@@ -58,6 +58,17 @@ php artisan shield:install --fresh
 
 Beaware, that even though there are checks in place but if confirmed; existing policies might get overwritten.
 
+### `RolePolicy`
+To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AuthServiceProvider`:
+
+```php
+//AuthServiceProvider.php
+...
+protected $policies = [
+    'Spatie\Permission\Models\Role' => 'App\Policies\RolePolicy',
+];
+...
+```
 
 Optionally, you can publish the translations using
 
