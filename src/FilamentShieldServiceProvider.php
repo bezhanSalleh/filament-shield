@@ -20,6 +20,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         return [
             Commands\MakeInstallShieldCommand::class,
             Commands\MakeNewShieldCommand::class,
+            Commands\MakeUserShieldCommand::class,
             Commands\MakeGenerateShieldCommand::class,
             Commands\MakePublishShieldCommand::class,
         ];

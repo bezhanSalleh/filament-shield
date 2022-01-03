@@ -15,6 +15,8 @@ class MakeInstallShieldCommand extends Command
     {
         $confirmed = $this->confirm('Do you wish to continue?', true);
 
+        https://github.com/bezhanSalleh/filament-shield
+
         if ($this->CheckIfAlreadyInstalled() && !$this->option('fresh')) {
             $this->error('Core package(`spatie/laravel-permission`) is already installed!');
             $this->comment('You should run `shield:generate` instead');
@@ -34,6 +36,8 @@ class MakeInstallShieldCommand extends Command
                 $this->call('migrate');
             }
 
+            $this->info('Creating user...');
+            $this->call('shield:user');
             $this->call('shield:generate');
             $this->call('shield:publish');
 
@@ -42,6 +46,19 @@ class MakeInstallShieldCommand extends Command
             $this->comment('`shield:install` command was cancelled.');
         }
 
+        if (\Spatie\Permission\Models\Role::count() === 0 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
+            if (PHP_OS_FAMILY === 'Darwin') {
+                exec('open https://github.com/bezhanSalleh/filament-shield');
+            }
+            if (PHP_OS_FAMILY === 'Linux') {
+                exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
+            }
+            if (PHP_OS_FAMILY === 'Windows') {
+                exec('start https://github.com/bezhanSalleh/filament-shield');
+            }
+
+            $this->line('Thank you!');
+        }
         return self::SUCCESS;
     }
 

@@ -13,21 +13,28 @@ class FilamentShield
         $permissions = collect();
         collect(config('filament-shield.default_permission_prefixes'))
             ->each(function ($prefix) use ($model, $permissions) {
-                $permissions->push(Permission::firstOrCreate([
-                    'name' => $prefix.'_'.Str::lower($model),
-                ]));
+                $permissions->push(Permission::firstOrCreate(
+                    ['name' => $prefix.'_'.Str::lower($model)],
+                    ['guard_name' => config('filament.auth.guard')]
+                ));
             });
 
-        if (static::checkIfSuperAdminIsEnabled()) {
-            $superAdmin = Role::firstOrCreate([
-                'name' => config('filament-shield.default_roles.super_admin.role_name'),
-            ]);
+        if (static::isSuperAdminEnabled()) {
+            $superAdmin = Role::firstOrCreate(
+                ['name' => config('filament-shield.super_admin.role_name')],
+                ['guard_name' => config('filament.auth.guard')]
+            );
             $superAdmin->givePermissionTo($permissions);
         }
     }
 
-    protected static function checkIfSuperAdminIsEnabled(): bool
+    public static function isSuperAdminEnabled(): bool
     {
-        return config('filament-shield.default_roles.super_admin.enabled');
+        return config('filament-shield.super_admin.enabled');
+    }
+
+    public static function isFilamentUserEnabled(): bool
+    {
+        return config('filament-shield.filament_user.enabled');
     }
 }
