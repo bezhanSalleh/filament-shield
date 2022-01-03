@@ -36,7 +36,7 @@ class MakeGenerateShieldCommand extends Command
 
         $this->info('Successfully generated permissions for '.implode(',', $resources->toArray()));
 
-        $this->comment('Enjoy!');
+        $this->line('Enjoy!');
 
         return self::SUCCESS;
     }

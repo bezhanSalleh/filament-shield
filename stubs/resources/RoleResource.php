@@ -163,47 +163,16 @@ class RoleResource extends Resource
                 ->afterStateHydrated(function (Closure $set, Closure $get, $record) use($entity, $permission) {
                     if (is_null($record)) return;
 
-                    // sit the state for the existing permissions
-                    $existingPermissions = $record->permissions->pluck('name')->reduce(function ($permissions, $permission){
-                        $permissions[$permission] = true;
-                        return $permissions;
-                    },[]);
+                    $set($permission.'_'.$entity, $record->hasPermissionTo($permission.'_'.$entity));
 
-                    $set($permission.'_'.$entity, in_array($permission.'_'.$entity,array_keys($existingPermissions)) && $existingPermissions[$permission.'_'.$entity] ? true : false);
-                    // check if any entites' one or all are true
-                    $entities = $record->permissions->pluck('name')
-                        ->reduce(function ($roles, $role){
-                            $roles[$role] = Str::afterLast($role, '_');
-                            return $roles;
-                        },collect())
-                        ->values()
-                        ->groupBy(function ($item) {
-                            return $item;
-                        })->map->count()
-                        ->reduce(function ($counts,$role,$key) {
-                            if ($role === 6) {
-                                $counts[$key] = true;
-                            }else {
-                                $counts[$key] = false;
-                            }
-                            return $counts;
-                        },[]);
-
-                    // set entity's state if one are all permissions are true
-                    if (in_array($entity,array_keys($entities)) && $entities[$entity])
-                    {
-                        $set($entity, true);
-                    } else {
-                        $set($entity, false);
-                        $set('select_all', false);
-                    }
+                    static::refreshEntityStateAfterHydrated($record, $set, $entity);
 
                     static::refreshSelectAllState($set, $get);
                 })
                 ->reactive()
                 ->afterStateUpdated(function (Closure $set, Closure $get, $state) use($entity){
 
-                    static::refreshEntityState($set, $get, Str::of($entity));
+                    static::refreshEntityStateAfterUpdate($set, $get, Str::of($entity));
 
                     if(!$state) {
                         $set($entity,false);
@@ -220,28 +189,62 @@ class RoleResource extends Resource
     protected static function refreshSelectAllState(Closure $set, Closure $get): void
     {
         $entityStates = collect(static::getEntities())
-            ->map(fn(string $entity): bool => (bool) $get($entity));
+            ->map(function($entity) use($get){
+                return (bool) $get($entity);
+            });
 
         if ($entityStates->containsStrict(false) === false) {
-            $set('select_all', true); // if all toggles on => turn select_all on
+            $set('select_all', true);
         }
 
         if ($entityStates->containsStrict(false) === true) {
-            $set('select_all', false); // if even one toggle off => turn select_all off
+            $set('select_all', false);
         }
     }
 
-    protected static function refreshEntityState(Closure $set, Closure $get, string $entity): void
+    protected static function refreshEntityStateAfterUpdate(Closure $set, Closure $get, string $entity): void
     {
         $permissionStates = collect(config('filament-shield.default_permission_prefixes'))
-            ->map(fn(string $permission): bool => (bool) $get($permission.'_'.$entity));
+            ->map(function($permission) use($get, $entity) {
+                return (bool) $get($permission.'_'.$entity);
+            });
 
         if ($permissionStates->containsStrict(false) === false) {
-            $set($entity, true); // if all permissions true => turn toggle on
+            $set($entity, true);
         }
 
         if ($permissionStates->containsStrict(false) === true) {
-            $set($entity, false); // if even one false => turn toggle off
+            $set($entity, false);
+        }
+    }
+
+    protected static function refreshEntityStateAfterHydrated(Model $record, Closure $set, string $entity): void
+    {
+        $entities = $record->permissions->pluck('name')
+            ->reduce(function ($roles, $role){
+                $roles[$role] = Str::afterLast($role, '_');
+                return $roles;
+            },collect())
+            ->values()
+            ->groupBy(function ($item) {
+                return $item;
+            })->map->count()
+            ->reduce(function ($counts,$role,$key) {
+                if ($role === 6) {
+                    $counts[$key] = true;
+                }else {
+                    $counts[$key] = false;
+                }
+                return $counts;
+            },[]);
+
+        // set entity's state if one are all permissions are true
+        if (in_array($entity,array_keys($entities)) && $entities[$entity])
+        {
+            $set($entity, true);
+        } else {
+            $set($entity, false);
+            $set('select_all', false);
         }
     }
 }

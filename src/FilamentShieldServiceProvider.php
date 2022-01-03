@@ -12,17 +12,18 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-shield')
             ->hasConfigFile()
+            ->hasTranslations()
             ->hasCommands($this->getCommands());
     }
 
     protected function getCommands(): array
     {
         return [
-            Commands\MakeInstallShieldCommand::class,
-            Commands\MakeNewShieldCommand::class,
             Commands\MakeUserShieldCommand::class,
-            Commands\MakeGenerateShieldCommand::class,
+            Commands\MakeCreateShieldCommand::class,
+            Commands\MakeInstallShieldCommand::class,
             Commands\MakePublishShieldCommand::class,
+            Commands\MakeGenerateShieldCommand::class,
         ];
     }
 }

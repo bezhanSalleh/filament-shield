@@ -4,18 +4,29 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
+use Symfony\Component\Console\Formatter\OutputFormatter;
 
 class MakeInstallShieldCommand extends Command
 {
     public $signature = 'shield:install {--fresh}';
 
-    public $description = "Installs everything and generates Permissions & Policies for existing Filament Resources";
+    public $description = "One Command to Rule them All 🔥";
 
     public function handle(): int
     {
-        $confirmed = $this->confirm('Do you wish to continue?', true);
+        $this->alert('Following operations will be performed:');
+        $this->info('-  Publishes core package config');
+        $this->info('-  Publishes core package migration');
+        $this->warn('   - On fresh applications database will be migrated');
+        $this->warn('   - You can also force this behavior by supplying the --fresh option');
+        $this->info('-  Creates a filament user');
+        $this->warn('   - Assigns Super Admin role if enabled in config');
+        $this->warn('   - And/Or Assigns Filament User role if enabled in config');
+        $this->info('-  Discovers filament resources and generates Permissions and Policies accordingly');
+        $this->warn('   - Will override any existing policies if available');
+        $this->info('- Publishes Shield Resource');
 
-        https://github.com/bezhanSalleh/filament-shield
+        $confirmed = $this->confirm('Do you wish to continue?', true);
 
         if ($this->CheckIfAlreadyInstalled() && !$this->option('fresh')) {
             $this->error('Core package(`spatie/laravel-permission`) is already installed!');
@@ -24,16 +35,18 @@ class MakeInstallShieldCommand extends Command
         }
 
         if ($confirmed) {
-            // publish core package migration and config
-            $this->callSilently('vendor:publish',[
+
+            $this->call('vendor:publish',[
                 '--provider' => 'Spatie\Permission\PermissionServiceProvider'
             ]);
+            $this->info('Core Package config published.');
 
-            //run core pacakge migrations
             if ($this->option('fresh')) {
                 $this->call('migrate:fresh');
+                $this->info('Database migrations freshed up.');
             } else {
                 $this->call('migrate');
+                $this->info('Database migrated.');
             }
 
             $this->info('Creating user...');

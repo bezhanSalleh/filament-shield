@@ -6,15 +6,15 @@ use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use BezhanSalleh\FilamentShield\FilamentShield;
 
-class MakeNewShieldCommand extends Command
+class MakeCreateShieldCommand extends Command
 {
     use Concerns\CanGeneratePolicy;
     use Concerns\CanManipulateFiles;
     use Concerns\CanValidateInput;
 
-    public $signature = 'shield:new {name?}';
+    public $signature = 'shield:create {name?}';
 
-    public $description = 'Generate Permissions and/or Policy for the given Filament Resource Model';
+    public $description = 'Create Permissions and/or Policy for the given Filament Resource Model';
 
     public function handle(): int
     {
