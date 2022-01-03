@@ -50,8 +50,8 @@ class MakeInstallShieldCommand extends Command
 
             $this->info('Creating user...');
             $this->call('shield:user');
-            $this->call('shield:generate');
             $this->call('shield:publish');
+            $this->call('shield:generate');
 
             $this->info('Filament Shield🛡 is now active ✅');
         } else {
