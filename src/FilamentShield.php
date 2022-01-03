@@ -25,6 +25,5 @@ class FilamentShield
         );
 
         $superAdmin->givePermissionTo($permissions);
-
     }
 }
