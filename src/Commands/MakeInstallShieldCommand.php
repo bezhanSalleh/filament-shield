@@ -82,7 +82,7 @@ class MakeInstallShieldCommand extends Command
                     return Schema::hasTable($table);
                 })
                 ->count();
-        if ($count != 0 || class_exists('Spatie\Permission\Models\Role')) {
+        if ($count !== 0) {
             return true;
         }
 
