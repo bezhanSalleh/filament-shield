@@ -48,8 +48,8 @@ class MakeInstallShieldCommand extends Command
                 $this->info('Database migrated.');
             }
 
-            $this->info('Creating user...');
-            $this->call('shield:user');
+            $this->info('Creating Super Admin...');
+            $this->call('shield:super-admin');
             $this->call('shield:publish');
             $this->call('shield:generate');
 

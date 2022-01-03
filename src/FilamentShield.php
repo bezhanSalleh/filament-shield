@@ -19,22 +19,12 @@ class FilamentShield
                 ));
             });
 
-        if (static::isSuperAdminEnabled()) {
-            $superAdmin = Role::firstOrCreate(
-                ['name' => config('filament-shield.super_admin.role_name')],
-                ['guard_name' => config('filament.auth.guard')]
-            );
-            $superAdmin->givePermissionTo($permissions);
-        }
-    }
+        $superAdmin = Role::firstOrCreate(
+            ['name' => config('filament-shield.default_roles.super_admin_role_name')],
+            ['guard_name' => config('filament.auth.guard')]
+        );
 
-    public static function isSuperAdminEnabled(): bool
-    {
-        return config('filament-shield.super_admin.enabled');
-    }
+        $superAdmin->givePermissionTo($permissions);
 
-    public static function isFilamentUserEnabled(): bool
-    {
-        return config('filament-shield.filament_user.enabled');
     }
 }

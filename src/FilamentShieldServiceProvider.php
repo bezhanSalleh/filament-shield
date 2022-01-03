@@ -19,11 +19,11 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            Commands\MakeUserShieldCommand::class,
             Commands\MakeCreateShieldCommand::class,
             Commands\MakeInstallShieldCommand::class,
             Commands\MakePublishShieldCommand::class,
             Commands\MakeGenerateShieldCommand::class,
+            Commands\MakeSuperAdminShieldCommand::class,
         ];
     }
 }
