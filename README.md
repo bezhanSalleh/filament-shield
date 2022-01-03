@@ -29,18 +29,34 @@ composer require bezhansalleh/filament-shield
 php artisan vendor:publish --tag="filament-shield-config"
 ```
 
-3. Configure `super_admin` role and change the `role_name` to something of your choosing. 
-It is recommend to leave it enable this way every `permission` generated will be automatically assigned to this role.
-then you would only need to assign this role to your super admin `user`.
+3. Change `super_admin_role_name` if you want. (You can skip this step if you use the default)
+Every `permission` generated will be automatically assigned to this role.
+Then you would be able to make a `user` super admin by assigning this role to them.
 
 ```php
-'super_admin' => [
-    'enabled' => true,
-    'role_name' => 'super_admin',
-],
+'default_roles' => [
+     'super_admin_role_name' => 'super_admin',
+     'filament_user' => [
+         'role_name' => 'filament_user',
+         'enabled' => true
+     ],
+ ],
+```
+4. Add the `Spatie\Permission\Traits\HasRoles` trait to your User model(s):
+
+```php
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasRoles;
+
+    // ...
+}
 ```
 
-4. Now run the following command to setup everything:
+5. Now run the following command to setup everything:
 
 ```bash
 php artisan shield:install
@@ -48,9 +64,9 @@ php artisan shield:install
 ```
 Follow the prompts and enjoy!
 
-## Installation (Existing Apps)
+## Installation (Existing Apps with `spatie/laravel-permission` already installed)
 
-4. For existing apps run the following command to setup everything:
+5. Follow the above steps from (1) thorugh (4) run the following command to setup everything:
 
 ```bash
 php artisan shield:install --fresh
@@ -87,7 +103,8 @@ php artisan vendor:publish --tag="filament-shield-translations"
 
 ## Chores
 
-- [ ] Imporve documentation 📝
+- [x] `shield:install` command flow improved ⚒️
+- [ ] Improve documentation 📝
 - [ ] A command to reverse everything 🤯
 - [ ] handle `except` or `only` options for Permission and Policy generation 👀
 - [ ] improve automation or add new features... ⏭
