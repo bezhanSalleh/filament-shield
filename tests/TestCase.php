@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Tests;
 
+use BezhanSalleh\FilamentShield\FilamentShieldServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use BezhanSalleh\FilamentShield\FilamentShieldServiceProvider;
 
 class TestCase extends Orchestra
 {

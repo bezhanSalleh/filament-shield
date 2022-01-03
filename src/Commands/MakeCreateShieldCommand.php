@@ -2,9 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Support\Str;
-use Illuminate\Console\Command;
 use BezhanSalleh\FilamentShield\FilamentShield;
+use Illuminate\Console\Command;
 
 class MakeCreateShieldCommand extends Command
 {
@@ -26,8 +25,7 @@ class MakeCreateShieldCommand extends Command
             "Only Policy",
         ], 0, null, false);
 
-        if ($choice === "Permissions & Policy")
-        {
+        if ($choice === "Permissions & Policy") {
             if ($this->checkForCollision([$this->generatePolicyPath($model)])) {
                 return static::INVALID;
             }
@@ -42,14 +40,12 @@ class MakeCreateShieldCommand extends Command
         }
 
         if ($choice === "Only Permissions") {
-
             FilamentShield::generateFor($model);
 
             $this->info("Successfully generated Permissions for {$model}Resource");
         }
 
         if ($choice === "Only Policy") {
-
             if ($this->checkForCollision([$this->generatePolicyPath($model)])) {
                 return static::INVALID;
             }

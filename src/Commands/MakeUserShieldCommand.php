@@ -2,10 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use BezhanSalleh\FilamentShield\FilamentShield;
 
 class MakeUserShieldCommand extends Command
 {
@@ -42,10 +42,10 @@ class MakeUserShieldCommand extends Command
                 $user->assignRole(config('filament-shield.filament_user.role_name'));
             }
         } else {
-            $choice = $this->choice('What role the user should have?',[
+            $choice = $this->choice('What role the user should have?', [
                 config('filament-shield.super_admin.role_name'),
                 config('filament-shield.filament_user.role_name'),
-            ],0,null,false);
+            ], 0, null, false);
         }
 
         $loginUrl = route('filament.auth.login');

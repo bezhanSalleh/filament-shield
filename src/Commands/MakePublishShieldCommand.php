@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class MakePublishShieldCommand extends Command
 {
@@ -21,7 +21,7 @@ class MakePublishShieldCommand extends Command
 
         if ($this->checkForCollision([$roleResourcePath])) {
             $confirmed = $this->confirm('Shield Resource already exists. Overwrite?', true);
-            if (!$confirmed) {
+            if (! $confirmed) {
                 return self::INVALID;
             }
         }

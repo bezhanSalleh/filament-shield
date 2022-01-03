@@ -3,8 +3,8 @@
 namespace BezhanSalleh\FilamentShield;
 
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class FilamentShield
 {

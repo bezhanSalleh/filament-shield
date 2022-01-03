@@ -4,9 +4,8 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class MakeGenerateShieldCommand extends Command
 {
@@ -23,10 +22,11 @@ class MakeGenerateShieldCommand extends Command
             ->reduce(function ($entites, $resource) {
                 $model = Str::before(Str::afterLast($resource, '\\'), 'Resource');
                 $entites[$model] = $model;
+
                 return $entites;
             }, collect())
             ->values()
-            ->each(function($entity) {
+            ->each(function ($entity) {
                 $model = Str::of($entity);
                 $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($model), $this->generatePolicyStubVariables($model));
                 FilamentShield::generateFor($model);

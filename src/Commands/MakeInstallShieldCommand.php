@@ -4,7 +4,6 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
-use Symfony\Component\Console\Formatter\OutputFormatter;
 
 class MakeInstallShieldCommand extends Command
 {
@@ -28,16 +27,16 @@ class MakeInstallShieldCommand extends Command
 
         $confirmed = $this->confirm('Do you wish to continue?', true);
 
-        if ($this->CheckIfAlreadyInstalled() && !$this->option('fresh')) {
+        if ($this->CheckIfAlreadyInstalled() && ! $this->option('fresh')) {
             $this->error('Core package(`spatie/laravel-permission`) is already installed!');
             $this->comment('You should run `shield:generate` instead');
+
             return self::INVALID;
         }
 
         if ($confirmed) {
-
-            $this->call('vendor:publish',[
-                '--provider' => 'Spatie\Permission\PermissionServiceProvider'
+            $this->call('vendor:publish', [
+                '--provider' => 'Spatie\Permission\PermissionServiceProvider',
             ]);
             $this->info('Core Package config published.');
 
@@ -72,13 +71,14 @@ class MakeInstallShieldCommand extends Command
 
             $this->line('Thank you!');
         }
+
         return self::SUCCESS;
     }
 
-    protected function CheckIfAlreadyInstalled():bool
+    protected function CheckIfAlreadyInstalled(): bool
     {
         $count = collect(['permissions','roles','role_has_permissions','model_has_roles','model_has_permissions'])
-                ->filter(function($table) {
+                ->filter(function ($table) {
                     return Schema::hasTable($table);
                 })
                 ->count();
