@@ -20,7 +20,7 @@ class MakePublishShieldCommand extends Command
         $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'), );
 
         if ($this->checkForCollision([$roleResourcePath])) {
-            $confirmed = $this->confirm('Shield Resource already exists. Overwrite?', true);
+            $confirmed = $this->confirm('Shield Resource already exists. Overwrite?', false);
             if (! $confirmed) {
                 return self::INVALID;
             }
