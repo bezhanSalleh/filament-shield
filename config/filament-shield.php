@@ -2,14 +2,12 @@
 // config for BezhanSalleh/FilamentShield
 return [
 
-    'super_admin' => [
-        'enabled' => true,
-        'role_name' => 'super_admin',
-    ],
-
-    'filament_user' => [
-        'enabled' => true,
-        'role_name' => 'filament_user',
+    'default_roles' => [
+        'super_admin_role_name' => 'super_admin',
+        'filament_user' => [
+            'role_name' => 'filament_user',
+            'enabled' => true
+        ],
     ],
 
     'default_permission_prefixes' => [
