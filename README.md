@@ -1,4 +1,6 @@
-# Filament support for `spatie/laravel-permission`.
+![filament-shield](https://user-images.githubusercontent.com/10007504/147907752-dbf4a109-94ab-4d9d-b5da-9ef8db223806.png)
+
+# Filament Shield.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/bezhansalleh/filament-shield.svg?style=flat-square)](https://packagist.org/packages/bezhansalleh/filament-shield)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/run-tests?label=tests)](https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3Amain)
