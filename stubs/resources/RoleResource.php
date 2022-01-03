@@ -18,7 +18,9 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-finger-print';
+    protected static ?int $navigationSort = -10;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
@@ -29,19 +31,21 @@ class RoleResource extends Resource
                     Forms\Components\Card::make()
                         ->schema([
                             Forms\Components\TextInput::make('name')
+                                ->label(__('filament-shield::filament-shield.field.name'))
                                 ->required()
                                 ->maxLength(255)
                                 ->afterStateUpdated(fn(Closure $set, $state): string => $set('name', Str::lower($state))),
                             Forms\Components\TextInput::make('guard_name')
+                                ->label(__('filament-shield::filament-shield.field.guard_name'))
                                 ->default(config('filament.auth.guard'))
-                                ->required()
+                                ->nullable()
                                 ->maxLength(255)
                                 ->afterStateUpdated(fn(Closure $set, $state): string => $set('guard_name', Str::lower($state))),
                             Forms\Components\Toggle::make('select_all')
                                 ->onIcon('heroicon-s-shield-check')
                                 ->offIcon('heroicon-s-shield-exclamation')
-                                ->label('Select All')
-                                ->helperText('Enable all Permissions for this role.')
+                                ->label(__('filament-shield::filament-shield.field.select_all.name'))
+                                ->helperText(__('filament-shield::filament-shield.field.select_all.message'))
                                 ->reactive()
                                 ->afterStateUpdated(function (Closure $set, $state) {
                                     foreach (static::getEntities() as $entity) {
@@ -77,13 +81,18 @@ class RoleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->formatStateUsing(fn($state): string => Str::headline($state)),
+                    ->label(__('filament-shield::filament-shield.column.name'))
+                    ->formatStateUsing(fn($state): string => Str::headline($state))
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('guard_name')
+                    ->label(__('filament-shield::filament-shield.column.guard_name'))
                     ->formatStateUsing(fn($state): string => Str::headline($state)),
                 Tables\Columns\BadgeColumn::make('permissions')
+                    ->label(__('filament-shield::filament-shield.column.permissions'))
                     ->formatStateUsing(fn($record): int => $record->permissions->count())
                     ->colors(['success']),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('filament-shield::filament-shield.column.updated_at'))
                     ->dateTime(),
             ])
             ->filters([
@@ -107,6 +116,31 @@ class RoleResource extends Resource
         ];
     }
 
+    public static function getLabel(): string
+    {
+        return __('filament-shield::filament-shield.resource.label.role');
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return __('filament-shield::filament-shield.resource.label.roles');
+    }
+
+    protected static function getNavigationGroup(): ?string
+    {
+        return __('filament-shield::filament-shield.nav.group');
+    }
+
+    protected static function getNavigationLabel(): string
+    {
+        return __('filament-shield::filament-shield.nav.label');
+    }
+
+    protected static function getNavigationIcon(): string
+    {
+        return __('filament-shield::filament-shield.nav.icon');
+    }
+    
     protected static function getEntities(): ?array
     {
         return Permission::pluck('name')
