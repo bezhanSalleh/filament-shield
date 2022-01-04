@@ -1,4 +1,4 @@
-<img style="width: 100%; max-width: 100%;" alt="filament-shield-art" src="https://user-images.githubusercontent.com/10007504/147907752-dbf4a109-94ab-4d9d-b5da-9ef8db223806.png" >
+<img style="width: 100%; max-width: 100%;" alt="filament-shield-art" src="https://user-images.githubusercontent.com/10007504/148017180-a638248e-ba9a-4278-a099-1f8c1cbf068f.png" >
 
 # Filament Shield
 
@@ -6,7 +6,7 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/run-tests?label=tests)](https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/Check%20&%20fix%20styling?label=code%20style)](https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/bezhansalleh/filament-shield.svg?style=flat-square)](https://packagist.org/packages/bezhansalleh/filament-shield)
-
+#### The easiest and most intuitive way to add access management to your Filament Resources (more coming soon 😎)
 One Plugin to rule them all, One Plugin to find them, One Plugin to bring them all, and in the light bind them, In the Land of Filament where building them is really fun!
 
 ## Support Filament
@@ -64,7 +64,8 @@ php artisan shield:install
 ```
 Follow the prompts and enjoy!
 
-## Installation (Existing Apps with `spatie/laravel-permission` already installed)
+## Installation (Existing Apps)
+#### Apps with `spatie/laravel-permission` already installed
 
 5. Follow the above steps from (1) thorugh (4) run the following command to setup everything:
 
