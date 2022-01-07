@@ -2,16 +2,18 @@
 
 namespace App\Filament\Resources\Shield\RoleResource\Pages;
 
-use App\Filament\Resources\Shield\RoleResource;
-use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\Shield\RoleResource;
+use Illuminate\Support\Collection;
 
 class CreateRole extends CreateRecord
 {
     protected static string $resource = RoleResource::class;
 
-    public $permissions;
+    public Collection    $permissions;
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
@@ -24,6 +26,14 @@ class CreateRole extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $this->record->syncPermissions($this->permissions);
+        $permissionModels = collect();
+        $this->permissions->each(function($permission) use($permissionModels) {
+            $permissionModels->push(Permission::firstOrCreate(
+                ['name' => $permission],
+                ['guard_name' => config('filament.auth.guard')]
+            ));
+        });
+
+        $this->record->syncPermissions($permissionModels);
     }
 }

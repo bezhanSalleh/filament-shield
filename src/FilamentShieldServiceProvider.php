@@ -2,6 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -14,6 +15,11 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasTranslations()
             ->hasCommands($this->getCommands());
+    }
+
+    public function packageBooted(): void
+    {
+        Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
     }
 
     protected function getCommands(): array

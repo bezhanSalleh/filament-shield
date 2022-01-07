@@ -2,16 +2,18 @@
 
 namespace App\Filament\Resources\Shield\RoleResource\Pages;
 
-use App\Filament\Resources\Shield\RoleResource;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Filament\Resources\Pages\EditRecord;
+use Spatie\Permission\Models\Permission;
+use App\Filament\Resources\Shield\RoleResource;
 
 class EditRole extends EditRecord
 {
     protected static string $resource = RoleResource::class;
 
-    public $permissions;
+    public Collection $permissions;
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
@@ -24,6 +26,14 @@ class EditRole extends EditRecord
 
     protected function afterSave(): void
     {
-        $this->record->syncPermissions($this->permissions);
+        $permissionModels = collect();
+        $this->permissions->each(function($permission) use($permissionModels) {
+            $permissionModels->push(Permission::firstOrCreate(
+                ['name' => $permission],
+                ['guard_name' => config('filament.auth.guard')]
+            ));
+        });
+
+        $this->record->syncPermissions($permissionModels);
     }
 }
