@@ -76,6 +76,8 @@ class RoleResource extends Resource
                         Forms\Components\Tabs::make('Permissions')
                             ->tabs([
                                 Forms\Components\Tabs\Tab::make('Resources')
+                                    ->visible(fn(): bool => (bool) config('filament-shield.entities.resources'))
+                                    ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
                                             'sm' => 2,
@@ -88,6 +90,8 @@ class RoleResource extends Resource
                                         ])
                                     ]),
                                 Forms\Components\Tabs\Tab::make('Pages')
+                                    ->visible(fn(): bool => (bool) config('filament-shield.entities.pages'))
+                                    ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
                                             'sm' => 3,
@@ -100,6 +104,8 @@ class RoleResource extends Resource
                                         ])
                                     ]),
                                 Forms\Components\Tabs\Tab::make('Widgets')
+                                    ->visible(fn(): bool => (bool) config('filament-shield.entities.widgets'))
+                                    ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
                                             'sm' => 3,
@@ -111,6 +117,20 @@ class RoleResource extends Resource
                                             'lg' => 4
                                         ])
                                     ]),
+                                // Forms\Components\Tabs\Tab::make('Custom')
+                                //     ->visible(fn(): bool => (bool) config('filament-shield.entities.widgets'))
+                                //     ->reactive()
+                                //     ->schema([
+                                //         Forms\Components\Grid::make([
+                                //             'sm' => 3,
+                                //             'lg' => 4,
+                                //         ])
+                                //         ->schema(static::getWidgetEntityPermissionSchema())
+                                //         ->columns([
+                                //             'sm' => 3,
+                                //             'lg' => 4
+                                //         ])
+                                //     ]),
                             ])
                             ->columnSpan('full'),
                     ]),
