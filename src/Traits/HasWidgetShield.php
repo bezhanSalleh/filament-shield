@@ -9,7 +9,6 @@ trait HasWidgetShield
 {
     public static function canView(): bool
     {
-        // dd(static::getPermissionName());
         return Filament::auth()->user()->can(static::getPermissionName());
     }
 
@@ -18,6 +17,6 @@ trait HasWidgetShield
         return (string) Str::of(static::class)
             ->after('Widgets\\')
             ->snake()
-            ->prepend('view_');
+            ->prepend(config('filament-shield.widget_permission_prefix').'_');
     }
 }
