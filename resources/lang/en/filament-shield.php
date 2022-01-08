@@ -9,6 +9,7 @@ return [
 
     'column.name' => 'Name',
     'column.guard_name' => 'Guard Name',
+    'column.roles' => 'Roles',
     'column.permissions' => 'Permissions',
     'column.updated_at' => 'Updated At',
 
@@ -31,11 +32,21 @@ return [
     */
 
     'nav.group' => 'Filament Shield',
-    'nav.label' => 'Roles',
-    'nav.icon' => 'heroicon-o-shield-check',
+    'nav.role.label' => 'Roles',
+    'nav.role.icon' => 'heroicon-o-shield-check',
     'resource.label.role' => 'Role',
     'resource.label.roles' => 'Roles',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Section & Tabs
+    |--------------------------------------------------------------------------
+    */
+    'section' => 'Entities',
+    'resources' => 'Resources',
+    'widgets' => 'Widgets',
+    'pages' => 'Pages',
+    'custom' => 'Custom Permissions',
 
     /**
      * HasPageShield Trait Forbidden Message

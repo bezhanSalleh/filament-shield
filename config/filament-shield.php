@@ -134,4 +134,6 @@ return [
         ],
         'resources' => [],
     ],
+
+    'register_role_policy' => true,
 ];

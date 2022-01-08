@@ -19,7 +19,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?int $navigationSort = -10;
+    protected static ?int $navigationSort = -1;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -58,11 +58,11 @@ class RoleResource extends Resource
                                 'lg' => 3
                             ]),
                     ]),
-                Forms\Components\Section::make('Entities\' Permissions')
+                Forms\Components\Section::make(__('filament-shield::filament-shield.section'))
                     ->schema([
                         Forms\Components\Tabs::make('Permissions')
                             ->tabs([
-                                Forms\Components\Tabs\Tab::make('Resources')
+                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
                                     ->visible(fn(): bool => (bool) config('filament-shield.tabs.resources'))
                                     ->reactive()
                                     ->schema([
@@ -76,7 +76,7 @@ class RoleResource extends Resource
                                             'lg' => 3
                                         ])
                                     ]),
-                                Forms\Components\Tabs\Tab::make('Pages')
+                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
                                     ->visible(fn(): bool => (bool) config('filament-shield.tabs.pages'))
                                     ->reactive()
                                     ->schema([
@@ -90,7 +90,7 @@ class RoleResource extends Resource
                                             'lg' => 4
                                         ])
                                     ]),
-                                Forms\Components\Tabs\Tab::make('Widgets')
+                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
                                     ->visible(fn(): bool => (bool) config('filament-shield.tabs.widgets'))
                                     ->reactive()
                                     ->schema([
@@ -105,7 +105,7 @@ class RoleResource extends Resource
                                         ])
                                     ]),
 
-                                Forms\Components\Tabs\Tab::make('Custom')
+                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
                                     ->visible(fn(): bool => (bool) config('filament-shield.tabs.custom_permissions'))
                                     ->reactive()
                                     ->schema([
@@ -131,13 +131,13 @@ class RoleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\BadgeColumn::make('name')
                     ->label(__('filament-shield::filament-shield.column.name'))
                     ->formatStateUsing(fn($state): string => Str::headline($state))
+                    ->colors(['primary'])
                     ->searchable(),
-                Tables\Columns\TextColumn::make('guard_name')
-                    ->label(__('filament-shield::filament-shield.column.guard_name'))
-                    ->formatStateUsing(fn($state): string => Str::headline($state)),
+                Tables\Columns\BadgeColumn::make('guard_name')
+                    ->label(__('filament-shield::filament-shield.column.guard_name')),
                 Tables\Columns\BadgeColumn::make('permissions_count')
                     ->label(__('filament-shield::filament-shield.column.permissions'))
                     ->counts('permissions')
@@ -163,6 +163,7 @@ class RoleResource extends Resource
         return [
             'index' => Pages\ListRoles::route('/'),
             'create' => Pages\CreateRole::route('/create'),
+            'view' => Pages\ViewRole::route('/{record}'),
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
@@ -184,12 +185,12 @@ class RoleResource extends Resource
 
     protected static function getNavigationLabel(): string
     {
-        return __('filament-shield::filament-shield.nav.label');
+        return __('filament-shield::filament-shield.nav.role.label');
     }
 
     protected static function getNavigationIcon(): string
     {
-        return __('filament-shield::filament-shield.nav.icon');
+        return __('filament-shield::filament-shield.nav.role.icon');
     }
 
     /**--------------------------------*
@@ -199,6 +200,9 @@ class RoleResource extends Resource
     protected static function getResourceEntities(): ?array
     {
         return collect(Filament::getResources())
+            ->filter(function ($resource) {
+                return !in_array(Str::before(Str::afterLast($resource, '\\'), 'Resource'), config('filament-shield.except.resources'));
+            })
             ->reduce(function ($roles, $resource) {
                 $role = Str::lower(Str::before(Str::afterLast($resource, '\\'), 'Resource'));
                 $roles[$role] = $role;
@@ -371,6 +375,9 @@ class RoleResource extends Resource
     protected static function getPageEntities(): ? array
     {
         return collect(Filament::getPages())
+            ->filter(function ($page) {
+                return !in_array(Str::afterLast($page, '\\'), config('filament-shield.except.pages'));
+            })
             ->reduce(function($transformedPages,$page) {
                 $name = Str::of($page)->after('Pages\\')->snake()->prepend('view_');
                 $transformedPages["{$name}"] = "{$name}";
@@ -422,6 +429,9 @@ class RoleResource extends Resource
     protected static function getWidgetEntities(): ? array
     {
         return collect(Filament::getWidgets())
+            ->filter(function ($widget) {
+                return !in_array(Str::afterLast($widget, '\\'), config('filament-shield.except.widgets'));
+            })
             ->reduce(function($widgets,$widget) {
                 $name = Str::of($widget)->after('Widgets\\')->snake()->prepend('view_');
                 $widgets["{$name}"] = "{$name}";

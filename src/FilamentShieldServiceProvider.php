@@ -19,7 +19,9 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
+        if (config('filament-shield.register_role_policy')) {
+            Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
+        }
     }
 
     protected function getCommands(): array
