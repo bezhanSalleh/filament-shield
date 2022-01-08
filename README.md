@@ -1,4 +1,6 @@
+<a href="https://github.com/bezhansalleh/filament-shield">
 <img style="width: 100%; max-width: 100%;" alt="filament-shield-art" src="https://user-images.githubusercontent.com/10007504/148017180-a638248e-ba9a-4278-a099-1f8c1cbf068f.png" >
+</a>
 
 # Filament Shield
 
@@ -6,7 +8,11 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/run-tests?label=tests)](https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/Check%20&%20fix%20styling?label=code%20style)](https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/bezhansalleh/filament-shield.svg?style=flat-square)](https://packagist.org/packages/bezhansalleh/filament-shield)
-#### The easiest and most intuitive way to add access management to your Filament Resource `Models` (more coming soon 😎)
+#### The easiest and most intuitive way to add access management to your Filament Admin:
+- **Resources** 📑
+- **Pages** 📄
+- **Widgets** 📈
+  
 One Plugin to rule them all, One Plugin to find them, One Plugin to bring them all, and in the light bind them, In the Land of Filament where building them is really fun!
 
 ## Support Filament
@@ -29,18 +35,150 @@ composer require bezhansalleh/filament-shield
 php artisan vendor:publish --tag="filament-shield-config"
 ```
 
-3. Change `super_admin_role_name` if you want. (You can skip this step if you use the default)
-Every `permission` generated will be automatically assigned to this role.
-Then you would be able to make a `user` super admin by assigning this role to them.
-
+3. Configure your options
 ```php
-'default_roles' => [
-     'super_admin_role_name' => 'super_admin',
-     'filament_user' => [
-         'role_name' => 'filament_user',
-         'enabled' => true
-     ],
- ],
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Defualt Roles
+    |--------------------------------------------------------------------------
+    |
+    | The default is `super_admin` but you can change it to whatever works best for you.
+    | `filament_user` if enabled will help smoothly provide access to filament users
+    | in production when implementing `FilamentUser`
+    */
+
+    'default_roles' => [
+        'super_admin_role_name' => 'super_admin',
+        'filament_user' => [
+            'role_name' => 'filament_user',
+            'enabled' => true
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Resource Permission Prefixes
+    |--------------------------------------------------------------------------
+    |
+    | When generating permissions for a `Resource` the resource `Model` will be prefixed with these.
+    | But you are free to change them in to whatever works for you, but keeping in mind the order since
+    | these will also be used in generating policies for the resources.
+    */
+
+    'resource_permission_prefixes' => [
+        'view',
+        'view_any',
+        'create',
+        'delete',
+        'delete_any',
+        'update',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Widget and Page Permission Prefix
+    |--------------------------------------------------------------------------
+    |
+    | When generating permission for a `Widget` or `Page` the widget or page name will be prefixed
+    | with this. But you are free to change it in to whatever works for you.
+    */
+
+    'page_permission_prefix' => 'view',
+    'widget_permission_prefix' => 'view',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entities Permission Generator
+    |--------------------------------------------------------------------------
+    | Enable the Entities for which you want the permissions or permissions and policies
+    | to be auto generated when you run `php artisan shield:install` command.
+    */
+
+    'entities' => [
+        'pages' => false,
+        'widgets' => true,
+        'resources' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Show/Hide Entities
+    |--------------------------------------------------------------------------
+    | You can show and hide entities in the shield manager while creating and editing roles.
+    */
+
+    'tabs' => [
+        'pages' => false,
+        'widgets' => true,
+        'resources' => true,
+        'custom_permissions' => false,
+    ],
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Only
+    |--------------------------------------------------------------------------
+    | Generate only permissions or permissions with policies for the entities
+    | listed here.
+    */
+
+    'only' => [
+        'enabled' => false,
+        /*----------------------------------------------------------------------*
+        | Generate Permissions for Only these Pages.                            |
+        | The generated permission for a Page:                                  |
+        | `view_page_name` i.e, `SettingsPage` => `view_settings_page`          |
+        *-----------------------------------------------------------------------*/
+        'pages' => [],
+
+        /*----------------------------------------------------------------------*
+        | Generate Permissions for Only these Widgets.                          |
+        | The generated permission for a Widget:                                |
+        | `view_widget_name` i.e, `IncomeWidget` => `view_income_widget`        |
+        *-----------------------------------------------------------------------*/
+        'widgets' => [],
+
+        /*----------------------------------------------------------------------*
+        |  Generate Permissions and Policies for Only these resource `Models`   |
+        |  You can pass in the list of `Models` i.e, ['User','Role',...]        |
+        |  Or the `Resources` i.e, ['UserResource','RoleResource',...]          |
+        *-----------------------------------------------------------------------*/
+        'resources' => [],
+    ],
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Except
+    |--------------------------------------------------------------------------
+    | Generate permissions or permissions with policies for all the entities
+    | except listed here.
+    | Generated Permission name will be formatted as:
+    | Page: `view_page_name` i.e, `SettingsPage` => `view_settings_page`
+    | Widget: `view_widget_name` i.e, `IncomeWidget` => `view_income_widget`
+    */
+
+    'except' => [
+        'pages' => [
+            'Dashboard'
+        ],
+        'widgets' => [
+            'AccountWidget',
+            'FilamentInfoWidget'
+        ],
+        'resources' => [],
+    ],
+
+    /**
+     * Register `RolePolicy` for `RoleResource`
+     */
+    'register_role_policy' => true,
+];
 ```
 4. Add the `Spatie\Permission\Traits\HasRoles` trait to your User model(s):
 
@@ -60,12 +198,11 @@ class User extends Authenticatable
 
 ```bash
 php artisan shield:install
-
 ```
 Follow the prompts and enjoy!
 
 ## Installation (Existing Apps)
-#### Apps with `spatie/laravel-permission` already installed
+##### Apps with `spatie/laravel-permission` already installed
 
 5. Follow the above steps from (1) thorugh (4) run the following command to setup everything:
 
@@ -75,7 +212,54 @@ php artisan shield:install --fresh
 
 Beaware, that even though there are checks in place but if confirmed; existing policies might get overwritten.
 
-### `RolePolicy`
+### Default Behaviour
+
+By default running `php artisan shield:install` will exclude generating permissions for `FilamentAdmin`'s default `Dashboard` page, `AccountWidget` and `FilamentInfoWidget`.
+If you want to disable this behaviour you can supply the `--all` flag:
+```bash
+php artisan shield:install --all
+```
+or
+```bash
+php artisan shield:install --fresh --all
+```
+Or you could remove them from the respective `except` key in the config file.
+#### Pages
+If you have generated permissions for `Pages` you can toggle the page's navigation from sidebar and restricted access to the page. You can set this up manually but this package comes with a `HasPageShield` trait to speed up this process. All you have to do is use the trait in you pages:
+```php
+<?php
+
+namespace App\Filament\Pages;
+
+use ...;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+
+class MyPage extends Page
+{
+    use HasPageShield;
+    ...
+}
+```
+
+📕 <b style="color:darkred">However if your page's `mount()` method requires a `$record` or other `parameters` it's best to handle that yourself instead of using `HasPageShield`.</b>
+#### Widgets
+if you have generated permissions for `Widgets` you can toggle their state based on whether a user have permission or not. You can set this up manually but this package comes with a `HasWidgetShield` trait to speed up this process. All you have to do is use the trait in you widgets:
+```php
+<?php
+
+namespace App\Filament\Widgets;
+
+use ...;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
+
+class IncomeWidget extends LineChartWidget
+{
+    use HasWidgetShield;
+    ...
+}
+```
+#### `RolePolicy` 
+You can skip this if have set the `'register_role_policy' => true` in the config.
 To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AuthServiceProvider`:
 
 ```php
@@ -93,7 +277,7 @@ Optionally, you can publish the translations using
 php artisan vendor:publish --tag="filament-shield-translations"
 ```
 
-## Available Filament Shield Commands
+### Available Filament Shield Commands
 
 ```bash
   shield:create    # Create Permissions and/or Policy for the given Filament Resource Model
@@ -102,13 +286,6 @@ php artisan vendor:publish --tag="filament-shield-translations"
   shield:publish   # Publish filament shield's Resource.
 ```
 
-## Chores
-
-- [x] `shield:install` command flow improved ⚒️
-- [ ] Improve documentation 📝
-- [ ] A command to reverse everything 🤯
-- [ ] handle `except` or `only` options for Permission and Policy generation 👀
-- [ ] improve automation or add new features... ⏭
 
 ## Testing
 

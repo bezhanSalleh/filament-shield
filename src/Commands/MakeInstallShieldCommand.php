@@ -60,7 +60,7 @@ class MakeInstallShieldCommand extends Command
             if ($this->option('only')) {
                 $output = Artisan::call('shield:generate --only');
                 if ($output === 2) {
-                    $this->comment('Seems like you have not setup your `only` config properly!');
+                    $this->comment('Seems like you have not enabled your `only` config properly!');
                 }
             }else if ($this->option('all')) {
 

@@ -199,8 +199,16 @@ class RoleResource extends Resource
 
     protected static function getResourceEntities(): ?array
     {
-        return collect(Filament::getResources())
-            ->filter(function ($resource) {
+        $onlyResources = config('filament-shield.only.resources');
+        $resources = config('filament-shield.only.enabled')
+            ? $onlyResources
+            : Filament::getResources();
+
+        return collect($resources)
+            ->filter(function ($resource) use($onlyResources){
+                if (!empty($onlyResources)) {
+                    return true;
+                }
                 return !in_array(Str::before(Str::afterLast($resource, '\\'), 'Resource'), config('filament-shield.except.resources'));
             })
             ->reduce(function ($roles, $resource) {
@@ -374,8 +382,16 @@ class RoleResource extends Resource
     *----------------------------------*/
     protected static function getPageEntities(): ? array
     {
-        return collect(Filament::getPages())
-            ->filter(function ($page) {
+        $onlyPages = config('filament-shield.only.pages');
+        $pages = config('filament-shield.only.enabled')
+            ? $onlyPages
+            : Filament::getPages();
+
+        return collect($pages)
+            ->filter(function ($page) use($onlyPages) {
+                if (!empty($onlyPages)) {
+                    return true;
+                }
                 return !in_array(Str::afterLast($page, '\\'), config('filament-shield.except.pages'));
             })
             ->reduce(function($transformedPages,$page) {
@@ -428,8 +444,16 @@ class RoleResource extends Resource
     *----------------------------------*/
     protected static function getWidgetEntities(): ? array
     {
-        return collect(Filament::getWidgets())
-            ->filter(function ($widget) {
+        $onlyWidgets = config('filament-shield.only.widgets');
+        $widgets = config('filament-shield.only.enabled')
+            ? $onlyWidgets
+            : Filament::getWidgets();
+
+        return collect($widgets)
+            ->filter(function ($widget) use($onlyWidgets) {
+                if (!empty($onlyWidgets)) {
+                    return true;
+                }
                 return !in_array(Str::afterLast($widget, '\\'), config('filament-shield.except.widgets'));
             })
             ->reduce(function($widgets,$widget) {

@@ -85,11 +85,11 @@ return [
     | Only
     |--------------------------------------------------------------------------
     | Generate only permissions or permissions with policies for the entities
-    | listed here.
+    | listed here if enabled is set true.
     */
 
     'only' => [
-
+        'enabled' => false,
         /*----------------------------------------------------------------------*
         | Generate Permissions for Only these Pages.                            |
         | The generated permission for a Page:                                  |
@@ -135,5 +135,8 @@ return [
         'resources' => [],
     ],
 
+    /**
+     * Register `RolePolicy` for `RoleResource`
+     */
     'register_role_policy' => true,
 ];

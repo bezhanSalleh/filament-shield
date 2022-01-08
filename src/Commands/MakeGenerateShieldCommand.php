@@ -23,7 +23,7 @@ class MakeGenerateShieldCommand extends Command
 
     public function handle(): int
     {
-        if ($this->option('only')) {
+        if ($this->option('only') && config('filament-shield.only.enabled')) {
             if (!empty($onlyResources = config('filament-shield.only.resources'))) {
                 $resources = $this->generateForResources($onlyResources);
                 $this->resourceInfo($resources->toArray());
@@ -39,7 +39,7 @@ class MakeGenerateShieldCommand extends Command
                 $this->widgetInfo($widgets->toArray());
             }
 
-            else {
+            if(empty(config('filament-shield.only.resources')) && empty(config('filament-shield.only.pages')) && empty(config('filament-shield.only.widget'))) {
                 $this->error('The `only` Config key is empty.');
                 return self::INVALID;
             }
