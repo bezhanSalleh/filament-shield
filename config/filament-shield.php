@@ -22,7 +22,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Permission Prefixes
+    | Default Resource Permission Prefixes
     |--------------------------------------------------------------------------
     |
     | When generating permissions for a `Resource` the resource `Model` will be prefixed with these.
@@ -30,7 +30,7 @@ return [
     | these will also be used in generating policies for the resources.
     */
 
-    'default_permission_prefixes' => [
+    'resource_permission_prefixes' => [
         'view',
         'view_any',
         'create',
@@ -38,6 +38,18 @@ return [
         'delete_any',
         'update',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Widget and Page Permission Prefix
+    |--------------------------------------------------------------------------
+    |
+    | When generating permission for a `Widget` or `Page` the widget or page name will be prefixed
+    | with this. But you are free to change it in to whatever works for you.
+    */
+
+    'page_permission_prefix' => 'view',
+    'widget_permission_prefix' => 'view',
 
     /*
     |--------------------------------------------------------------------------
@@ -53,7 +65,19 @@ return [
         'resources' => true,
     ],
 
-    'show_custom_permissions' => false,
+    /*
+    |--------------------------------------------------------------------------
+    | Show/Hide Entities
+    |--------------------------------------------------------------------------
+    | You can show and hide entities in the shield manager while creating and editing roles.
+    */
+
+    'tabs' => [
+        'pages' => false,
+        'widgets' => true,
+        'resources' => true,
+        'custom_permissions' => false,
+    ],
 
 
     /*
@@ -101,8 +125,13 @@ return [
     */
 
     'except' => [
-        'pages' => [],
-        'widgets' => [],
+        'pages' => [
+            'Dashboard'
+        ],
+        'widgets' => [
+            'AccountWidget',
+            'FilamentInfoWidget'
+        ],
         'resources' => [],
     ],
 ];
