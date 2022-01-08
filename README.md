@@ -203,8 +203,13 @@ Follow the prompts and enjoy!
 
 ## Installation (Existing Apps)
 ##### Apps with `spatie/laravel-permission` already installed
-
-5. Follow the above steps from (1) thorugh (4) run the following command to setup everything:
+5. First remove the `filament-shield` config file and translations then republish them by running the following commands:
+```bash
+php artisan vendor:publish --tag="filament-shield-config"
+php artisan vendor:publish --tag="filament-shield-translations"
+php artisan config:clear
+```
+Follow the above steps from (1) thorugh (4) run the following command to setup everything:
 
 ```bash
 php artisan shield:install --fresh
