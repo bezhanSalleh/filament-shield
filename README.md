@@ -1,5 +1,5 @@
 <a href="https://github.com/bezhansalleh/filament-shield">
-<img style="width: 100%; max-width: 100%;" alt="filament-shield-art" src="https://user-images.githubusercontent.com/10007504/148017180-a638248e-ba9a-4278-a099-1f8c1cbf068f.png" >
+<img style="width: 100%; max-width: 100%;" alt="filament-shield-art" src="https://user-images.githubusercontent.com/10007504/148662315-35d4bd74-fc1c-4f8c-8c02-689309b414b0.png" >
 </a>
 
 # Filament Shield
