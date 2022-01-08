@@ -2,10 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
