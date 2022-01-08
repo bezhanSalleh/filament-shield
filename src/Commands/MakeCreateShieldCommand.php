@@ -34,13 +34,13 @@ class MakeCreateShieldCommand extends Command
 
             $this->info("Successfully generated {$model}Policy for {$model}Resource");
 
-            FilamentShield::generateFor($model);
+            FilamentShield::generateForResource($model);
 
             $this->info("Successfully generated Permissions for {$model}Resource");
         }
 
         if ($choice === "Only Permissions") {
-            FilamentShield::generateFor($model);
+            FilamentShield::generateForResource($model);
 
             $this->info("Successfully generated Permissions for {$model}Resource");
         }

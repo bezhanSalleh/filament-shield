@@ -30,7 +30,7 @@ trait CanGeneratePolicy
 
     protected function generatePolicyStubVariables(string $model): array
     {
-        $defaultPermissions = collect(config('filament-shield.default_permission_prefixes'))
+        $defaultPermissions = collect(config('filament-shield.resource_permission_prefixes'))
             ->reduce(function ($gates, $permission) use ($model) {
                 $gates[Str::studly($permission)] = $permission.'_'.Str::lower($model);
 

@@ -3,11 +3,16 @@
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 
 class MakeInstallShieldCommand extends Command
 {
-    public $signature = 'shield:install {--fresh}';
+    public $signature = 'shield:install
+        {--F|fresh}
+        {--O|only : Generate permissions and/or policies `Only` for entities listed in config.}
+        {--A|all : Generate permissions and/or policies for all `Resources`, `Pages` and `Widgets`.}
+    ';
 
     public $description = "One Command to Rule them All 🔥";
 
@@ -51,14 +56,29 @@ class MakeInstallShieldCommand extends Command
             $this->info('Creating Super Admin...');
             $this->call('shield:super-admin');
             $this->call('shield:publish');
-            $this->call('shield:generate');
+
+            if ($this->option('only')) {
+                $output = Artisan::call('shield:generate --only');
+                if ($output === 2) {
+                    $this->comment('Seems like you have not setup your `only` config properly!');
+                }
+            }else if ($this->option('all')) {
+
+                $this->call('shield:generate');
+
+            }else{
+
+                Artisan::call('shield:generate --except');
+
+            }
+
 
             $this->info('Filament Shield🛡 is now active ✅');
         } else {
             $this->comment('`shield:install` command was cancelled.');
         }
 
-        if (\Spatie\Permission\Models\Role::count() === 0 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
+        if ($this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/bezhanSalleh/filament-shield');
             }

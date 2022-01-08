@@ -12,6 +12,7 @@ use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Permission;
 use App\Filament\Resources\Shield\RoleResource\Pages;
 
 class RoleResource extends Resource
@@ -48,21 +49,7 @@ class RoleResource extends Resource
                                     ->helperText(__('filament-shield::filament-shield.field.select_all.message'))
                                     ->reactive()
                                     ->afterStateUpdated(function (Closure $set, $state) {
-                                        collect(static::getResourceEntities())->each(function($entity) use($set, $state) {
-                                            $set($entity, $state);
-                                            collect(config('filament-shield.default_permission_prefixes'))->each(function($permission) use($entity, $set, $state) {
-                                                $set($permission.'_'.$entity, $state);
-                                            });
-                                        });
-
-                                        collect(static::getPageEntities())->each(function($page) use($set, $state) {
-                                            $set($page, $state);
-                                        });
-
-                                        collect(static::getWidgetEntities())->each(function ($widget) use($set, $state) {
-                                            $set($widget, $state);
-                                        });
-
+                                        static::refreshEntitiesStatesViaSelectAll($set, $state);
                                     })
                                     ->dehydrated(fn($state):bool => $state)
                             ])
@@ -71,12 +58,12 @@ class RoleResource extends Resource
                                 'lg' => 3
                             ]),
                     ]),
-                Forms\Components\Section::make('Permissionable Entities')
+                Forms\Components\Section::make('Entities\' Permissions')
                     ->schema([
                         Forms\Components\Tabs::make('Permissions')
                             ->tabs([
                                 Forms\Components\Tabs\Tab::make('Resources')
-                                    ->visible(fn(): bool => (bool) config('filament-shield.entities.resources'))
+                                    ->visible(fn(): bool => (bool) config('filament-shield.tabs.resources'))
                                     ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
@@ -90,7 +77,7 @@ class RoleResource extends Resource
                                         ])
                                     ]),
                                 Forms\Components\Tabs\Tab::make('Pages')
-                                    ->visible(fn(): bool => (bool) config('filament-shield.entities.pages'))
+                                    ->visible(fn(): bool => (bool) config('filament-shield.tabs.pages'))
                                     ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
@@ -104,7 +91,7 @@ class RoleResource extends Resource
                                         ])
                                     ]),
                                 Forms\Components\Tabs\Tab::make('Widgets')
-                                    ->visible(fn(): bool => (bool) config('filament-shield.entities.widgets'))
+                                    ->visible(fn(): bool => (bool) config('filament-shield.tabs.widgets'))
                                     ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
@@ -117,20 +104,21 @@ class RoleResource extends Resource
                                             'lg' => 4
                                         ])
                                     ]),
-                                // Forms\Components\Tabs\Tab::make('Custom')
-                                //     ->visible(fn(): bool => (bool) config('filament-shield.entities.widgets'))
-                                //     ->reactive()
-                                //     ->schema([
-                                //         Forms\Components\Grid::make([
-                                //             'sm' => 3,
-                                //             'lg' => 4,
-                                //         ])
-                                //         ->schema(static::getWidgetEntityPermissionSchema())
-                                //         ->columns([
-                                //             'sm' => 3,
-                                //             'lg' => 4
-                                //         ])
-                                //     ]),
+
+                                Forms\Components\Tabs\Tab::make('Custom')
+                                    ->visible(fn(): bool => (bool) config('filament-shield.tabs.custom_permissions'))
+                                    ->reactive()
+                                    ->schema([
+                                        Forms\Components\Grid::make([
+                                            'sm' => 3,
+                                            'lg' => 4,
+                                        ])
+                                        ->schema(static::getCustomEntitiesPermisssionSchema())
+                                        ->columns([
+                                            'sm' => 3,
+                                            'lg' => 4
+                                        ])
+                                    ]),
                             ])
                             ->columnSpan('full'),
                     ]),
@@ -229,7 +217,7 @@ class RoleResource extends Resource
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set,Closure $get, $state) use($entity) {
 
-                                collect(config('filament-shield.default_permission_prefixes'))->each(function ($permission) use($set, $entity, $state) {
+                                collect(config('filament-shield.resource_permission_prefixes'))->each(function ($permission) use($set, $entity, $state) {
                                         $set($permission.'_'.$entity, $state);
                                 });
 
@@ -257,7 +245,7 @@ class RoleResource extends Resource
 
     public static function getResourceEntityPermissionsSchema($entity)
     {
-        return collect(config('filament-shield.default_permission_prefixes'))->reduce(function ($permissions, $permission) use ($entity) {
+        return collect(config('filament-shield.resource_permission_prefixes'))->reduce(function ($permissions, $permission) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity)
                 ->label(Str::headline($permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
@@ -292,6 +280,7 @@ class RoleResource extends Resource
         $entitiesStates = collect(static::getResourceEntities())
             ->merge(static::getPageEntities())
             ->merge(static::getWidgetEntities())
+            ->merge(static::getCustomEntities())
             ->map(function ($entity) use($get) {
                 return (bool) $get($entity);
             });
@@ -305,9 +294,31 @@ class RoleResource extends Resource
         }
     }
 
+    protected static function refreshEntitiesStatesViaSelectAll(Closure $set, $state): void
+    {
+        collect(static::getResourceEntities())->each(function($entity) use($set, $state) {
+            $set($entity, $state);
+            collect(config('filament-shield.resource_permission_prefixes'))->each(function($permission) use($entity, $set, $state) {
+                $set($permission.'_'.$entity, $state);
+            });
+        });
+
+        collect(static::getPageEntities())->each(function($page) use($set, $state) {
+            $set($page, $state);
+        });
+
+        collect(static::getWidgetEntities())->each(function ($widget) use($set, $state) {
+            $set($widget, $state);
+        });
+
+        static::getCustomEntities()->each(function ($custom) use ($set, $state) {
+            $set($custom, $state);
+        });
+    }
+
     protected static function refreshResourceEntityStateAfterUpdate(Closure $set, Closure $get, string $entity): void
     {
-        $permissionStates = collect(config('filament-shield.default_permission_prefixes'))
+        $permissionStates = collect(config('filament-shield.resource_permission_prefixes'))
             ->map(function($permission) use($get, $entity) {
                 return (bool) $get($permission.'_'.$entity);
             });
@@ -455,4 +466,56 @@ class RoleResource extends Resource
     /**--------------------------------*
     | Widget Related Logic End          |
     *----------------------------------*/
+
+    protected static function getCustomEntities()
+    {
+        $resourcePermissions = collect();
+        collect(static::getResourceEntities())->each(function($entity) use($resourcePermissions){
+            collect(config('filament-shield.resource_permission_prefixes'))->map(function($permission) use($resourcePermissions, $entity) {
+                $resourcePermissions->push((string) Str::of($permission.'_'.$entity));
+            });
+        });
+
+        $entitiesPermissions = $resourcePermissions
+            ->merge(static::getPageEntities())
+            ->merge(static::getWidgetEntities())
+            ->values();
+
+        return Permission::whereNotIn('name',$entitiesPermissions)->pluck('name');
+    }
+
+    protected static function getCustomEntitiesPermisssionSchema(): ?array
+    {
+        return collect(static::getCustomEntities())->reduce(function($customEntities,$customPermission) {
+                $customEntities[] = Forms\Components\Grid::make()
+                    ->schema([
+                        Forms\Components\Checkbox::make($customPermission)
+                            ->label(Str::of($customPermission)->after('view_')->headline())
+                            // ->helperText(fn($state): string => (bool) $state ? '<span class="text-success-600 font-medium">Enabled</span>' : '<span class="text-danger-600 font-medium">Disabled</span>')
+                            // ->onIcon('heroicon-s-lock-open')
+                            // ->offIcon('heroicon-s-lock-closed')
+                            ->inline()
+                            ->afterStateHydrated(function (Closure $set, Closure $get, $record) use($customPermission) {
+                                if (is_null($record)) return;
+
+                                $set($customPermission, $record->checkPermissionTo($customPermission));
+
+                                static::refreshSelectAllStateViaEntities($set, $get);
+                            })
+                            ->reactive()
+                            ->afterStateUpdated(function (Closure $set,Closure $get, $state) {
+
+                                if (! $state) {
+                                    $set('select_all',false);
+                                }
+
+                                static::refreshSelectAllStateViaEntities($set, $get);
+                            })
+                            ->dehydrated(fn($state): bool => $state)
+                    ])
+                    ->columns(1)
+                    ->columnSpan(1);
+                return $customEntities;
+        },[]);
+    }
 }
