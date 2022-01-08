@@ -2,16 +2,16 @@
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
+use Illuminate\Support\Str;
 
 trait HasPageShield
 {
-
     public function mount()
     {
         if (! static::canView()) {
-            $this->notify('warning',__('filament-shield::filament-shield.forbidden'));
+            $this->notify('warning', __('filament-shield::filament-shield.forbidden'));
+
             return redirect(config('filament.path'));
         }
     }

@@ -2,8 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
+use Illuminate\Support\Str;
 
 trait HasWidgetShield
 {
