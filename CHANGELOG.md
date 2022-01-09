@@ -2,6 +2,10 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.1 - 2022-01-09
+- added `shield:upgrade` command :fire:
+- added `Custom Permission` for `Resources` in addition to the default 6
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.0...v1.1.1
 ## v1.1.0 - 2022-01-09
 
 - Improved permission generation for `Resources` :fire:
