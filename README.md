@@ -21,7 +21,7 @@ One Plugin to rule them all, One Plugin to find them, One Plugin to bring them a
 <img width="320" alt="filament-logo" src="https://filamentadmin.com/images/sponsor-banner.jpg">
 </a>
 
-##Upgrade
+## Upgrade
 To upgrade to the latest release first run:
 ```bash
 composer update
