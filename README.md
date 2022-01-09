@@ -21,6 +21,16 @@ One Plugin to rule them all, One Plugin to find them, One Plugin to bring them a
 <img width="320" alt="filament-logo" src="https://filamentadmin.com/images/sponsor-banner.jpg">
 </a>
 
+##Upgrade
+To upgrade to the latest release first run:
+```bash
+composer update
+```
+then:
+```bash
+php artisan shield:upgrade
+```
+you can run this command without interaction by supplying the `-no-interaction` flag.
 ## Installation (New Apps)
 
 1. Install the package via composer:
@@ -229,6 +239,28 @@ or
 php artisan shield:install --fresh --all
 ```
 Or you could remove them from the respective `except` key in the config file.
+
+#### Resource Custom Permissions
+You can add custom permissions for the resources in addition to the required 6 by adding your custom permission names at the end of the `resource_permissions_prefixes` config key array.
+For instance lets add `export` cutom permission to all resources:
+```php
+...
+'resource_permission_prefixes' => [
+        'view',
+        'view_any',
+        'create',
+        'delete',
+        'delete_any',
+        'update',
+        'export',
+    ],
+...
+```
+Since we have added our new custom permission, it's time to refresh the list of permissions for the resources by running:
+```bash
+php artisan shield:generate --except
+```
+Now, you can check and see in your `Resources` each resource listed will have an `export` permission as well.
 #### Pages
 If you have generated permissions for `Pages` you can toggle the page's navigation from sidebar and restricted access to the page. You can set this up manually but this package comes with a `HasPageShield` trait to speed up this process. All you have to do is use the trait in you pages:
 ```php
