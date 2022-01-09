@@ -356,7 +356,7 @@ class RoleResource extends Resource
                 return $item;
             })->map->count()
             ->reduce(function ($counts,$role,$key) {
-                if ($role === 6) {
+                if ($role === count(config('filament-shield.resource_permission_prefixes'))) {
                     $counts[$key] = true;
                 }else {
                     $counts[$key] = false;

@@ -6,7 +6,7 @@ return [
     | Table Columns
     |--------------------------------------------------------------------------
     */
-
+    
     'column.name' => 'Name',
     'column.guard_name' => 'Guard Name',
     'column.roles' => 'Roles',

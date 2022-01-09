@@ -30,6 +30,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
             Commands\MakeCreateShieldCommand::class,
             Commands\MakeInstallShieldCommand::class,
             Commands\MakePublishShieldCommand::class,
+            Commands\MakeUpgradeShieldCommand::class,
             Commands\MakeGenerateShieldCommand::class,
             Commands\MakeSuperAdminShieldCommand::class,
         ];
