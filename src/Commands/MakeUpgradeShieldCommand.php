@@ -2,10 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class MakeUpgradeShieldCommand extends Command
 {
@@ -32,9 +32,11 @@ class MakeUpgradeShieldCommand extends Command
 
             Artisan::call('shield:generate --except');
             $this->info('(re)Discovered and (re)Generated all permissions and policies.');
+
             return self::SUCCESS;
         }
         $this->error('shield:upgrade command aborted!');
+
         return self::INVALID;
     }
 }
