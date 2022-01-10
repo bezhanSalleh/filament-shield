@@ -4,8 +4,8 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 
 class MakeInstallShieldCommand extends Command
 {
@@ -63,9 +63,9 @@ class MakeInstallShieldCommand extends Command
 
             $this->call('shield:publish');
 
-            if (!collect(Filament::getResources())->containsStrict("App\\Filament\\Resources\\Shield\\RoleResource")) {
+            if (! collect(Filament::getResources())->containsStrict("App\\Filament\\Resources\\Shield\\RoleResource")) {
                 Filament::registerResources([
-                    \App\Filament\Resources\Shield\RoleResource::class
+                    \App\Filament\Resources\Shield\RoleResource::class,
                 ]);
             }
 
@@ -80,12 +80,11 @@ class MakeInstallShieldCommand extends Command
                 $this->call('shield:generate');
             }
 
-            if (!$this->option('only') && !$this->option('all')){
+            if (! $this->option('only') && ! $this->option('all')) {
                 Artisan::call('shield:generate --except');
             }
 
             $this->info('Filament Shield🛡 is now active ✅');
-
         } else {
             $this->comment('`shield:install` command was cancelled.');
         }
