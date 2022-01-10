@@ -43,7 +43,7 @@ class MakeGenerateShieldCommand extends Command
 
                 return self::INVALID;
             }
-        } else if ($this->option('except')) {
+        } elseif ($this->option('except')) {
             $exceptResources = config('filament-shield.except.resources');
             $removedExemptedResource = collect(Filament::getResources())->filter(function ($resource) use ($exceptResources) {
                 return ! in_array(Str::before(Str::afterLast($resource, '\\'), 'Resource'), $exceptResources);
