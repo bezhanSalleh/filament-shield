@@ -2,6 +2,11 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.3 - 2022-01-10
+
+- Fix `Resource` custom permissions state
+- **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.2...v1.1.3
+
 ## v1.1.2 - 2022-01-10
 
 ## What's Changed
