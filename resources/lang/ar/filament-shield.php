@@ -9,6 +9,7 @@ return [
 
     'column.name' => 'الإسم',
     'column.guard_name' => 'اسم الحارس',
+    'column.roles' => 'الصلاحية',
     'column.permissions' => 'الأذونات',
     'column.updated_at' => 'تاريخ التحديث',
 
@@ -31,8 +32,24 @@ return [
     */
 
     'nav.group' => 'الصلاحيات',
-    'nav.label' => 'الصلاحيات',
-    'nav.icon' => 'heroicon-o-shield-check',
+    'nav.role.label' => 'الصلاحيات',
+    'nav.role.icon' => 'heroicon-o-shield-check',
     'resource.label.role' => 'صلاحية',
     'resource.label.roles' => 'الصلاحيات',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Section & Tabs
+    |--------------------------------------------------------------------------
+    */
+    'section' => 'الوحدات',
+    'resources' => 'المصادر',
+    'widgets' => 'الملحقات',
+    'pages' => 'الصفحات',
+    'custom' => 'أذونات مخصصة',
+
+    /**
+     * HasPageShield Trait Forbidden Message
+     */
+    'forbidden' => 'عذراً، ليست لديك صلاحية تنفيذ هذا الإجراء',
 ];
