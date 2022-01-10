@@ -2,10 +2,27 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.2 - 2022-01-10
+
+## What's Changed
+
+- Add Brazilian Portuguese by @felipe-balloni in https://github.com/bezhanSalleh/filament-shield/pull/5
+- Fix two translations keys by @felipe-balloni in https://github.com/bezhanSalleh/filament-shield/pull/7
+- [AR] Translate new phrases by @mohamedsabil83 in https://github.com/bezhanSalleh/filament-shield/pull/6
+- Fixed `shield:install` to generate `RolePolicy`
+
+## New Contributors
+
+- @felipe-balloni made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/5
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.0.4...v1.1.2
+
 ## v1.1.1 - 2022-01-09
+
 - added `shield:upgrade` command :fire:
 - added `Custom Permission` for `Resources` in addition to the default 6
-**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.0...v1.1.1
+- **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.0...v1.1.1
+
 ## v1.1.0 - 2022-01-09
 
 - Improved permission generation for `Resources` :fire:
@@ -20,6 +37,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - Ability to exclude `Dashboard`, `AccountWidget` and `FilamentInfoWidget` while generating permissions
 - `--all` flag added for `shield:install` command
 - `--only` flag added for `shield:install` command
+
 ## v1.0.3 - 2022-01-03
 
 - `shield:install` command improved
