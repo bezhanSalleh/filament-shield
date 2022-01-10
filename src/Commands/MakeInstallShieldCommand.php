@@ -2,12 +2,15 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 
 class MakeInstallShieldCommand extends Command
 {
+    use Concerns\CanManipulateFiles;
+
     public $signature = 'shield:install
         {--F|fresh}
         {--O|only : Generate permissions and/or policies `Only` for entities listed in config.}
@@ -43,7 +46,9 @@ class MakeInstallShieldCommand extends Command
             $this->call('vendor:publish', [
                 '--provider' => 'Spatie\Permission\PermissionServiceProvider',
             ]);
+
             $this->info('Core Package config published.');
+
 
             if ($this->option('fresh')) {
                 $this->call('migrate:fresh');
@@ -55,21 +60,32 @@ class MakeInstallShieldCommand extends Command
 
             $this->info('Creating Super Admin...');
             $this->call('shield:super-admin');
+
             $this->call('shield:publish');
+
+            if (!collect(Filament::getResources())->containsStrict("App\\Filament\\Resources\\Shield\\RoleResource")) {
+                Filament::registerResources([
+                    \App\Filament\Resources\Shield\RoleResource::class
+                ]);
+            }
 
             if ($this->option('only')) {
                 $output = Artisan::call('shield:generate --only');
                 if ($output === 2) {
                     $this->comment('Seems like you have not enabled your `only` config properly!');
                 }
-            } elseif ($this->option('all')) {
+            }
+
+            if ($this->option('all')) {
                 $this->call('shield:generate');
-            } else {
+            }
+
+            if (!$this->option('only') && !$this->option('all')){
                 Artisan::call('shield:generate --except');
             }
 
-
             $this->info('Filament Shield🛡 is now active ✅');
+
         } else {
             $this->comment('`shield:install` command was cancelled.');
         }
