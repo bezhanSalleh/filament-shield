@@ -35,4 +35,20 @@ return [
     'nav.icon' => 'heroicon-o-shield-check',
     'resource.label.role' => 'Rôle',
     'resource.label.roles' => 'Rôles',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Section & Tabs
+    |--------------------------------------------------------------------------
+    */
+    'section' => 'Entités',
+    'resources' => 'Ressources',
+    'widgets' => 'Widgets',
+    'pages' => 'Pages',
+    'custom' => 'Permissions personnalisées',
+
+    /**
+     * HasPageShield Trait Forbidden Message
+     */
+    'forbidden' => 'Vous n\'avez pas la permission d\'accéder',
 ];
