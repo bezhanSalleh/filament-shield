@@ -2,18 +2,32 @@
 <img style="width: 100%; max-width: 100%;" alt="filament-shield-art" src="https://user-images.githubusercontent.com/10007504/148662315-35d4bd74-fc1c-4f8c-8c02-689309b414b0.png" >
 </a>
 
-# Filament Shield
+<p align="center">
+    <a href="https://filamentadmin.com/docs/2.x/admin/installation">
+        <img alt="FILAMENT 8.x" src="https://img.shields.io/badge/FILAMENT-2.x-EBB304?style=for-the-badge">
+    </a>
+    <a href="https://packagist.org/packages/bezhansalleh/filament-shield">
+        <img alt="Packagist" src="https://img.shields.io/packagist/v/bezhansalleh/filament-shield.svg?style=for-the-badge&logo=packagist">
+    </a>
+    <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3Amain">
+        <img alt="Tests Passing" src="https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/run-tests?style=for-the-badge&logo=github&label=tests">
+    </a>
+    <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain">
+        <img alt="Code Style Passing" src="https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/run-tests?style=for-the-badge&logo=github&label=code%20style">
+    </a>
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/bezhansalleh/filament-shield.svg?style=flat-square)](https://packagist.org/packages/bezhansalleh/filament-shield)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/run-tests?label=tests)](https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/Check%20&%20fix%20styling?label=code%20style)](https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/bezhansalleh/filament-shield.svg?style=flat-square)](https://packagist.org/packages/bezhansalleh/filament-shield)
-#### The easiest and most intuitive way to add access management to your Filament Admin:
+<a href="https://packagist.org/packages/bezhansalleh/filament-shield">
+    <img alt="Downloads" src="https://img.shields.io/packagist/dt/bezhansalleh/filament-shield.svg?style=for-the-badge" >
+    </a>
+<p>
+
+# Filament Shield
+The easiest and most intuitive way to add access management to your Filament Admin:
 - :fire: **Resources** 📑
 - :fire: **Pages** 📄
 - :fire: **Widgets** 📈
   
-One Plugin to rule them all, One Plugin to find them, One Plugin to bring them all, and in the light bind them, In the Land of Filament where building them is really fun!
+<!-- One Plugin to rule them all, One Plugin to find them, One Plugin to bring them all, and in the light bind them, In the Land of Filament where building them is really fun! -->
 
 ## Support Filament
 
