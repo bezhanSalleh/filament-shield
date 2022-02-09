@@ -2,6 +2,15 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.4 - 2022-02-09
+
+## What's Changed
+
+- Laravel 9 Support
+- [FR] Translate new phrases by @jvkassi in https://github.com/bezhanSalleh/filament-shield/pull/8
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.3...v1.1.4
+
 ## v1.1.3 - 2022-01-10
 
 - Fix `Resource` custom permissions state
