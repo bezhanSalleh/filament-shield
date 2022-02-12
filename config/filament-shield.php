@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Defualt Roles
+    | Default Roles
     |--------------------------------------------------------------------------
     |
     | The default is `super_admin` but you can change it to whatever works best for you.
