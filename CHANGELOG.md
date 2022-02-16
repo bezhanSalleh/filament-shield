@@ -2,6 +2,18 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.5 - 2022-02-16
+
+- Brand new `Settings` Page 🔥
+- Brand new `Config`
+- Improved `sheild:install` to detect existing app vs new app install
+- `--fresh` flag of `shield:install` now only touches the core package migrations
+- Improved `shield:upgrade`
+- Backing-up the existing `Config`
+- Added the ability to opt-in/out of `super_admin` role
+- and much more optimizations...
+- **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.4...v1.1.5
+
 ## v1.1.4 - 2022-02-09
 
 ## What's Changed
