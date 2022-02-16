@@ -18,25 +18,32 @@ class MakeUpgradeShieldCommand extends Command
         $confirm = $this->confirm('This command will override Shield\'s config file, translation files and Resource?', false);
         if ($confirm || $this->option('no-interaction')) {
 
-            $this->call('vendor:publish', [
-                '--tag' => 'filament-shield-config',
-            ]);
+            (new Filesystem())->ensureDirectoryExists(config_path());
+            (new Filesystem())->copy(__DIR__.'/../../config/filament-shield.php', config_path('filament-shield.php'));
+            $this->info('Published Shield Config.');
 
-            $this->call('vendor:publish', [
-                '--tag' => 'filament-shield-views'
-            ]);
+            (new Filesystem())->ensureDirectoryExists(lang_path());
+            (new Filesystem())->copyDirectory(__DIR__.'/../../resources/lang', lang_path('/vendor/filament-shield'));
+            $this->info('Publishd Shield Translations');
 
-            $this->call('vendor:publish', [
-                '--tag' => 'filament-shield-translations',
-            ]);
+            (new Filesystem())->ensureDirectoryExists(lang_path());
+            (new Filesystem())->copyDirectory(__DIR__.'/../../resources/views', resource_path('/views/vendor/filament-shield'));
+            $this->info('Publishd Shield Views.');
 
             $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
             (new Filesystem())->ensureDirectoryExists($baseResourcePath);
             (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/resources', $baseResourcePath);
 
-            $this->info('Published Shield\'s Resource.');
+            $this->info('Published Shields\' config, translations, views & Resource.');
 
-            $this->call('shield:generate');
+            if (config('filament-shield.exclude.enabled'))
+            {
+                Artisan::call('shield:generate --exclude');
+                $this->info(Artisan::output());
+            } else {
+                Artisan::call('shield:generate');
+            }
+
             $this->info('(re)Discovered and (re)Generated all permissions and policies.');
 
             return self::SUCCESS;

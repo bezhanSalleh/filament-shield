@@ -59,13 +59,12 @@ class Settings extends Page
                     $layout::make()
                         ->schema([
                             Forms\Components\Toggle::make('super_admin_role_enabled')
-                                ->label('Super Admin Role')
-                                ->hint(fn($state) => $state ? '<span class="font-bold text-success-700">Enabled</span>' : '<span class="font-bold text-primary-700">Disabled</span>')
+                                ->label(__('filament-shield::filament-shield.labels.super_admin.toggle_input'))
+                                ->hint(fn($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
                                 ->required()
                                 ->reactive(),
                             Forms\Components\TextInput::make('super_admin_role_name')
-                                ->label('')
-                                ->prefix('Role Name')
+                                ->label(__('filament-shield::filament-shield.labels.super_admin.text_input'))
                                 ->afterStateHydrated(fn(Closure $set, Closure $get, $state) => $set($state,Str::of($get($state))->snake()))
                                 ->visible(fn($get) => $get('super_admin_role_enabled')),
                         ])
@@ -75,13 +74,12 @@ class Settings extends Page
                     $layout::make()
                         ->schema([
                             Forms\Components\Toggle::make('filament_user_role_enabled')
-                                ->label('Filament User Role')
-                                ->hint(fn($state) => $state ? '<span class="font-bold text-success-700">Enabled</span>' : '<span class="font-bold text-primary-700">Disabled</span>')
+                                ->label(__('filament-shield::filament-shield.labels.filament_user.toggle_input'))
+                                ->hint(fn($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
                                 ->required()
                                 ->reactive(),
                             Forms\Components\TextInput::make('filament_user_role_name')
-                                ->label('')
-                                ->prefix('Role Name')
+                                ->label(__('filament-shield::filament-shield.labels.filament_user.text_input'))
                                 ->visible(fn($get) => $get('filament_user_role_enabled')),
                         ])
                         ->columns(1)
@@ -89,10 +87,10 @@ class Settings extends Page
                     $layout::make()
                         ->schema([
                             Forms\Components\Toggle::make('register_role_policy')
-                                ->label('Role Policy Registered?')
-                                ->hint(fn($state) => $state ? '<span class="font-bold text-success-700">Yes</span>' : '<span class="font-bold text-primary-700">No</span>')
+                                ->label(__('filament-shield::filament-shield.labels.role_policy.toggle_input'))
+                                ->hint(fn($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.yes").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.no").'</span>')
                                 ->default(true)
-                                ->helperText('<span class="text-md text-gray-600 leading-loose">Ensure the policy is registered and the permissions are enforced</span>')
+                                ->helperText('<span class="text-md text-gray-600 leading-loose">'.__("filament-shield::filament-shield.labels.role_policy.message").'</span>')
                                 ->reactive()
                                 ->required()
                         ])
@@ -107,19 +105,19 @@ class Settings extends Page
             $layout::make()
             ->schema([
                     Forms\Components\Placeholder::make('')
-                        ->label('Default Permission Prefixes'),
+                        ->label(__('filament-shield::filament-shield.labels.prefixes.placeholder')),
                     Forms\Components\Grid::make()
                         ->schema([
                             Forms\Components\TagsInput::make('resource_permission_prefixes')
-                                ->label('Resource')
-                                ->placeholder('Add Custom Resource Permission')
+                                ->label(__('filament-shield::filament-shield.labels.prefixes.resource'))
+                                ->placeholder(__('filament-shield::filament-shield.labels.prefixes.resource.placeholder'))
                                 ->required()
                                 ->separator(','),
                             Forms\Components\TextInput::make('page_permission_prefix')
-                                ->label('Page')
+                                ->label(__('filament-shield::filament-shield.labels.prefixes.page'))
                                 ->required(),
                             Forms\Components\TextInput::make('widget_permission_prefix')
-                                ->label('Widget')
+                                ->label(__('filament-shield::filament-shield.labels.prefixes.widget'))
                                 ->required(),
                         ])
                         ->columns(3)
@@ -127,25 +125,25 @@ class Settings extends Page
             $layout::make()
                 ->schema([
                     Forms\Components\Placeholder::make('Entities\'s Permission Generator Options')
-                        ->label('Entity Permission Generators & Tabs'),
+                        ->label(__('filament-shield::filament-shield.labels.entities.placeholder')),
                     Forms\Components\Grid::make()
                         ->schema([
                             Forms\Components\Toggle::make('entities_resources')
-                                ->label('Resources')
+                                ->label(__('filament-shield::filament-shield.labels.entities.resources'))
                                 ->default(config('filament-shield.entities.resources'))
-                                ->helperText(fn($state) => $state ? 'Generator & Tab is <span class="font-medium text-success-700">Enabled</span>' : 'Generator & Tab is <span class="font-medium text-primary-700">Disabled</span>')
+                                ->helperText(fn($state) => $state ? __("filament-shield::filament-shield.labels.entities.message").' <span class="font-medium text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : __("filament-shield::filament-shield.labels.entities.message").'<span class="font-medium text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
                                 ->reactive(),
                             Forms\Components\Toggle::make('entities_pages')
-                                ->label('Pages')
-                                ->helperText(fn($state) => $state ? 'Generator & Tab is: <span class="font-medium text-success-700">Enabled</span>' : 'Generator & Tab is: <span class="font-medium text-primary-700">Disabled</span>')
+                                ->label(__('filament-shield::filament-shield.labels.entities.pages'))
+                                ->helperText(fn($state) => $state ? __("filament-shield::filament-shield.labels.entities.message").' <span class="font-medium text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : __("filament-shield::filament-shield.labels.entities.message").'<span class="font-medium text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
                                 ->reactive(),
                             Forms\Components\Toggle::make('entities_widgets')
-                                ->label('Widgets')
-                                ->helperText(fn($state) => $state ? 'Generator & Tab is <span class="font-medium text-success-700">Enabled</span>' : 'Generator & Tab is <span class="font-medium text-primary-700">Disabled</span>')
+                                ->label(__('filament-shield::filament-shield.labels.entities.widgets'))
+                                ->helperText(fn($state) => $state ? __("filament-shield::filament-shield.labels.entities.message").' <span class="font-medium text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : __("filament-shield::filament-shield.labels.entities.message").'<span class="font-medium text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
                                 ->reactive(),
                             Forms\Components\Toggle::make('entities_custom_permissions')
-                                ->label('Custom Permissions')
-                                ->helperText(fn($state) => $state ? 'Tab is <span class="font-medium text-success-700">Enabled</span>' : 'Tab is <span class="font-medium text-primary-700">Disabled</span>')
+                                ->label(__('filament-shield::filament-shield.labels.entities.custom_permissions'))
+                                ->helperText(fn($state) => $state ? __("filament-shield::filament-shield.labels.entities.custom_permissions.message").' <span class="font-medium text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : __("filament-shield::filament-shield.labels.entities.custom_permissions.message").'<span class="font-medium text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
                                 ->reactive(),
                         ])
                         ->columns(4),
@@ -156,18 +154,18 @@ class Settings extends Page
                     Forms\Components\Grid::make()
                         ->schema([
                             Forms\Components\Placeholder::make('Exclusion Mode')
-                                ->label('Exclusion Mode')
-                                ->content('By Enabling the Exclusion Mode you can instruct permission generator to skip creating permissions for the entities you select.')
+                                ->label(__('filament-shield::filament-shield.labels.exclude.placeholder'))
+                                ->content(__('filament-shield::filament-shield.labels.exclude.message'))
                                 ->extraAttributes(['class' => 'text-sm text-gray-500']),
                             Forms\Components\Toggle::make('exclude_enabled')
-                                ->label(fn($state): string => $state ? 'Enabled' : 'Disabled')
+                                ->label(fn($state): string => $state ? __("filament-shield::filament-shield.labels.status.enabled") : __("filament-shield::filament-shield.labels.status.disabled"))
                                 ->default(config('filament-shield.exclude.enabled'))
                                 ->reactive(),
                             Forms\Components\Grid::make()
                                 ->visible(fn($get) => $get('exclude_enabled'))
                                 ->schema([
                                     Forms\Components\MultiSelect::make('exclude_resources')
-                                        ->placeholder('Select resources ...')
+                                        ->placeholder(__("filament-shield::filament-shield.labels.exclude.resources.placeholder"))
                                         ->options(function() {
                                             return collect(Filament::getResources())
                                                 ->reduce(function ($resources, $resource) {
@@ -175,9 +173,9 @@ class Settings extends Page
                                                     return $resources;
                                                 }, []);
                                         })
-                                        ->label('Resources'),
+                                        ->label(__("filament-shield::filament-shield.labels.exclude.resources")),
                                     Forms\Components\MultiSelect::make('exclude_pages')
-                                        ->placeholder('Select pages ...')
+                                        ->placeholder(__("filament-shield::filament-shield.labels.exclude.pages.placeholder"))
                                         ->options(function () {
                                             return collect(Filament::getPages())
                                                 ->reduce(function($pages,$page) {
@@ -193,9 +191,9 @@ class Settings extends Page
                                                     return $pages;
                                             },[]);
                                         })
-                                        ->label('Pages'),
+                                        ->label(__("filament-shield::filament-shield.labels.exclude.pages")),
                                     Forms\Components\MultiSelect::make('exclude_widgets')
-                                        ->placeholder('Select widgets ...')
+                                        ->placeholder(__("filament-shield::filament-shield.labels.exclude.widgets.placeholder"))
                                         ->options(function () {
                                             return collect(Filament::getWidgets())
                                                 ->reduce(function($widgets,$widget) {
@@ -206,7 +204,7 @@ class Settings extends Page
                                                     return $widgets;
                                             },[]);
                                         })
-                                        ->label('Widgets'),
+                                        ->label(__("filament-shield::filament-shield.labels.exclude.widgets.placeholder")),
                                 ])
                                 ->columns(3)
                         ])

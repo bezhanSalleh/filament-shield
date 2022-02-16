@@ -164,6 +164,7 @@ class RoleResource extends Resource
         return [
             'index' => Pages\ListRoles::route('/'),
             'create' => Pages\CreateRole::route('/create'),
+            'settings' => Pages\Settings::route('/settings'),
             'view' => Pages\ViewRole::route('/{record}'),
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];

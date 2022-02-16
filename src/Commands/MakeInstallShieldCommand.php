@@ -2,10 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
 
 class MakeInstallShieldCommand extends Command
 {
@@ -56,20 +58,26 @@ class MakeInstallShieldCommand extends Command
                 $this->info('Database migrated.');
             }
 
-            $this->call('vendor:publish', [
-                '--tag' => 'filament-shield-config',
-            ]);
+            (new Filesystem())->ensureDirectoryExists(config_path());
+            (new Filesystem())->copy(__DIR__.'/../../config/filament-shield.php', config_path('filament-shield.php'));
+            $this->info('Published Shield Config.');
 
-            $this->call('vendor:publish', [
-                '--tag' => 'filament-shield-views'
-            ]);
+            (new Filesystem())->ensureDirectoryExists(lang_path());
+            (new Filesystem())->copyDirectory(__DIR__.'/../../resources/lang', lang_path('/vendor/filament-shield'));
+            $this->info('Publishd Shield Translations');
 
-            $this->info('Shield config & views published!');
+            (new Filesystem())->ensureDirectoryExists(lang_path());
+            (new Filesystem())->copyDirectory(__DIR__.'/../../resources/views', resource_path('/views/vendor/filament-shield'));
+            $this->info('Publishd Shield Views.');
+
+            $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
+            (new Filesystem())->ensureDirectoryExists($baseResourcePath);
+            (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/resources', $baseResourcePath);
+
+            $this->info('Published Shields\' config, translations, views & Resource.');
 
             $this->info('Creating Super Admin...');
             $this->call('shield:super-admin');
-
-            $this->call('shield:publish');
 
             if (! collect(Filament::getResources())->containsStrict("App\\Filament\\Resources\\Shield\\RoleResource")) {
                 Filament::registerResources([
@@ -77,13 +85,12 @@ class MakeInstallShieldCommand extends Command
                 ]);
             }
 
-            if (! collect(Filament::getPages())->containsStrict("App\\Filament\\Pages\\Shield\\Configuration")) {
-                Filament::registerResources([
-                    \App\Filament\Pages\Shield\Configuration::class,
-                ]);
+            if (config('filament-shield.exclude.enabled'))
+            {
+                Artisan::call('shield:generate --exclude');
+            } else {
+                Artisan::call('shield:generate');
             }
-
-            Artisan::call('shield:generate');
 
             $this->info('Filament Shield🛡 is now active ✅');
         } else {
