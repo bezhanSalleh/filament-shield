@@ -17,25 +17,26 @@ class MakeUpgradeShieldCommand extends Command
     {
         $confirm = $this->confirm('This command will override Shield\'s config file, translation files and Resource?', false);
         if ($confirm || $this->option('no-interaction')) {
-            (new Filesystem())->ensureDirectoryExists(config_path());
-            (new Filesystem())->copy(__DIR__.'/../../config/filament-shield.php', config_path('filament-shield.php'));
-            $this->info('Published Config file.');
 
-            (new Filesystem())->ensureDirectoryExists(lang_path());
-            (new Filesystem())->copyDirectory(__DIR__.'/../../resources/lang', lang_path('/vendor/filament-shield'));
-            $this->info('Publishd Translation files.');
+            $this->call('vendor:publish', [
+                '--tag' => 'filament-shield-config',
+            ]);
+
+            $this->call('vendor:publish', [
+                '--tag' => 'filament-shield-views'
+            ]);
+
+            $this->call('vendor:publish', [
+                '--tag' => 'filament-shield-translations',
+            ]);
 
             $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
             (new Filesystem())->ensureDirectoryExists($baseResourcePath);
             (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/resources', $baseResourcePath);
 
-            $basePagePath = app_path((string) Str::of('Filament\\Pages\\Shield')->replace('\\', '/'), );
-            (new Filesystem())->ensureDirectoryExists($basePagePath);
-            (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/pages', $basePagePath);
+            $this->info('Published Shield\'s Resource.');
 
-            $this->info('Published Shield\'s Resource & Page.');
-
-            Artisan::call('shield:generate');
+            $this->call('shield:generate');
             $this->info('(re)Discovered and (re)Generated all permissions and policies.');
 
             return self::SUCCESS;

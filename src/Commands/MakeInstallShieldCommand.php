@@ -60,7 +60,11 @@ class MakeInstallShieldCommand extends Command
                 '--tag' => 'filament-shield-config',
             ]);
 
-            $this->info('Shield config published!');
+            $this->call('vendor:publish', [
+                '--tag' => 'filament-shield-views'
+            ]);
+
+            $this->info('Shield config & views published!');
 
             $this->info('Creating Super Admin...');
             $this->call('shield:super-admin');
