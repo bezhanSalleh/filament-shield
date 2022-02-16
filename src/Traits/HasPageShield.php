@@ -25,7 +25,7 @@ trait HasPageShield
     {
         return (string) Str::of(static::class)
             ->after('Pages\\')
-            ->replace('\\','')
+            ->replace('\\', '')
             ->snake()
             ->prepend(config('filament-shield.prefixes.page').'_');
     }

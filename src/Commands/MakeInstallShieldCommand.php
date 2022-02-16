@@ -61,7 +61,7 @@ class MakeInstallShieldCommand extends Command
             ]);
 
             $this->call('vendor:publish', [
-                '--tag' => 'filament-shield-views'
+                '--tag' => 'filament-shield-views',
             ]);
 
             $this->info('Shield config & views published!');

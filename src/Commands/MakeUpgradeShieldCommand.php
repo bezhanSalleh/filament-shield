@@ -4,7 +4,6 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
 class MakeUpgradeShieldCommand extends Command
@@ -17,13 +16,12 @@ class MakeUpgradeShieldCommand extends Command
     {
         $confirm = $this->confirm('This command will override Shield\'s config file, translation files and Resource?', false);
         if ($confirm || $this->option('no-interaction')) {
-
             $this->call('vendor:publish', [
                 '--tag' => 'filament-shield-config',
             ]);
 
             $this->call('vendor:publish', [
-                '--tag' => 'filament-shield-views'
+                '--tag' => 'filament-shield-views',
             ]);
 
             $this->call('vendor:publish', [

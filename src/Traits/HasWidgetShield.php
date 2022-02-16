@@ -16,7 +16,7 @@ trait HasWidgetShield
     {
         return (string) Str::of(static::class)
             ->after('Widgets\\')
-            ->replace('\\','')
+            ->replace('\\', '')
             ->snake()
             ->prepend(config('filament-shield.prefixes.widget').'_');
     }
