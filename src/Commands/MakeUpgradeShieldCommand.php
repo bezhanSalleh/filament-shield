@@ -2,7 +2,6 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
@@ -17,7 +16,6 @@ class MakeUpgradeShieldCommand extends Command
     {
         $confirm = $this->confirm('This command will override Shield\'s config file, translation files and Resource?', false);
         if ($confirm || $this->option('no-interaction')) {
-
             (new Filesystem())->ensureDirectoryExists(config_path());
 
             if ($this->isBackupPossible(config_path('filament-shield.php'), config_path('filament-shield.php.bak'))) {
@@ -36,8 +34,7 @@ class MakeUpgradeShieldCommand extends Command
 
             $this->info('Published Shields\' config, translations, views & Resource.');
 
-            if (config('filament-shield.exclude.enabled'))
-            {
+            if (config('filament-shield.exclude.enabled')) {
                 Artisan::call('shield:generate --exclude');
                 $this->info(Artisan::output());
             } else {

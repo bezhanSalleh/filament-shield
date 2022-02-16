@@ -2,14 +2,13 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class MakeInstallShieldCommand extends Command
 {
@@ -41,9 +40,10 @@ class MakeInstallShieldCommand extends Command
             $this->comment('Seems you have already installed the Core package(`spatie/laravel-permission`)!');
             $this->comment('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
 
-            if ($this->confirm('Run `shield:install --fresh` instead?', false)){
+            if ($this->confirm('Run `shield:install --fresh` instead?', false)) {
                 $this->install(true);
             }
+
             return self::INVALID;
         }
 
@@ -99,10 +99,9 @@ class MakeInstallShieldCommand extends Command
 
 
         if ($fresh) {
-
             try {
                 Schema::disableForeignKeyConstraints();
-                DB::table('migrations')->where('migration','like','%_create_permission_tables')->delete();
+                DB::table('migrations')->where('migration', 'like', '%_create_permission_tables')->delete();
                 $this->getTables()->each(fn ($table) => DB::statement('DROP TABLE IF EXISTS '.$table));
                 Schema::enableForeignKeyConstraints();
             } catch (\Throwable $e) {
@@ -119,8 +118,6 @@ class MakeInstallShieldCommand extends Command
             }
 
             (new Filesystem())->copy(__DIR__.'/../../config/filament-shield.php', config_path('filament-shield.php'));
-
-
         } else {
             $this->call('migrate');
             $this->info('Database migrated.');
@@ -145,17 +142,14 @@ class MakeInstallShieldCommand extends Command
             ]);
         }
 
-        if (config('filament-shield.exclude.enabled'))
-        {
+        if (config('filament-shield.exclude.enabled')) {
             Artisan::call('shield:generate --exclude');
             $this->info(Artisan::output());
-
         } else {
             Artisan::call('shield:generate');
             $this->info(Artisan::output());
         }
 
         $this->info('Filament Shield🛡 is now active ✅');
-
     }
 }

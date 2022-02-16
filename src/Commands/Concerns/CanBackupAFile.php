@@ -10,6 +10,7 @@ trait CanBackupAFile
     {
         if ($this->fileAlreadyExists($sourcePath)) {
             $this->backup($sourcePath, $distinationPath);
+
             return true;
         }
 
