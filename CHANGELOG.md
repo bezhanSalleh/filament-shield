@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.6 - 2022-02-16
+
+## What's Changed
+
+- Add missing trait to upgrade command  by @jvkassi in https://github.com/bezhanSalleh/filament-shield/pull/13
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.5...v1.1.6
+
 ## v1.1.5 - 2022-02-16
 
 ## What's Changed
@@ -14,7 +22,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - Backing-up the existing `Config`
 - Added the ability to opt-in/out of `super_admin` role
 - and much more optimizations...
-  
+
 **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.4...v1.1.5
 
 ## v1.1.4 - 2022-02-09
