@@ -20,7 +20,9 @@
     <img alt="Downloads" src="https://img.shields.io/packagist/dt/bezhansalleh/filament-shield.svg?style=for-the-badge" >
     </a>
 <p>
+
 <hr style="background-color: #ebb304">
+
 # Filament Shield
 The easiest and most intuitive way to add access management to your Filament Admin:
 - :fire: **Resources** 
