@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Artisan;
 
 class MakeUpgradeShieldCommand extends Command
 {
+    use Concerns\CanBackupAFile;
+
     public $signature = 'shield:upgrade';
 
     public $description = 'Upgrade Filament Shield.';
