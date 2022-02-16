@@ -6,7 +6,7 @@ return [
     | Table Columns
     |--------------------------------------------------------------------------
     */
-    
+
     'column.name' => 'Name',
     'column.guard_name' => 'Guard Name',
     'column.roles' => 'Roles',
@@ -49,7 +49,18 @@ return [
     'custom' => 'Custom Permissions',
 
     /**
-     * HasPageShield Trait Forbidden Message
+     * Settings Page
+     */
+    'page' => [
+        'name' => 'Settings',
+        'icon' => 'heroicon-o-adjustments',
+        'save' => 'Save',
+        'generate' => 'Save & Generate'
+    ],
+    /**
+     * Messages
      */
     'forbidden' => 'You do not have permission to access',
+    'update' => 'Renewed Shield\'s Config!',
+    'generate' => 'Renewed Shield\'s Config & Generated Permissions w/o Policies!',
 ];

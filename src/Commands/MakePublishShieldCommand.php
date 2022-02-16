@@ -19,8 +19,11 @@ class MakePublishShieldCommand extends Command
         $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
         $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'), );
 
-        if ($this->checkForCollision([$roleResourcePath])) {
-            $confirmed = $this->confirm('Shield Resource already exists. Overwrite?', false);
+        $basePagePath = app_path((string) Str::of('Filament\\Pages\\Shield')->replace('\\', '/'), );
+        $configPagePath = app_path((string) Str::of('Filament\\Pages\\Shield\\Configuration.php')->replace('\\', '/'), );
+
+        if ($this->checkForCollision([$roleResourcePath,$configPagePath])) {
+            $confirmed = $this->confirm('Shield Resource & Page already exists. Overwrite?', true);
             if (! $confirmed) {
                 return self::INVALID;
             }
@@ -28,8 +31,10 @@ class MakePublishShieldCommand extends Command
 
         (new Filesystem())->ensureDirectoryExists($baseResourcePath);
         (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/resources', $baseResourcePath);
+        (new Filesystem())->ensureDirectoryExists($basePagePath);
+        (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/pages', $basePagePath);
 
-        $this->info('Shield\'s Resource have been published successfully!');
+        $this->info('Shield\'s Resource & Page have been published successfully!');
 
         return self::SUCCESS;
     }

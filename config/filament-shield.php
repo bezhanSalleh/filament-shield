@@ -7,49 +7,48 @@ return [
     | Defualt Roles
     |--------------------------------------------------------------------------
     |
-    | The default is `super_admin` but you can change it to whatever works best for you.
+    | Permissions' generated will be assigned automatically to the following roles when enabled.
     | `filament_user` if enabled will help smoothly provide access to filament users
-    | in production when implementing `FilamentUser`
+    | in production when implementing `FilamentUser` interface.
     */
 
-    'default_roles' => [
-        'super_admin_role_name' => 'super_admin',
-        'filament_user' => [
-            'role_name' => 'filament_user',
-            'enabled' => true
-        ],
+
+    'super_admin' => [
+        'enabled' => true,
+        'role_name' => 'super_admin'
+    ],
+
+    'filament_user' => [
+        'role_name' => 'filament_user',
+        'enabled' => false
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Default Resource Permission Prefixes
+    | Default Prefixes
     |--------------------------------------------------------------------------
     |
     | When generating permissions for a `Resource` the resource `Model` will be prefixed with these.
-    | But you are free to change them in to whatever works for you, but keeping in mind the order since
-    | these will also be used in generating policies for the resources.
-    */
-
-    'resource_permission_prefixes' => [
-        'view',
-        'view_any',
-        'create',
-        'delete',
-        'delete_any',
-        'update',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Widget and Page Permission Prefix
-    |--------------------------------------------------------------------------
+    | Keep in mind the order since these will also be used in generating policies for the resources.
     |
     | When generating permission for a `Widget` or `Page` the widget or page name will be prefixed
-    | with this. But you are free to change it in to whatever works for you.
+    | with this.
+    | But you are free to change these in to whatever works for you.
     */
 
-    'page_permission_prefix' => 'view',
-    'widget_permission_prefix' => 'view',
+    'prefixes' => [
+        'resource' => [
+            'view',
+            'view_any',
+            'create',
+            'delete',
+            'delete_any',
+            'update',
+            'export', // custom resource permission
+        ],
+        'page'  =>  'view',
+        'widget' => 'view'
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -60,71 +59,22 @@ return [
     */
 
     'entities' => [
-        'pages' => false,
-        'widgets' => true,
-        'resources' => true,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Show/Hide Entities
-    |--------------------------------------------------------------------------
-    | You can show and hide entities in the shield manager while creating and editing roles.
-    */
-
-    'tabs' => [
-        'pages' => false,
+        'pages' => true,
         'widgets' => true,
         'resources' => true,
         'custom_permissions' => false,
     ],
 
-
     /*
     |--------------------------------------------------------------------------
-    | Only
+    | Exclude
     |--------------------------------------------------------------------------
-    | Generate only permissions or permissions with policies for the entities
-    | listed here if enabled is set true.
+    | When enabled Exclude entites listed here during permission generation.
+    |
     */
 
-    'only' => [
-        'enabled' => false,
-        /*----------------------------------------------------------------------*
-        | Generate Permissions for Only these Pages.                            |
-        | The generated permission for a Page:                                  |
-        | `view_page_name` i.e, `SettingsPage` => `view_settings_page`          |
-        *-----------------------------------------------------------------------*/
-        'pages' => [],
-
-        /*----------------------------------------------------------------------*
-        | Generate Permissions for Only these Widgets.                          |
-        | The generated permission for a Widget:                                |
-        | `view_widget_name` i.e, `IncomeWidget` => `view_income_widget`        |
-        *-----------------------------------------------------------------------*/
-        'widgets' => [],
-
-        /*----------------------------------------------------------------------*
-        |  Generate Permissions and Policies for Only these resource `Models`   |
-        |  You can pass in the list of `Models` i.e, ['User','Role',...]        |
-        |  Or the `Resources` i.e, ['UserResource','RoleResource',...]          |
-        *-----------------------------------------------------------------------*/
-        'resources' => [],
-    ],
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Except
-    |--------------------------------------------------------------------------
-    | Generate permissions or permissions with policies for all the entities
-    | except listed here.
-    | Generated Permission name will be formatted as:
-    | Page: `view_page_name` i.e, `SettingsPage` => `view_settings_page`
-    | Widget: `view_widget_name` i.e, `IncomeWidget` => `view_income_widget`
-    */
-
-    'except' => [
+    'exclude' => [
+        'enabled' => true,
         'pages' => [
             'Dashboard'
         ],

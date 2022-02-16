@@ -13,8 +13,6 @@ class MakeInstallShieldCommand extends Command
 
     public $signature = 'shield:install
         {--F|fresh}
-        {--O|only : Generate permissions and/or policies `Only` for entities listed in config.}
-        {--A|all : Generate permissions and/or policies for all `Resources`, `Pages` and `Widgets`.}
     ';
 
     public $description = "One Command to Rule them All 🔥";
@@ -31,7 +29,7 @@ class MakeInstallShieldCommand extends Command
         $this->warn('   - And/Or Assigns Filament User role if enabled in config');
         $this->info('-  Discovers filament resources and generates Permissions and Policies accordingly');
         $this->warn('   - Will override any existing policies if available');
-        $this->info('- Publishes Shield Resource');
+        $this->info('- Publishes Shield Resource & Page');
 
         $confirmed = $this->confirm('Do you wish to continue?', true);
 
@@ -58,6 +56,12 @@ class MakeInstallShieldCommand extends Command
                 $this->info('Database migrated.');
             }
 
+            $this->call('vendor:publish', [
+                '--tag' => 'filament-shield-config',
+            ]);
+
+            $this->info('Shield config published!');
+
             $this->info('Creating Super Admin...');
             $this->call('shield:super-admin');
 
@@ -69,20 +73,13 @@ class MakeInstallShieldCommand extends Command
                 ]);
             }
 
-            if ($this->option('only')) {
-                $output = Artisan::call('shield:generate --only');
-                if ($output === 2) {
-                    $this->comment('Seems like you have not enabled your `only` config properly!');
-                }
+            if (! collect(Filament::getPages())->containsStrict("App\\Filament\\Pages\\Shield\\Configuration")) {
+                Filament::registerResources([
+                    \App\Filament\Pages\Shield\Configuration::class,
+                ]);
             }
 
-            if ($this->option('all')) {
-                $this->call('shield:generate');
-            }
-
-            if (! $this->option('only') && ! $this->option('all')) {
-                Artisan::call('shield:generate --except');
-            }
+            Artisan::call('shield:generate');
 
             $this->info('Filament Shield🛡 is now active ✅');
         } else {

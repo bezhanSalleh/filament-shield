@@ -25,27 +25,27 @@ class MakeSuperAdminShieldCommand extends Command
         /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
 
-        if (! Role::whereName(config('filament-shield.default_roles.super_admin_role_name'))->exists()) {
-            Role::create(
-                ['name' => config('filament-shield.default_roles.super_admin_role_name')],
-                ['guard_name' => config('filament.auth.guard')]
-            );
+        if (! Role::whereName(config('filament-shield.super_admin.role_name'))->exists()) {
+            Role::create([
+                'name' => config('filament-shield.super_admin.role_name'),
+                'guard_name' => config('filament.auth.guard'),
+            ]);
         }
 
-        if (config('filament-shield.default_roles.filament_user.enabled') && ! Role::whereName(config('filament-shield.default_roles.filament_user.role_name'))->exists()) {
-            Role::create(
-                ['name' => config('filament-shield.default_roles.filament_user.role_name')],
-                ['guard_name' => config('filament.auth.guard')]
-            );
+        if (config('filament-shield.filament_user.enabled') && ! Role::whereName(config('filament-shield.filament_user.role_name'))->exists()) {
+            Role::create([
+                'name' => config('filament-shield.filament_user.role_name'),
+                'guard_name' => config('filament.auth.guard'),
+            ]);
         }
 
         if ($userProvider->getModel()::count() === 1) {
             $superAdmin = $userProvider->getModel()::first();
 
-            $superAdmin->assignRole(config('filament-shield.default_roles.super_admin_role_name'));
+            $superAdmin->assignRole(config('filament-shield.super_admin.role_name'));
 
-            if (config('filament-shield.default_roles.filament_user.enabled')) {
-                $superAdmin->assignRole(config('filament-shield.default_roles.filament_user.role_name'));
+            if (config('filament-shield.filament_user.enabled')) {
+                $superAdmin->assignRole(config('filament-shield.filament_user.role_name'));
             }
         } elseif ($userProvider->getModel()::count() > 1) {
             $this->table(
@@ -64,10 +64,10 @@ class MakeSuperAdminShieldCommand extends Command
 
             $superAdmin = $userProvider->getModel()::find($superAdminId);
 
-            $superAdmin->assignRole(config('filament-shield.default_roles.super_admin_role_name'));
+            $superAdmin->assignRole(config('filament-shield.super_admin.role_name'));
 
-            if (config('filament-shield.default_roles.filament_user.enabled')) {
-                $superAdmin->assignRole(config('filament-shield.default_roles.filament_user.role_name'));
+            if (config('filament-shield.filament_user.enabled')) {
+                $superAdmin->assignRole(config('filament-shield.filament_user.role_name'));
             }
         } else {
             $superAdmin = $userProvider->getModel()::create([
@@ -76,10 +76,10 @@ class MakeSuperAdminShieldCommand extends Command
                 'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
             ]);
 
-            $superAdmin->assignRole(config('filament-shield.default_roles.super_admin_role_name'));
+            $superAdmin->assignRole(config('filament-shield.super_admin.role_name'));
 
-            if (config('filament-shield.default_roles.filament_user.enabled')) {
-                $superAdmin->assignRole(config('filament-shield.default_roles.filament_user.role_name'));
+            if (config('filament-shield.filament_user.enabled')) {
+                $superAdmin->assignRole(config('filament-shield.filament_user.role_name'));
             }
         }
 

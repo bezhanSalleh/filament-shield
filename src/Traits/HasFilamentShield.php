@@ -10,7 +10,7 @@ trait HasFilamentShield
 
     public static function bootHasFilamentShield()
     {
-        if (config('filament-shield.default_roles.filament_user.enabled')) {
+        if (config('filament-shield.filament_user.enabled')) {
             static::created(fn ($user) => $user->assignRole(static::filamentUserRole()));
 
             static::deleting(fn ($user) => $user->removeRole(static::filamentUserRole()));
@@ -24,6 +24,6 @@ trait HasFilamentShield
 
     protected static function filamentUserRole(): string
     {
-        return (string) config('filament-shield.default_roles.filament_user.role_name');
+        return (string) config('filament-shield.filament_user.role_name');
     }
 }

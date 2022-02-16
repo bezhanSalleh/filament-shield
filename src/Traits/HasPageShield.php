@@ -25,8 +25,9 @@ trait HasPageShield
     {
         return (string) Str::of(static::class)
             ->after('Pages\\')
+            ->replace('\\','')
             ->snake()
-            ->prepend(config('filament-shield.page_permission_prefix').'_');
+            ->prepend(config('filament-shield.prefixes.page').'_');
     }
 
     protected static function shouldRegisterNavigation(): bool

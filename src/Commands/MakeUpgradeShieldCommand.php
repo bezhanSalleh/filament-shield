@@ -28,9 +28,14 @@ class MakeUpgradeShieldCommand extends Command
             $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
             (new Filesystem())->ensureDirectoryExists($baseResourcePath);
             (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/resources', $baseResourcePath);
-            $this->info('Published Shield\'s Resource.');
 
-            Artisan::call('shield:generate --except');
+            $basePagePath = app_path((string) Str::of('Filament\\Pages\\Shield')->replace('\\', '/'), );
+            (new Filesystem())->ensureDirectoryExists($basePagePath);
+            (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/pages', $basePagePath);
+
+            $this->info('Published Shield\'s Resource & Page.');
+
+            Artisan::call('shield:generate');
             $this->info('(re)Discovered and (re)Generated all permissions and policies.');
 
             return self::SUCCESS;
