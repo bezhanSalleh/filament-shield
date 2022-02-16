@@ -19,9 +19,6 @@ class MakePublishShieldCommand extends Command
         $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
         $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'), );
 
-        // $basePagePath = app_path((string) Str::of('Filament\\Pages\\Shield')->replace('\\', '/'), );
-        // $configPagePath = app_path((string) Str::of('Filament\\Pages\\Shield\\Configuration.php')->replace('\\', '/'), );
-
         if ($this->checkForCollision([$roleResourcePath])) {
             $confirmed = $this->confirm('Shield Resource already exists. Overwrite?', true);
             if (! $confirmed) {
@@ -31,8 +28,6 @@ class MakePublishShieldCommand extends Command
 
         (new Filesystem())->ensureDirectoryExists($baseResourcePath);
         (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/resources', $baseResourcePath);
-        // (new Filesystem())->ensureDirectoryExists($basePagePath);
-        // (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/pages', $basePagePath);
 
         $this->info('Shield\'s Resource have been published successfully!');
 

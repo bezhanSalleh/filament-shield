@@ -23,7 +23,7 @@ return [
     'field.guard_name' => 'Guard Name',
     'field.permissions' => 'Permissions',
     'field.select_all.name' => 'Select All',
-    'field.select_all.message' => 'Enable all Permissions for this role',
+    'field.select_all.message' => 'Enable all Permissions currently <span class="text-primary font-medium">Enabled</span> for this role',
 
     /*
     |--------------------------------------------------------------------------
@@ -49,10 +49,10 @@ return [
     'custom' => 'Custom Permissions',
 
     /**
-     * Settings Page
+     * Role Setting Page
      */
     'page' => [
-        'name' => 'Settings',
+        'name' => 'Setting',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Save',
         'generate' => 'Save & Generate'

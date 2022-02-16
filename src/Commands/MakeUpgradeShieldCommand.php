@@ -19,20 +19,20 @@ class MakeUpgradeShieldCommand extends Command
         if ($confirm || $this->option('no-interaction')) {
 
             (new Filesystem())->ensureDirectoryExists(config_path());
+
+            if ($this->isBackupPossible(config_path('filament-shield.php'), config_path('filament-shield.php.bak'))) {
+                $this->info('Config backup created.');
+            }
+
             (new Filesystem())->copy(__DIR__.'/../../config/filament-shield.php', config_path('filament-shield.php'));
-            $this->info('Published Shield Config.');
 
             (new Filesystem())->ensureDirectoryExists(lang_path());
             (new Filesystem())->copyDirectory(__DIR__.'/../../resources/lang', lang_path('/vendor/filament-shield'));
-            $this->info('Publishd Shield Translations');
 
             (new Filesystem())->ensureDirectoryExists(lang_path());
             (new Filesystem())->copyDirectory(__DIR__.'/../../resources/views', resource_path('/views/vendor/filament-shield'));
-            $this->info('Publishd Shield Views.');
 
-            $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
-            (new Filesystem())->ensureDirectoryExists($baseResourcePath);
-            (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/resources', $baseResourcePath);
+            $this->call('shield:publish');
 
             $this->info('Published Shields\' config, translations, views & Resource.');
 

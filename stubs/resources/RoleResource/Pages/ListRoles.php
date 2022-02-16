@@ -13,9 +13,9 @@ class ListRoles extends ListRecords
     protected function getActions(): array
     {
         return array_merge([
-            ButtonAction::make('settings')
+            ButtonAction::make('setting')
                 ->label(__('filament-shield::filament-shield.page.name'))
-                ->action(fn() => redirect(static::$resource::getUrl('settings')))
+                ->url(static::$resource::getUrl('settings'))
                 ->icon(__('filament-shield::filament-shield.page.icon'))
                 ->color('primary')
                 ->outlined()

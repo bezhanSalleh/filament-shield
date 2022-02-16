@@ -22,6 +22,8 @@ class RoleResource extends Resource
 
     protected static ?int $navigationSort = -1;
 
+    protected static ?string $slug = 'shield/roles';
+    
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
@@ -78,7 +80,7 @@ class RoleResource extends Resource
                                         ])
                                     ]),
                                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-                                    ->visible(fn(): bool => (bool) config('filament-shield.entities.pages'))
+                                    ->visible(fn (): bool => (bool) (config('filament-shield.entities.pages') && count(static::getPageEntities())) > 0 ? true: false)
                                     ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
@@ -92,7 +94,7 @@ class RoleResource extends Resource
                                         ])
                                     ]),
                                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-                                    ->visible(fn(): bool => (bool) config('filament-shield.entities.widgets'))
+                                    ->visible(fn(): bool => (bool) (config('filament-shield.entities.widgets') && count(static::getWidgetEntities())) > 0 ? true: false)
                                     ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
@@ -164,7 +166,7 @@ class RoleResource extends Resource
         return [
             'index' => Pages\ListRoles::route('/'),
             'create' => Pages\CreateRole::route('/create'),
-            'settings' => Pages\Settings::route('/settings'),
+            'settings' => Pages\ShieldSettings::route('/settings'),
             'view' => Pages\ViewRole::route('/{record}'),
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
@@ -204,7 +206,7 @@ class RoleResource extends Resource
         return collect(Filament::getResources())
             ->filter(function ($resource) {
                 if (config('filament-shield.exclude.enabled')) {
-                    return !in_array(Str::before(Str::afterLast($resource, '\\'), 'Resource'), config('filament-shield.exclude.resources'));
+                    return !in_array(Str::of($resource)->afterLast('\\'), config('filament-shield.exclude.resources'));
                 }
                 return true;
             })

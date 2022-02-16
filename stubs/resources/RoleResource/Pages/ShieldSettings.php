@@ -12,13 +12,14 @@ use App\Filament\Resources\Shield\RoleResource;
 use BezhanSalleh\FilamentShield\Commands\Concerns;
 use Illuminate\Support\Facades\Artisan;
 
-class Settings extends Page
+class ShieldSettings extends Page
 {
+    use Concerns\CanBackupAFile;
     use Concerns\CanManipulateFiles;
 
     protected static string $resource = RoleResource::class;
 
-    protected static string $view = 'filament-shield::pages.settings';
+    protected static string $view = 'filament-shield::pages.shield-settings';
 
     public function mount(): void
     {
@@ -237,8 +238,15 @@ class Settings extends Page
         );
     }
 
+    protected function backupCurrentConfig(): void
+    {
+        $this->isBackupPossible(config_path('filament-shield.php'), config_path('filament-shield.php.bak'));
+    }
+
     public function save(): void
     {
+        $this->backupCurrentConfig();
+
         $this->generateNewConfig();
 
         Artisan::call('config:clear');
@@ -248,6 +256,8 @@ class Settings extends Page
 
     public function generate(): void
     {
+        $this->backupCurrentConfig();
+
         $this->generateNewConfig();
 
         Artisan::call('config:clear');
