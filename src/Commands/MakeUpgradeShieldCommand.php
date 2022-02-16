@@ -2,10 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
 
 class MakeUpgradeShieldCommand extends Command
 {

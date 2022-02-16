@@ -1,10 +1,13 @@
 <?php
+
 namespace BezhanSalleh\FilamentShield\Commands;
+
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+
 class MakeGenerateShieldCommand extends Command
 {
     use Concerns\CanGeneratePolicy;
@@ -18,7 +21,7 @@ class MakeGenerateShieldCommand extends Command
 
     public function handle(): int
     {
-    if ($this->option('exclude') && config('filament-shield.exclude.enabled')) {
+        if ($this->option('exclude') && config('filament-shield.exclude.enabled')) {
             $exceptResources = config('filament-shield.exclude.resources');
             $removedExcludedResources = collect(Filament::getResources())->filter(function ($resource) use ($exceptResources) {
                 return ! in_array(Str::of($resource)->afterLast('\\'), $exceptResources);
@@ -60,14 +63,17 @@ class MakeGenerateShieldCommand extends Command
             }
         }
         $this->info('Enjoy!');
+
         return self::SUCCESS;
     }
+
     protected function generateForResources(array $resources): Collection
     {
         return  collect($resources)
             ->reduce(function ($entites, $resource) {
                 $model = Str::before(Str::afterLast($resource, '\\'), 'Resource');
                 $entites[$model] = $model;
+
                 return $entites;
             }, collect())
             ->values()
@@ -77,12 +83,14 @@ class MakeGenerateShieldCommand extends Command
                 FilamentShield::generateForResource($model);
             });
     }
+
     protected function generateForWidgets(array $widgets): Collection
     {
         return collect($widgets)
             ->reduce(function ($transformedWidgets, $widget) {
-                $name = Str::of($widget)->after('Widgets\\')->replace('\\','')->snake();
+                $name = Str::of($widget)->after('Widgets\\')->replace('\\', '')->snake();
                 $transformedWidgets["{$name}"] = "{$name}";
+
                 return $transformedWidgets;
             }, collect())
             ->values()
@@ -91,18 +99,21 @@ class MakeGenerateShieldCommand extends Command
                 FilamentShield::generateForWidget($widget);
             });
     }
+
     protected function generateForPages(array $pages): Collection
     {
         return collect($pages)->reduce(function ($transformedPages, $page) {
-                $name = Str::of($page)->after('Pages\\')->replace('\\','')->snake();
-                $transformedPages["{$name}"] = "{$name}";
-                return $transformedPages;
-            }, collect())->values()
+            $name = Str::of($page)->after('Pages\\')->replace('\\', '')->snake();
+            $transformedPages["{$name}"] = "{$name}";
+
+            return $transformedPages;
+        }, collect())->values()
             ->each(function ($entity) {
                 $page = Str::of($entity);
                 FilamentShield::generateForPage($page);
             });
     }
+
     protected function resourceInfo(array $resources): void
     {
         $this->info('Successfully generated Permissions & Policies for:');
@@ -121,6 +132,7 @@ class MakeGenerateShieldCommand extends Command
             })
         );
     }
+
     protected function pageInfo(array $pages): void
     {
         $this->info('Successfully generated Page Permissions for:');
@@ -135,6 +147,7 @@ class MakeGenerateShieldCommand extends Command
             })
         );
     }
+
     protected function widgetInfo(array $widgets): void
     {
         $this->info('Successfully generated Widget Permissions for:');
