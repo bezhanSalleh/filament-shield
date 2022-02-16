@@ -38,17 +38,22 @@ The easiest and most intuitive way to add access management to your Filament Adm
 </a>
 
 ## Upgrade
+
 To upgrade to the latest release first run:
+
 ```bash
 composer update
 ```
+
 backup `config.php`(incase you have configured) then:
+
 ```bash
 php artisan shield:upgrade
 ```
+
 you can run this command without interaction by supplying the `-no-interaction` flag.
 
-<hr style="background-color: #ebb304">
+
 ## Installation
 
 1. Install the package via composer:
@@ -64,6 +69,7 @@ php artisan vendor:publish --tag="filament-shield-config"
 ```
 
 3. Configure your options
+
 ```php
 <?php
 
@@ -158,6 +164,7 @@ return [
     'register_role_policy' => true,
 ];
 ```
+
 4. Add the `Spatie\Permission\Traits\HasRoles` trait to your User model(s):
 
 ```php
@@ -177,11 +184,12 @@ class User extends Authenticatable
 ```bash
 php artisan shield:install
 ```
-Follow the prompts and enjoy!
-<hr style="background-color: #ebb304">
 
-#### Resource Custom Permissions
-You can add custom permissions for the resources in addition to the required 6 by adding your custom permission names at the end of the `resource_permissions_prefixes` config key array.
+Follow the prompts and enjoy!
+
+## Resource Custom Permissions
+
+You can add custom permissions for the resources in addition to the required 6 by adding your custom permission names at the end of the `resource` key inside the `prefixes` config key array.
 For instance lets add `export` cutom permission to all resources:
 ```php
 ...
@@ -198,12 +206,17 @@ For instance lets add `export` cutom permission to all resources:
     ...
 ...
 ```
+
 Since we have added our new custom permission, it's time to refresh the list of permissions for the resources by running:
+
 ```bash
 php artisan shield:generate
 ```
+
 Now, you can check and see in your `Resources` each resource listed will have an `export` permission as well.
+
 #### Pages
+
 If you have generated permissions for `Pages` you can toggle the page's navigation from sidebar and restricted access to the page. You can set this up manually but this package comes with a `HasPageShield` trait to speed up this process. All you have to do is use the trait in you pages:
 ```php
 <?php
@@ -237,7 +250,9 @@ class IncomeWidget extends LineChartWidget
     ...
 }
 ```
+
 #### `RolePolicy` 
+
 You can skip this if have set the `'register_role_policy' => true` in the config.
 To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AuthServiceProvider`:
 
@@ -251,6 +266,7 @@ protected $policies = [
 ```
 
 #### Translations 
+
 Publish the translations using:
 
 ```bash
@@ -258,14 +274,14 @@ php artisan vendor:publish --tag="filament-shield-translations"
 ```
 
 #### Views 
+
 Publish the Views using:
 
 ```bash
 php artisan vendor:publish --tag="filament-shield-views"
 ```
-<hr style="background-color: #ebb304">
 
-### Available Filament Shield Commands
+## Available Filament Shield Commands
 
 ```php
 - install   # One Command to Rule them All 🔥
