@@ -2,6 +2,26 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.7 - 2022-02-21
+
+## What's Changed
+
+- Removed `outlined()`
+- Bump dependabot/fetch-metadata from 1.1.1 to 1.2.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/19
+- Fixes issue #17 by @brunolipe-a in https://github.com/bezhanSalleh/filament-shield/pull/18
+- Add support for Turkish (tr) translation by @trk in https://github.com/bezhanSalleh/filament-shield/pull/16
+- [ar] Translate new phrases by @mohamedsabil83 in https://github.com/bezhanSalleh/filament-shield/pull/15
+- Add spanish translations by @pathros in https://github.com/bezhanSalleh/filament-shield/pull/14
+
+## New Contributors
+
+- @dependabot made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/19
+- @brunolipe-a made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/18
+- @trk made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/16
+- @pathros made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/14
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.6...v1.1.7
+
 ## v1.1.6 - 2022-02-16
 
 ## What's Changed
