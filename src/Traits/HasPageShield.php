@@ -32,6 +32,6 @@ trait HasPageShield
 
     protected static function shouldRegisterNavigation(): bool
     {
-        return static::canView();
+        return static::canView() && static::$shouldRegisterNavigation;
     }
 }
