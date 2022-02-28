@@ -35,6 +35,7 @@ class ShieldSettings extends Page
             'entities_widgets' => config('filament-shield.entities.widgets'),
             'entities_resources' => config('filament-shield.entities.resources'),
             'entities_custom_permissions' => config('filament-shield.entities.custom_permissions'),
+            'resource_option' => config('filament-shield.resource_option'),
             'exclude_enabled' => config('filament-shield.exclude.enabled'),
             'exclude_pages' => config('filament-shield.exclude.pages'),
             'exclude_widgets' => config('filament-shield.exclude.widgets'),
