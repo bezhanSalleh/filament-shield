@@ -2,6 +2,20 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.8 - 2022-02-28
+
+## What's Changed
+
+- Bump dependabot/fetch-metadata from 1.2.0 to 1.2.1 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/23
+- Enhance policy stubs + Improve Arabic translation by @mohamedsabil83 in https://github.com/bezhanSalleh/filament-shield/pull/20
+- added Indonesian translations. by @sayasuhendra in https://github.com/bezhanSalleh/filament-shield/pull/22
+
+## New Contributors
+
+- @sayasuhendra made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/22
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.7...v1.1.8
+
 ## v1.1.7 - 2022-02-21
 
 ## What's Changed
