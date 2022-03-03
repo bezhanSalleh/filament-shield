@@ -17,7 +17,7 @@ class {{ modelPolicy }}
      */
     public function viewAny(User $user)
     {
-        return $user->can('{{ ViewAny }}'));
+        return $user->can('{{ ViewAny }}');
     }
 
     /**
