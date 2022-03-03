@@ -2,6 +2,11 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.9 - 2022-03-03
+
+- Subs bug fix
+- **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.8...v1.1.9
+
 ## v1.1.8 - 2022-02-28
 
 ## What's Changed
