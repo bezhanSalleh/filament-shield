@@ -23,6 +23,8 @@ class ShieldSettings extends Page
 
     public function mount(): void
     {
+        static::authorizeResourceAccess();
+
         $this->form->fill([
             'super_admin_role_enabled' => config('filament-shield.super_admin.enabled'),
             'super_admin_role_name' => config('filament-shield.super_admin.role_name'),
