@@ -2,6 +2,21 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.10 - 2022-03-13
+
+## What's Changed
+
+- fixed settings page authorization
+- Bump dependabot/fetch-metadata from 1.2.1 to 1.3.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/27
+- directory seperator fix by @alperenersoy in https://github.com/bezhanSalleh/filament-shield/pull/26
+- Bump actions/checkout from 2 to 3 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/28
+
+## New Contributors
+
+- @alperenersoy made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/26
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.9...v1.1.10
+
 ## v1.1.9 - 2022-03-03
 
 - Subs bug fix
