@@ -67,7 +67,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Resource Generator Option
+    | Resources Generator Option
     |--------------------------------------------------------------------------
     | Here you may define the "generator" option for resources.
     | Sometimes it's beneficial to generate policies once locally, in case the production server
@@ -77,7 +77,7 @@ return [
     | Supported options: "policies_and_permissions", "policies", "permissions"
     */
 
-    'resource_option' => 'policies_and_permissions',
+    'resources_generator_option' => 'policies_and_permissions',
 
     /*
     |--------------------------------------------------------------------------

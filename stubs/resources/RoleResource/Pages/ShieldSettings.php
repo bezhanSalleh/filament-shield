@@ -11,6 +11,7 @@ use Filament\Pages\Actions\ButtonAction;
 use App\Filament\Resources\Shield\RoleResource;
 use BezhanSalleh\FilamentShield\Commands\Concerns;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
 
 class ShieldSettings extends Page
 {
@@ -23,6 +24,8 @@ class ShieldSettings extends Page
 
     public function mount(): void
     {
+        static::authorizeResourceAccess();
+
         $this->form->fill([
             'super_admin_role_enabled' => config('filament-shield.super_admin.enabled'),
             'super_admin_role_name' => config('filament-shield.super_admin.role_name'),
@@ -35,7 +38,7 @@ class ShieldSettings extends Page
             'entities_widgets' => config('filament-shield.entities.widgets'),
             'entities_resources' => config('filament-shield.entities.resources'),
             'entities_custom_permissions' => config('filament-shield.entities.custom_permissions'),
-            'resource_option' => config('filament-shield.resource_option'),
+            'resources_generator_option' => config('filament-shield.resources_generator_option'),
             'exclude_enabled' => config('filament-shield.exclude.enabled'),
             'exclude_pages' => config('filament-shield.exclude.pages'),
             'exclude_widgets' => config('filament-shield.exclude.widgets'),
@@ -124,6 +127,7 @@ class ShieldSettings extends Page
                         ])
                         ->columns(3)
                 ]),
+
             $layout::make()
                 ->schema([
                     Forms\Components\Placeholder::make('Entities\'s Permission Generator Options')
@@ -132,7 +136,6 @@ class ShieldSettings extends Page
                         ->schema([
                             Forms\Components\Toggle::make('entities_resources')
                                 ->label(__('filament-shield::filament-shield.labels.entities.resources'))
-                                ->default(config('filament-shield.entities.resources'))
                                 ->helperText(fn($state) => $state ? __("filament-shield::filament-shield.labels.entities.message").' <span class="font-medium text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : __("filament-shield::filament-shield.labels.entities.message").'<span class="font-medium text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
                                 ->reactive(),
                             Forms\Components\Toggle::make('entities_pages')
@@ -146,9 +149,27 @@ class ShieldSettings extends Page
                             Forms\Components\Toggle::make('entities_custom_permissions')
                                 ->label(__('filament-shield::filament-shield.labels.entities.custom_permissions'))
                                 ->helperText(fn($state) => $state ? __("filament-shield::filament-shield.labels.entities.custom_permissions.message").' <span class="font-medium text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : __("filament-shield::filament-shield.labels.entities.custom_permissions.message").'<span class="font-medium text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
-                                ->reactive(),
+                                ->reactive()
                         ])
                         ->columns(4),
+                ]),
+            $layout::make()
+                ->visible(fn($get): bool => (bool) $get('entities_resources'))
+                ->schema([
+                    Forms\Components\Grid::make()
+                    ->schema([
+                            Forms\Components\Placeholder::make('')
+                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700">Resources Generator Option</span>')),
+                            Forms\Components\Radio::make('resources_generator_option')
+                                ->label('')
+                                ->options([
+                                    'policies_and_permissions' => 'Generate Policies & Permissions',
+                                    'policies' => 'Generate only Policies',
+                                    'permissions' => 'Generate only Permissions',
+                                ])
+                                ->inline()
+                        ])
+                        ->columns(1)
                 ]),
 
             $layout::make()
