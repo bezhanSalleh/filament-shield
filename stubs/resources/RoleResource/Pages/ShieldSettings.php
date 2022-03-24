@@ -7,16 +7,21 @@ use Filament\Forms;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\Page;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Artisan;
 use Filament\Pages\Actions\ButtonAction;
+use League\CommonMark\MarkdownConverter;
+use League\CommonMark\CommonMarkConverter;
+use Filament\Pages\Contracts\HasFormActions;
 use App\Filament\Resources\Shield\RoleResource;
 use BezhanSalleh\FilamentShield\Commands\Concerns;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\HtmlString;
+use Filament\Resources\Pages\Concerns\UsesResourceForm;
 
-class ShieldSettings extends Page
+class ShieldSettings extends Page implements HasFormActions
 {
     use Concerns\CanBackupAFile;
     use Concerns\CanManipulateFiles;
+    use UsesResourceForm;
 
     protected static string $resource = RoleResource::class;
 
@@ -252,6 +257,7 @@ class ShieldSettings extends Page
                 'entities_widgets' => $this->entities_widgets ? 'true' : 'false',
                 'entities_resources' => $this->entities_resources ? 'true' : 'false',
                 'entities_custom_permissions' => $this->entities_custom_permissions ? 'true' : 'false',
+                'resources_generator_option' => $this->resources_generator_option,
                 'exclude_enabled' => $this->exclude_enabled ? 'true' : 'false',
                 'exclude_pages' => json_encode($this->exclude_pages),
                 'exclude_widgets' => json_encode($this->exclude_widgets),
