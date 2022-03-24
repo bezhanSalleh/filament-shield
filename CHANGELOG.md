@@ -2,6 +2,18 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.11 - 2022-03-24
+
+## What's Changed
+
+- makes the resources generator option configurable by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/31
+
+## New Contributors
+
+- @bezhanSalleh made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/31
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.10...v1.1.11
+
 ## v1.1.10 - 2022-03-13
 
 ## What's Changed
