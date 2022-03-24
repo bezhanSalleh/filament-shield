@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Defualt Roles
+    | Default Roles
     |--------------------------------------------------------------------------
     |
     | Permissions' generated will be assigned automatically to the following roles when enabled.
@@ -64,6 +64,20 @@ return [
         'resources' => true,
         'custom_permissions' => false,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resources Generator Option
+    |--------------------------------------------------------------------------
+    | Here you may define the "generator" option for resources.
+    | Sometimes it's beneficial to generate policies once locally, in case the production server
+    | does not allow you to regenerate them (Laravel Vapor) or you have updated the policies.
+    | Choose the option the fits best your use case.
+    |
+    | Supported options: "policies_and_permissions", "policies", "permissions"
+    */
+
+    'resources_generator_option' => 'policies_and_permissions',
 
     /*
     |--------------------------------------------------------------------------

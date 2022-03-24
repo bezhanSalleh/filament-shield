@@ -17,7 +17,8 @@ class ListRoles extends ListRecords
                 ->label(__('filament-shield::filament-shield.page.name'))
                 ->url(static::$resource::getUrl('settings'))
                 ->icon(__('filament-shield::filament-shield.page.icon'))
-                ->color('success')
+                ->color('primary')
+                ->outlined()
         ], parent::getActions());
     }
 }

@@ -25,12 +25,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Resource Permission Prefixes
+    | Default Prefixes
     |--------------------------------------------------------------------------
     |
     | When generating permissions for a `Resource` the resource `Model` will be prefixed with these.
-    | But you are free to change them in to whatever works for you, but keeping in mind the order since
-    | these will also be used in generating policies for the resources.
+    | Keep in mind the order since these will also be used in generating policies for the resources.
+    |
+    | When generating permission for a `Widget` or `Page` the widget or page name will be prefixed
+    | with this.
+    | But you are free to change these in to whatever works for you.
     */
 
     'prefixes' => [
@@ -38,16 +41,6 @@ return [
         'page'  =>  '{{ page_permission_prefix }}',
         'widget' => '{{ widget_permission_prefix }}'
     ],
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Widget and Page Permission Prefix
-    |--------------------------------------------------------------------------
-    |
-    | When generating permission for a `Widget` or `Page` the widget or page name will be prefixed
-    | with this. But you are free to change it in to whatever works for you.
-    */
 
     /*
     |--------------------------------------------------------------------------
@@ -63,6 +56,20 @@ return [
         'resources' => {{ entities_resources }},
         'custom_permissions' => {{ entities_custom_permissions }},
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resources Generator Option
+    |--------------------------------------------------------------------------
+    | Here you may define the "generator" option for resources.
+    | Sometimes it's beneficial to generate policies once locally, in case the production server
+    | does not allow you to regenerate them (Laravel Vapor) or you have updated the policies.
+    | Choose the option the fits best your use case.
+    |
+    | Supported options: "policies_and_permissions", "policies", "permissions"
+    */
+
+    'resources_generator_option' => '{{ resources_generator_option }}',
 
     /*
     |--------------------------------------------------------------------------

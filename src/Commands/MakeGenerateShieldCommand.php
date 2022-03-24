@@ -79,8 +79,18 @@ class MakeGenerateShieldCommand extends Command
             ->values()
             ->each(function ($entity) {
                 $model = Str::of($entity);
-                $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($model), $this->generatePolicyStubVariables($model));
-                FilamentShield::generateForResource($model);
+                if (config('filament-shield.resources_generator_option') === 'policies_and_permissions') {
+                    $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($model), $this->generatePolicyStubVariables($model));
+                    FilamentShield::generateForResource($model);
+                }
+
+                if (config('filament-shield.resources_generator_option') === 'policies') {
+                    $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($model), $this->generatePolicyStubVariables($model));
+                }
+
+                if (config('filament-shield.resources_generator_option') === 'permissions') {
+                    FilamentShield::generateForResource($model);
+                }
             });
     }
 
@@ -123,11 +133,11 @@ class MakeGenerateShieldCommand extends Command
                 return [
                     '#' => $key + 1,
                     'Resource' => $resource,
-                    'Policy' => "{$resource}Policy.php",
+                    'Policy' => "{$resource}Policy.php". (config('filament-shield.resources_generator_option') !== 'permissions' ? ' ✅' : ' ❌') ,
                     'Permissions' =>
                         implode(',', collect(config('filament-shield.prefixes.resource'))->map(function ($permission, $key) use ($resource) {
                             return $permission.'_'.Str::lower($resource);
-                        })->toArray()),
+                        })->toArray()) . (config('filament-shield.resources_generator_option') !== 'policies' ? ' ✅' : ' ❌'),
                 ];
             })
         );
