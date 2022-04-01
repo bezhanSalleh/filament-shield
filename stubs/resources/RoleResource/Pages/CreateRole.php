@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Shield\RoleResource\Pages;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\Shield\RoleResource;
 use Illuminate\Support\Collection;
@@ -28,7 +27,7 @@ class CreateRole extends CreateRecord
     {
         $permissionModels = collect();
         $this->permissions->each(function($permission) use($permissionModels) {
-            $permissionModels->push(Permission::firstOrCreate(
+            $permissionModels->push(config('permission.models.permission')::firstOrCreate(
                 ['name' => $permission],
                 ['guard_name' => config('filament.auth.guard')]
             ));

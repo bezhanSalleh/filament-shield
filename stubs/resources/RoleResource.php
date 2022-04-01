@@ -10,21 +10,23 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
-use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Models\Permission;
 use App\Filament\Resources\Shield\RoleResource\Pages;
 use Illuminate\Support\Collection;
 
 class RoleResource extends Resource
 {
-    protected static ?string $model = Role::class;
 
     protected static ?int $navigationSort = -1;
 
     protected static ?string $slug = 'shield/roles';
-    
+
     protected static ?string $recordTitleAttribute = 'name';
+
+    public function __construct()
+    {
+        static::$model = config('permission.models.role');
+    }
 
     public static function form(Form $form): Form
     {
@@ -503,7 +505,7 @@ class RoleResource extends Resource
             ->merge(static::getWidgetEntities())
             ->values();
 
-        return Permission::whereNotIn('name',$entitiesPermissions)->pluck('name');
+        return config('permission.models.permission')::whereNotIn('name',$entitiesPermissions)->pluck('name');
     }
 
     protected static function getCustomEntitiesPermisssionSchema(): ?array

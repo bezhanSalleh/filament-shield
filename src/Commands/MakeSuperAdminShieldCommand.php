@@ -5,7 +5,6 @@ namespace BezhanSalleh\FilamentShield\Commands;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class MakeSuperAdminShieldCommand extends Command
 {
@@ -25,15 +24,15 @@ class MakeSuperAdminShieldCommand extends Command
         /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
 
-        if (! Role::whereName(config('filament-shield.super_admin.role_name'))->exists()) {
-            Role::create([
+        if (! config('permission.models.role')::whereName(config('filament-shield.super_admin.role_name'))->exists()) {
+            config('permission.models.role')::create([
                 'name' => config('filament-shield.super_admin.role_name'),
                 'guard_name' => config('filament.auth.guard'),
             ]);
         }
 
-        if (config('filament-shield.filament_user.enabled') && ! Role::whereName(config('filament-shield.filament_user.role_name'))->exists()) {
-            Role::create([
+        if (config('filament-shield.filament_user.enabled') && ! config('permission.models.role')::whereName(config('filament-shield.filament_user.role_name'))->exists()) {
+            config('permission.models.role')::create([
                 'name' => config('filament-shield.filament_user.role_name'),
                 'guard_name' => config('filament.auth.guard'),
             ]);

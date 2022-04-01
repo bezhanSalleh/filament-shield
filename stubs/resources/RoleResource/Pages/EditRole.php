@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Filament\Resources\Pages\EditRecord;
-use Spatie\Permission\Models\Permission;
 use App\Filament\Resources\Shield\RoleResource;
 
 class EditRole extends EditRecord
@@ -28,7 +27,7 @@ class EditRole extends EditRecord
     {
         $permissionModels = collect();
         $this->permissions->each(function($permission) use($permissionModels) {
-            $permissionModels->push(Permission::firstOrCreate(
+            $permissionModels->push(config('permission.models.permission')::firstOrCreate(
                 ['name' => $permission],
                 ['guard_name' => config('filament.auth.guard')]
             ));

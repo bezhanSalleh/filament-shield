@@ -273,7 +273,7 @@ To ensure `RoleResource` access via `RolePolicy` you would need to add the follo
 //AuthServiceProvider.php
 ...
 protected $policies = [
-    'Spatie\Permission\Models\Role' => 'App\Policies\RolePolicy',
+    config('permission.models.permission') => 'App\Policies\RolePolicy',
 ];
 ...
 ```
