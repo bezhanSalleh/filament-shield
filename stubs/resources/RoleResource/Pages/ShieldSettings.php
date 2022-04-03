@@ -49,6 +49,8 @@ class ShieldSettings extends Page implements HasFormActions
             'exclude_widgets' => config('filament-shield.exclude.widgets'),
             'exclude_resources' => config('filament-shield.exclude.resources'),
             'register_role_policy' => config('filament-shield.register_role_policy'),
+            'navgroup_enabled' => config('filament-shield.navgroup.enabled'),
+            'navgroup_name' => config('filament-shield.navgroup.name'),
         ]);
     }
 
@@ -112,6 +114,34 @@ class ShieldSettings extends Page implements HasFormActions
                     'md' => 2,
                     'lg' => 3
                 ]),
+
+
+                $layout::make()
+                ->schema([
+                Forms\Components\Grid::make()
+                    ->schema([
+                        Forms\Components\Placeholder::make('Custom Navigation Group')
+                            ->label(__('filament-shield::filament-shield.labels.navgroup.placeholder'))
+                            ->content(__('filament-shield::filament-shield.labels.navgroup.message'))
+                            ->extraAttributes(['class' => 'text-sm text-gray-500']),
+                        Forms\Components\Toggle::make('navgroup_enabled')
+                            ->label(fn($state): string => $state ? __("filament-shield::filament-shield.labels.status.enabled") : __("filament-shield::filament-shield.labels.status.disabled"))
+                            ->default(config('filament-shield.navgroup.enabled'))
+                            ->reactive(),
+                        Forms\Components\Grid::make()
+                            ->visible(fn($get) => $get('navgroup_enabled'))
+                            ->schema([
+                                Forms\Components\TextInput::make('navgroup_name')
+                                ->label(__('filament-shield::filament-shield.labels.navgroup.name'))
+                                ->required(),
+                            ])
+                            ->columns(1)
+                    ])
+            ]),
+
+
+            
+                                        
             $layout::make()
             ->schema([
                     Forms\Components\Placeholder::make('')
@@ -262,6 +292,8 @@ class ShieldSettings extends Page implements HasFormActions
                 'exclude_pages' => json_encode($this->exclude_pages),
                 'exclude_widgets' => json_encode($this->exclude_widgets),
                 'exclude_resources' => json_encode($this->exclude_resources),
+                'navgroup_enabled' => $this->navgroup_enabled ? 'true' : 'false',
+                'navgroup_name' => $this->navgroup_name,
             ]
         );
     }

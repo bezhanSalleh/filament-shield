@@ -25,6 +25,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Navigation Group
+    |--------------------------------------------------------------------------
+    |
+    | Change this setting to correspond with the desired navigation group. Default is "Filament Shield" which is derived from the included translations.
+    | 
+    */
+
+    'navgroup' => [
+        'enabled' => {{ navgroup_enabled }},
+        'name' => '{{ navgroup_name }}',
+        
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Prefixes
     |--------------------------------------------------------------------------
     |
