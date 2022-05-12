@@ -9,12 +9,12 @@ trait HasPageShield
 {
     public function booted() : void
     {
-        $this->callHook('beforeBooted');
+        $this->beforeBooted();
 
         if (! static::canView()) {
             $this->notify('warning', __('filament-shield::filament-shield.forbidden'));
 
-            $this->callHook('beforeShieldRedirects');
+            $this->beforeShieldRedirects();
 
             redirect($this->getShieldRedirectPath());
 
@@ -25,7 +25,19 @@ trait HasPageShield
             parent::booted();
         }
 
-        $this->callHook('afterBooted');
+        $this->afterBooted();
+    }
+
+    protected function beforeBooted(): void {
+        return;
+    }
+
+    protected function afterBooted(): void {
+        return;
+    }
+
+    protected function beforeShieldRedirects(): void {
+        return;
     }
 
     protected function getShieldRedirectPath(): string {
