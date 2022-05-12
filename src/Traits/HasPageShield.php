@@ -7,13 +7,29 @@ use Illuminate\Support\Str;
 
 trait HasPageShield
 {
-    public function mount()
+    public function booted() : void
     {
+        $this->callHook('beforeBooted');
+
         if (! static::canView()) {
             $this->notify('warning', __('filament-shield::filament-shield.forbidden'));
 
-            return redirect(config('filament.path'));
+            $this->callHook('beforeShieldRedirects');
+
+            redirect($this->getShieldRedirectPath());
+
+            return;
         }
+
+        if(method_exists(parent::class, 'booted')) {
+            parent::booted();
+        }
+
+        $this->callHook('afterBooted');
+    }
+
+    protected function getShieldRedirectPath(): string {
+        return config('filament.path');
     }
 
     public static function canView(): bool
