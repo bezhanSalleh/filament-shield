@@ -2,6 +2,23 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v1.1.12 - 2022-05-19
+
+## What's Changed
+
+- Bump dependabot/fetch-metadata from 1.3.0 to 1.3.1 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/36
+- Dutch translations #44 by @sten in https://github.com/bezhanSalleh/filament-shield/pull/45
+- add german (de) translations by @simonbuehler in https://github.com/bezhanSalleh/filament-shield/pull/32
+- Feature: Uses booted instead of the mount lifecycle method in the HasPageShield trait. by @oyepez003 in https://github.com/bezhanSalleh/filament-shield/pull/43
+
+## New Contributors
+
+- @sten made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/45
+- @simonbuehler made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/32
+- @oyepez003 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/43
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.11...v1.1.12
+
 ## v1.1.11 - 2022-03-24
 
 ## What's Changed
