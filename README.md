@@ -246,7 +246,66 @@ class MyPage extends Page
 }
 ```
 
-📕 <b style="color:darkred">However if your page's `mount()` method requires a `$record` or other `parameters` it's best to handle that yourself instead of using `HasPageShield`.</b>
+📕 <b style="color:darkred">`HasPageShield` uses the `booted` method to check the user's permissions and makes sure to execute the `booted` page method in the parent page if exists.</b>
+
+###### Pages Hooks
+
+However if you need to perform some methods before and after the booted method you can declare the next hooks methods in your filament page.
+
+```php
+<?php
+
+namespace App\Filament\Pages;
+
+use ...;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+
+class MyPage extends Page
+{
+    use HasPageShield;
+    ...
+
+    protected function beforeBooted : void() {
+        ...
+    }
+
+    protected function afterBooted : void() {
+        ...
+    }
+
+    /**
+     * Hook to perform an action before redirect if the user
+     * doesn't have access to the page.  
+     * */
+    protected function beforeShieldRedirects : void() {
+        ...
+    }
+}
+```
+
+###### Pages Redirect Path
+
+`HasPageShield` uses the `config('filament.path')` value by default to perform the shield redirection. If you need to overwrite the rediretion path, just add the next method to your page:
+
+```php
+<?php
+
+namespace App\Filament\Pages;
+
+use ...;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+
+class MyPage extends Page
+{
+    use HasPageShield;
+    ...
+
+    protected function getShieldRedirectPath(): string {
+        return '/'; // redirect to the root index...
+    }
+}
+```
+
 #### Widgets
 if you have generated permissions for `Widgets` you can toggle their state based on whether a user have permission or not. You can set this up manually but this package comes with a `HasWidgetShield` trait to speed up this process. All you have to do is use the trait in you widgets:
 ```php
