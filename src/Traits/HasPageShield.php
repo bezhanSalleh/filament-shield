@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 trait HasPageShield
 {
-    public function booted() : void
+    public function booted(): void
     {
         $this->beforeBooted();
 
@@ -21,26 +21,30 @@ trait HasPageShield
             return;
         }
 
-        if(method_exists(parent::class, 'booted')) {
+        if (method_exists(parent::class, 'booted')) {
             parent::booted();
         }
 
         $this->afterBooted();
     }
 
-    protected function beforeBooted(): void {
+    protected function beforeBooted(): void
+    {
         return;
     }
 
-    protected function afterBooted(): void {
+    protected function afterBooted(): void
+    {
         return;
     }
 
-    protected function beforeShieldRedirects(): void {
+    protected function beforeShieldRedirects(): void
+    {
         return;
     }
 
-    protected function getShieldRedirectPath(): string {
+    protected function getShieldRedirectPath(): string
+    {
         return config('filament.path');
     }
 
