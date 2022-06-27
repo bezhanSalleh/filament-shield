@@ -22,7 +22,7 @@ trait CanGeneratePolicy
         $basePolicyPath = app_path(
             (string) Str::of($model)
             ->prepend('Policies\\')
-            ->replace('\\', '/'),
+            ->replace('\\', DIRECTORY_SEPARATOR),
         );
 
         return "{$basePolicyPath}Policy.php";
