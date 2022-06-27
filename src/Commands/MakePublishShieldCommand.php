@@ -16,8 +16,8 @@ class MakePublishShieldCommand extends Command
 
     public function handle(): int
     {
-        $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
-        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'), );
+        $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', DIRECTORY_SEPARATOR), );
+        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', DIRECTORY_SEPARATOR), );
 
         if ($this->checkForCollision([$roleResourcePath])) {
             $confirmed = $this->confirm('Shield Resource already exists. Overwrite?', true);
