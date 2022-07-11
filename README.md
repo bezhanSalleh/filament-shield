@@ -19,7 +19,7 @@
 <a href="https://packagist.org/packages/bezhansalleh/filament-shield">
     <img alt="Downloads" src="https://img.shields.io/packagist/dt/bezhansalleh/filament-shield.svg?style=for-the-badge" >
     </a>
-<p>
+</p>
 
 <hr style="background-color: #ebb304">
 

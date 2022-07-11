@@ -5,6 +5,7 @@ namespace BezhanSalleh\FilamentShield;
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use BezhanSalleh\FilamentShield\FilamentShield;
 
 class FilamentShieldServiceProvider extends PackageServiceProvider
 {
@@ -23,6 +24,13 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         if (config('filament-shield.register_role_policy')) {
             Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
         }
+    }
+
+    public function packageRegistered(): void
+    {
+        $this->app->scoped('filament-shield', function (): FilamentShield {
+            return new FilamentShield();
+        });
     }
 
     protected function getCommands(): array

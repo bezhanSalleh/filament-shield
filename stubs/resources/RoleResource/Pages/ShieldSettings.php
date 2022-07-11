@@ -290,7 +290,9 @@ class ShieldSettings extends Page implements HasFormActions
 
         Artisan::call('config:clear');
 
-        Artisan::call('shield:generate');
+        config('filament-shield.exclude.enabled')
+            ? Artisan::call('shield:generate --exclude')
+            : Artisan::call('shield:generate');
 
         $this->notify('success', __('filament-shield::filament-shield.generate'));
     }
