@@ -32,10 +32,6 @@ class MakeUpgradeShieldCommand extends Command
             (new Filesystem())->ensureDirectoryExists(lang_path());
             (new Filesystem())->copyDirectory(__DIR__.'/../../resources/views', resource_path('/views/vendor/filament-shield'));
 
-            $this->call('shield:publish');
-
-            $this->info('Published Shields\' config, translations, views & Resource.');
-
             if (config('filament-shield.exclude.enabled')) {
                 Artisan::call('shield:generate --exclude');
                 $this->info(Artisan::output());

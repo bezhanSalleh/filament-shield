@@ -55,7 +55,7 @@ return [
         'name' => 'Setting',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Salva',
-        'generate' => 'Salva & Genera'
+        'generate' => 'Salva & Genera',
     ],
     'labels.super_admin.toggle_input' => 'Ruolo Super Admin',
     'labels.super_admin.text_input' => 'Nome Ruolo',

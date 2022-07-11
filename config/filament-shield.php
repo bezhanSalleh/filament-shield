@@ -15,12 +15,12 @@ return [
 
     'super_admin' => [
         'enabled' => true,
-        'role_name' => 'super_admin'
+        'role_name' => 'super_admin',
     ],
 
     'filament_user' => [
         'role_name' => 'filament_user',
-        'enabled' => false
+        'enabled' => false,
     ],
 
     /*
@@ -46,8 +46,8 @@ return [
             'update',
             'export', // custom resource permission
         ],
-        'page'  =>  'view',
-        'widget' => 'view'
+        'page' => 'view',
+        'widget' => 'view',
     ],
 
     /*
@@ -90,11 +90,11 @@ return [
     'exclude' => [
         'enabled' => true,
         'pages' => [
-            'Dashboard'
+            'Dashboard',
         ],
         'widgets' => [
             'AccountWidget',
-            'FilamentInfoWidget'
+            'FilamentInfoWidget',
         ],
         'resources' => [],
     ],

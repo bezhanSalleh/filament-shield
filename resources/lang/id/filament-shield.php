@@ -55,7 +55,7 @@ return [
         'name' => 'Setting',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Simpan',
-        'generate' => 'Simpan & Generate'
+        'generate' => 'Simpan & Generate',
     ],
     'labels.super_admin.toggle_input' => 'Peran Super Admin',
     'labels.super_admin.text_input' => 'Nama Peran',

@@ -2,7 +2,6 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
@@ -32,7 +31,6 @@ class MakeInstallShieldCommand extends Command
         $this->warn('   - And/Or Assigns Filament User role if enabled in config');
         $this->info('-  Discovers filament resources and generates Permissions and Policies accordingly');
         $this->warn('   - Will override any existing policies if available');
-        $this->info('- Publishes Shield Resource & Page');
 
         $confirmed = $this->confirm('Do you wish to continue?', true);
 
@@ -129,18 +127,10 @@ class MakeInstallShieldCommand extends Command
         (new Filesystem())->ensureDirectoryExists(lang_path());
         (new Filesystem())->copyDirectory(__DIR__.'/../../resources/views', resource_path('/views/vendor/filament-shield'));
 
-        $this->call('shield:publish');
-
         $this->info('Published Shields\' translations, views & Resource.');
 
         $this->info('Creating Super Admin...');
         $this->call('shield:super-admin');
-
-        if (! collect(Filament::getResources())->containsStrict("App\\Filament\\Resources\\Shield\\RoleResource")) {
-            Filament::registerResources([
-                \App\Filament\Resources\Shield\RoleResource::class,
-            ]);
-        }
 
         if (config('filament-shield.exclude.enabled')) {
             Artisan::call('shield:generate --exclude');

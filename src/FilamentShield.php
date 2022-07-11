@@ -2,11 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
@@ -91,27 +91,30 @@ class FilamentShield
             ->unique()
             ->filter(function ($resource) {
                 if (config('filament-shield.exclude.enabled')) {
-                    return !in_array(
+                    return ! in_array(
                         Str::of($resource)->afterLast('\\'),
                         config('filament-shield.exclude.resources')
                     );
                 }
+
                 return true;
             })
             ->reduce(function ($roles, $resource) {
                 $role = str($resource)->afterLast('\\')->before('Resource')->lower()->toString();
                 $roles[$role] = $role;
+
                 return $roles;
-            },[]);
+            }, []);
     }
 
     public static function getEntityLabel(string $entity): String
     {
         $label = collect(Filament::getResources())
-                ->filter(function($resource) use($entity){
+                ->filter(function ($resource) use ($entity) {
                     return str($resource)->endsWith(str($entity)->ucfirst().'Resource');
                 })
                 ->first()::getModelLabel();
+
         return str($label)->headline();
     }
 
@@ -125,14 +128,17 @@ class FilamentShield
         return collect(static::getEntities())
             ->map(function ($entity) {
                 return collect(config('filament-shield.prefixes.resource'))
-                    ->reduce(function ($option, $permission) use ($entity) {
-                        $option[$permission . '_' . $entity] = ['label' => $permission,'value' => false];
-                        return $option;
-                    },
-                    [
-                        'label' => static::getEntityLabel($entity),
-                        'value' => false,
-                    ]);
+                    ->reduce(
+                        function ($option, $permission) use ($entity) {
+                            $option[$permission . '_' . $entity] = ['label' => $permission,'value' => false];
+
+                            return $option;
+                        },
+                        [
+                            'label' => static::getEntityLabel($entity),
+                            'value' => false,
+                        ]
+                    );
             })
             ->sortKeys()
             ->all();

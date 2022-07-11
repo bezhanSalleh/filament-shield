@@ -55,7 +55,7 @@ return [
         'name' => 'Instelling',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Bewaar',
-        'generate' => 'Bewaar & Genereer'
+        'generate' => 'Bewaar & Genereer',
     ],
     'labels.super_admin.toggle_input' => 'Super Admin Rol',
     'labels.super_admin.text_input' => 'Rolnaam',

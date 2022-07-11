@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\Shield\RoleResource\Pages;
+namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use App\Filament\Resources\Shield\RoleResource;
-use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 
 class ListRoles extends ListRecords
 {
@@ -12,13 +12,14 @@ class ListRoles extends ListRecords
 
     protected function getActions(): array
     {
-        return array_merge([
-            ButtonAction::make('setting')
+        return [
+            Actions\CreateAction::make(),
+            Actions\Action::make('setting')
                 ->label(__('filament-shield::filament-shield.page.name'))
                 ->url(static::$resource::getUrl('settings'))
                 ->icon(__('filament-shield::filament-shield.page.icon'))
                 ->color('primary')
-                ->outlined()
-        ], parent::getActions());
+                ->outlined(),
+        ];
     }
 }

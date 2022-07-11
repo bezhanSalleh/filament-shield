@@ -52,10 +52,10 @@ return [
      * Role Setting Page
      */
     'page' => [
-        'name' => 'Setting',
+        'name' => 'Shield Settings',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Save',
-        'generate' => 'Save & Generate'
+        'generate' => 'Save & Generate',
     ],
     'labels.super_admin.toggle_input' => 'Super Admin Role',
     'labels.super_admin.text_input' => 'Role Name',
