@@ -5,6 +5,7 @@ parameters:
     level: 4
     paths:
         - src
+        - tests
         - resources
     tmpDir: build/phpstan
     checkOctaneCompatibility: true

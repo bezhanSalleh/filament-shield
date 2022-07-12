@@ -4,6 +4,7 @@ namespace BezhanSalleh\FilamentShield;
 
 use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
+use BezhanSalleh\FilamentShield\Models\Setting;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
@@ -18,14 +19,23 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews()
-            ->hasCommands($this->getCommands());
+            ->hasCommands($this->getCommands())
+            ->hasMigration('create_filament_shield_settings_table')
+            ;
+    }
+
+    public function bootingPackage(): void
+    {
+
     }
 
     public function packageBooted(): void
     {
         parent::packageBooted();
-        
-        if (config('filament-shield.register_role_policy')) {
+
+        config(['filament-shield' => Setting::pluck('value','key')->toArray()]);
+
+        if (config('filament-shield.register_role_policy.enabled')) {
             \Illuminate\Support\Facades\Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
         }
     }
@@ -37,6 +47,10 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         $this->app->scoped('filament-shield', function (): \BezhanSalleh\FilamentShield\FilamentShield {
             return new \BezhanSalleh\FilamentShield\FilamentShield();
         });
+
+        $this->publishes([
+            $this->package->basePath("/../stubs/ShieldSettingSeeder.stub") => database_path('seeders/ShieldSettingSeeder.php'),
+        ], "{$this->package->shortName()}-seeder");
     }
 
     protected function getCommands(): array

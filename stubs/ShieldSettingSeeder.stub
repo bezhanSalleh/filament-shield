@@ -1,0 +1,70 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use BezhanSalleh\FilamentShield\Models\Setting;
+
+class ShieldSettingSeeder extends Seeder
+{
+    /**
+    * Run the database seeds.
+    *
+    * @return void
+    */
+    public function run()
+    {
+        /** @var array[string]mixed $settingKeys */
+        $settingKeys = [
+            'super_admin' => [
+                'enabled' => true,
+                'name'  => 'super_admin'
+            ],
+            'filament_user' => [
+                'enabled' => true,
+                'name' => 'filament_user'
+            ],
+            'prefixes' => [
+                'resource' => [
+                    'view',
+                    'view_any',
+                    'create',
+                    'delete',
+                    'delete_any',
+                    'update',
+                    'export',
+                ],
+                'page' => 'view',
+                'widget' => 'view',
+            ],
+            'entities' => [
+                'pages' => true,
+                'widgets' => true,
+                'resources' => true,
+                'custom_permissions' => false,
+            ],
+            'resource_generator_option' => [
+                'option' => 'policies_and_permissions'
+            ],
+            'exclude' => [
+                'enabled' => true,
+                'pages' => ['Dashboard'],
+                'widgets' => ['AccountWidget','FilamentInfoWidget'],
+                'resources' => [],
+            ],
+            'register_role_policy' => [
+                'enabled' => false
+            ],
+        ];
+
+        foreach ($settingKeys as $key => $value) {
+            Setting::create([
+                'key' => $key,
+                'value' => $value,
+                'default' => $value
+            ]);
+        }
+
+        $this->command->info('Shield settings created.');
+    }
+}

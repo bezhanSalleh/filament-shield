@@ -69,7 +69,10 @@
         "laravel": {
             "providers": [
                 "BezhanSalleh\\FilamentShield\\FilamentShieldServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "FilamentShield": "BezhanSalleh\\FilamentShield\\Facades\\FilamentShield"
+            }
         }
     },
     "minimum-stability": "dev",

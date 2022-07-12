@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Permission;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 class RoleResource extends Resource
@@ -212,33 +213,13 @@ class RoleResource extends Resource
     | Resource Related Logic Start     |
     *----------------------------------*/
 
-    protected static function getResourceEntities(): ?array
-    {
-        return collect(
-            /** @phpstan-ignore-next-line */
-            Filament::getResources()
-        )
-            ->filter(function ($resource) {
-                if (config('filament-shield.exclude.enabled')) {
-                    return ! in_array(Str::of($resource)->afterLast('\\'), config('filament-shield.exclude.resources'));
-                }
-
-                return true;
-            })
-            ->reduce(function ($roles, $resource) {
-                $role = Str::lower(Str::before(Str::afterLast($resource, '\\'), 'Resource'));
-                $roles[$role] = $role;
-
-                return $roles;
-            }, []);
-    }
-
     public static function getResourceEntitiesSchema(): ?array
     {
-        return collect(static::getResourceEntities())->reduce(function ($entities, $entity) {
+        return collect(FilamentShield::getEntities())->sortKeys()->reduce(function ($entities, $entity) {
             $entities[] = Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Toggle::make($entity)
+                            ->label(FilamentShield::getEntityLabel($entity))
                             ->onIcon('heroicon-s-lock-open')
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
@@ -306,7 +287,7 @@ class RoleResource extends Resource
 
     protected static function refreshSelectAllStateViaEntities(Closure $set, Closure $get): void
     {
-        $entitiesStates = collect(static::getResourceEntities())
+        $entitiesStates = collect(FilamentShield::getEntities())
             ->when(config('filament-shield.entities.pages'), fn ($entities) => $entities->merge(static::getPageEntities()))
             ->when(config('filament-shield.entities.widgets'), fn ($entities) => $entities->merge(static::getWidgetEntities()))
             ->when(config('filament-shield.entities.custom_permissions'), fn ($entities) => $entities->merge(static::getCustomEntities()))
@@ -325,7 +306,7 @@ class RoleResource extends Resource
 
     protected static function refreshEntitiesStatesViaSelectAll(Closure $set, $state): void
     {
-        collect(static::getResourceEntities())->each(function ($entity) use ($set, $state) {
+        collect(FilamentShield::getEntities())->each(function ($entity) use ($set, $state) {
             $set($entity, $state);
             collect(config('filament-shield.prefixes.resource'))->each(function ($permission) use ($entity, $set, $state) {
                 $set($permission.'_'.$entity, $state);
@@ -518,7 +499,7 @@ class RoleResource extends Resource
     protected static function getCustomEntities(): ?Collection
     {
         $resourcePermissions = collect();
-        collect(static::getResourceEntities())->each(function ($entity) use ($resourcePermissions) {
+        collect(FilamentShield::getEntities())->each(function ($entity) use ($resourcePermissions) {
             collect(config('filament-shield.prefixes.resource'))->map(function ($permission) use ($resourcePermissions, $entity) {
                 $resourcePermissions->push((string) Str::of($permission.'_'.$entity));
             });

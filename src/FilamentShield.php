@@ -58,8 +58,8 @@ class FilamentShield
     {
         if (config('filament-shield.super_admin.enabled')) {
             $superAdmin = Role::firstOrCreate(
-                ['name' => config('filament-shield.super_admin.role_name')],
-                ['guard_name' => config('filament.auth.guard')]
+                ['name' => config('filament-shield.super_admin.name')],
+                ['guard_name' => config('filament.auth.guard') ?? 'web']
             );
 
             $superAdmin->givePermissionTo($permissions);
@@ -71,7 +71,7 @@ class FilamentShield
     {
         if (config('filament-shield.filament_user.enabled')) {
             $filamentUser = Role::firstOrCreate(
-                ['name' => config('filament-shield.filament_user.role_name')],
+                ['name' => config('filament-shield.filament_user.name')],
                 ['guard_name' => config('filament.auth.guard')]
             );
 
@@ -81,11 +81,11 @@ class FilamentShield
     }
 
     /**
-     * Return Resources as key value paire of Entities
+     * Return Resources as key value pair of Entities
      *
-     * @return void
+     * @return array|null
      */
-    public static function getEntities()
+    public static function getEntities(): ?array
     {
         return collect(Filament::getResources())
             ->unique()
@@ -100,22 +100,28 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($roles, $resource) {
-                $role = str($resource)->afterLast('\\')->before('Resource')->lower()->toString();
+                $role = Str::of($resource)->afterLast('\\')->before('Resource')->lower()->toString();
                 $roles[$role] = $role;
 
                 return $roles;
             }, []);
     }
 
+    /**
+     * Get the label for the given entity (Resource)
+     *
+     * @param string $entity
+     * @return String
+     */
     public static function getEntityLabel(string $entity): String
     {
         $label = collect(Filament::getResources())
                 ->filter(function ($resource) use ($entity) {
-                    return str($resource)->endsWith(str($entity)->ucfirst().'Resource');
+                    return Str::of($resource)->endsWith(Str::of($entity)->ucfirst().'Resource');
                 })
                 ->first()::getModelLabel();
 
-        return str($label)->headline();
+        return Str::of($label)->headline();
     }
 
     /**

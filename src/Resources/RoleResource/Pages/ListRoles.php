@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
 
 class ListRoles extends ListRecords
 {

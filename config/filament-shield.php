@@ -77,7 +77,9 @@ return [
     | Supported options: "policies_and_permissions", "policies", "permissions"
     */
 
-    'resources_generator_option' => 'policies_and_permissions',
+    'resources_generator_option' => [
+        'option' => 'policies_and_permissions'
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -102,5 +104,7 @@ return [
     /**
      * Register `RolePolicy` for `RoleResource`
      */
-    'register_role_policy' => true,
+    'register_role_policy' => [
+        'enabled' => false
+    ],
 ];
