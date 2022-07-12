@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Models\Setting;
 use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
-use BezhanSalleh\FilamentShield\Models\Setting;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
@@ -21,19 +21,18 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             ->hasViews()
             ->hasCommands($this->getCommands())
             ->hasMigration('create_filament_shield_settings_table')
-            ;
+        ;
     }
 
     public function bootingPackage(): void
     {
-
     }
 
     public function packageBooted(): void
     {
         parent::packageBooted();
 
-        config(['filament-shield' => Setting::pluck('value','key')->toArray()]);
+        config(['filament-shield' => Setting::pluck('value', 'key')->toArray()]);
 
         if (config('filament-shield.register_role_policy.enabled')) {
             \Illuminate\Support\Facades\Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');

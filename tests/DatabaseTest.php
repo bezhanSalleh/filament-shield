@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
 use BezhanSalleh\FilamentShield\Models\Setting;
+use Illuminate\Support\Facades\Schema;
 
 use function PHPUnit\Framework\assertNotEmpty;
 
@@ -23,11 +23,11 @@ it('can validate column names', function () {
         $table->string('value');
         $table->string('default');
     });
-    $columnsStatus = Schema::hasColumns('filament_shield_settings',[
+    $columnsStatus = Schema::hasColumns('filament_shield_settings', [
         'id',
         'key',
         'value',
-        'default'
+        'default',
     ]);
 
     expect($columnsStatus)->toBeTrue();
@@ -43,10 +43,9 @@ it('can create config', function () {
 
     Setting::factory()->create();
 
-    config(['filament-shield' => Setting::pluck('value','default')]);
+    config(['filament-shield' => Setting::pluck('value', 'default')]);
 
     expect(config()->has('filament-shield'))->toBeTrue();
 
     assertNotEmpty(config('filament-shield.shield'));
-
 });
