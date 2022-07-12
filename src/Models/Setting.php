@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
@@ -31,7 +31,7 @@ class Setting extends Model
     protected $fillable = [
         'key',
         'value',
-        'default'
+        'default',
     ];
 
     /**
@@ -43,5 +43,4 @@ class Setting extends Model
         'value' => AsArrayObject::class,
         'default' => AsArrayObject::class,
     ];
-
 }
