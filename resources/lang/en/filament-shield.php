@@ -56,6 +56,8 @@ return [
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Save',
         'generate' => 'Save & Generate',
+        'load_default_settings' => 'Load Default Settings',
+        'cancel' => 'Cancel'
     ],
     'labels.super_admin.toggle_input' => 'Super Admin Role',
     'labels.super_admin.text_input' => 'Role Name',
@@ -92,6 +94,7 @@ return [
      * Messages
      */
     'forbidden' => 'You do not have permission to access',
-    'update' => 'Renewed Shield\'s Config!',
-    'generate' => 'Renewed Shield\'s Config & Generated Permissions w/o Policies!',
+    'update' => 'Shield\'s config updated!',
+    'generate' => 'Updated Shield\'s config & Generated Permissions and/or Policies based on the new config.',
+    'loaded_default_settings' => 'Loaded Shield\'s default settings.'
 ];

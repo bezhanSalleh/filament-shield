@@ -91,14 +91,16 @@ return [
 
     'exclude' => [
         'enabled' => true,
-        'pages' => [
+        'ppages' => [
             'Dashboard',
         ],
-        'widgets' => [
+        'wwidgets' => [
             'AccountWidget',
             'FilamentInfoWidget',
         ],
-        'resources' => [],
+        'resources' => [
+            'RoleResource'
+        ],
     ],
 
     /**

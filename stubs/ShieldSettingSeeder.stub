@@ -43,14 +43,20 @@ class ShieldSettingSeeder extends Seeder
                 'resources' => true,
                 'custom_permissions' => false,
             ],
-            'resource_generator_option' => [
+            'resource_generator' => [
                 'option' => 'policies_and_permissions'
             ],
             'exclude' => [
                 'enabled' => true,
-                'pages' => ['Dashboard'],
-                'widgets' => ['AccountWidget','FilamentInfoWidget'],
-                'resources' => [],
+                'pages' => [
+                    'Dashboard',
+                ],
+                'widgets' => [
+                    'AccountWidget','FilamentInfoWidget',
+                ],
+                'resources' => [
+                    'RoleResource',
+                ],
             ],
             'register_role_policy' => [
                 'enabled' => false
