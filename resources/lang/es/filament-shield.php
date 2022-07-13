@@ -6,7 +6,7 @@ return [
     | Table Columns
     |--------------------------------------------------------------------------
     */
-    
+
     'column.name' => 'Nombre',
     'column.guard_name' => 'Guard',
     'column.roles' => 'Roles',
@@ -23,7 +23,7 @@ return [
     'field.guard_name' => 'Guard',
     'field.permissions' => 'Permisos',
     'field.select_all.name' => 'Seleccionar todos',
-    'field.select_all.message' => 'Habilitar todos los permisos actualmente <span class="text-primary font-medium">habilitados</span> para este rol',    
+    'field.select_all.message' => 'Habilitar todos los permisos actualmente <span class="text-primary font-medium">habilitados</span> para este rol',
 
     /*
     |--------------------------------------------------------------------------
@@ -94,6 +94,4 @@ return [
     'forbidden' => 'Usted no tiene permiso de acceso',
     'update' => '¡La configuración del Shield ha sido renovada!',
     'generate' => '¡La configuración del Shield ha sido renovada y se han generado los permisos y/o políticas!',
-
 ];
-
