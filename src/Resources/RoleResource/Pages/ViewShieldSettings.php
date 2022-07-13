@@ -2,17 +2,17 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use Filament\Forms;
-use Filament\Pages\Actions;
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
-use Filament\Resources\Pages\Page;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\Artisan;
-use Filament\Pages\Contracts\HasFormActions;
 use BezhanSalleh\FilamentShield\Models\Setting;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use Filament\Facades\Filament;
+use Filament\Forms;
+use Filament\Pages\Actions;
+use Filament\Pages\Contracts\HasFormActions;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
+use Filament\Resources\Pages\Page;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class ViewShieldSettings extends Page implements HasFormActions
 {
@@ -31,7 +31,7 @@ class ViewShieldSettings extends Page implements HasFormActions
     {
         static::authorizeResourceAccess();
 
-        $this->form->fill(Setting::pluck('value','key')->toArray());
+        $this->form->fill(Setting::pluck('value', 'key')->toArray());
     }
 
     protected function getFormSchema(): array
@@ -50,7 +50,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                                 ->reactive(),
                             Forms\Components\TextInput::make('super_admin.name')
                                 ->label(__('filament-shield::filament-shield.labels.super_admin.text_input'))
-                                ->afterStateHydrated(function($set, $state){
+                                ->afterStateHydrated(function ($set, $state) {
                                     $set('super_admin.name', Str::of($state)->snake()->toString());
                                 })
                                 ->visible(fn ($get) => $get('super_admin.enabled'))
@@ -179,6 +179,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                                             collect(Filament::getResources())
                                                 ->reduce(function ($resources, $resource) {
                                                     $resources[Str::afterLast($resource, '\\')] = Str::afterLast($resource, '\\');
+
                                                     return $resources;
                                                 }, collect())->toArray()
                                         )
@@ -203,7 +204,8 @@ class ViewShieldSettings extends Page implements HasFormActions
                                         ->multiple()
                                         ->label(__("filament-shield::filament-shield.labels.exclude.widgets"))
                                         ->placeholder(__("filament-shield::filament-shield.labels.exclude.widgets.placeholder"))
-                                        ->options(collect(Filament::getWidgets())
+                                        ->options(
+                                            collect(Filament::getWidgets())
                                             ->reduce(function ($widgets, $widget) {
                                                 $name = Str::of($widget)
                                                         ->after('Widgets\\')
@@ -213,7 +215,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                                                 return $widgets;
                                             }, collect())->toArray()
                                         )
-                                        ->preload()
+                                        ->preload(),
 
                                 ])
                                 ->columns(3),
@@ -230,18 +232,17 @@ class ViewShieldSettings extends Page implements HasFormActions
 
         foreach ($data as $key => $value) {
             Setting::updateOrCreate([
-                'key' => $key
-            ],[
+                'key' => $key,
+            ], [
                 'value' => $value,
             ]);
         }
 
-        config()->set('filament-shield', Setting::pluck('value','key')->toArray());
+        config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
 
         if ($notify) {
             $this->notify('success', __('filament-shield::filament-shield.update'));
         }
-
     }
 
     protected function getFormActions(): array
@@ -255,7 +256,7 @@ class ViewShieldSettings extends Page implements HasFormActions
 
             Actions\Action::make('generate')
                 ->label(__('filament-shield::filament-shield.page.generate'))
-                ->action(function() {
+                ->action(function () {
                     $this->save(false);
 
                     config('filament-shield.exclude.enabled')
@@ -269,14 +270,12 @@ class ViewShieldSettings extends Page implements HasFormActions
 
             Actions\Action::make('load_defaults')
                 ->label(__('filament-shield::filament-shield.page.load_default_settings'))
-                ->action(function() {
-
-                    $this->form->fill(Setting::pluck('default','key')->toArray());
+                ->action(function () {
+                    $this->form->fill(Setting::pluck('default', 'key')->toArray());
 
                     $this->save(false);
 
                     $this->notify('success', __('filament-shield::filament-shield.loaded_default_settings'));
-
                 })
                 ->requiresConfirmation()
                 ->color('warning'),
@@ -284,7 +283,7 @@ class ViewShieldSettings extends Page implements HasFormActions
             Actions\Action::make('cancel')
                 ->modalCancelAction()
                 ->label(__('filament-shield::filament-shield.page.cancel'))
-                ->color('secondary')
+                ->color('secondary'),
 
         ];
     }

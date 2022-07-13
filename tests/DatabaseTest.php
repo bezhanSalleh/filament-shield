@@ -1,6 +1,7 @@
 <?php
 
 use BezhanSalleh\FilamentShield\Models\Setting;
+
 use Illuminate\Support\Facades\Schema;
 
 use function PHPUnit\Framework\assertNotEmpty;

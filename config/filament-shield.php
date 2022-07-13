@@ -78,7 +78,7 @@ return [
     */
 
     'resources_generator_option' => [
-        'option' => 'policies_and_permissions'
+        'option' => 'policies_and_permissions',
     ],
 
     /*
@@ -99,7 +99,7 @@ return [
             'FilamentInfoWidget',
         ],
         'resources' => [
-            'RoleResource'
+            'RoleResource',
         ],
     ],
 
@@ -107,6 +107,6 @@ return [
      * Register `RolePolicy` for `RoleResource`
      */
     'register_role_policy' => [
-        'enabled' => false
+        'enabled' => false,
     ],
 ];

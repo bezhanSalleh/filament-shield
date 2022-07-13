@@ -2,10 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Models\Setting;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelPackageTools\Package;
-use BezhanSalleh\FilamentShield\Models\Setting;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
