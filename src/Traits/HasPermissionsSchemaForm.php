@@ -73,7 +73,7 @@ trait HasPermissionsSchemaForm
     {
         return collect(config('filament-shield.prefixes.resource'))->reduce(function ($permissions, $permission) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity)
-                ->label(Str::headline($permission))
+                ->label(__('filament-shield::filament-shield.prefixes.resources.'.$permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
                 ->afterStateHydrated(function (Closure $set, Closure $get, $record) use($entity, $permission) {
                     if (is_null($record)) return;

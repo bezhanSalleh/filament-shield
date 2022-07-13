@@ -94,4 +94,21 @@ return [
     'forbidden' => 'You do not have permission to access',
     'update' => 'Renewed Shield\'s Config!',
     'generate' => 'Renewed Shield\'s Config & Generated Permissions w/o Policies!',
+
+    /**
+     * Prefixes
+     */
+    'prefixes' => [
+        'resources' => [
+            'view' => 'View',
+            'view_any' => 'View Any',
+            'create' => 'Create',
+            'delete' => 'Delete',
+            'delete_any' => 'Delete Any',
+            'update' => 'Update',
+            'restore' => 'Restore',
+            'restore_any' => 'Restore Any',
+            'export' => 'Export',
+        ]
+    ],
 ];

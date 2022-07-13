@@ -94,4 +94,21 @@ return [
     'forbidden' => 'Usted no tiene permiso de acceso',
     'update' => '¡La configuración del Shield ha sido renovada!',
     'generate' => '¡La configuración del Shield ha sido renovada y se han generado los permisos y/o políticas!',
+
+    /**
+     * Prefixes
+     */
+    'prefixes' => [
+        'resources' => [
+            'view' => 'Ver',
+            'view_any' => 'Ver Algunos',
+            'create' => 'Crear',
+            'delete' => 'Eliminar',
+            'delete_any' => 'Eliminar Algunos',
+            'update' => 'Editar',
+            'restore' => 'Restaurar',
+            'restore_any' => 'Restaurar Algunos',
+            'export' => 'Exportar',
+        ]
+    ],
 ];
