@@ -2,6 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Contracts\HasPermissions;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
@@ -21,50 +22,61 @@ class MakeGenerateShieldCommand extends Command
 
     public function handle(): int
     {
-        if ($this->option('exclude') && config('filament-shield.exclude.enabled')) {
-            $exceptResources = config('filament-shield.exclude.resources');
-            $removedExcludedResources = collect(Filament::getResources())->filter(function ($resource) use ($exceptResources) {
-                return ! in_array(Str::of($resource)->afterLast('\\'), $exceptResources);
-            });
-            if (config('filament-shield.entities.resources')) {
-                $resources = $this->generateForResources($removedExcludedResources->toArray());
-                $this->resourceInfo($resources->toArray());
-            }
-            $exceptPages = config('filament-shield.exclude.pages');
-            $removedExcludedPages = collect(Filament::getPages())->filter(function ($page) use ($exceptPages) {
-                return ! in_array(Str::afterLast($page, '\\'), $exceptPages);
-            });
-            if (config('filament-shield.entities.pages')) {
-                $pages = $this->generateForPages($removedExcludedPages->toArray());
-                $this->pageInfo($pages->toArray());
-            }
-            $exceptWidgets = config('filament-shield.exclude.widgets');
-            $removedExcludedWidgets = collect(Filament::getWidgets())->filter(function ($widget) use ($exceptWidgets) {
-                return ! in_array(Str::afterLast($widget, '\\'), $exceptWidgets);
-            });
-            if (config('filament-shield.entities.pages')) {
-                $widgets = $this->generateForWidgets($removedExcludedWidgets->toArray());
-                $this->widgetInfo($widgets->toArray());
-            }
-        } else {
-            if (config('filament-shield.entities.resources')) {
-                $resources = $this->generateForResources(Filament::getResources());
-                $this->resourceInfo($resources->toArray());
-            }
-            if (config('filament-shield.entities.pages')) {
-                $pages = $this->generateForPages(Filament::getPages());
-                $this->pageInfo($pages->toArray());
-            }
-            if (config('filament-shield.entities.widgets')) {
-                $widgets = $this->generateForWidgets(Filament::getWidgets());
-                $this->widgetInfo($widgets->toArray());
-            } else {
-                $this->comment('Please enable `entities` from config first.');
-            }
+        $resources = collect(Filament::getResources());
+        $pages = collect(Filament::getPages());
+        $widgets = collect(Filament::getWidgets());
+
+        if ($this->isExcludeEnabled()) {
+            $excepts = config('filament-shield.exclude.pages');
+            $pages = collect($pages)
+                ->filter(
+                    function ($page) use ($excepts) {
+                        return !in_array(Str::afterLast($page, '\\'), $excepts);
+                    }
+                );
+
+            $excepts = config('filament-shield.exclude.widgets');
+            $widgets = collect($widgets)
+                ->filter(
+                    function ($widget) use ($excepts) {
+                        return !in_array(Str::afterLast($widget, '\\'), $excepts);
+                    }
+                );
         }
+
+        if (config('filament-shield.entities.resources')) {
+            $resources = $resources
+                ->filter(
+                    fn($resource) => in_array(HasPermissions::class, class_implements($resource))
+                );
+
+            $resources = $this->generateForResources($resources->toArray());
+
+            $this->resourceInfo($resources->toArray());
+        }
+
+        if (config('filament-shield.entities.pages')) {
+            $pages = $this->generateForPages($pages);
+
+            $this->pageInfo($pages->toArray());
+        }
+
+        if (config('filament-shield.entities.widgets')) {
+            $widgets = $this->generateForWidgets($widgets);
+
+            $this->widgetInfo($widgets->toArray());
+        } else {
+            $this->comment('Please enable `entities` from config first.');
+        }
+
         $this->info('Enjoy!');
 
         return self::SUCCESS;
+    }
+
+    protected function isExcludeEnabled(): bool
+    {
+        return $this->option('exclude') && config('filament-shield.exclude.enabled');
     }
 
     protected function generateForResources(array $resources): Collection
