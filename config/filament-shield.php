@@ -96,7 +96,6 @@ return [
             'AccountWidget',
             'FilamentInfoWidget'
         ],
-        'resources' => [],
     ],
 
     /**
