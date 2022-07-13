@@ -41,6 +41,7 @@ trait HasPermissionsSchemaForm
                         ->onIcon('heroicon-s-lock-open')
                         ->offIcon('heroicon-s-lock-closed')
                         ->reactive()
+                        ->label(__(Str::headline($entity)))
                         ->afterStateUpdated(function (Closure $set,Closure $get, $state) use($entity) {
 
                             collect(config('filament-shield.prefixes.resource'))->each(function ($permission) use($set, $entity, $state) {
@@ -217,10 +218,12 @@ trait HasPermissionsSchemaForm
     protected static function getPageEntityPermissionsSchema(): ?array
     {
         return collect(static::getPageEntities())->reduce(function($pages,$page) {
+            $entity = Str::of($page)->after(config('filament-shield.prefixes.page').'_')->headline();
+
             $pages[] = Forms\Components\Grid::make()
                 ->schema([
                     Forms\Components\Checkbox::make($page)
-                        ->label(Str::of($page)->after(config('filament-shield.prefixes.page').'_')->headline())
+                        ->label(__($entity))
                         ->inline()
                         ->afterStateHydrated(function (Closure $set, Closure $get, $record) use($page) {
                             if (is_null($record)) return;
