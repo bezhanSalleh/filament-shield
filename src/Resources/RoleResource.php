@@ -2,6 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
+use BezhanSalleh\FilamentShield\Contracts\HasPermissions;
+use BezhanSalleh\FilamentShield\Traits\HasDefaultPermissions;
 use Closure;
 use Filament\Forms;
 use Filament\Tables;
@@ -16,8 +18,10 @@ use Spatie\Permission\Models\Permission;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use Illuminate\Support\Collection;
 
-class RoleResource extends Resource
+class RoleResource extends Resource implements HasPermissions
 {
+    use HasDefaultPermissions;
+
     protected static ?string $model = Role::class;
 
     protected static ?int $navigationSort = -1;
