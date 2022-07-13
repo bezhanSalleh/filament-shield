@@ -10,17 +10,22 @@ use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
 {
-    public static function generateForResource(string $resource): void
+    public static function generateForResource(string $resource, array $prefixes): void
     {
         if (config('filament-shield.entities.resources')) {
             $permissions = collect();
-            collect(config('filament-shield.prefixes.resource'))
-                ->each(function ($prefix) use ($resource, $permissions) {
-                    $permissions->push(Permission::firstOrCreate(
-                        ['name' => $prefix.'_'.Str::lower($resource)],
-                        ['guard_name' => config('filament.auth.guard')]
-                    ));
-                });
+
+            collect($prefixes)
+                ->each(
+                    function ($prefix) use ($resource, $permissions) {
+                        $permissions->push(
+                            Permission::firstOrCreate(
+                                ['name' => $prefix.'_'.Str::lower($resource)],
+                                ['guard_name' => config('filament.auth.guard')]
+                            )
+                        );
+                    }
+                );
 
             static::giveSuperAdminPermission($permissions);
             static::giveFilamentUserPermission($permissions);
