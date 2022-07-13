@@ -56,13 +56,13 @@ class MakeGenerateShieldCommand extends Command
         }
 
         if (config('filament-shield.entities.pages')) {
-            $pages = $this->generateForPages($pages);
+            $pages = $this->generateForPages($pages->toArray());
 
             $this->pageInfo($pages->toArray());
         }
 
         if (config('filament-shield.entities.widgets')) {
-            $widgets = $this->generateForWidgets($widgets);
+            $widgets = $this->generateForWidgets($widgets->toArray());
 
             $this->widgetInfo($widgets->toArray());
         } else {
