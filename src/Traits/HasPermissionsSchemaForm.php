@@ -301,36 +301,42 @@ trait HasPermissionsSchemaForm
 
     protected static function getCustomEntitiesPermissionSchema(): ?array
     {
-        return collect(static::getCustomEntities())->reduce(function ($customEntities, $customPermission) {
-            $customEntities[] = Forms\Components\Grid::make()
-                ->schema([
-                    Forms\Components\Checkbox::make($customPermission)
-                        ->label(Str::of($customPermission)->headline())
-                        ->inline()
-                        ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($customPermission) {
-                            if (is_null($record)) {
-                                return;
-                            }
+        return collect(static::getCustomEntities())
+            ->reduce(
+                function ($customEntities, $customPermission) {
+                    $customEntities[] = Forms\Components\Grid::make()
+                        ->schema([
+                            Forms\Components\Checkbox::make($customPermission)
+                                ->label(Str::of($customPermission)->headline())
+                                ->inline()
+                                ->afterStateHydrated(
+                                    function (Closure $set, Closure $get, $record) use ($customPermission) {
+                                        if (is_null($record)) {
+                                            return;
+                                        }
 
-                            $set($customPermission, $record->checkPermissionTo($customPermission));
+                                        $set($customPermission, $record->checkPermissionTo($customPermission));
 
-                            static::refreshSelectAllStateViaEntities($set, $get);
-                        })
-                        ->reactive()
-                        ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                            if (!$state) {
-                                $set('select_all', false);
-                            }
+                                        static::refreshSelectAllStateViaEntities($set, $get);
+                                    }
+                                )
+                                ->reactive()
+                                ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                                    if (!$state) {
+                                        $set('select_all', false);
+                                    }
 
-                            static::refreshSelectAllStateViaEntities($set, $get);
-                        })
-                        ->dehydrated(fn($state): bool => $state),
-                ])
-                ->columns(1)
-                ->columnSpan(1);
+                                    static::refreshSelectAllStateViaEntities($set, $get);
+                                })
+                                ->dehydrated(fn($state): bool => $state),
+                        ])
+                        ->columns(1)
+                        ->columnSpan(1);
 
-            return $customEntities;
-        }, []);
+                    return $customEntities;
+                },
+                []
+            );
     }
 
     /*
