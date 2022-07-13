@@ -118,7 +118,7 @@ class RoleResource extends Resource implements HasPermissions
                                             'sm' => 3,
                                             'lg' => 4,
                                         ])
-                                        ->schema(static::getCustomEntitiesPermisssionSchema())
+                                        ->schema(static::getCustomEntitiesPermissionSchema())
                                         ->columns([
                                             'sm' => 3,
                                             'lg' => 4
