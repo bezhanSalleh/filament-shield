@@ -368,9 +368,9 @@ trait HasPermissionsSchemaForm
                 config('filament-shield.entities.custom_permissions'),
                 fn($entities) => $entities->merge(static::getCustomEntities())
             )
-            ->map(function ($resource, $entity) use ($get) {
-                return (bool)$get($entity);
-            });
+            ->map(
+                fn($resource, $entity) => (bool)$get($entity)
+            );
 
         if ($entitiesStates->containsStrict(false) === false) {
             $set('select_all', true);
@@ -407,7 +407,9 @@ trait HasPermissionsSchemaForm
         });
 
         collect(static::getWidgetEntities())->each(function ($widget) use ($set, $state) {
-            $set($widget, $state);
+            if (config('filament-shield.entities.widgets')) {
+                $set($widget, $state);
+            }
         });
 
         static::getCustomEntities()->each(function ($custom) use ($set, $state) {
