@@ -97,7 +97,6 @@ class MakeInstallShieldCommand extends Command
 
         $this->info('Core Package config published.');
 
-
         if ($fresh) {
             try {
                 Schema::disableForeignKeyConstraints();
@@ -135,12 +134,6 @@ class MakeInstallShieldCommand extends Command
 
         $this->info('Creating Super Admin...');
         $this->call('shield:super-admin');
-
-        if (! collect(Filament::getResources())->containsStrict("App\\Filament\\Resources\\Shield\\RoleResource")) {
-            Filament::registerResources([
-                \App\Filament\Resources\Shield\RoleResource::class,
-            ]);
-        }
 
         if (config('filament-shield.exclude.enabled')) {
             Artisan::call('shield:generate --exclude');
