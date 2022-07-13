@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Shield;
+namespace BezhanSalleh\FilamentShield\Resources;
 
 use Closure;
 use Filament\Forms;
@@ -13,7 +13,7 @@ use Filament\Resources\Resource;
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Permission;
-use App\Filament\Resources\Shield\RoleResource\Pages;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use Illuminate\Support\Collection;
 
 class RoleResource extends Resource
@@ -23,7 +23,7 @@ class RoleResource extends Resource
     protected static ?int $navigationSort = -1;
 
     protected static ?string $slug = 'shield/roles';
-    
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources\Shield\RoleResource\Pages;
+namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Filament\Resources\Pages\EditRecord;
 use Spatie\Permission\Models\Permission;
-use App\Filament\Resources\Shield\RoleResource;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 
 class EditRole extends EditRecord
 {

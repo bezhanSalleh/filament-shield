@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Shield\RoleResource\Pages;
+namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 use Closure;
 use Filament\Forms;
@@ -13,7 +13,7 @@ use Filament\Pages\Actions\ButtonAction;
 use League\CommonMark\MarkdownConverter;
 use League\CommonMark\CommonMarkConverter;
 use Filament\Pages\Contracts\HasFormActions;
-use App\Filament\Resources\Shield\RoleResource;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Commands\Concerns;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
 
