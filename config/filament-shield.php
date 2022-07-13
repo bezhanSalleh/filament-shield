@@ -2,6 +2,10 @@
 
 return [
 
+    'resources' => [
+        'roles' => \BezhanSalleh\FilamentShield\Resources\RoleResource::class
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Default Roles
@@ -46,7 +50,7 @@ return [
             'update',
             'export', // custom resource permission
         ],
-        'page'  =>  'view',
+        'page' => 'view',
         'widget' => 'view'
     ],
 

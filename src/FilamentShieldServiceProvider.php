@@ -46,4 +46,9 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             Commands\MakeSuperAdminShieldCommand::class,
         ];
     }
+
+    protected function getResources(): array
+    {
+        return config('filament-shield.resources');
+    }
 }
