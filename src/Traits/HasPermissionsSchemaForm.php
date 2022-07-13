@@ -181,32 +181,7 @@ trait HasPermissionsSchemaForm
                         ->headline()
                         ->toString();
 
-                    $pages[] = Forms\Components\Grid::make()
-                        ->schema([
-                            Forms\Components\Checkbox::make($page)
-                                ->label(__($entity))
-                                ->inline()
-                                ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($page) {
-                                    if (is_null($record)) {
-                                        return;
-                                    }
-
-                                    $set($page, $record->checkPermissionTo($page));
-
-                                    static::refreshSelectAllStateViaEntities($set, $get);
-                                })
-                                ->reactive()
-                                ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                                    if (!$state) {
-                                        $set('select_all', false);
-                                    }
-
-                                    static::refreshSelectAllStateViaEntities($set, $get);
-                                })
-                                ->dehydrated(fn($state): bool => $state),
-                        ])
-                        ->columns(1)
-                        ->columnSpan(1);
+                    $pages[] = static::schemaForNotResourcePermissions($page, $entity);
 
                     return $pages;
                 },
@@ -249,32 +224,7 @@ trait HasPermissionsSchemaForm
                         ->headline()
                         ->toString();
 
-                    $widgets[] = Forms\Components\Grid::make()
-                        ->schema([
-                            Forms\Components\Checkbox::make($widget)
-                                ->label(__($entity))
-                                ->inline()
-                                ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($widget) {
-                                    if (is_null($record)) {
-                                        return;
-                                    }
-
-                                    $set($widget, $record->checkPermissionTo($widget));
-
-                                    static::refreshSelectAllStateViaEntities($set, $get);
-                                })
-                                ->reactive()
-                                ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                                    if (!$state) {
-                                        $set('select_all', false);
-                                    }
-
-                                    static::refreshSelectAllStateViaEntities($set, $get);
-                                })
-                                ->dehydrated(fn($state): bool => $state),
-                        ])
-                        ->columns(1)
-                        ->columnSpan(1);
+                    $widgets[] = static::schemaForNotResourcePermissions($widget, $entity);
 
                     return $widgets;
                 },
@@ -317,35 +267,10 @@ trait HasPermissionsSchemaForm
     {
         return collect(static::getCustomEntities())
             ->reduce(
-                function ($customEntities, $customPermission) {
-                    $customEntities[] = Forms\Components\Grid::make()
-                        ->schema([
-                            Forms\Components\Checkbox::make($customPermission)
-                                ->label(Str::of($customPermission)->headline())
-                                ->inline()
-                                ->afterStateHydrated(
-                                    function (Closure $set, Closure $get, $record) use ($customPermission) {
-                                        if (is_null($record)) {
-                                            return;
-                                        }
+                function ($entities, $permission) {
+                    $entity = Str::of($permission)->headline()->toString();
 
-                                        $set($customPermission, $record->checkPermissionTo($customPermission));
-
-                                        static::refreshSelectAllStateViaEntities($set, $get);
-                                    }
-                                )
-                                ->reactive()
-                                ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
-                                    if (!$state) {
-                                        $set('select_all', false);
-                                    }
-
-                                    static::refreshSelectAllStateViaEntities($set, $get);
-                                })
-                                ->dehydrated(fn($state): bool => $state),
-                        ])
-                        ->columns(1)
-                        ->columnSpan(1);
+                    $customEntities[] = static::schemaForNotResourcePermissions($permission, $entity);
 
                     return $customEntities;
                 },
@@ -507,5 +432,43 @@ trait HasPermissionsSchemaForm
             $set($entity, false);
             $set('select_all', false);
         }
+    }
+
+    /**
+     * Form schema (checkbox) for pages, widgets and custom permissions.
+     *
+     * @param          $component
+     * @param  string  $entity
+     *
+     * @return Forms\Components\Grid
+     */
+    public static function schemaForNotResourcePermissions($component, string $entity): Forms\Components\Grid
+    {
+        return Forms\Components\Grid::make()
+            ->schema([
+                Forms\Components\Checkbox::make($component)
+                    ->label(__($entity))
+                    ->inline()
+                    ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($component) {
+                        if (is_null($record)) {
+                            return;
+                        }
+
+                        $set($component, $record->checkPermissionTo($component));
+
+                        static::refreshSelectAllStateViaEntities($set, $get);
+                    })
+                    ->reactive()
+                    ->afterStateUpdated(function (Closure $set, Closure $get, $state) {
+                        if (!$state) {
+                            $set('select_all', false);
+                        }
+
+                        static::refreshSelectAllStateViaEntities($set, $get);
+                    })
+                    ->dehydrated(fn($state): bool => $state),
+            ])
+            ->columns(1)
+            ->columnSpan(1);
     }
 }
