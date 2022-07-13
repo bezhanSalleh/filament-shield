@@ -277,20 +277,26 @@ trait HasPermissionsSchemaForm
     protected static function getCustomEntities(): ?Collection
     {
         $resourcePermissions = collect();
-        collect(static::getResourceEntities())->each(function ($entity) use ($resourcePermissions) {
-            collect(config('filament-shield.prefixes.resource'))->map(
-                function ($permission) use ($resourcePermissions, $entity) {
-                    $resourcePermissions->push((string)Str::of($permission.'_'.$entity));
+
+        collect(static::getResourceEntities())
+            ->each(
+                function ($resource, $entity) use ($resourcePermissions) {
+                    collect(config('filament-shield.prefixes.resource'))->map(
+                        function ($permission) use ($resourcePermissions, $entity) {
+                            $resourcePermissions->push((string)Str::of($permission.'_'.$entity));
+                        }
+                    );
                 }
             );
-        });
 
         $entitiesPermissions = $resourcePermissions
             ->merge(static::getPageEntities())
             ->merge(static::getWidgetEntities())
             ->values();
 
-        return Permission::whereNotIn('name', $entitiesPermissions)->pluck('name');
+        return Permission::query()
+            ->whereNotIn('name', $entitiesPermissions)
+            ->pluck('name');
     }
 
     protected static function getCustomEntitiesPermissionSchema(): ?array
