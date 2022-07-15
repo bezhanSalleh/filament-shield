@@ -3,17 +3,14 @@
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
+use BezhanSalleh\FilamentShield\Models\Setting;
 
 class MakeInstallShieldCommand extends Command
 {
-    use Concerns\CanManipulateFiles;
-    use Concerns\CanBackupAFile;
-
     public $signature = 'shield:install
         {--F|fresh}
     ';
@@ -84,7 +81,7 @@ class MakeInstallShieldCommand extends Command
 
     protected function getTables(): Collection
     {
-        return collect(['permissions','roles','role_has_permissions','model_has_roles','model_has_permissions']);
+        return collect(['permissions','roles','role_has_permissions','model_has_roles','model_has_permissions','filament_shield_settings']);
     }
 
     protected function install(bool $fresh = false)
@@ -95,11 +92,24 @@ class MakeInstallShieldCommand extends Command
 
         $this->info('Core Package config published.');
 
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-shield-seeder',
+            '--force' => true
+        ]);
+
+        $this->call('vendor:publish', [
+            '--tag' =>'filament-shield-migrations',
+            '--force' => true
+        ]);
+
+        $this->info('Shield\'s migration and seeder published.');
+
 
         if ($fresh) {
             try {
                 Schema::disableForeignKeyConstraints();
                 DB::table('migrations')->where('migration', 'like', '%_create_permission_tables')->delete();
+                DB::table('migrations')->where('migration', 'like', '%_filament_shield_settings_%')->delete();
                 $this->getTables()->each(fn ($table) => DB::statement('DROP TABLE IF EXISTS '.$table));
                 Schema::enableForeignKeyConstraints();
             } catch (\Throwable $e) {
@@ -107,27 +117,21 @@ class MakeInstallShieldCommand extends Command
             }
 
             $this->call('migrate');
+
             $this->info('Database migrations freshed up.');
 
-            (new Filesystem())->ensureDirectoryExists(config_path());
-
-            if ($this->isBackupPossible(config_path('filament-shield.php'), config_path('filament-shield.php.bak'))) {
-                $this->info('Config backup created.');
-            }
-
-            (new Filesystem())->copy(__DIR__.'/../../config/filament-shield.php', config_path('filament-shield.php'));
         } else {
             $this->call('migrate');
             $this->info('Database migrated.');
         }
 
-        (new Filesystem())->ensureDirectoryExists(lang_path());
-        (new Filesystem())->copyDirectory(__DIR__.'/../../resources/lang', lang_path('/vendor/filament-shield'));
+        Artisan::call('db:seed',[
+            '--class' => 'ShieldSettingSeeder'
+        ]);
 
-        (new Filesystem())->ensureDirectoryExists(lang_path());
-        (new Filesystem())->copyDirectory(__DIR__.'/../../resources/views', resource_path('/views/vendor/filament-shield'));
+        config()->set('filament-shield', Setting::pluck('value','key')->toArray());
 
-        $this->info('Published Shields\' translations, views & Resource.');
+        $this->info('Shield\'s settings configured.');
 
         $this->info('Creating Super Admin...');
         $this->call('shield:super-admin');

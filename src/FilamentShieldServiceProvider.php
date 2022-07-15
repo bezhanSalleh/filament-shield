@@ -17,16 +17,11 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         $package
             ->name('filament-shield')
-            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews()
             ->hasCommands($this->getCommands())
             ->hasMigration('create_filament_shield_settings_table')
         ;
-    }
-
-    public function bootingPackage(): void
-    {
     }
 
     public function packageBooted(): void
@@ -60,8 +55,6 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         return [
             Commands\MakeCreateShieldCommand::class,
             Commands\MakeInstallShieldCommand::class,
-            Commands\MakePublishShieldCommand::class,
-            Commands\MakeUpgradeShieldCommand::class,
             Commands\MakeGenerateShieldCommand::class,
             Commands\MakeSuperAdminShieldCommand::class,
         ];

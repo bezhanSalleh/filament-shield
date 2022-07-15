@@ -97,4 +97,16 @@ return [
     'update' => 'Shield\'s config updated!',
     'generate' => 'Updated Shield\'s config & Generated Permissions and/or Policies based on the new config.',
     'loaded_default_settings' => 'Loaded Shield\'s default settings.',
+
+    /**
+     * Resource Permissions
+     */
+    'resource.permissions.labels' => [
+        'view' => 'View',
+        'view_any' => 'View Any',
+        'create' => 'Create',
+        'update' => 'Update',
+        'delete' => 'Delete',
+        'delete_any' => 'delete_any',
+    ]
 ];

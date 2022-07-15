@@ -2,11 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\FilamentShield;
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 
 class MakeGenerateShieldCommand extends Command
 {
@@ -79,16 +79,16 @@ class MakeGenerateShieldCommand extends Command
             ->values()
             ->each(function ($entity) {
                 $model = Str::of($entity);
-                if (config('filament-shield.resources_generator_option.option') === 'policies_and_permissions') {
+                if (config('filament-shield.generator.option') === 'policies_and_permissions') {
                     $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($model), $this->generatePolicyStubVariables($model));
                     FilamentShield::generateForResource($model);
                 }
 
-                if (config('filament-shield.resources_generator_option.option') === 'policies') {
+                if (config('filament-shield.generator.option') === 'policies') {
                     $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($model), $this->generatePolicyStubVariables($model));
                 }
 
-                if (config('filament-shield.resources_generator_option.option') === 'permissions') {
+                if (config('filament-shield.generator.option') === 'permissions') {
                     FilamentShield::generateForResource($model);
                 }
             });
@@ -133,11 +133,11 @@ class MakeGenerateShieldCommand extends Command
                 return [
                     '#' => $key + 1,
                     'Resource' => $resource,
-                    'Policy' => "{$resource}Policy.php". (config('filament-shield.resources_generator_option.option') !== 'permissions' ? ' ✅' : ' ❌') ,
+                    'Policy' => "{$resource}Policy.php". (config('filament-shield.generator.option') !== 'permissions' ? ' ✅' : ' ❌') ,
                     'Permissions' =>
                         implode(',', collect(config('filament-shield.prefixes.resource'))->map(function ($permission, $key) use ($resource) {
                             return $permission.'_'.Str::lower($resource);
-                        })->toArray()) . (config('filament-shield.resources_generator_option.option') !== 'policies' ? ' ✅' : ' ❌'),
+                        })->toArray()) . (config('filament-shield.generator.option') !== 'policies' ? ' ✅' : ' ❌'),
                 ];
             })
         );

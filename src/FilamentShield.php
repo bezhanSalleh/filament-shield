@@ -113,7 +113,7 @@ class FilamentShield
      * @param string $entity
      * @return String
      */
-    public static function getEntityLabel(string $entity): String
+    public static function getEntityLabel(string $entity): string
     {
         $label = collect(Filament::getResources())
                 ->filter(function ($resource) use ($entity) {
@@ -124,6 +124,11 @@ class FilamentShield
         return Str::of($label)->headline();
     }
 
+
+    public static function getPermissionLabel(string $permission): string
+    {
+        return Str::of($permission)->headline();
+    }
     /**
      * Shield structured data.
      *

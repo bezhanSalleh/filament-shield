@@ -4,12 +4,13 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanValidateInput;
 
 class MakeSuperAdminShieldCommand extends Command
 {
-    use Concerns\CanValidateInput;
+    use CanValidateInput;
 
     protected $hidden = true;
 

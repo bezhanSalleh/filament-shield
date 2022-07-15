@@ -144,8 +144,8 @@ class ViewShieldSettings extends Page implements HasFormActions
                     Forms\Components\Grid::make()
                     ->schema([
                             Forms\Components\Placeholder::make('')
-                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700">Resources Generator Option</span>')),
-                            Forms\Components\Radio::make('resource_generator.option')
+                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700">Generator Option</span>')),
+                            Forms\Components\Radio::make('generator.option')
                                 ->label('')
                                 ->options([
                                     'policies_and_permissions' => 'Generate Policies & Permissions',
@@ -238,6 +238,8 @@ class ViewShieldSettings extends Page implements HasFormActions
             ]);
         }
 
+        config()->set('filament-shield', null);
+
         config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
 
         if ($notify) {
@@ -281,7 +283,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                 ->color('warning'),
 
             Actions\Action::make('cancel')
-                ->modalCancelAction()
+                ->url(static::$resource::getUrl(name: 'index'))
                 ->label(__('filament-shield::filament-shield.page.cancel'))
                 ->color('secondary'),
 
