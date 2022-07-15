@@ -124,11 +124,11 @@ class FilamentShield
         return Str::of($label)->headline();
     }
 
-
     public static function getPermissionLabel(string $permission): string
     {
         return Str::of($permission)->headline();
     }
+
     /**
      * Shield structured data.
      *

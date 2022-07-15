@@ -2,12 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Models\Setting;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Artisan;
-use BezhanSalleh\FilamentShield\Models\Setting;
 
 class MakeInstallShieldCommand extends Command
 {
@@ -94,12 +94,12 @@ class MakeInstallShieldCommand extends Command
 
         $this->call('vendor:publish', [
             '--tag' => 'filament-shield-seeder',
-            '--force' => true
+            '--force' => true,
         ]);
 
         $this->call('vendor:publish', [
-            '--tag' =>'filament-shield-migrations',
-            '--force' => true
+            '--tag' => 'filament-shield-migrations',
+            '--force' => true,
         ]);
 
         $this->info('Shield\'s migration and seeder published.');
@@ -119,17 +119,16 @@ class MakeInstallShieldCommand extends Command
             $this->call('migrate');
 
             $this->info('Database migrations freshed up.');
-
         } else {
             $this->call('migrate');
             $this->info('Database migrated.');
         }
 
-        Artisan::call('db:seed',[
-            '--class' => 'ShieldSettingSeeder'
+        Artisan::call('db:seed', [
+            '--class' => 'ShieldSettingSeeder',
         ]);
 
-        config()->set('filament-shield', Setting::pluck('value','key')->toArray());
+        config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
 
         $this->info('Shield\'s settings configured.');
 
