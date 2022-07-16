@@ -5,7 +5,6 @@ namespace BezhanSalleh\FilamentShield\Resources;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use Closure;
-use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -385,7 +384,6 @@ class RoleResource extends Resource
     | Page Related Logic Start       |
     *----------------------------------*/
 
-
     protected static function getPageEntityPermissionsSchema(): ?array
     {
         return collect(FilamentShield::getPages())->sortKeys()->reduce(function ($pages, $page) {
@@ -426,7 +424,6 @@ class RoleResource extends Resource
     /**--------------------------------*
     | Widget Related Logic Start       |
     *----------------------------------*/
-
 
     protected static function getWidgetEntityPermissionSchema(): ?array
     {

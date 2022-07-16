@@ -2,12 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
@@ -165,7 +165,7 @@ class FilamentShield
      * Get localized page label
      *
      * @param string $page
-     * @return string|boolean
+     * @return string|bool
      */
     public static function getLocalizedPageLabel(string $page): string|bool
     {
@@ -201,7 +201,7 @@ class FilamentShield
      * Get localized widget label
      *
      * @param string $page
-     * @return string|boolean
+     * @return string|bool
      */
     public static function getLocalizedWidgetLabel(string $widget): string
     {
@@ -213,35 +213,33 @@ class FilamentShield
             ->after(config('filament-shield.prefixes.widget').'_')
             ->headline();
 
-        if ($grandpa === "Filament\Widgets\ChartWidget")
-        {
+        if ($grandpa === "Filament\Widgets\ChartWidget") {
             return (string) invade(new $class())->getHeading() ?? $heading;
         }
 
-        return match($parent) {
+        return match ($parent) {
             "Filament\Widgets\TableWidget" => (string) invade(new $class())->getTableHeading(),
-            "Filament\Widgets\StatsOverviewWidget" =>  (string) static::hasHeadingForShield($class)
+            "Filament\Widgets\StatsOverviewWidget" => (string) static::hasHeadingForShield($class)
                 ? (new $class())->getHeadingForShield()
                 : $heading,
             default => $heading
         };
     }
 
-
     protected static function transformClassString(string $string, bool $isPageClass = true): string
     {
         return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
             ->sole(
-                fn($value, $key): string
+                fn ($value, $key): string
                     => Str::of($value)
                         ->endsWith(
                             Str::of($string)
                             ->after('_')
                             ->headline()
-                            ->replace(' ','')
+                            ->replace(' ', '')
                             ->toString()
                         )
-                    );
+            );
     }
 
     protected static function hasHeadingForShield(object|string $class): bool

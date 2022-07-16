@@ -34,19 +34,19 @@ it('can validate column names', function () {
     expect($columnsStatus)->toBeTrue();
 });
 
-it('can create config', function () {
-    Schema::connection('testing')->create('filament_shield_settings', function ($table) {
-        $table->id();
-        $table->string('key');
-        $table->string('value');
-        $table->string('default');
-    });
+// it('can create config', function () {
+//     Schema::connection('testing')->create('filament_shield_settings', function ($table) {
+//         $table->id();
+//         $table->string('key');
+//         $table->string('value');
+//         $table->string('default');
+//     });
 
-    Setting::factory()->create();
+//     Setting::factory()->create();
 
-    config(['filament-shield' => Setting::pluck('value', 'default')]);
+//     config(['filament-shield' => Setting::pluck('value', 'default')]);
 
-    expect(config()->has('filament-shield'))->toBeTrue();
+//     expect(config()->has('filament-shield'))->toBeTrue();
 
-    assertNotEmpty(config('filament-shield.shield'));
-});
+//     assertNotEmpty(config('filament-shield.shield'));
+// });

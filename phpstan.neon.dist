@@ -1,6 +1,5 @@
 includes:
     - phpstan-baseline.neon
-    - ./vendor/spatie/invade/phpstan-extension.neon
 parameters:
     level: 4
     paths:
