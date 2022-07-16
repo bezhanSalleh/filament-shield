@@ -216,7 +216,7 @@ class RoleResource extends Resource
     {
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
             $entities[] = Forms\Components\Card::make()
-                    ->extraAttributes(['class'=>'border-0 shadow-lg'])
+                    ->extraAttributes(['class' => 'border-0 shadow-lg'])
                     ->schema([
                         Forms\Components\Toggle::make($entity)
                             ->label(FilamentShield::getLocalizedResourceLabel($entity))
