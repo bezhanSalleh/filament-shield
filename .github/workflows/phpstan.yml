@@ -8,8 +8,8 @@ on:
 
 jobs:
   phpstan:
-    name: phpstan
-    runs-on: ubuntu-latest
+    name: "phpstan"
+    runs-on: "ubuntu-latest"
 
     strategy:
       matrix:
@@ -18,17 +18,19 @@ jobs:
           - "8.1"
 
     steps:
-      - name: Checkout code
+      - name: "Checkout code"
       - uses: actions/checkout@v3
 
-      - name: Setup PHP
+      - name: "Install PHP"
         uses: shivammathur/setup-php@v2
         with:
           php-version: "${{ matrix.php-version }}"
-          coverage: none
+          coverage: "none"
 
-      - name: Install composer dependencies
+      - name: "Install composer dependencies"
         uses: ramsey/composer-install@v1
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
 
-      - name: Run PHPStan
-        run: ./vendor/bin/phpstan --error-format=github
+      - name: "Run PHPStan"
+        run: ./vendor/bin/phpstan analyse --error-format=github
