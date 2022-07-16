@@ -28,7 +28,9 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
+        /** @phpstan-ignore-next-line */
         if (Schema::hasTable('filament_shield_settings')) {
+            /** @phpstan-ignore-next-line */
             config(['filament-shield' => Setting::pluck('value', 'key')->toArray()], '');
         }
 
