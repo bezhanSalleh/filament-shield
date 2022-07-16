@@ -2,11 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Lang;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
@@ -81,11 +82,11 @@ class FilamentShield
     }
 
     /**
-     * Return Resources as key value pair of Entities
+     * Transform filament resources to key value pair for shield
      *
-     * @return array|null
+     * @return array
      */
-    public static function getEntities(): ?array
+    public static function getResources(): ?array
     {
         return collect(Filament::getResources())
             ->unique()
@@ -99,21 +100,21 @@ class FilamentShield
 
                 return true;
             })
-            ->reduce(function ($roles, $resource) {
-                $role = Str::of($resource)->afterLast('\\')->before('Resource')->lower()->toString();
-                $roles[$role] = $role;
+            ->reduce(function ($resources, $resource) {
+                $resource = Str::of($resource)->afterLast('\\')->before('Resource')->lower()->toString();
+                $resources[$resource] = $resource;
 
-                return $roles;
+                return $resources;
             }, []);
     }
 
     /**
-     * Get the label for the given entity (Resource)
+     * Get the localized resource label
      *
      * @param string $entity
      * @return String
      */
-    public static function getEntityLabel(string $entity): string
+    public static function getLocalizedResourceLabel(string $entity): string
     {
         $label = collect(Filament::getResources())
                 ->filter(function ($resource) use ($entity) {
@@ -124,11 +125,130 @@ class FilamentShield
         return Str::of($label)->headline();
     }
 
-
-    public static function getPermissionLabel(string $permission): string
+    /**
+     * Get the localized resource permission label
+     *
+     * @param string $permission
+     * @return string
+     */
+    public static function getLocalizedResourcePermissionLabel(string $permission): string
     {
-        return Str::of($permission)->headline();
+        return Lang::has("filament-shield::filament-shield.resource_permission_prefixes_labels.$permission", app()->getLocale())
+            ? __("filament-shield::filament-shield.resource_permission_prefixes_labels.$permission")
+            : Str::of($permission)->headline();
     }
+
+    /**
+    * Transform filament pages to key value pair for shield
+    *
+    * @return array
+    */
+    public static function getPages(): ?array
+    {
+        return collect(Filament::getPages())
+            ->filter(function ($page) {
+                if (config('filament-shield.exclude.enabled')) {
+                    return ! in_array(Str::afterLast($page, '\\'), config('filament-shield.exclude.pages'));
+                }
+
+                return true;
+            })
+            ->reduce(function ($pages, $page) {
+                $name = Str::of($page)->after('Pages\\')->replace('\\', '')->snake()->prepend(config('filament-shield.prefixes.page').'_');
+                $pages["{$name}"] = "{$name}";
+
+                return $pages;
+            }, []);
+    }
+
+    /**
+     * Get localized page label
+     *
+     * @param string $page
+     * @return string|boolean
+     */
+    public static function getLocalizedPageLabel(string $page): string|bool
+    {
+        $object = static::transformClassString($page);
+
+        return invade(new $object())->getNavigationLabel();
+    }
+
+    /**
+    * Transform filament widgets to key value pair for shield
+    *
+    * @return array
+    */
+    public static function getWidgets(): ?array
+    {
+        return collect(Filament::getWidgets())
+            ->filter(function ($widget) {
+                if (config('filament-shield.exclude.enabled')) {
+                    return ! in_array(Str::afterLast($widget, '\\'), config('filament-shield.exclude.widgets'));
+                }
+
+                return true;
+            })
+            ->reduce(function ($widgets, $widget) {
+                $name = Str::of($widget)->after('Widgets\\')->replace('\\', '')->snake()->prepend(config('filament-shield.prefixes.widget').'_');
+                $widgets["{$name}"] = "{$name}";
+
+                return $widgets;
+            }, []);
+    }
+
+    /**
+     * Get localized widget label
+     *
+     * @param string $page
+     * @return string|boolean
+     */
+    public static function getLocalizedWidgetLabel(string $widget): string
+    {
+        $class = static::transformClassString($widget, false);
+        $parent = get_parent_class($class);
+        $grandpa = get_parent_class($parent);
+
+        $heading = Str::of($widget)
+            ->after(config('filament-shield.prefixes.widget').'_')
+            ->headline();
+
+        if ($grandpa === "Filament\Widgets\ChartWidget")
+        {
+            return (string) invade(new $class())->getHeading() ?? $heading;
+        }
+
+        return match($parent) {
+            "Filament\Widgets\TableWidget" => (string) invade(new $class())->getTableHeading(),
+            "Filament\Widgets\StatsOverviewWidget" =>  (string) static::hasHeadingForShield($class)
+                ? (new $class())->getHeadingForShield()
+                : $heading,
+            default => $heading
+        };
+    }
+
+
+    protected static function transformClassString(string $string, bool $isPageClass = true): string
+    {
+        return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
+            ->sole(
+                fn($value, $key): string
+                    => Str::of($value)
+                        ->endsWith(
+                            Str::of($string)
+                            ->after('_')
+                            ->headline()
+                            ->replace(' ','')
+                            ->toString()
+                        )
+                    );
+    }
+
+    protected static function hasHeadingForShield(object|string $class): bool
+    {
+        return method_exists($class, 'getHeadingForShield');
+    }
+
     /**
      * Shield structured data.
      *
@@ -136,7 +256,7 @@ class FilamentShield
      */
     public static function getShieldData(): array
     {
-        return collect(static::getEntities())
+        return collect(static::getResources())
             ->map(function ($entity) {
                 return collect(config('filament-shield.prefixes.resource'))
                     ->reduce(
@@ -146,7 +266,7 @@ class FilamentShield
                             return $option;
                         },
                         [
-                            'label' => static::getEntityLabel($entity),
+                            'label' => static::getLocalizedResourceLabel($entity),
                             'value' => false,
                         ]
                     );

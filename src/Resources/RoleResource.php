@@ -81,7 +81,7 @@ class RoleResource extends Resource
                                         ]),
                                     ]),
                                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-                                    ->visible(fn (): bool => (bool) (config('filament-shield.entities.pages') && count(static::getPageEntities())) > 0 ? true : false)
+                                    ->visible(fn (): bool => (bool) (config('filament-shield.entities.pages') && count(FilamentShield::getPages())) > 0 ? true : false)
                                     ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
@@ -95,7 +95,7 @@ class RoleResource extends Resource
                                         ]),
                                     ]),
                                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-                                    ->visible(fn (): bool => (bool) (config('filament-shield.entities.widgets') && count(static::getWidgetEntities())) > 0 ? true : false)
+                                    ->visible(fn (): bool => (bool) (config('filament-shield.entities.widgets') && count(FilamentShield::getWidgets())) > 0 ? true : false)
                                     ->reactive()
                                     ->schema([
                                         Forms\Components\Grid::make([
@@ -215,11 +215,11 @@ class RoleResource extends Resource
 
     public static function getResourceEntitiesSchema(): ?array
     {
-        return collect(FilamentShield::getEntities())->sortKeys()->reduce(function ($entities, $entity) {
+        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
             $entities[] = Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Toggle::make($entity)
-                            ->label(FilamentShield::getEntityLabel($entity))
+                            ->label(FilamentShield::getLocalizedResourceLabel($entity))
                             ->onIcon('heroicon-s-lock-open')
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
@@ -237,6 +237,7 @@ class RoleResource extends Resource
                             ->dehydrated(false)
                             ,
                         Forms\Components\Fieldset::make('Permissions')
+                        ->label(__('filament-shield::filament-shield.column.permissions'))
                         ->extraAttributes(['class' => 'text-primary-600','style' => 'border-color:var(--primary)'])
                         ->columns([
                             'default' => 2,
@@ -255,7 +256,7 @@ class RoleResource extends Resource
     {
         return collect(config('filament-shield.prefixes.resource'))->reduce(function ($permissions, $permission) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity)
-                ->label(Str::headline($permission))
+                ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
                 ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $permission) {
                     if (is_null($record)) {
@@ -287,9 +288,9 @@ class RoleResource extends Resource
 
     protected static function refreshSelectAllStateViaEntities(Closure $set, Closure $get): void
     {
-        $entitiesStates = collect(FilamentShield::getEntities())
-            ->when(config('filament-shield.entities.pages'), fn ($entities) => $entities->merge(static::getPageEntities()))
-            ->when(config('filament-shield.entities.widgets'), fn ($entities) => $entities->merge(static::getWidgetEntities()))
+        $entitiesStates = collect(FilamentShield::getResources())
+            ->when(config('filament-shield.entities.pages'), fn ($entities) => $entities->merge(FilamentShield::getPages()))
+            ->when(config('filament-shield.entities.widgets'), fn ($entities) => $entities->merge(FilamentShield::getWidgets()))
             ->when(config('filament-shield.entities.custom_permissions'), fn ($entities) => $entities->merge(static::getCustomEntities()))
             ->map(function ($entity) use ($get) {
                 return (bool) $get($entity);
@@ -306,20 +307,20 @@ class RoleResource extends Resource
 
     protected static function refreshEntitiesStatesViaSelectAll(Closure $set, $state): void
     {
-        collect(FilamentShield::getEntities())->each(function ($entity) use ($set, $state) {
+        collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
             $set($entity, $state);
             collect(config('filament-shield.prefixes.resource'))->each(function ($permission) use ($entity, $set, $state) {
                 $set($permission.'_'.$entity, $state);
             });
         });
 
-        collect(static::getPageEntities())->each(function ($page) use ($set, $state) {
+        collect(FilamentShield::getPages())->each(function ($page) use ($set, $state) {
             if (config('filament-shield.entities.pages')) {
                 $set($page, $state);
             }
         });
 
-        collect(static::getWidgetEntities())->each(function ($widget) use ($set, $state) {
+        collect(FilamentShield::getWidgets())->each(function ($widget) use ($set, $state) {
             $set($widget, $state);
         });
 
@@ -383,31 +384,15 @@ class RoleResource extends Resource
     /**--------------------------------*
     | Page Related Logic Start       |
     *----------------------------------*/
-    protected static function getPageEntities(): ?array
-    {
-        return collect(Filament::getPages())
-            ->filter(function ($page) {
-                if (config('filament-shield.exclude.enabled')) {
-                    return ! in_array(Str::afterLast($page, '\\'), config('filament-shield.exclude.pages'));
-                }
 
-                return true;
-            })
-            ->reduce(function ($transformedPages, $page) {
-                $name = Str::of($page)->after('Pages\\')->replace('\\', '')->snake()->prepend(config('filament-shield.prefixes.page').'_');
-                $transformedPages["{$name}"] = "{$name}";
-
-                return $transformedPages;
-            }, []);
-    }
 
     protected static function getPageEntityPermissionsSchema(): ?array
     {
-        return collect(static::getPageEntities())->reduce(function ($pages, $page) {
+        return collect(FilamentShield::getPages())->sortKeys()->reduce(function ($pages, $page) {
             $pages[] = Forms\Components\Grid::make()
                     ->schema([
                         Forms\Components\Checkbox::make($page)
-                            ->label(Str::of($page)->after(config('filament-shield.prefixes.page').'_')->headline())
+                            ->label(FilamentShield::getLocalizedPageLabel($page))
                             ->inline()
                             ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($page) {
                                 if (is_null($record)) {
@@ -441,31 +426,15 @@ class RoleResource extends Resource
     /**--------------------------------*
     | Widget Related Logic Start       |
     *----------------------------------*/
-    protected static function getWidgetEntities(): ?array
-    {
-        return collect(Filament::getWidgets())
-            ->filter(function ($widget) {
-                if (config('filament-shield.exclude.enabled')) {
-                    return ! in_array(Str::afterLast($widget, '\\'), config('filament-shield.exclude.widgets'));
-                }
 
-                return true;
-            })
-            ->reduce(function ($widgets, $widget) {
-                $name = Str::of($widget)->after('Widgets\\')->replace('\\', '')->snake()->prepend(config('filament-shield.prefixes.widget').'_');
-                $widgets["{$name}"] = "{$name}";
-
-                return $widgets;
-            }, []);
-    }
 
     protected static function getWidgetEntityPermissionSchema(): ?array
     {
-        return collect(static::getWidgetEntities())->reduce(function ($widgets, $widget) {
+        return collect(FilamentShield::getWidgets())->reduce(function ($widgets, $widget) {
             $widgets[] = Forms\Components\Grid::make()
                     ->schema([
                         Forms\Components\Checkbox::make($widget)
-                            ->label(Str::of($widget)->after(config('filament-shield.prefixes.widget').'_')->headline())
+                            ->label(FilamentShield::getLocalizedWidgetLabel($widget))
                             ->inline()
                             ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($widget) {
                                 if (is_null($record)) {
@@ -499,15 +468,15 @@ class RoleResource extends Resource
     protected static function getCustomEntities(): ?Collection
     {
         $resourcePermissions = collect();
-        collect(FilamentShield::getEntities())->each(function ($entity) use ($resourcePermissions) {
+        collect(FilamentShield::getResources())->each(function ($entity) use ($resourcePermissions) {
             collect(config('filament-shield.prefixes.resource'))->map(function ($permission) use ($resourcePermissions, $entity) {
                 $resourcePermissions->push((string) Str::of($permission.'_'.$entity));
             });
         });
 
         $entitiesPermissions = $resourcePermissions
-            ->merge(static::getPageEntities())
-            ->merge(static::getWidgetEntities())
+            ->merge(FilamentShield::getPages())
+            ->merge(FilamentShield::getWidgets())
             ->values();
 
         return Permission::whereNotIn('name', $entitiesPermissions)->pluck('name');

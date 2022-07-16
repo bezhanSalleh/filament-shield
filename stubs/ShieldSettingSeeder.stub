@@ -24,7 +24,8 @@ class ShieldSettingSeeder extends Seeder
                 'enabled' => true,
                 'name' => 'filament_user'
             ],
-            'prefixes' => [
+
+            'permission_prefixes' => [
                 'resource' => [
                     'view',
                     'view_any',
@@ -34,9 +35,10 @@ class ShieldSettingSeeder extends Seeder
                     'update',
                     'export',
                 ],
-                'page' => 'view',
-                'widget' => 'view',
+                'page' => 'page',
+                'widget' => 'widget',
             ],
+
             'entities' => [
                 'pages' => true,
                 'widgets' => true,

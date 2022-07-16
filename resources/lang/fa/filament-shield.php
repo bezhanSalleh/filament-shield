@@ -99,14 +99,14 @@ return [
     'loaded_default_settings' => 'Loaded Shield\'s default settings.',
 
     /**
-     * Resource Permissions' Labels
+     * Resource Permissions
      */
     'resource_permission_prefixes_labels' => [
-        'view' => 'View',
-        'view_any' => 'View Any',
-        'create' => 'Create',
-        'update' => 'Update',
-        'delete' => 'Delete',
-        'delete_any' => 'Delete Any',
+            'view' => 'نمایش',
+            'view_any' => 'نمایش همه',
+            'create' => 'ایجاد',
+            'update' => 'تجدید',
+            'delete' => 'حذف',
+            'delete_any' => 'حذف همه',
     ]
 ];

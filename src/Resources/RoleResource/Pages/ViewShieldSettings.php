@@ -98,16 +98,16 @@ class ViewShieldSettings extends Page implements HasFormActions
                         ->label(__('filament-shield::filament-shield.labels.prefixes.placeholder')),
                     Forms\Components\Grid::make()
                         ->schema([
-                            Forms\Components\TagsInput::make('prefixes.resource')
-                                ->label(__('filament-shield::filament-shield.labels.prefixes.resource'))
-                                ->placeholder(__('filament-shield::filament-shield.labels.prefixes.resource.placeholder'))
+                            Forms\Components\TagsInput::make('permission_prefixes.resource')
+                                ->label(__('filament-shield::filament-shield.labels.permission_prefixes.resource'))
+                                ->placeholder(__('filament-shield::filament-shield.labels.permission_prefixes.resource.placeholder'))
                                 ->required()
                                 ->separator(','),
-                            Forms\Components\TextInput::make('prefixes.page')
-                                ->label(__('filament-shield::filament-shield.labels.prefixes.page'))
+                            Forms\Components\TextInput::make('permission_prefixes.page')
+                                ->label(__('filament-shield::filament-shield.labels.permission_prefixes.page'))
                                 ->required(),
-                            Forms\Components\TextInput::make('prefixes.widget')
-                                ->label(__('filament-shield::filament-shield.labels.prefixes.widget'))
+                            Forms\Components\TextInput::make('permission_prefixes.widget')
+                                ->label(__('filament-shield::filament-shield.labels.permission_prefixes.widget'))
                                 ->required(),
                         ])
                         ->columns(3),
@@ -228,7 +228,7 @@ class ViewShieldSettings extends Page implements HasFormActions
     public function save(bool $notify = true): void
     {
         $data = $this->form->getState();
-        $data['prefixes']['resource'] = explode(',', $data['prefixes']['resource']);
+        $data['permission_prefixes']['resource'] = explode(',', $data['permission_prefixes']['resource']);
 
         foreach ($data as $key => $value) {
             Setting::updateOrCreate([
