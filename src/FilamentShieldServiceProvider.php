@@ -28,9 +28,9 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        if (Schema::hasTable('filament_shield_settings')) {
-            config(['filament-shield' => Setting::pluck('value', 'key')->toArray()], '');
-        }
+        // if (Schema::hasTable('filament_shield_settings')) {
+        //     config(['filament-shield' => Setting::pluck('value', 'key')->toArray()], '');
+        // }
 
         if (config('filament-shield.register_role_policy.enabled')) {
             \Illuminate\Support\Facades\Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');

@@ -29,6 +29,7 @@ class CreateRole extends CreateRecord
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
             $permissionModels->push(Permission::firstOrCreate(
+                /** @phpstan-ignore-next-line */
                 ['name' => $permission],
                 ['guard_name' => config('filament.auth.guard')]
             ));

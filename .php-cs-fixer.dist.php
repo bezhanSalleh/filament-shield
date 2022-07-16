@@ -36,9 +36,5 @@ return (new PhpCsFixer\Config())
             'keep_multiple_spaces_after_comma' => true,
         ],
         'single_trait_insert_per_statement' => true,
-
-        'ordered_imports' => [
-            'sort_algorithm' => 'alpha',
-        ],
     ])
     ->setFinder($finder);
