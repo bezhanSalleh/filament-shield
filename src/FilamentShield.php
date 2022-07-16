@@ -229,8 +229,9 @@ class FilamentShield
     protected static function transformClassString(string $string, bool $isPageClass = true): string
     {
         return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
-            ->first(fn($item) =>
-                Str::endsWith($item,
+            ->first(fn ($item) =>
+                Str::endsWith(
+                    $item,
                     Str::of($string)
                     ->after('_')
                     ->headline()
