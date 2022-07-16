@@ -61,8 +61,8 @@ class RoleResource extends Resource
                                 'lg' => 3,
                             ]),
                     ]),
-                Forms\Components\Section::make(__('filament-shield::filament-shield.section'))
-                    ->schema([
+                // Forms\Components\Section::make(__('filament-shield::filament-shield.section'))
+                //     ->schema([
                         Forms\Components\Tabs::make('Permissions')
                             ->tabs([
                                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
@@ -124,7 +124,7 @@ class RoleResource extends Resource
                                     ]),
                             ])
                             ->columnSpan('full'),
-                    ]),
+                    // ]),
 
 
             ]);
@@ -216,6 +216,7 @@ class RoleResource extends Resource
     {
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
             $entities[] = Forms\Components\Card::make()
+                    ->extraAttributes(['class'=>'border-0 shadow-lg'])
                     ->schema([
                         Forms\Components\Toggle::make($entity)
                             ->label(FilamentShield::getLocalizedResourceLabel($entity))

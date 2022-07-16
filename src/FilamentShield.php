@@ -229,17 +229,14 @@ class FilamentShield
     protected static function transformClassString(string $string, bool $isPageClass = true): string
     {
         return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
-            ->sole(
-                fn ($value, $key): string
-                    => Str::of($value)
-                        ->endsWith(
-                            Str::of($string)
-                            ->after('_')
-                            ->headline()
-                            ->replace(' ', '')
-                            ->toString()
-                        )
-            );
+            ->first(fn($item) =>
+                Str::endsWith($item,
+                    Str::of($string)
+                    ->after('_')
+                    ->headline()
+                    ->replace(' ', '')
+                    ->toString()
+                ));
     }
 
     protected static function hasHeadingForShield(object|string $class): bool
