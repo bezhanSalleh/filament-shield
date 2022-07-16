@@ -2,7 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use Closure;
 use Filament\Forms;

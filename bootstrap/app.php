@@ -20,6 +20,5 @@ $app = (new Application($basePathLocator::applicationBasePath()))
 $app->register(LivewireServiceProvider::class);
 $app->register(FilamentServiceProvider::class);
 $app->register(SupportServiceProvider::class);
-$app->register(FilamentShieldServiceProvider::class);
 
 return $app;
