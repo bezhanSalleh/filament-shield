@@ -2,11 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanValidateInput;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-use BezhanSalleh\FilamentShield\Commands\Concerns\CanValidateInput;
+use Spatie\Permission\Models\Role;
 
 class MakeSuperAdminShieldCommand extends Command
 {

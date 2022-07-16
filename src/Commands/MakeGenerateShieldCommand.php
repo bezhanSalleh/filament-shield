@@ -2,11 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Illuminate\Support\Str;
 
 class MakeGenerateShieldCommand extends Command
 {
