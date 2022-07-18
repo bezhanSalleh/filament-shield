@@ -52,5 +52,5 @@ return [
     'resources' => 'Ressourcen',
     'section' => 'Entitäten',
     'update' => 'Shield Konfiguration aktualisiert!',
-    'widgets' => 'Widgets'
+    'widgets' => 'Widgets',
 ];

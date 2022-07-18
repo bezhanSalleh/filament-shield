@@ -65,11 +65,11 @@ return [
     'labels.filament_user.text_input' => 'Role Name',
     'labels.role_policy.toggle_input' => 'Role Policy Registered?',
     'labels.role_policy.message' => 'Ensure the policy is registered and the permissions are enforced',
-    'labels.permission_prefixes.placeholder' => 'Default Permission Prefixes',
-    'labels.permission_prefixes.resource' => 'Resource',
-    'labels.permission_prefixes.resource.placeholder' => 'Add or Remove Resource Permissions...',
-    'labels.permission_prefixes.page' => 'Page',
-    'labels.permission_prefixes.widget' => 'Widget',
+    'labels.prefixes.placeholder' => 'Default Permission Prefixes',
+    'labels.prefixes.resource' => 'Resource',
+    'labels.prefixes.resource.placeholder' => 'Add or Remove Resource Permissions...',
+    'labels.prefixes.page' => 'Page',
+    'labels.prefixes.widget' => 'Widget',
     'labels.entities.placeholder' => 'Entity Permission Generators & Tabs',
     'labels.entities.message' => 'Generators & Tabs are ',
     'labels.entities.resources' => 'Resources',
@@ -99,14 +99,14 @@ return [
     'loaded_default_settings' => 'Loaded Shield\'s default settings.',
 
     /**
-     * Resource Permissions' Labels
+     * Resource Permissions
      */
     'resource_permission_prefixes_labels' => [
-        'view' => 'View',
-        'view_any' => 'View Any',
-        'create' => 'Create',
-        'update' => 'Update',
-        'delete' => 'Delete',
-        'delete_any' => 'Delete Any',
+            'view' => 'نمایش',
+            'view_any' => 'نمایش همه',
+            'create' => 'ایجاد',
+            'update' => 'تجدید',
+            'delete' => 'حذف',
+            'delete_any' => 'حذف همه',
     ]
 ];

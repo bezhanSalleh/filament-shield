@@ -6,7 +6,7 @@ return [
     | Table Columns
     |--------------------------------------------------------------------------
     */
-    
+
     'column.name' => 'Nombre',
     'column.guard_name' => 'Guard',
     'column.roles' => 'Roles',
@@ -23,7 +23,7 @@ return [
     'field.guard_name' => 'Guard',
     'field.permissions' => 'Permisos',
     'field.select_all.name' => 'Seleccionar todos',
-    'field.select_all.message' => 'Habilitar todos los permisos actualmente <span class="text-primary font-medium">habilitados</span> para este rol',    
+    'field.select_all.message' => 'Habilitar todos los permisos actualmente <span class="text-primary font-medium">habilitados</span> para este rol',
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ return [
         'name' => 'Configuración',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Guardar',
-        'generate' => 'Guardar y generar'
+        'generate' => 'Guardar y generar',
     ],
     'labels.super_admin.toggle_input' => 'Rol de súper administrador',
     'labels.super_admin.text_input' => 'Nombre del rol',
@@ -96,4 +96,3 @@ return [
     'generate' => '¡La configuración del Shield ha sido renovada y se han generado los permisos y/o políticas!',
 
 ];
-

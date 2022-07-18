@@ -55,7 +55,7 @@ return [
         'name' => 'Ayarlar',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Kaydet',
-        'generate' => 'Kaydet & Oluştur'
+        'generate' => 'Kaydet & Oluştur',
     ],
     'labels.super_admin.toggle_input' => 'Süper Yönetici Rolü',
     'labels.super_admin.text_input' => 'Rol Adı',

@@ -59,7 +59,7 @@ trait HasPageShield
             ->after('Pages\\')
             ->replace('\\', '')
             ->snake()
-            ->prepend(config('filament-shield.prefixes.page').'_');
+            ->prepend(config('filament-shield.permission_prefixes.page').'_');
     }
 
     protected static function shouldRegisterNavigation(): bool
