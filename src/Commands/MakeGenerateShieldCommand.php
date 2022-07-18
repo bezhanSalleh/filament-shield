@@ -135,7 +135,7 @@ class MakeGenerateShieldCommand extends Command
                     'Resource' => $resource,
                     'Policy' => "{$resource}Policy.php". (config('filament-shield.generator.option') !== 'permissions' ? ' ✅' : ' ❌') ,
                     'Permissions' =>
-                        implode(',', collect(config('filament-shield.prefixes.resource'))->map(function ($permission, $key) use ($resource) {
+                        implode(',', collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission, $key) use ($resource) {
                             return $permission.'_'.Str::lower($resource);
                         })->toArray()) . (config('filament-shield.generator.option') !== 'policies' ? ' ✅' : ' ❌'),
                 ];
@@ -152,7 +152,7 @@ class MakeGenerateShieldCommand extends Command
                 return [
                     '#' => $key + 1,
                     'Page' => Str::studly($page),
-                    'Permission' => config('filament-shield.prefixes.page').'_'.Str::snake($page),
+                    'Permission' => config('filament-shield.permission_prefixes.page').'_'.Str::snake($page),
                 ];
             })
         );
@@ -167,7 +167,7 @@ class MakeGenerateShieldCommand extends Command
                 return [
                     '#' => $key + 1,
                     'Widget' => Str::studly($widget),
-                    'Permission' => config('filament-shield.prefixes.widget').'_'.Str::snake($widget),
+                    'Permission' => config('filament-shield.permission_prefixes.widget').'_'.Str::snake($widget),
                 ];
             })
         );
