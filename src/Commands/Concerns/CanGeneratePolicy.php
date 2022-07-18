@@ -37,9 +37,8 @@ trait CanGeneratePolicy
                 return $gates;
             }, []);
         
-        $configPath = ('auth.providers.' . config('auth.guards.' . config('filament.auth.guard') . '.provider') . '.model');
 
-        $defaultPermissions['guardNamespace'] = config($configPath);
+        $defaultPermissions['guardNamespace'] = auth(config('filament.auth.guard'))->getProvider()->getModel();
         $defaultPermissions['guardModel']     = Str::of($defaultPermissions['guardNamespace'])->afterLast('\\');
         
         $defaultPermissions['modelPolicy'] = "{$model}Policy";
