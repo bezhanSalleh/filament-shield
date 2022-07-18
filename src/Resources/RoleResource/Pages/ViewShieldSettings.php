@@ -95,7 +95,7 @@ class ViewShieldSettings extends Page implements HasFormActions
             $layout::make()
             ->schema([
                     Forms\Components\Placeholder::make('')
-                        ->label(__('filament-shield::filament-shield.labels.prefixes.placeholder')),
+                        ->label(__('filament-shield::filament-shield.labels.permission_prefixes.placeholder')),
                     Forms\Components\Grid::make()
                         ->schema([
                             Forms\Components\TagsInput::make('permission_prefixes.resource')

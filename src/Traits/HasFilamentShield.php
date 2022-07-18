@@ -24,6 +24,6 @@ trait HasFilamentShield
 
     protected static function filamentUserRole(): string
     {
-        return (string) config('filament-shield.filament_user.role_name');
+        return (string) config('filament-shield.filament_user.name');
     }
 }
