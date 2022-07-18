@@ -16,7 +16,7 @@ class FilamentShield
     {
         if (config('filament-shield.entities.resources')) {
             $permissions = collect();
-            collect(config('filament-shield.prefixes.resource'))
+            collect(config('filament-shield.permission_prefixes.resource'))
                 ->each(function ($prefix) use ($resource, $permissions) {
                     $permissions->push(Permission::firstOrCreate(
                         ['name' => $prefix . '_' . Str::lower($resource)],
@@ -33,7 +33,7 @@ class FilamentShield
     {
         if (config('filament-shield.entities.pages')) {
             $permission = Permission::firstOrCreate(
-                ['name' => config('filament-shield.prefixes.page') . '_' . Str::lower($page)],
+                ['name' => config('filament-shield.permission_prefixes.page') . '_' . Str::lower($page)],
                 ['guard_name' => config('filament.auth.guard')]
             )->name;
 
@@ -46,7 +46,7 @@ class FilamentShield
     {
         if (config('filament-shield.entities.widgets')) {
             $permission = Permission::firstOrCreate(
-                ['name' => config('filament-shield.prefixes.widget') . '_' . Str::lower($widget)],
+                ['name' => config('filament-shield.permission_prefixes.widget') . '_' . Str::lower($widget)],
                 ['guard_name' => config('filament.auth.guard')]
             )->name;
 
@@ -154,7 +154,7 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($pages, $page) {
-                $name = Str::of($page)->after('Pages\\')->replace('\\', '')->snake()->prepend(config('filament-shield.prefixes.page').'_');
+                $name = Str::of($page)->after('Pages\\')->replace('\\', '')->snake()->prepend(config('filament-shield.permission_prefixes.page').'_');
                 $pages["{$name}"] = "{$name}";
 
                 return $pages;
@@ -190,7 +190,7 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($widgets, $widget) {
-                $name = Str::of($widget)->after('Widgets\\')->replace('\\', '')->snake()->prepend(config('filament-shield.prefixes.widget').'_');
+                $name = Str::of($widget)->after('Widgets\\')->replace('\\', '')->snake()->prepend(config('filament-shield.permission_prefixes.widget').'_');
                 $widgets["{$name}"] = "{$name}";
 
                 return $widgets;
@@ -210,7 +210,7 @@ class FilamentShield
         $grandpa = get_parent_class($parent);
 
         $heading = Str::of($widget)
-            ->after(config('filament-shield.prefixes.widget').'_')
+            ->after(config('filament-shield.permission_prefixes.widget').'_')
             ->headline();
 
         if ($grandpa === "Filament\Widgets\ChartWidget") {
@@ -254,7 +254,7 @@ class FilamentShield
     {
         return collect(static::getResources())
             ->map(function ($entity) {
-                return collect(config('filament-shield.prefixes.resource'))
+                return collect(config('filament-shield.permission_prefixes.resource'))
                     ->reduce(
                         function ($option, $permission) use ($entity) {
                             $option[$permission . '_' . $entity] = ['label' => $permission,'value' => false];
