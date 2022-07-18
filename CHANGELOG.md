@@ -2,6 +2,38 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v2.0.0 - 2022-07-18
+
+### What's Changed
+
+- 2.x by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/61
+- 
+- - Follow filament plugin standards
+- - Add Setting Model (DB)
+- - Generate config dynamically from setting model
+- - Remove Config file
+- - Follow new Filament Actions
+- - Make default permissions translatable
+- - Add ability to Load default settings from DB
+- - Remove `shield:publish` command
+- - Remove `RoleResource` stubs
+- 
+- Italian Translation by @slamservice in https://github.com/bezhanSalleh/filament-shield/pull/50
+- 
+- Bump dependabot/fetch-metadata from 1.3.1 to 1.3.3 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/55
+- 
+- support Windows installation by @hadyfayed in https://github.com/bezhanSalleh/filament-shield/pull/54
+- 
+- add Support for windows installation by @hadyfayed in https://github.com/bezhanSalleh/filament-shield/pull/53
+- 
+
+### New Contributors
+
+- @slamservice made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/50
+- @hadyfayed made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/54
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v1.1.12...v2.0.0
+
 ## v1.1.12 - 2022-05-19
 
 ## What's Changed
