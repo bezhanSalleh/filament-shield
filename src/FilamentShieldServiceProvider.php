@@ -2,23 +2,20 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Models\Setting;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelPackageTools\Package;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Models\Setting;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
-    protected array $resources = [
-        \BezhanSalleh\FilamentShield\Resources\RoleResource::class,
-    ];
-
     public function configurePackage(Package $package): void
     {
         $package
             ->name('filament-shield')
-            ->hasTranslations()
             ->hasViews()
+            ->hasTranslations()
             ->hasCommands($this->getCommands())
             ->hasMigration('create_filament_shield_settings_table')
         ;
@@ -59,6 +56,13 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             Commands\MakeInstallShieldCommand::class,
             Commands\MakeGenerateShieldCommand::class,
             Commands\MakeSuperAdminShieldCommand::class,
+        ];
+    }
+
+    protected function getResources(): array
+    {
+        return [
+            Utils::isResourceEnabled() ? Utils::getResourceClass() : '',
         ];
     }
 }

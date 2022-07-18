@@ -16,6 +16,12 @@ class ShieldSettingSeeder extends Seeder
     {
         /** @var array[string]mixed $settingKeys */
         $settingKeys = [
+            'shield_resource' => [
+                'enabled' => true,
+                'resource' => 'BezhanSalleh\\FilamentShield\\Resources\\RoleResource::class',
+                'slug' => 'shield/roles',
+                'navigation_sort' => -1,
+            ],
             'super_admin' => [
                 'enabled' => true,
                 'name'  => 'super_admin'
@@ -39,7 +45,7 @@ class ShieldSettingSeeder extends Seeder
                 'widget' => 'widget',
             ],
 
-            'entities' => [
+            'discover' => [
                 'pages' => true,
                 'widgets' => true,
                 'resources' => true,
