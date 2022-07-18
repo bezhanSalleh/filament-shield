@@ -45,15 +45,16 @@ To upgrade to the latest release first run:
 composer update
 ```
 
-backup `config.php`(incase you have configured) then:
+> **Note**
+> Minimum **Filament** Requirement is now `2.13`
+> v2.x uses database to manage **Settings**
+> so you need to run the following command as well and then go to the settings page and update the settings based on `filament-shield` config file and click on `Save & Generate`, then delete the config file.
 
 ```bash
-php artisan shield:upgrade
+php artisan shield:install --fresh
 ```
-
-you can run this command without interaction by supplying the `-no-interaction` flag.
-
-
+> **Warning**
+> for **Filament** prior to 2.13 use [v1.1.12](https://github.com/bezhanSalleh/filament-shield/releases/tag/v1.1.12)
 ## Installation
 
 1. Install the package via composer:
@@ -62,123 +63,7 @@ you can run this command without interaction by supplying the `-no-interaction` 
 composer require bezhansalleh/filament-shield
 ```
 
-2. Publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="filament-shield-config"
-```
-
-3. Configure your options
-
-```php
-<?php
-
-return [
-
-/*
-    |--------------------------------------------------------------------------
-    | Defualt Roles
-    |--------------------------------------------------------------------------
-    |
-    | Permissions' generated will be assigned automatically to the following roles when enabled.
-    | `filament_user` if enabled will help smoothly provide access to filament users
-    | in production when implementing `FilamentUser` interface.
-    */
-
-
-    'super_admin' => [
-        'enabled' => true,
-        'role_name' => 'super_admin'
-    ],
-
-    'filament_user' => [
-        'role_name' => 'filament_user',
-        'enabled' => false
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Prefixes
-    |--------------------------------------------------------------------------
-    |
-    | When generating permissions for a `Resource` the resource `Model` will be prefixed with these.
-    | Keep in mind the order since these will also be used in generating policies for the resources.
-    |
-    | When generating permission for a `Widget` or `Page` the widget or page name will be prefixed
-    | with this.
-    | But you are free to change these in to whatever works for you.
-    */
-
-    'prefixes' => [
-        'resource' => [
-            'view',
-            'view_any',
-            'create',
-            'delete',
-            'delete_any',
-            'update',
-            'export', // custom resource permission
-        ],
-        'page'  =>  'view',
-        'widget' => 'view'
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Entities Permission Generator
-    |--------------------------------------------------------------------------
-    | Enable the Entities for which you want the permissions or permissions and policies
-    | to be auto generated when you run `php artisan shield:install` command.
-    */
-
-    'entities' => [
-        'pages' => true,
-        'widgets' => true,
-        'resources' => true,
-        'custom_permissions' => false,
-    ],
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Resources Generator Option
-    |--------------------------------------------------------------------------
-    | Here you may define the "generator" option for resources.
-    | Sometimes it's beneficial to generate policies once locally, in case the production server
-    | does not allow you to regenerate them (Laravel Vapor) or you have updated the policies.
-    | Choose the option the fits best your use case.
-    |
-    | Supported options: "policies_and_permissions", "policies", "permissions"
-    */
-
-    'resources_generator_option' => 'policies_and_permissions',
-    /*
-    |--------------------------------------------------------------------------
-    | Exclude
-    |--------------------------------------------------------------------------
-    | When enabled Exclude entites listed here during permission generation.
-    |
-    */
-
-    'exclude' => [
-        'enabled' => true,
-        'pages' => [
-            'Dashboard'
-        ],
-        'widgets' => [
-            'AccountWidget',
-            'FilamentInfoWidget'
-        ],
-        'resources' => [],
-    ],
-
-    /**
-     * Register `RolePolicy` for `RoleResource`
-     */
-    'register_role_policy' => true,
-];
-```
-
-4. Add the `Spatie\Permission\Traits\HasRoles` trait to your User model(s):
+2. Add the `Spatie\Permission\Traits\HasRoles` trait to your User model(s):
 
 ```php
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -192,7 +77,7 @@ class User extends Authenticatable
 }
 ```
 
-5. Now run the following command to setup everything:
+3. Now run the following command to setup everything:
 
 ```bash
 php artisan shield:install
@@ -200,33 +85,9 @@ php artisan shield:install
 
 Follow the prompts and enjoy!
 
-## Resource Custom Permissions
+#### Resource Custom Permissions
 
-You can add custom permissions for the resources in addition to the required 6 by adding your custom permission names at the end of the `resource` key inside the `prefixes` config key array.
-For instance lets add `export` cutom permission to all resources:
-```php
-...
-'prefixes' => [
-        'resource' => [
-            'view',
-            'view_any',
-            'create',
-            'delete',
-            'delete_any',
-            'update',
-            'export', // custom resource permission
-        ],
-    ...
-...
-```
-
-Since we have added our new custom permission, it's time to refresh the list of permissions for the resources by running:
-
-```bash
-php artisan shield:generate
-```
-
-Now, you can check and see in your `Resources` each resource listed will have an `export` permission as well.
+You can add custom permissions for `Resources` through settings page.
 
 #### Pages
 
@@ -359,9 +220,7 @@ php artisan vendor:publish --tag="filament-shield-views"
 - install   # One Command to Rule them All 🔥
 - generate  # (Re)Discovers Filament resources and (re)generates Permissions and Policies.
 - create    # Create Permissions and/or Policy for the given Filament Resource Model
-- publish   # Publish filament shield's Resource.
 - super-admin # Create a user with super_admin role
-- upgrade # upgrade shield without hassle
 ```
 
 
