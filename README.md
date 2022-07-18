@@ -37,23 +37,44 @@ The easiest and most intuitive way to add access management to your Filament Adm
 <img width="320" alt="filament-logo" src="https://filamentadmin.com/images/sponsor-banner.jpg">
 </a>
 
-## Upgrade
+## Upgrade 
 
 To upgrade to the latest release first run:
 
 ```bash
 composer update
 ```
-
+#### v2.x
 > **Note**
-> Minimum **Filament** Requirement is now `2.13`
-> v2.x uses database to manage **Settings**
-> so you need to run the following command as well and then go to the settings page and update the settings based on `filament-shield` config file and click on `Save & Generate`, then delete the config file.
+> 
+> Minimum **Filament** Requirement is now `2.13`.
+> v2.x uses database to manage **Settings**. 
+> So you need Delete `Shield` folder from `Filament\Resources` and run the following command as well and then go to the settings page and update the settings based on `filament-shield` config file and click on `Save & Generate`, then delete the config file.
 
 ```bash
 php artisan shield:install --fresh
 ```
 > **Warning**
+> 
+> if you have custom permissions and/or updated policies running the above command will overwrite everything.
+> 
+> So if you do not want to break anything just follow along the below steps:
+1. Delete `Shield` folder from `Filament\Resources`
+2. Run the following commands:
+```bash
+php artisan vendor:publish --tag=filament-shield-migrations
+php artisan vendor:publish --tag=filament-shield-seeder
+```
+3. Open the `Database\Seeders\ShieldSettingSeeder.php` file and update the `$settingKeys` based on your `config` file.
+4. Run the following commands:
+```bash
+php artisan migrate
+php artisan db:seed --class=ShieldSettingSeeder
+```
+5. Go to Sheild's setting page and verify your settings then click on `Save`.
+
+> **Note**
+> 
 > for **Filament** prior to 2.13 use [v1.1.12](https://github.com/bezhanSalleh/filament-shield/releases/tag/v1.1.12)
 ## Installation
 
