@@ -2,24 +2,27 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use Closure;
-use Filament\Forms;
-use Filament\Tables;
-use Illuminate\Support\Str;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Spatie\Permission\Models\Role;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Models\Permission;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
+use Closure;
+use Filament\Forms;
+use Filament\Resources\Form;
+use Filament\Resources\Resource;
+use Filament\Resources\Table;
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
+
+    protected static ?int $navigationSort = -1;
+
+    protected static ?string $slug = 'shield/roles';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -199,16 +202,6 @@ class RoleResource extends Resource
     {
         return __('filament-shield::filament-shield.nav.role.icon');
     }
-
-    protected static function getNavigationSort(): ?int
-    {
-        return Utils::getResourceNavigationSort();
-    }
-
-     public static function getSlug(): string
-     {
-        return Utils::getResourceSlug();
-     }
 
     protected static function getNavigationBadge(): ?string
     {

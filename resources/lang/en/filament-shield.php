@@ -59,18 +59,6 @@ return [
         'load_default_settings' => 'Load Default Settings',
         'cancel' => 'Cancel',
     ],
-    'labels' => [
-        'setting' => [
-            'general' => 'General',
-            'resource' => [
-                'tab' => 'Resource',
-                'name' => 'Shield Role Resource',
-                'label' => 'Resource Class',
-                'slug' => 'Slug',
-                'navigation_sort' => 'Navigation Sort',
-            ]
-        ]
-    ],
     'labels.super_admin.toggle_input' => 'Super Admin Role',
     'labels.super_admin.text_input' => 'Role Name',
     'labels.filament_user.toggle_input' => 'Filament User Role',
@@ -120,5 +108,5 @@ return [
         'update' => 'Update',
         'delete' => 'Delete',
         'delete_any' => 'Delete Any',
-    ],
+    ]
 ];

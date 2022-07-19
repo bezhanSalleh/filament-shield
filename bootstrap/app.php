@@ -5,6 +5,7 @@ use Livewire\LivewireServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Orchestra\Testbench\Foundation\Application;
 use Orchestra\Testbench\Concerns\CreatesApplication;
+use BezhanSalleh\FilamentShield\FilamentShieldServiceProvider;
 
 $basePathLocator = new class () {
     use CreatesApplication;
