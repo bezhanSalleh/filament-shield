@@ -42,15 +42,19 @@ return [
     | Section & Tabs
     |--------------------------------------------------------------------------
     */
+
     'section' => 'Entities',
     'resources' => 'Resources',
     'widgets' => 'Widgets',
     'pages' => 'Pages',
     'custom' => 'Custom Permissions',
 
-    /**
-     * Role Setting Page
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Role Setting Page
+    |--------------------------------------------------------------------------
+    */
+    
     'page' => [
         'name' => 'Shield Settings',
         'icon' => 'heroicon-o-adjustments',
@@ -90,17 +94,23 @@ return [
     'labels.exclude.widgets' => 'Widgets',
     'labels.exclude.widgets.placeholder' => 'Select widgets ...',
 
-    /**
-     * Messages
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Messages
+    |--------------------------------------------------------------------------
+    */
+
     'forbidden' => 'You do not have permission to access',
     'update' => 'Shield\'s config updated!',
     'generate' => 'Updated Shield\'s config & Generated Permissions and/or Policies based on the new config.',
     'loaded_default_settings' => 'Loaded Shield\'s default settings.',
 
-    /**
-     * Resource Permissions' Labels
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Resource Permissions' Labels
+    |--------------------------------------------------------------------------
+    */
+
     'resource_permission_prefixes_labels' => [
         'view' => 'View',
         'view_any' => 'View Any',
@@ -108,5 +118,9 @@ return [
         'update' => 'Update',
         'delete' => 'Delete',
         'delete_any' => 'Delete Any',
+        'force_delete' => 'Force Delete',
+        'force_delete_any' => 'Force Delete Any',
+        'restore' => 'Restore',
+        'restore_any' => 'Restore Any',
     ]
 ];
