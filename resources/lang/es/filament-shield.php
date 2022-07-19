@@ -41,7 +41,8 @@ return [
     |--------------------------------------------------------------------------
     | Section & Tabs
     |--------------------------------------------------------------------------
-    */
+     */
+
     'section' => 'Entidades',
     'resources' => 'Recursos',
     'widgets' => 'Widgets',
@@ -49,13 +50,18 @@ return [
     'custom' => 'Permisos personalizados',
 
     /**
-     * Role Setting Page
+    |--------------------------------------------------------------------------
+    | Role Setting Page
+    |--------------------------------------------------------------------------
      */
+
     'page' => [
         'name' => 'Configuración',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Guardar',
         'generate' => 'Guardar y generar',
+        'load_default_settings' => 'Cargar las configuraciones por defecto',
+        'cancel' => 'Cancelar',
     ],
     'labels.super_admin.toggle_input' => 'Rol de súper administrador',
     'labels.super_admin.text_input' => 'Nombre del rol',
@@ -88,11 +94,33 @@ return [
     'labels.exclude.widgets' => 'Widgets',
     'labels.exclude.widgets.placeholder' => 'Seleccionar widgets ...',
 
-    /**
-     * Messages
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Messages
+    |--------------------------------------------------------------------------
+    */
+
     'forbidden' => 'Usted no tiene permiso de acceso',
     'update' => '¡La configuración del Shield ha sido renovada!',
     'generate' => '¡La configuración del Shield ha sido renovada y se han generado los permisos y/o políticas!',
+    'loaded_default_settings' => 'Configuraciones por defecto cargadas.',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Resource Permissions' Labels
+    |--------------------------------------------------------------------------
+    */
+
+    'resource_permission_prefixes_labels' => [
+        'view' => 'Ver un registro en particular',
+        'view_any' => 'Ver el listado de registros',
+        'create' => 'Crear',
+        'update' => 'Actualizar',
+        'delete' => 'Eliminar un registro en particular',
+        'delete_any' => 'Eliminar varios registros a la vez',
+        'force_delete' => 'Forzar elminación de un registro en particular',
+        'force_delete_any' => 'Forzar eliminación de varios registros',
+        'restore' => 'Restaurar un registro en particular',
+        'restore_any' => 'Restaurar varios registros',
+    ]
 ];
