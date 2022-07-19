@@ -116,7 +116,9 @@ class FilamentShield
      */
     public static function getLocalizedResourceLabel(string $entity): string
     {
-        $label = collect(Filament::getResources())->filter(function ($resource) use ($entity) {return Str::of($resource)->endsWith(Str::of($entity)->headline()->replace(' ','')->toString().'Resource');})->first()::getModelLabel();
+        $label = collect(Filament::getResources())->filter(function ($resource) use ($entity) {
+            return Str::of($resource)->endsWith(Str::of($entity)->headline()->replace(' ', '')->toString().'Resource');
+        })->first()::getModelLabel();
 
         return Str::of($label)->headline();
     }
