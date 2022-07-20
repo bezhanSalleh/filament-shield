@@ -2,7 +2,6 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\FilamentShield;
 use Illuminate\Console\Command;
 
 class MakeShieldDoctorCommand extends Command
@@ -13,8 +12,8 @@ class MakeShieldDoctorCommand extends Command
 
     public function handle(): int
     {
-        $this->call('about',[
-            '--only' => 'filament_shield'
+        $this->call('about', [
+            '--only' => 'filament_shield',
         ]);
 
         return self::SUCCESS;

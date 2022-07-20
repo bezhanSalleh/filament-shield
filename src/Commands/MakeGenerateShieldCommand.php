@@ -71,8 +71,8 @@ class MakeGenerateShieldCommand extends Command
     {
         return  collect($resources)
             ->reduce(function ($entites, $resource) {
-                $permission = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\','')->headline()->snake()->replace('_','::')->toString();
-                $entites[$permission] =[
+                $permission = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::')->toString();
+                $entites[$permission] = [
                     'permission' => $permission,
                     'model' => Str::of($resource::getModel())->afterLast('\\')->toString(),
                     'resource' => $resource,
@@ -82,7 +82,6 @@ class MakeGenerateShieldCommand extends Command
             }, collect())
             ->values()
             ->each(function ($entity) {
-
                 if (config('filament-shield.generator.option') === 'policies_and_permissions') {
                     $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
                     FilamentShield::generateForResource($entity['permission']);
@@ -134,7 +133,6 @@ class MakeGenerateShieldCommand extends Command
         $this->table(
             ['#','Resource','Policy','Permissions'],
             collect($resources)->map(function ($resource, $key) {
-
                 return [
                     '#' => $key + 1,
                     'Resource' => $resource['model'],
