@@ -214,12 +214,13 @@ class RoleResource extends Resource
 
     public static function getResourceEntitiesSchema(): ?array
     {
-        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
+        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entityCode) {
+            $entity = self::getEntityIdentifier($entityCode);
             $entities[] = Forms\Components\Card::make()
                     ->extraAttributes(['class' => 'border-0 shadow-lg'])
                     ->schema([
                         Forms\Components\Toggle::make($entity)
-                            ->label(FilamentShield::getLocalizedResourceLabel($entity))
+                            ->label(FilamentShield::getLocalizedResourceLabel($entityCode))
                             ->onIcon('heroicon-s-lock-open')
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
@@ -307,7 +308,8 @@ class RoleResource extends Resource
 
     protected static function refreshEntitiesStatesViaSelectAll(Closure $set, $state): void
     {
-        collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
+        collect(FilamentShield::getResources())->each(function ($entityCode) use ($set, $state) {
+            $entity = self::getEntityIdentifier($entityCode);
             $set($entity, $state);
             collect(config('filament-shield.permission_prefixes.resource'))->each(function ($permission) use ($entity, $set, $state) {
                 $set($permission.'_'.$entity, $state);
@@ -512,5 +514,16 @@ class RoleResource extends Resource
 
             return $customEntities;
         }, []);
+    }
+
+    /**
+     * Retrive the entity identifier in the same way as the permissions and policies generated (without '_' char in model names).
+     *
+     * @param string $entity
+     * @return string
+     */
+    protected static function getEntityIdentifier(string $entity): string
+    {
+        return str_replace('_', '', $entity);
     }
 }
