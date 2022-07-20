@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Policies;
+namespace {{ namespace }};
 
-use App\Models\User;
+use {{ auth_model_fqcn }};
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class {{ modelPolicy }}
@@ -12,10 +12,10 @@ class {{ modelPolicy }}
     /**
      * Determine whether the user can view any models.
      *
-     * @param  \App\Models\User  $user
+     * @param  \{{ auth_model_fqcn }}  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAny({{ auth_model_name }} $user)
     {
         return $user->can('{{ ViewAny }}');
     }
@@ -23,10 +23,10 @@ class {{ modelPolicy }}
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \App\Models\User  $user
+     * @param  \{{ auth_model_fqcn }}  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user)
+    public function view({{ auth_model_name }} $user)
     {
         return $user->can('{{ View }}');
     }
@@ -34,10 +34,10 @@ class {{ modelPolicy }}
     /**
      * Determine whether the user can create models.
      *
-     * @param  \App\Models\User  $user
+     * @param  \{{ auth_model_fqcn }}  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user)
+    public function create({{ auth_model_name }} $user)
     {
         return $user->can('{{ Create }}');
     }
@@ -45,10 +45,10 @@ class {{ modelPolicy }}
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \App\Models\User  $user
+     * @param  \{{ auth_model_fqcn }}  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user)
+    public function update({{ auth_model_name }} $user)
     {
         return $user->can('{{ Update }}');
     }
@@ -56,10 +56,10 @@ class {{ modelPolicy }}
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  \App\Models\User  $user
+     * @param  \{{ auth_model_fqcn }}  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user)
+    public function delete({{ auth_model_name }} $user)
     {
         return $user->can('{{ Delete }}');
     }
@@ -67,10 +67,10 @@ class {{ modelPolicy }}
     /**
      * Determine whether the user can bulk delete.
      *
-     * @param  \App\Models\User  $user
+     * @param  \{{ auth_model_fqcn }}  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function deleteAny(User $user)
+    public function deleteAny({{ auth_model_name }} $user)
     {
         return $user->can('{{ DeleteAny }}');
     }

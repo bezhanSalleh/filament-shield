@@ -12,8 +12,6 @@ class MakeSuperAdminShieldCommand extends Command
 {
     use CanValidateInput;
 
-    protected $hidden = true;
-
     public $signature = 'shield:super-admin';
 
     public $description = 'Creates Filament Super Admin';

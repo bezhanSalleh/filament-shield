@@ -19,7 +19,7 @@ class FilamentShield
             collect(config('filament-shield.permission_prefixes.resource'))
                 ->each(function ($prefix) use ($resource, $permissions) {
                     $permissions->push(Permission::firstOrCreate(
-                        ['name' => $prefix . '_' . Str::lower($resource)],
+                        ['name' => $prefix . '_' . $resource],
                         ['guard_name' => config('filament.auth.guard')]
                     ));
                 });
@@ -101,11 +101,16 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $resource = Str::of($resource)->afterLast('\\')->before('Resource')->snake()->toString();
-                $resources[$resource] = $resource;
+                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\','')->headline()->snake()->replace('_','::')->toString();
+                $resources[$name] = [
+                    'resource' => $name,
+                    'fqcn' => $resource,
+                ];
 
                 return $resources;
-            }, []);
+            }, collect())
+            ->sortKeys()
+            ->toArray();
     }
 
     /**
@@ -117,7 +122,7 @@ class FilamentShield
     public static function getLocalizedResourceLabel(string $entity): string
     {
         $label = collect(Filament::getResources())->filter(function ($resource) use ($entity) {
-            return Str::of($resource)->endsWith(Str::of($entity)->headline()->replace(' ', '')->toString().'Resource');
+            return $resource === $entity;
         })->first()::getModelLabel();
 
         return Str::of($label)->headline();
