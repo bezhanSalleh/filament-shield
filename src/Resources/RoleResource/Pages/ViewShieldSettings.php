@@ -148,7 +148,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                             Forms\Components\Radio::make('generator.option')
                                 ->label('')
                                 ->options([
-                                    'policies_and_permissions' => __("filament-shield::filament-shield.labels.generator_option.polices_and_permissions"),
+                                    'policies_and_permissions' => __("filament-shield::filament-shield.labels.generator_option.policies_and_permissions"),
                                     'policies' => __("filament-shield::filament-shield.labels.generator_option.policies"),
                                     'permissions' => __("filament-shield::filament-shield.labels.generator_option.permissions"),
                                 ])
