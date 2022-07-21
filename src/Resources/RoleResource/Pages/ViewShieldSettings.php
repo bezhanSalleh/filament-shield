@@ -101,7 +101,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                             Forms\Components\Select::make('settings.driver')
                                 ->options([
                                     'file' => __('filament-shield::filament-shield.settings.driver.file'),
-                                    'database' => __('filament-shield::filament-shield.settings.driver.database')
+                                    'database' => __('filament-shield::filament-shield.settings.driver.database'),
                                 ])
                                 ->label(__('filament-shield::filament-shield.settings.driver.label'))
                                 ->helperText(__('filament-shield::filament-shield.settings.driver.helper_text'))
