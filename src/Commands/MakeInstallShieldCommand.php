@@ -13,6 +13,7 @@ class MakeInstallShieldCommand extends Command
 {
     public $signature = 'shield:install
         {--F|fresh}
+        {--db-driver : Use settings database driver.}
     ';
     public $description = "One Command to Rule them All 🔥";
 
@@ -36,14 +37,14 @@ class MakeInstallShieldCommand extends Command
             $this->comment('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
 
             if ($this->confirm('Run `shield:install --fresh` instead?', false)) {
-                $this->install(true);
+                $this->install(true, $this->option('db-driver'));
             }
 
             return self::INVALID;
         }
 
         if ($confirmed) {
-            $this->install($this->option('fresh'));
+            $this->install($this->option('fresh'), $this->option('db-driver'));
         } else {
             $this->comment('`shield:install` command was cancelled.');
         }
@@ -84,7 +85,7 @@ class MakeInstallShieldCommand extends Command
         return collect(['permissions','roles','role_has_permissions','model_has_roles','model_has_permissions','filament_shield_settings']);
     }
 
-    protected function install(bool $fresh = false)
+    protected function install(bool $fresh = false, bool $useDBDriver = false)
     {
         $this->call('vendor:publish', [
             '--provider' => 'Spatie\Permission\PermissionServiceProvider',
@@ -92,18 +93,20 @@ class MakeInstallShieldCommand extends Command
 
         $this->info('Core Package config published.');
 
-        $this->call('vendor:publish', [
-            '--tag' => 'filament-shield-seeder',
-            '--force' => true,
-        ]);
+        if ($useDBDriver) {
 
-        $this->call('vendor:publish', [
-            '--tag' => 'filament-shield-migrations',
-            '--force' => true,
-        ]);
+            $this->call('vendor:publish', [
+                '--tag' => 'filament-shield-seeder',
+                '--force' => true,
+            ]);
 
-        $this->info('Shield\'s migration and seeder published.');
+            $this->call('vendor:publish', [
+                '--tag' => 'filament-shield-migrations',
+                '--force' => true,
+            ]);
 
+            $this->info('Shield\'s migration and seeder published.');
+        }
 
         if ($fresh) {
             try {
@@ -124,13 +127,15 @@ class MakeInstallShieldCommand extends Command
             $this->info('Database migrated.');
         }
 
-        Artisan::call('db:seed', [
-            '--class' => 'ShieldSettingSeeder',
-        ]);
+        if ($useDBDriver) {
+            Artisan::call('db:seed', [
+                '--class' => 'ShieldSettingSeeder',
+            ]);
 
-        config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
+            config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
 
-        $this->info('Shield\'s settings configured.');
+            $this->info('Shield\'s settings configured.');
+        }
 
         $this->info('Creating Super Admin...');
         $this->call('shield:super-admin');

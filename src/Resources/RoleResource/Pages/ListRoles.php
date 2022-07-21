@@ -2,9 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use Filament\Pages\Actions;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 
 class ListRoles extends ListRecords
 {
@@ -19,7 +20,8 @@ class ListRoles extends ListRecords
                 ->url(static::$resource::getUrl('settings'))
                 ->icon(__('filament-shield::filament-shield.page.icon'))
                 ->color('primary')
-                ->outlined(),
+                ->outlined()
+                ->visible(config('filament-shield.settings.gui_enabled') || Filament::auth()->user()->hasRole(config('filament-shield.super_admin.name'))),
         ];
     }
 }

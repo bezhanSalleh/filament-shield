@@ -29,9 +29,13 @@ class ViewShieldSettings extends Page implements HasFormActions
 
     public function mount(): void
     {
-        static::authorizeResourceAccess();
+        abort_unless((static::getResource()::canViewAny() && config('filament-shield.settings.gui_enabled')) || Filament::auth()->user()->hasRole(config('filament-shield.super_admin.name')), 403);
 
-        $this->form->fill(Setting::pluck('value', 'key')->toArray());
+        $this->form->fill(
+            config('filament-shield.settings.driver') === 'database'
+            ? Setting::pluck('value', 'key')->toArray()
+            : config('filament-shield')
+        );
     }
 
     protected function getFormSchema(): array
@@ -262,17 +266,7 @@ class ViewShieldSettings extends Page implements HasFormActions
         $data = $this->form->getState();
         $data['permission_prefixes']['resource'] = explode(',', $data['permission_prefixes']['resource']);
 
-        foreach ($data as $key => $value) {
-            Setting::updateOrCreate([
-                'key' => $key,
-            ], [
-                'value' => $value,
-            ]);
-        }
-
-        config()->set('filament-shield', null);
-
-        config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
+        static::updateConfig($data);
 
         if ($notify) {
             $this->notify('success', __('filament-shield::filament-shield.update'));
@@ -312,7 +306,8 @@ class ViewShieldSettings extends Page implements HasFormActions
                     $this->notify('success', __('filament-shield::filament-shield.loaded_default_settings'));
                 })
                 ->requiresConfirmation()
-                ->color('warning'),
+                ->color('warning')
+                ->visible(config('filament-shield.settings.driver') === 'database'),
 
             Actions\Action::make('cancel')
                 ->url(static::$resource::getUrl(name: 'index'))
@@ -320,5 +315,24 @@ class ViewShieldSettings extends Page implements HasFormActions
                 ->color('secondary'),
 
         ];
+    }
+
+    protected static function updateConfig(array $data): void
+    {
+        config()->set('filament-shield', null);
+
+        if (config('filament-shield.settings.driver') === 'database') {
+            foreach ($data as $key => $value) {
+                Setting::updateOrCreate([
+                    'key' => $key,
+                ], [
+                   'value' => $value,
+                ]);
+            }
+
+            config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
+        } else {
+            config()->set('filament-shield', $data);
+        }
     }
 }

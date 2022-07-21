@@ -134,7 +134,7 @@ return [
 
         'gui' =>  [
             'label' => 'Settings GUI',
-            'helper_text' => 'Enable or Disable the settings page access. Make sure you know what you are doing.'
+            'helper_text' => 'Enable or Disable the settings page access. Only accessible by User with Super Admin Role so make sure you know what you are doing.'
         ]
     ],
 
