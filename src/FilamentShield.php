@@ -101,7 +101,7 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::')->toString();
                 $resources[$name] = [
                     'resource' => $name,
                     'fqcn' => $resource,
@@ -194,7 +194,7 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($widgets, $widget) {
-                $name = Str::of($widget)->after('Widgets\\')->replace('\\', '')->snake()->prepend(config('filament-shield.permission_prefixes.widget').'_');
+                $name = Str::of($widget)->afterLast('\\')->snake()->prepend(config('filament-shield.permission_prefixes.widget').'_');
                 $widgets["{$name}"] = "{$name}";
 
                 return $widgets;
