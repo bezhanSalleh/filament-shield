@@ -93,6 +93,10 @@ return [
     'labels.exclude.pages.placeholder' => 'Select pages ...',
     'labels.exclude.widgets' => 'Widgets',
     'labels.exclude.widgets.placeholder' => 'Select widgets ...',
+    'labels.generator_option' => 'Generator Option',
+    'labels.generator_option.policies_and_permissions' => 'Generate Policies & Permissions',
+    'labels.generator_option.policies' => 'Generate only Policies',
+    'labels.generator_option.permissions' => 'Generate only Permissions',
 
     /*
     |--------------------------------------------------------------------------

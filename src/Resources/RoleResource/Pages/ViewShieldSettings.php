@@ -144,13 +144,13 @@ class ViewShieldSettings extends Page implements HasFormActions
                     Forms\Components\Grid::make()
                     ->schema([
                             Forms\Components\Placeholder::make('')
-                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700">Generator Option</span>')),
+                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700">' . __("filament-shield::filament-shield.labels.generator_option") . '</span>')),
                             Forms\Components\Radio::make('generator.option')
                                 ->label('')
                                 ->options([
-                                    'policies_and_permissions' => 'Generate Policies & Permissions',
-                                    'policies' => 'Generate only Policies',
-                                    'permissions' => 'Generate only Permissions',
+                                    'policies_and_permissions' => __("filament-shield::filament-shield.labels.generator_option.polices_and_permissions"),
+                                    'policies' => __("filament-shield::filament-shield.labels.generator_option.policies"),
+                                    'permissions' => __("filament-shield::filament-shield.labels.generator_option.permissions"),
                                 ])
                                 ->inline(),
                         ])
