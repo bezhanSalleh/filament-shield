@@ -124,6 +124,23 @@ return [
         'restore_any' => 'Restore Any',
     ],
 
-    'auth_provider_model' => 'Auth Provider Model',
-    'auth_provider_model.helperText' => 'Fully Qualified Class Name of the Model used for policy generation.'
+    'settings' => [
+        'driver' => [
+            'label' => 'Settings Driver',
+            'helper_text' => 'Driver to be used for storing Shield\'s Settings for permission generators.',
+            'file' => 'File',
+            'database' => 'Database'
+        ],
+
+        'gui' =>  [
+            'label' => 'Settings GUI',
+            'helper_text' => 'Enable or Disable the settings page access. Make sure you know what you are doing.'
+        ]
+    ],
+
+    'auth_provider' => [
+        'label' => 'Auth Provider Model',
+        'helper_text' => 'Fully Qualified Class Name of the Model used for policy generation.'
+    ],
+
 ];

@@ -85,9 +85,35 @@ class ViewShieldSettings extends Page implements HasFormActions
                     $layout::make()
                         ->schema([
                             Forms\Components\TextInput::make('auth_provider_model.fqcn')
-                                ->label(__('filament-shield::filament-shield.auth_provider_model'))
-                                ->helperText(__('filament-shield::filament-shield.auth_provider_model.helperText'))
+                                ->label(__('filament-shield::filament-shield.auth_provider.label'))
+                                ->helperText(__('filament-shield::filament-shield.auth_provider.helper_text'))
                                 ->default(config('filament-shield.auth_provider_model.fqcn'))
+                                ->required(),
+                        ])
+                        ->columns(1)
+                        ->columnSpan(1),
+                    $layout::make()
+                        ->schema([
+                            Forms\Components\Select::make('settings.driver')
+                                ->options([
+                                    'file' => __('filament-shield::filament-shield.settings.driver.file'),
+                                    'database' => __('filament-shield::filament-shield.settings.driver.database')
+                                ])
+                                ->label(__('filament-shield::filament-shield.settings.driver.label'))
+                                ->helperText(__('filament-shield::filament-shield.settings.driver.helper_text'))
+                                ->default(config('filament-shield.settings.driver'))
+                                ->disablePlaceholderSelection()
+                                ->required(),
+                        ])
+                        ->columns(1)
+                        ->columnSpan(1),
+                    $layout::make()
+                        ->schema([
+                            Forms\Components\Toggle::make('settings.gui_enabled')
+                                ->label(__('filament-shield::filament-shield.settings.gui.label'))
+                                ->hint(fn ($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.yes").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.no").'</span>')
+                                ->default(config('filament-shield.settings.gui_enabled'))
+                                ->helperText('<span class="text-md text-gray-600 leading-loose">'.__("filament-shield::filament-shield.settings.gui.helper_text").'</span>')
                                 ->required(),
                         ])
                         ->columns(1)
