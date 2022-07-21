@@ -94,7 +94,6 @@ class MakeInstallShieldCommand extends Command
         $this->info('Core Package config published.');
 
         if ($useDBDriver) {
-
             $this->call('vendor:publish', [
                 '--tag' => 'filament-shield-seeder',
                 '--force' => true,
