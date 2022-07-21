@@ -50,9 +50,6 @@ class ViewShieldSettings extends Page implements HasFormActions
                                 ->reactive(),
                             Forms\Components\TextInput::make('super_admin.name')
                                 ->label(__('filament-shield::filament-shield.labels.super_admin.text_input'))
-                                ->afterStateHydrated(function ($set, $state) {
-                                    $set('super_admin.name', Str::of($state)->snake()->toString());
-                                })
                                 ->visible(fn ($get) => $get('super_admin.enabled'))
                                 ->required(fn ($get) => $get('super_admin.enabled')),
                         ])
@@ -69,8 +66,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                             Forms\Components\TextInput::make('filament_user.name')
                                 ->label(__('filament-shield::filament-shield.labels.filament_user.text_input'))
                                 ->visible(fn ($get) => $get('filament_user.enabled'))
-                                ->required(fn ($get) => $get('filament_user.enabled'))
-                                ,
+                                ->required(fn ($get) => $get('filament_user.enabled')),
                         ])
                         ->columns(1)
                         ->columnSpan(1),

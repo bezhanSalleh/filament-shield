@@ -101,7 +101,7 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::')->toString();
+                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
                 $resources[$name] = [
                     'resource' => $name,
                     'fqcn' => $resource,
@@ -161,7 +161,8 @@ class FilamentShield
                 $pages["{$name}"] = "{$name}";
 
                 return $pages;
-            }, []);
+            }, collect())
+            ->toArray();
     }
 
     /**
@@ -197,7 +198,8 @@ class FilamentShield
                 $widgets["{$name}"] = "{$name}";
 
                 return $widgets;
-            }, []);
+            }, collect())
+            ->toArray();
     }
 
     /**
@@ -237,8 +239,7 @@ class FilamentShield
                     $item,
                     Str::of($string)
                     ->after('_')
-                    ->headline()
-                    ->replace(' ', '')
+                    ->studly()
                 ));
     }
 

@@ -37,14 +37,12 @@ class RoleResource extends Resource
                                 Forms\Components\TextInput::make('name')
                                     ->label(__('filament-shield::filament-shield.field.name'))
                                     ->required()
-                                    ->maxLength(255)
-                                    ->afterStateUpdated(fn (Closure $set, $state): string => $set('name', Str::lower($state))),
+                                    ->maxLength(255),
                                 Forms\Components\TextInput::make('guard_name')
                                     ->label(__('filament-shield::filament-shield.field.guard_name'))
                                     ->default(config('filament.auth.guard'))
                                     ->nullable()
-                                    ->maxLength(255)
-                                    ->afterStateUpdated(fn (Closure $set, $state): string => $set('guard_name', Str::lower($state))),
+                                    ->maxLength(255),
                                 Forms\Components\Toggle::make('select_all')
                                     ->onIcon('heroicon-s-shield-check')
                                     ->offIcon('heroicon-s-shield-exclamation')
@@ -61,70 +59,67 @@ class RoleResource extends Resource
                                 'lg' => 3,
                             ]),
                     ]),
-                // Forms\Components\Section::make(__('filament-shield::filament-shield.section'))
-                //     ->schema([
-                        Forms\Components\Tabs::make('Permissions')
-                            ->tabs([
-                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
-                                    ->visible(fn (): bool => (bool) config('filament-shield.entities.resources'))
-                                    ->reactive()
-                                    ->schema([
-                                        Forms\Components\Grid::make([
-                                            'sm' => 2,
-                                            'lg' => 3,
-                                        ])
-                                        ->schema(static::getResourceEntitiesSchema())
-                                        ->columns([
-                                            'sm' => 2,
-                                            'lg' => 3,
-                                        ]),
+                    Forms\Components\Tabs::make('Permissions')
+                        ->tabs([
+                            Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
+                                ->visible(fn (): bool => (bool) config('filament-shield.entities.resources'))
+                                ->reactive()
+                                ->schema([
+                                    Forms\Components\Grid::make([
+                                        'sm' => 2,
+                                        'lg' => 3,
+                                    ])
+                                    ->schema(static::getResourceEntitiesSchema())
+                                    ->columns([
+                                        'sm' => 2,
+                                        'lg' => 3,
                                     ]),
-                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-                                    ->visible(fn (): bool => (bool) (config('filament-shield.entities.pages') && count(FilamentShield::getPages())) > 0 ? true : false)
-                                    ->reactive()
-                                    ->schema([
-                                        Forms\Components\Grid::make([
-                                            'sm' => 3,
-                                            'lg' => 4,
-                                        ])
-                                        ->schema(static::getPageEntityPermissionsSchema())
-                                        ->columns([
-                                            'sm' => 3,
-                                            'lg' => 4,
-                                        ]),
+                                ]),
+                            Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
+                                ->visible(fn (): bool => (bool) (config('filament-shield.entities.pages') && count(FilamentShield::getPages())) > 0 ? true : false)
+                                ->reactive()
+                                ->schema([
+                                    Forms\Components\Grid::make([
+                                        'sm' => 3,
+                                        'lg' => 4,
+                                    ])
+                                    ->schema(static::getPageEntityPermissionsSchema())
+                                    ->columns([
+                                        'sm' => 3,
+                                        'lg' => 4,
                                     ]),
-                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-                                    ->visible(fn (): bool => (bool) (config('filament-shield.entities.widgets') && count(FilamentShield::getWidgets())) > 0 ? true : false)
-                                    ->reactive()
-                                    ->schema([
-                                        Forms\Components\Grid::make([
-                                            'sm' => 3,
-                                            'lg' => 4,
-                                        ])
-                                        ->schema(static::getWidgetEntityPermissionSchema())
-                                        ->columns([
-                                            'sm' => 3,
-                                            'lg' => 4,
-                                        ]),
+                                ]),
+                            Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
+                                ->visible(fn (): bool => (bool) (config('filament-shield.entities.widgets') && count(FilamentShield::getWidgets())) > 0 ? true : false)
+                                ->reactive()
+                                ->schema([
+                                    Forms\Components\Grid::make([
+                                        'sm' => 3,
+                                        'lg' => 4,
+                                    ])
+                                    ->schema(static::getWidgetEntityPermissionSchema())
+                                    ->columns([
+                                        'sm' => 3,
+                                        'lg' => 4,
                                     ]),
+                                ]),
 
-                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
-                                    ->visible(fn (): bool => (bool) config('filament-shield.entities.custom_permissions'))
-                                    ->reactive()
-                                    ->schema([
-                                        Forms\Components\Grid::make([
-                                            'sm' => 3,
-                                            'lg' => 4,
-                                        ])
-                                        ->schema(static::getCustomEntitiesPermisssionSchema())
-                                        ->columns([
-                                            'sm' => 3,
-                                            'lg' => 4,
-                                        ]),
+                            Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
+                                ->visible(fn (): bool => (bool) config('filament-shield.entities.custom_permissions'))
+                                ->reactive()
+                                ->schema([
+                                    Forms\Components\Grid::make([
+                                        'sm' => 3,
+                                        'lg' => 4,
+                                    ])
+                                    ->schema(static::getCustomEntitiesPermisssionSchema())
+                                    ->columns([
+                                        'sm' => 3,
+                                        'lg' => 4,
                                     ]),
-                            ])
-                            ->columnSpan('full'),
-                    // ]),
+                                ]),
+                        ])
+                        ->columnSpan('full'),
 
 
             ]);
