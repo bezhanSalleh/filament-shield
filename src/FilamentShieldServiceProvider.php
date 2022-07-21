@@ -6,7 +6,6 @@ use BezhanSalleh\FilamentShield\Models\Setting;
 use Composer\InstalledVersions;
 use Filament\PluginServiceProvider;
 use Illuminate\Foundation\Console\AboutCommand;
-use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelPackageTools\Package;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
