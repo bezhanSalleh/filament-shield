@@ -19,7 +19,7 @@ class FilamentShield
             collect(config('filament-shield.permission_prefixes.resource'))
                 ->each(function ($prefix) use ($resource, $permissions) {
                     $permissions->push(Permission::firstOrCreate(
-                        ['name' => $prefix . '_' . $resource],
+                        ['name' => $prefix . '_' . Str::lower($resource)],
                         ['guard_name' => config('filament.auth.guard')]
                     ));
                 });
@@ -101,16 +101,11 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::')->toString();
-                $resources[$name] = [
-                    'resource' => $name,
-                    'fqcn' => $resource,
-                ];
+                $resource = Str::of($resource)->afterLast('\\')->before('Resource')->snake()->toString();
+                $resources[$resource] = $resource;
 
                 return $resources;
-            }, collect())
-            ->sortKeys()
-            ->toArray();
+            }, []);
     }
 
     /**
@@ -122,7 +117,7 @@ class FilamentShield
     public static function getLocalizedResourceLabel(string $entity): string
     {
         $label = collect(Filament::getResources())->filter(function ($resource) use ($entity) {
-            return $resource === $entity;
+            return Str::of($resource)->endsWith(Str::of($entity)->headline()->replace(' ', '')->toString().'Resource');
         })->first()::getModelLabel();
 
         return Str::of($label)->headline();
@@ -157,7 +152,7 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($pages, $page) {
-                $name = Str::of($page)->afterLast('\\')->snake()->prepend(config('filament-shield.permission_prefixes.page').'_');
+                $name = Str::of($page)->after('Pages\\')->replace('\\', '')->snake()->prepend(config('filament-shield.permission_prefixes.page').'_');
                 $pages["{$name}"] = "{$name}";
 
                 return $pages;
@@ -239,6 +234,7 @@ class FilamentShield
                     ->after('_')
                     ->headline()
                     ->replace(' ', '')
+                    ->toString()
                 ));
     }
 
