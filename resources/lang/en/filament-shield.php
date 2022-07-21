@@ -54,7 +54,7 @@ return [
     | Role Setting Page
     |--------------------------------------------------------------------------
     */
-    
+
     'page' => [
         'name' => 'Shield Settings',
         'icon' => 'heroicon-o-adjustments',
@@ -122,5 +122,8 @@ return [
         'force_delete_any' => 'Force Delete Any',
         'restore' => 'Restore',
         'restore_any' => 'Restore Any',
-    ]
+    ],
+
+    'auth_provider_model' => 'Auth Provider Model',
+    'auth_provider_model.helperText' => 'Fully Qualified Class Name of the Model used for policy generation.'
 ];

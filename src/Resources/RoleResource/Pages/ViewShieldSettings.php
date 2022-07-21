@@ -82,6 +82,16 @@ class ViewShieldSettings extends Page implements HasFormActions
                         ])
                         ->columns(1)
                         ->columnSpan(1),
+                    $layout::make()
+                        ->schema([
+                            Forms\Components\TextInput::make('auth_provider_model.fqcn')
+                                ->label(__('filament-shield::filament-shield.auth_provider_model'))
+                                ->helperText(__('filament-shield::filament-shield.auth_provider_model.helperText'))
+                                ->default(config('filament-shield.auth_provider_model.fqcn'))
+                                ->required(),
+                        ])
+                        ->columns(1)
+                        ->columnSpan(1),
                 ])
                 ->columns([
                     'sm' => 1,
