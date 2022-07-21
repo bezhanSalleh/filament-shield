@@ -152,7 +152,7 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($pages, $page) {
-                $name = Str::of($page)->after('Pages\\')->replace('\\', '')->snake()->prepend(config('filament-shield.permission_prefixes.page').'_');
+                $name = Str::of($page)->afterLast('\\')->snake()->prepend(config('filament-shield.permission_prefixes.page').'_');
                 $pages["{$name}"] = "{$name}";
 
                 return $pages;
@@ -234,7 +234,6 @@ class FilamentShield
                     ->after('_')
                     ->headline()
                     ->replace(' ', '')
-                    ->toString()
                 ));
     }
 
