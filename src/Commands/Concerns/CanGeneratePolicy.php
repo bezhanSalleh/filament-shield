@@ -36,7 +36,7 @@ trait CanGeneratePolicy
             ->replace('Models', 'Policies')
             ->replaceLast('.php', 'Policy.php')
             ->replace('\\', DIRECTORY_SEPARATOR)
-            ;
+        ;
 
         return $basePath;
     }
