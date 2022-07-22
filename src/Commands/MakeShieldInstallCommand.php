@@ -140,7 +140,7 @@ class MakeShieldInstallCommand extends Command
         $this->call('shield:super-admin');
 
 
-        Artisan::call('shield:generate');
+        $this->call('shield:generate');
         $this->info(Artisan::output());
 
         $this->info('Filament Shield🛡 is now active ✅');

@@ -105,7 +105,7 @@ class MakeShieldGenerateCommand extends Command
             collect($pages)->map(function ($page, $key) {
                 return [
                     '#' => $key + 1,
-                    'Page' => Str::studly($page),
+                    'Page' => Str::replace(config('filament-shield.permission_prefixes.page').'_', '', $page),
                     'Permission' => $page,
                 ];
             })
@@ -120,7 +120,7 @@ class MakeShieldGenerateCommand extends Command
             collect($widgets)->map(function ($widget, $key) {
                 return [
                     '#' => $key + 1,
-                    'Widget' => Str::studly($widget),
+                    'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget').'_', '', $widget),
                     'Permission' => $widget,
                 ];
             })

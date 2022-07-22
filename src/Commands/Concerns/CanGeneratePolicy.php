@@ -19,7 +19,7 @@ trait CanGeneratePolicy
 
     protected function generatePolicyPath(array $entity): string
     {
-        if ($entity['model'] === 'Role') {
+        if (Str::of($entity['model'])->contains('Role')) {
             $basePolicyPath = app_path(
                 (string) Str::of($entity['model'])
                 ->prepend('Policies\\')
@@ -36,7 +36,7 @@ trait CanGeneratePolicy
             ->replace('Models', 'Policies')
             ->replaceLast('.php', 'Policy.php')
             ->replace('\\', DIRECTORY_SEPARATOR)
-            ->value;
+            ;
 
         return $basePath;
     }
@@ -56,9 +56,9 @@ trait CanGeneratePolicy
         $namespace = (new \ReflectionClass($entity['fqcn']::getModel()))
             ->getNamespaceName();
 
-        $stubVariables['namespace'] = $entity['model'] === 'Role'
+        $stubVariables['namespace'] = Str::of($entity['model'])->contains('Role')
             ? 'App\Policies'
-            : Str::of($namespace)->replace('Models', 'Policies')->value; /** @phpstan-ignore-line */
+            : Str::of($namespace)->replace('Models', 'Policies'); /** @phpstan-ignore-line */
 
         $stubVariables['modelPolicy'] = "{$entity['model']}Policy";
 

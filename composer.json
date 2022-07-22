@@ -25,7 +25,7 @@
     "require": {
         "php": "^8.0|^8.1",
         "filament/filament": "^2.13",
-        "illuminate/contracts": "^8.0|^9.0",
+        "illuminate/contracts": "^8.6|^9.0",
         "spatie/laravel-package-tools": "^1.9.2",
         "spatie/laravel-permission": "^5.0",
         "spatie/invade": "^1.0"

@@ -101,10 +101,10 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::')->value;
-                $resources[$name] = [
-                    'resource' => $name,
-                    'model' => Str::of($resource::getModel())->afterLast('\\')->value,
+                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+                $resources["{$name}"] = [
+                    'resource' => "{$name}",
+                    'model' => Str::of($resource::getModel())->afterLast('\\'),
                     'fqcn' => $resource,
                 ];
 
