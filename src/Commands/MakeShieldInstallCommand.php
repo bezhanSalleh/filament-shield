@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class MakeInstallShieldCommand extends Command
+class MakeShieldInstallCommand extends Command
 {
     public $signature = 'shield:install
         {--F|fresh}
@@ -139,13 +139,9 @@ class MakeInstallShieldCommand extends Command
         $this->info('Creating Super Admin...');
         $this->call('shield:super-admin');
 
-        if (config('filament-shield.exclude.enabled')) {
-            Artisan::call('shield:generate --exclude');
-            $this->info(Artisan::output());
-        } else {
-            Artisan::call('shield:generate');
-            $this->info(Artisan::output());
-        }
+
+        Artisan::call('shield:generate');
+        $this->info(Artisan::output());
 
         $this->info('Filament Shield🛡 is now active ✅');
     }

@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
-class MakeSuperAdminShieldCommand extends Command
+class MakeShieldSuperAdminCommand extends Command
 {
     use CanValidateInput;
 

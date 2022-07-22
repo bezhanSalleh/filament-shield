@@ -33,7 +33,7 @@ class FilamentShield
     {
         if (config('filament-shield.entities.pages')) {
             $permission = Permission::firstOrCreate(
-                ['name' => config('filament-shield.permission_prefixes.page') . '_' . Str::lower($page)],
+                ['name' => $page ],
                 ['guard_name' => config('filament.auth.guard')]
             )->name;
 
@@ -46,7 +46,7 @@ class FilamentShield
     {
         if (config('filament-shield.entities.widgets')) {
             $permission = Permission::firstOrCreate(
-                ['name' => config('filament-shield.permission_prefixes.widget') . '_' . Str::lower($widget)],
+                ['name' => $widget ],
                 ['guard_name' => config('filament.auth.guard')]
             )->name;
 
@@ -104,6 +104,7 @@ class FilamentShield
                 $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::')->value;
                 $resources[$name] = [
                     'resource' => $name,
+                    'model' => Str::of($resource::getModel())->afterLast('\\')->value,
                     'fqcn' => $resource,
                 ];
 
@@ -157,7 +158,10 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($pages, $page) {
-                $name = Str::of($page)->afterLast('\\')->snake()->prepend(config('filament-shield.permission_prefixes.page').'_');
+                $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+                $name = Str::of(class_basename($page))
+                    ->prepend($prepend);
+
                 $pages["{$name}"] = "{$name}";
 
                 return $pages;
@@ -194,7 +198,10 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($widgets, $widget) {
-                $name = Str::of($widget)->afterLast('\\')->snake()->prepend(config('filament-shield.permission_prefixes.widget').'_');
+                $prepend = Str::of(config('filament-shield.permission_prefixes.widget'))->append('_');
+                $name = Str::of(class_basename($widget))
+                    ->prepend($prepend);
+
                 $widgets["{$name}"] = "{$name}";
 
                 return $widgets;

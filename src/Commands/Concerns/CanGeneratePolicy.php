@@ -29,7 +29,7 @@ trait CanGeneratePolicy
             return "{$basePolicyPath}Policy.php";
         }
 
-        $path = (new \ReflectionClass($entity['resource']::getModel()))->getFileName();
+        $path = (new \ReflectionClass($entity['fqcn']::getModel()))->getFileName();
 
         $basePath = Str::of($path)
             ->replace('Models', 'Policies')
@@ -44,7 +44,7 @@ trait CanGeneratePolicy
     {
         $stubVariables = collect(config('filament-shield.permission_prefixes.resource'))
             ->reduce(function ($gates, $permission) use ($entity) {
-                $gates[Str::studly($permission)] = $permission.'_'.$entity['permission'];
+                $gates[Str::studly($permission)] = $permission.'_'.$entity['resource'];
 
                 return $gates;
             }, collect())->toArray();
@@ -52,7 +52,7 @@ trait CanGeneratePolicy
         $stubVariables['auth_model_fqcn'] = config('filament-shield.auth_provider_model.fqcn');
         $stubVariables['auth_model_name'] = Str::of($stubVariables['auth_model_fqcn'])->afterLast('\\');
 
-        $namespace = (new \ReflectionClass($entity['resource']::getModel()))
+        $namespace = (new \ReflectionClass($entity['fqcn']::getModel()))
             ->getNamespaceName();
 
         $stubVariables['namespace'] = $entity['model'] === 'Role'
