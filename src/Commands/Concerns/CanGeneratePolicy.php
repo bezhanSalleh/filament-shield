@@ -31,6 +31,7 @@ trait CanGeneratePolicy
 
         $path = (new \ReflectionClass($entity['fqcn']::getModel()))->getFileName();
 
+        /** @phpstan-ignore-next-line */
         $basePath = Str::of($path)
             ->replace('Models', 'Policies')
             ->replaceLast('.php', 'Policy.php')
@@ -57,7 +58,7 @@ trait CanGeneratePolicy
 
         $stubVariables['namespace'] = $entity['model'] === 'Role'
             ? 'App\Policies'
-            : Str::of($namespace)->replace('Models', 'Policies')->value;
+            : Str::of($namespace)->replace('Models', 'Policies')->value; /** @phpstan-ignore-line */
 
         $stubVariables['modelPolicy'] = "{$entity['model']}Policy";
 

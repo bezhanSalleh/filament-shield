@@ -78,9 +78,13 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
 
     protected static function authProviderConfigured()
     {
-        return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(config('filament-shield.auth_provider_model.fqcn')))
-         || in_array("Spatie\Permission\Traits\HasRoles", class_uses(config('filament-shield.auth_provider_model.fqcn')))
-            ? '<fg=green;options=bold>YES</>'
-            : '<fg=red;options=bold>NO</>' ;
+        if (class_exists(config('filament-shield.auth_provider_model.fqcn'))) {
+            return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(config('filament-shield.auth_provider_model.fqcn')))
+            || in_array("Spatie\Permission\Traits\HasRoles", class_uses(config('filament-shield.auth_provider_model.fqcn')))
+                ? '<fg=green;options=bold>YES</>'
+                : '<fg=red;options=bold>NO</>' ;
+        }
+
+        return '';
     }
 }

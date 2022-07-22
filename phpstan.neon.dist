@@ -18,10 +18,15 @@ parameters:
         - '#Call to method getProvider\(\) on an unknown class BezhanSalleh\\FilamentShield\\Commands\\SessionGuard#'
         -
             message: '#Call to an undefined static method [a-zA-Z0-9\\_]+::whereName\(\)#'
-            path: src/Commands/MakeSuperAdminShieldCommand.php
+            path: src/Commands/MakeShieldSuperAdminCommand.php
         -
             message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$permissions#'
             path: src/Resources/RoleResource.php
+        -
+            message: '#Call to an undefined method Illuminate\\Foundation\\Auth\\User::hasRole\(\)#'
+            paths:
+                - src/Resources/RoleResource/Pages/ListRoles.php
+                - src/Resources/RoleResource/Pages/ViewShieldSettings.php
         -
             message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$form#'
             paths:
