@@ -35,7 +35,7 @@ trait CanGeneratePolicy
             ->replace('Models', 'Policies')
             ->replaceLast('.php', 'Policy.php')
             ->replace('\\', DIRECTORY_SEPARATOR)
-            ->toString();
+            ->value;
 
         return $basePath;
     }
@@ -57,7 +57,7 @@ trait CanGeneratePolicy
 
         $stubVariables['namespace'] = $entity['model'] === 'Role'
             ? 'App\Policies'
-            : Str::of($namespace)->replace('Models', 'Policies')->toString();
+            : Str::of($namespace)->replace('Models', 'Policies')->value;
 
         $stubVariables['modelPolicy'] = "{$entity['model']}Policy";
 

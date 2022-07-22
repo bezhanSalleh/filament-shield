@@ -71,10 +71,10 @@ class MakeGenerateShieldCommand extends Command
     {
         return  collect($resources)
             ->reduce(function ($entites, $resource) {
-                $permission = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::')->toString();
+                $permission = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::')->value;
                 $entites[$permission] = [
                     'permission' => $permission,
-                    'model' => Str::of($resource::getModel())->afterLast('\\')->toString(),
+                    'model' => Str::of($resource::getModel())->afterLast('\\')->value,
                     'resource' => $resource,
                 ];
 
