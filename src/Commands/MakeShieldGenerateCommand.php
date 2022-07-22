@@ -78,8 +78,6 @@ class MakeShieldGenerateCommand extends Command
             });
     }
 
-
-
     protected function resourceInfo(array $resources): void
     {
         $this->info('Successfully generated Permissions & Policies for:');
