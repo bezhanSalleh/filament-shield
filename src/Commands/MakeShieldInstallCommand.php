@@ -2,18 +2,19 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\Models\Setting;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
+use BezhanSalleh\FilamentShield\Models\Setting;
 
 class MakeShieldInstallCommand extends Command
 {
     public $signature = 'shield:install
         {--F|fresh}
-        {--db-driver : Use settings database driver.}
+        {--setting : Setup & Configure shield\'s setting page using setting table.}
     ';
     public $description = "One Command to Rule them All 🔥";
 
@@ -37,14 +38,14 @@ class MakeShieldInstallCommand extends Command
             $this->comment('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
 
             if ($this->confirm('Run `shield:install --fresh` instead?', false)) {
-                $this->install(true, $this->option('db-driver'));
+                $this->install(true, $this->option('setting'));
             }
 
             return self::INVALID;
         }
 
         if ($confirmed) {
-            $this->install($this->option('fresh'), $this->option('db-driver'));
+            $this->install($this->option('fresh'), $this->option('setting'));
         } else {
             $this->comment('`shield:install` command was cancelled.');
         }
@@ -85,7 +86,7 @@ class MakeShieldInstallCommand extends Command
         return collect(['permissions','roles','role_has_permissions','model_has_roles','model_has_permissions','filament_shield_settings']);
     }
 
-    protected function install(bool $fresh = false, bool $useDBDriver = false)
+    protected function install(bool $fresh = false, bool $setting = false)
     {
         $this->call('vendor:publish', [
             '--provider' => 'Spatie\Permission\PermissionServiceProvider',
@@ -93,7 +94,11 @@ class MakeShieldInstallCommand extends Command
 
         $this->info('Core Package config published.');
 
-        if ($useDBDriver) {
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-shield-config',
+        ]);
+
+        if ($setting) {
             $this->call('vendor:publish', [
                 '--tag' => 'filament-shield-seeder',
                 '--force' => true,
@@ -114,19 +119,24 @@ class MakeShieldInstallCommand extends Command
                 DB::table('migrations')->where('migration', 'like', '%_filament_shield_settings_%')->delete();
                 $this->getTables()->each(fn ($table) => DB::statement('DROP TABLE IF EXISTS '.$table));
                 Schema::enableForeignKeyConstraints();
+
             } catch (\Throwable $e) {
                 $this->info($e);
             }
 
-            $this->call('migrate');
-
-            $this->info('Database migrations freshed up.');
+            $this->info('Freshening up shield migrations.');
         } else {
-            $this->call('migrate');
-            $this->info('Database migrated.');
+            $this->info('running shield migrations.');
         }
 
-        if ($useDBDriver) {
+        if (!$setting && File::exists($path = glob(database_path('migrations/*_filament_shield_settings_table.php'))[0])) {
+            File::delete($path);
+        }
+        
+        $this->call('migrate');
+
+
+        if ($setting) {
             Artisan::call('db:seed', [
                 '--class' => 'ShieldSettingSeeder',
             ]);

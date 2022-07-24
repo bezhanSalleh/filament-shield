@@ -2,7 +2,6 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use Illuminate\Support\Arr;
 use Composer\InstalledVersions;
 use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
@@ -28,7 +27,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        if (config('filament-shield.settings.driver') === 'database') {
+        if (Utils::isSettingPageEnabled()) {
             config(['filament-shield' => Setting::pluck('value', 'key')->toArray()], '');
         }
 
@@ -51,20 +50,14 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
 
         if (class_exists(AboutCommand::class)) {
             AboutCommand::add('Filament Shield', [
-                'Auth Provider' => config('filament-shield.auth_provider_model.fqcn'),
-                'Auth Provider Configured' => static::authProviderConfigured(),
-                'Settings Driver' => config('filament-shield.settings.driver'),
-                'Settings GUI' => config('filament-shield.settings.gui_enabled')
-                    ? '<fg=green;options=bold>ENABLED</>'
-                    : '<fg=red;options=bold>DISABLED</>',
+                'Auth Provider' => Utils::getAuthProviderFQCN().'|'.static::authProviderConfigured(),
+                'Role Resource' => Utils::isResourceEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::usesBuiltInResource() ? '|<fg=green;options=bold>BUILT-IN</>' : '|<fg=red;options=bold>CUSTOM</>'): '<fg=red;options=bold>DISABLED</>'.(Utils::usesBuiltInResource() ? '|<fg=green;options=bold>BUILT-IN</>' : '|<fg=red;options=bold>CUSTOM</>'),
+                'Setting Page' => Utils::isSettingPageEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>') : '<fg=red;options=bold>DISABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>'),
                 'Translations' => is_dir(resource_path('resource/lang/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
                 'Version' => InstalledVersions::getPrettyVersion('bezhansalleh/filament-shield'),
                 'Views' => is_dir(resource_path('views/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
             ]);
         }
-
-        // $this->mergeConfigFrom(__DIR__ . '/../config/filament-shield.php', 'filament-shield');
-
     }
 
     protected function getCommands(): array
@@ -79,9 +72,20 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
 
     protected function getResources(): array
     {
-        return [
-            Utils::isResourceEnabled() ? Utils::getResourceClass() : '',
-        ];
+        if (Utils::isResourceEnabled()) {
+            return [
+                Utils::getResourceClass(),
+            ];
+        }
+        return [];
+    }
+
+    protected function getPages(): array
+    {
+        return [];
+        // return [
+        //     Utils::registerShieldSettingPage(),
+        // ];
     }
 
     protected static function authProviderConfigured()
@@ -89,44 +93,10 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         if (class_exists(config('filament-shield.auth_provider_model.fqcn'))) {
             return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(config('filament-shield.auth_provider_model.fqcn')))
             || in_array("Spatie\Permission\Traits\HasRoles", class_uses(config('filament-shield.auth_provider_model.fqcn')))
-                ? '<fg=green;options=bold>YES</>'
-                : '<fg=red;options=bold>NO</>' ;
+                ? '<fg=green;options=bold>CONFIGURED</>'
+                : '<fg=red;options=bold>NOT CONFIGURED</>' ;
         }
 
         return '';
     }
-
-    // protected function mergeConfig(array $original, array $merging): array
-    // {
-    //     $array = array_merge($original, $merging);
-
-    //     foreach ($original as $key => $value) {
-    //         if (! is_array($value)) {
-    //             continue;
-    //         }
-
-    //         if (! Arr::exists($merging, $key)) {
-    //             continue;
-    //         }
-
-    //         if (is_numeric($key)) {
-    //             continue;
-    //         }
-
-    //         if ($key === 'middleware' || $key === 'register') {
-    //             continue;
-    //         }
-
-    //         $array[$key] = $this->mergeConfig($value, $merging[$key]);
-    //     }
-
-    //     return $array;
-    // }
-
-    // protected function mergeConfigFrom($path, $key): void
-    // {
-    //     $config = $this->app['config']->get($key, []);
-
-    //     $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
-    // }
 }

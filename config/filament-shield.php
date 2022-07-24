@@ -2,8 +2,8 @@
 
 return [
     'shield_resource' => [
-        'enabled' => true,
-        'resource' => \BezhanSalleh\FilamentShield\Resources\RoleResource::class,
+        'enabled' => false,
+        'resource' => "BezhanSalleh\\FilamentShield\\Resources\\RoleResource",
         'slug' => 'shield/roles',
         'navigation_sort' => -1,
     ],
@@ -13,8 +13,7 @@ return [
     ],
 
     'settings' => [
-        'driver' => 'file', //database
-        'gui_enabled' => false
+        'enabled' => false,
     ],
 
     'super_admin' => [

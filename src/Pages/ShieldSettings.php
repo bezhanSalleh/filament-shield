@@ -1,43 +1,67 @@
 <?php
 
-namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
+namespace BezhanSalleh\FilamentShield\Pages;
 
 use Filament\Forms;
+use Filament\Pages;
 use Filament\Pages\Actions;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
-use Filament\Resources\Pages\Page;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
-use Filament\Pages\Contracts\HasFormActions;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Models\Setting;
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
-use Filament\Resources\Pages\Concerns\UsesResourceForm;
 
-class ViewShieldSettings extends Page implements HasFormActions
+class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormActions
 {
-    use UsesResourceForm;
-
-    protected static string $resource = RoleResource::class;
+    use Pages\Concerns\HasFormActions;
 
     protected static string $view = 'filament-shield::pages.shield-settings';
+
+    protected static ?string $slug = 'shield/settings';
+
+    public function mount(): void
+    {
+        abort_unless(static::canView(),403,__('filament-shield::filament-shield.forbidden'));
+        $this->form->fill(Setting::pluck('value', 'key')->toArray());
+
+    }
+
+    public static function canView(): bool
+    {
+        return Filament::auth()->user()->can(static::getPermissionName());
+    }
+
+    protected static function getPermissionName(): string
+    {
+        $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+        return Str::of(class_basename(static::class))
+            ->prepend($prepend);
+    }
+
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return static::canView() && Utils::isSettingPageEnabled();
+    }
 
     protected function getTitle(): string
     {
         return __('filament-shield::filament-shield.page.name');
     }
 
-    public function mount(): void
+    protected static function getNavigationGroup(): ?string
     {
-        abort_unless((static::getResource()::canViewAny() && config('filament-shield.settings.gui_enabled')) || Filament::auth()->user()->hasRole(config('filament-shield.super_admin.name')), 403);
+        return __('filament-shield::filament-shield.nav.group');
+    }
 
-        $this->form->fill(
-            config('filament-shield.settings.driver') === 'database'
-            ? Setting::pluck('value', 'key')->toArray()
-            : config('filament-shield')
-        );
+    protected static function getNavigationIcon(): string
+    {
+        return __('filament-shield::filament-shield.page.icon');
+    }
 
+    protected static function getNavigationLabel(): string
+    {
+        return __('filament-shield::filament-shield.settings.navigation_label');
     }
 
     protected function getFormSchema(): array
@@ -47,6 +71,16 @@ class ViewShieldSettings extends Page implements HasFormActions
         return [
             Forms\Components\Grid::make()
                 ->schema([
+                    $layout::make()
+                        ->schema([
+                            Forms\Components\TextInput::make('auth_provider_model.fqcn')
+                                ->label(__('filament-shield::filament-shield.settings.auth_provider.label'))
+                                ->helperText(__('filament-shield::filament-shield.settings.auth_provider.helper_text'))
+                                ->default(config('filament-shield.auth_provider_model.fqcn'))
+                                ->required(),
+                        ])
+                        ->columns(1)
+                        ->columnSpan(1),
                     $layout::make()
                         ->schema([
                             Forms\Components\Toggle::make('super_admin.enabled')
@@ -78,48 +112,11 @@ class ViewShieldSettings extends Page implements HasFormActions
                         ->columnSpan(1),
                     $layout::make()
                         ->schema([
-                            Forms\Components\Toggle::make('register_role_policy.enabled')
-                                ->label(__('filament-shield::filament-shield.labels.role_policy.toggle_input'))
-                                ->hint(fn ($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.yes").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.no").'</span>')
-                                ->default(true)
-                                ->helperText('<span class="text-md text-gray-600 leading-loose">'.__("filament-shield::filament-shield.labels.role_policy.message").'</span>')
+                            Forms\Components\Toggle::make('settings.enabled')
+                                ->label(__('filament-shield::filament-shield.settings.label'))
+                                ->hint(fn ($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
+                                ->helperText('<span class="text-md text-gray-600 leading-loose">'.__("filament-shield::filament-shield.settings.helper_text").'</span>')
                                 ->reactive()
-                                ->required(),
-                        ])
-                        ->columns(1)
-                        ->columnSpan(1),
-                    $layout::make()
-                        ->schema([
-                            Forms\Components\TextInput::make('auth_provider_model.fqcn')
-                                ->label(__('filament-shield::filament-shield.settings.auth_provider.label'))
-                                ->helperText(__('filament-shield::filament-shield.settings.auth_provider.helper_text'))
-                                ->default(config('filament-shield.auth_provider_model.fqcn'))
-                                ->required(),
-                        ])
-                        ->columns(1)
-                        ->columnSpan(1),
-                    $layout::make()
-                        ->schema([
-                            Forms\Components\Select::make('settings.driver')
-                                ->options([
-                                    'file' => __('filament-shield::filament-shield.settings.driver.file'),
-                                    'database' => __('filament-shield::filament-shield.settings.driver.database'),
-                                ])
-                                ->label(__('filament-shield::filament-shield.settings.driver.label'))
-                                ->helperText(__('filament-shield::filament-shield.settings.driver.helper_text'))
-                                ->default(config('filament-shield.settings.driver'))
-                                ->disablePlaceholderSelection()
-                                ->required(),
-                        ])
-                        ->columns(1)
-                        ->columnSpan(1),
-                    $layout::make()
-                        ->schema([
-                            Forms\Components\Toggle::make('settings.gui_enabled')
-                                ->label(__('filament-shield::filament-shield.settings.gui.label'))
-                                ->hint(fn ($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.yes").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.no").'</span>')
-                                ->default(config('filament-shield.settings.gui_enabled'))
-                                ->helperText('<span class="text-md text-gray-600 leading-loose">'.__("filament-shield::filament-shield.settings.gui.helper_text").'</span>')
                                 ->required(),
                         ])
                         ->columns(1)
@@ -136,10 +133,25 @@ class ViewShieldSettings extends Page implements HasFormActions
                                     Forms\Components\TextInput::make('shield_resource.resource')
                                         ->label(__('filament-shield::filament-shield.settings.resource.label'))
                                         ->visible(fn ($get) => $get('shield_resource.enabled'))
-                                        ->required(fn ($get) => $get('shield_resource.enabled')),
+                                        ->required(fn ($get) => $get('shield_resource.enabled'))
+                                        ->reactive(),
                                 ])
                                 ->columns(1)
                                 ->columnSpan('full'),
+                            Forms\Components\Grid::make()
+                                ->visible(fn ($get) => $get('shield_resource.enabled') && $get('shield_resource.resource') === "BezhanSalleh\\FilamentShield\\Resources\\RoleResource")
+                                ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
+                                ->schema([
+                                    Forms\Components\Toggle::make('register_role_policy.enabled')
+                                        ->label(__('filament-shield::filament-shield.labels.role_policy.toggle_input'))
+                                        ->hint(fn ($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.yes").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.no").'</span>')
+                                        ->default(true)
+                                        ->helperText('<span class="text-md text-gray-600 leading-loose">'.__("filament-shield::filament-shield.labels.role_policy.message").'</span>')
+                                        ->reactive()
+                                        ->required(),
+                                ])
+                                ->columns(1)
+                                ->columnSpan(1),
                             Forms\Components\Grid::make()
                                 ->visible(fn ($get) => $get('shield_resource.enabled'))
                                 ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
@@ -161,10 +173,12 @@ class ViewShieldSettings extends Page implements HasFormActions
                                 ->columns(1)
                                 ->columnSpan(1),
                         ])
-                        ->columns([
-                            'sm' => 1,
-                            'lg' => 2,
-                        ])
+                    ->columns([
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 3,
+                    ])
+
                 ])
                 ->columns([
                     'sm' => 1,
@@ -312,10 +326,18 @@ class ViewShieldSettings extends Page implements HasFormActions
 
         config(['filament-shield' => null ]);
 
-        static::updateConfig($data);
+        foreach ($data as $key => $value) {
+            Setting::updateOrCreate([
+                'key' => $key,
+            ], [
+                'value' => $value,
+            ]);
+        }
 
+        config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
+
+        Artisan::call('optimize:clear');
         if ($notify) {
-            $this->notify('primary',"resource class ".config('filament-shield.shield_resource.resource'));
             $this->notify('success', __('filament-shield::filament-shield.update'));
         }
     }
@@ -327,7 +349,7 @@ class ViewShieldSettings extends Page implements HasFormActions
             Actions\Action::make('save')
                 ->label(__('filament-shield::filament-shield.page.save'))
                 ->action(fn() => $this->save())
-                ->color('success'),
+                ->color('primary'),
 
             Actions\Action::make('generate')
                 ->label(__('filament-shield::filament-shield.page.generate'))
@@ -338,7 +360,7 @@ class ViewShieldSettings extends Page implements HasFormActions
 
                     $this->notify('success', __('filament-shield::filament-shield.generate'));
                 })
-                ->color('primary')
+                ->color('danger')
                 ->requiresConfirmation(),
 
             Actions\Action::make('load_defaults')
@@ -351,31 +373,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                     $this->notify('success', __('filament-shield::filament-shield.loaded_default_settings'));
                 })
                 ->requiresConfirmation()
-                ->color('warning')
-                ->visible(config('filament-shield.settings.driver') === 'database'),
-
-            Actions\Action::make('cancel')
-                ->url(static::$resource::getUrl(name: 'index'))
-                ->label(__('filament-shield::filament-shield.page.cancel'))
                 ->color('secondary'),
-
         ];
-    }
-
-    protected static function updateConfig(array $data): void
-    {
-        if (config('filament-shield.settings.driver') === 'database') {
-            foreach ($data as $key => $value) {
-                Setting::updateOrCreate([
-                    'key' => $key,
-                ], [
-                   'value' => $value,
-                ]);
-            }
-
-            config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
-        } else {
-            config(['filament-shield' => $data]);
-        }
     }
 }

@@ -21,10 +21,6 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?int $navigationSort = -1;
-
-    protected static ?string $slug = 'shield/roles';
-
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
@@ -168,7 +164,6 @@ class RoleResource extends Resource
         return [
             'index' => Pages\ListRoles::route('/'),
             'create' => Pages\CreateRole::route('/create'),
-            'settings' => Pages\ViewShieldSettings::route('/settings'),
             'view' => Pages\ViewRole::route('/{record}'),
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];

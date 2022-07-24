@@ -51,7 +51,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Role Setting Page
+    | Shield Settings Page
     |--------------------------------------------------------------------------
     */
 
@@ -61,21 +61,13 @@ return [
         'save' => 'Save',
         'generate' => 'Save & Generate',
         'load_default_settings' => 'Load Default Settings',
-        'cancel' => 'Cancel',
     ],
 
     'settings' => [
-        'driver' => [
-            'label' => 'Settings Driver',
-            'helper_text' => 'Driver to be used for storing Shield\'s Settings for permission generators.',
-            'file' => 'File',
-            'database' => 'Database'
-        ],
-
-        'gui' =>  [
-            'label' => 'Settings GUI',
-            'helper_text' => 'Enable or Disable the settings page access. Only accessible by User with Super Admin Role so make sure you know what you are doing.'
-        ],
+        'enabled' =>  false,
+        'label' => 'Settings Page',
+        'helper_text' => 'Enable/Disable Settings Page. Only available for Super Admin.',
+        'navigation_label' => 'Settings',
 
         'generator_options' => [
             'policies_and_permissions' => 'Generate Policies & Permissions',
@@ -108,7 +100,7 @@ return [
     'labels.filament_user.toggle_input' => 'Filament User Role',
     'labels.filament_user.text_input' => 'Role Name',
     'labels.role_policy.toggle_input' => 'Role Policy Registered?',
-    'labels.role_policy.message' => 'Ensure the policy is registered and the permissions are enforced',
+    'labels.role_policy.message' => 'Ensure the Role policy is registered and the permissions are enforced.',
     'labels.permission_prefixes.placeholder' => 'Default Permission Prefixes',
     'labels.permission_prefixes.resource' => 'Resource',
     'labels.permission_prefixes.resource.placeholder' => 'Add or Remove Resource Permissions...',

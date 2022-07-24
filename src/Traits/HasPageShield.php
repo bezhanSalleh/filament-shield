@@ -55,11 +55,9 @@ trait HasPageShield
 
     protected static function getPermissionName(): string
     {
-        return (string) Str::of(static::class)
-            ->after('Pages\\')
-            ->replace('\\', '')
-            ->snake()
-            ->prepend(config('filament-shield.permission_prefixes.page').'_');
+        $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+        return Str::of(class_basename(static::class))
+            ->prepend($prepend);
     }
 
     protected static function shouldRegisterNavigation(): bool
