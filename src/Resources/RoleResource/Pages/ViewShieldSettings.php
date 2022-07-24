@@ -310,13 +310,9 @@ class ViewShieldSettings extends Page implements HasFormActions
 
         $data['permission_prefixes']['resource'] = explode(',', $data['permission_prefixes']['resource']);
 
-        dump('config before change', config('filament-shield'));
         config(['filament-shield' => null ]);
-        dump('config after null', config('filament-shield'));
 
         static::updateConfig($data);
-
-        dump('config after change', config('filament-shield'));
 
         if ($notify) {
             $this->notify('primary',"resource class ".config('filament-shield.shield_resource.resource'));
@@ -330,7 +326,7 @@ class ViewShieldSettings extends Page implements HasFormActions
 
             Actions\Action::make('save')
                 ->label(__('filament-shield::filament-shield.page.save'))
-                ->submit()
+                ->action('save')
                 ->color('success'),
 
             Actions\Action::make('generate')
@@ -379,9 +375,7 @@ class ViewShieldSettings extends Page implements HasFormActions
 
             config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
         } else {
-            $eol = PHP_EOL;
-            File::put(config_path('filament-shield.php'),$data);
-            File::prepend(config_path('filament-shield.php'),"<?php{$eol}return{$eol}");
+            config(['filament-shield' => $data]);
         }
     }
 }
