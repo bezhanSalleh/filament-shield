@@ -75,13 +75,20 @@ return [
         'gui' =>  [
             'label' => 'Settings GUI',
             'helper_text' => 'Enable or Disable the settings page access. Only accessible by User with Super Admin Role so make sure you know what you are doing.'
-        ]
+        ],
+
+        'generator_options' => [
+            'policies_and_permissions' => 'Generate Policies & Permissions',
+            'policies' => 'Generate Only Policies',
+            'permissions' => 'Generate Only Permissions',
+        ],
+        
+        'auth_provider' => [
+            'label' => 'Auth Provider Model',
+            'helper_text' => 'Fully Qualified Class Name of the Model used for policy generation.'
+        ],
     ],
 
-    'auth_provider' => [
-        'label' => 'Auth Provider Model',
-        'helper_text' => 'Fully Qualified Class Name of the Model used for policy generation.'
-    ],
 
     /*
     |--------------------------------------------------------------------------

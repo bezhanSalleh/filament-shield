@@ -89,8 +89,8 @@ class ViewShieldSettings extends Page implements HasFormActions
                     $layout::make()
                         ->schema([
                             Forms\Components\TextInput::make('auth_provider_model.fqcn')
-                                ->label(__('filament-shield::filament-shield.auth_provider.label'))
-                                ->helperText(__('filament-shield::filament-shield.auth_provider.helper_text'))
+                                ->label(__('filament-shield::filament-shield.settings.auth_provider.label'))
+                                ->helperText(__('filament-shield::filament-shield.settings.auth_provider.helper_text'))
                                 ->default(config('filament-shield.auth_provider_model.fqcn'))
                                 ->required(),
                         ])
@@ -180,13 +180,13 @@ class ViewShieldSettings extends Page implements HasFormActions
                     Forms\Components\Grid::make()
                     ->schema([
                             Forms\Components\Placeholder::make('')
-                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700">Generator Option</span>')),
+                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700 dark:text-gray-300">Generator Option</span>')),
                             Forms\Components\Radio::make('generator.option')
                                 ->label('')
                                 ->options([
-                                    'policies_and_permissions' => 'Generate Policies & Permissions',
-                                    'policies' => 'Generate only Policies',
-                                    'permissions' => 'Generate only Permissions',
+                                    'policies_and_permissions' => __("filament-shield::filament-shield.settings.generator_options.policies_and_permissions"),
+                                    'policies' => __("filament-shield::filament-shield.settings.generator_options.policies"),
+                                    'permissions' => __("filament-shield::filament-shield.settings.generator_options.permissions"),
                                 ])
                                 ->inline(),
                         ])
