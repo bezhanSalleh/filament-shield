@@ -326,7 +326,7 @@ class ViewShieldSettings extends Page implements HasFormActions
 
             Actions\Action::make('save')
                 ->label(__('filament-shield::filament-shield.page.save'))
-                ->action('save')
+                ->action(fn() => $this->save())
                 ->color('success'),
 
             Actions\Action::make('generate')
