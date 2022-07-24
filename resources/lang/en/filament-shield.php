@@ -82,11 +82,18 @@ return [
             'policies' => 'Generate Only Policies',
             'permissions' => 'Generate Only Permissions',
         ],
-        
+
         'auth_provider' => [
             'label' => 'Auth Provider Model',
             'helper_text' => 'Fully Qualified Class Name of the Model used for policy generation.'
         ],
+
+        'resource' => [
+            'name' => 'Shield Role Resource',
+            'label' => 'Resource Class',
+            'slug' => 'Slug',
+            'navigation_sort' => 'Navigation Sort',
+        ]
     ],
 
 

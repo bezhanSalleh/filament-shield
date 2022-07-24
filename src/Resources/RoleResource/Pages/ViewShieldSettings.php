@@ -2,17 +2,18 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use BezhanSalleh\FilamentShield\Models\Setting;
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
-use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Pages\Actions;
-use Filament\Pages\Contracts\HasFormActions;
-use Filament\Resources\Pages\Concerns\UsesResourceForm;
-use Filament\Resources\Pages\Page;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Filament\Facades\Filament;
+use Filament\Resources\Pages\Page;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
+use Filament\Pages\Contracts\HasFormActions;
+use BezhanSalleh\FilamentShield\Models\Setting;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use Filament\Resources\Pages\Concerns\UsesResourceForm;
 
 class ViewShieldSettings extends Page implements HasFormActions
 {
@@ -36,6 +37,7 @@ class ViewShieldSettings extends Page implements HasFormActions
             ? Setting::pluck('value', 'key')->toArray()
             : config('filament-shield')
         );
+
     }
 
     protected function getFormSchema(): array
@@ -122,6 +124,47 @@ class ViewShieldSettings extends Page implements HasFormActions
                         ])
                         ->columns(1)
                         ->columnSpan(1),
+                    $layout::make()
+                        ->schema([
+                            Forms\Components\Grid::make()
+                                ->schema([
+                                    Forms\Components\Toggle::make('shield_resource.enabled')
+                                        ->label(__('filament-shield::filament-shield.settings.resource.name'))
+                                        ->hint(fn ($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
+                                        ->required()
+                                        ->reactive(),
+                                    Forms\Components\TextInput::make('shield_resource.resource')
+                                        ->label(__('filament-shield::filament-shield.settings.resource.label'))
+                                        ->visible(fn ($get) => $get('shield_resource.enabled'))
+                                        ->required(fn ($get) => $get('shield_resource.enabled')),
+                                ])
+                                ->columns(1)
+                                ->columnSpan('full'),
+                            Forms\Components\Grid::make()
+                                ->visible(fn ($get) => $get('shield_resource.enabled'))
+                                ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
+                                ->schema([
+                                    Forms\Components\TextInput::make('shield_resource.slug')
+                                        ->label(__('filament-shield::filament-shield.settings.resource.slug'))
+                                        ->required(fn ($get) => $get('shield_resource.enabled')),
+                                ])
+                                ->columns(1)
+                                ->columnSpan(1),
+                            Forms\Components\Grid::make()
+                                ->visible(fn ($get) => $get('shield_resource.enabled'))
+                                ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
+                                ->schema([
+                                    Forms\Components\TextInput::make('shield_resource.navigation_sort')
+                                        ->label(__('filament-shield::filament-shield.settings.resource.navigation_sort'))
+                                        ->required(fn ($get) => $get('shield_resource.enabled')),
+                                ])
+                                ->columns(1)
+                                ->columnSpan(1),
+                        ])
+                        ->columns([
+                            'sm' => 1,
+                            'lg' => 2,
+                        ])
                 ])
                 ->columns([
                     'sm' => 1,
@@ -264,11 +307,19 @@ class ViewShieldSettings extends Page implements HasFormActions
     public function save(bool $notify = true): void
     {
         $data = $this->form->getState();
+
         $data['permission_prefixes']['resource'] = explode(',', $data['permission_prefixes']['resource']);
+
+        dump('config before change', config('filament-shield'));
+        config(['filament-shield' => null ]);
+        dump('config after null', config('filament-shield'));
 
         static::updateConfig($data);
 
+        dump('config after change', config('filament-shield'));
+
         if ($notify) {
+            $this->notify('primary',"resource class ".config('filament-shield.shield_resource.resource'));
             $this->notify('success', __('filament-shield::filament-shield.update'));
         }
     }
@@ -287,9 +338,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                 ->action(function () {
                     $this->save(false);
 
-                    config('filament-shield.exclude.enabled')
-                        ? Artisan::call('shield:generate --exclude')
-                        : Artisan::call('shield:generate');
+                    Artisan::call('shield:generate');
 
                     $this->notify('success', __('filament-shield::filament-shield.generate'));
                 })
@@ -319,8 +368,6 @@ class ViewShieldSettings extends Page implements HasFormActions
 
     protected static function updateConfig(array $data): void
     {
-        config()->set('filament-shield', null);
-
         if (config('filament-shield.settings.driver') === 'database') {
             foreach ($data as $key => $value) {
                 Setting::updateOrCreate([
@@ -332,7 +379,9 @@ class ViewShieldSettings extends Page implements HasFormActions
 
             config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
         } else {
-            config()->set('filament-shield', $data);
+            $eol = PHP_EOL;
+            File::put(config_path('filament-shield.php'),$data);
+            File::prepend(config_path('filament-shield.php'),"<?php{$eol}return{$eol}");
         }
     }
 }

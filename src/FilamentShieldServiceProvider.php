@@ -2,18 +2,16 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Models\Setting;
+use Illuminate\Support\Arr;
 use Composer\InstalledVersions;
 use Filament\PluginServiceProvider;
-use Illuminate\Foundation\Console\AboutCommand;
 use Spatie\LaravelPackageTools\Package;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Models\Setting;
+use Illuminate\Foundation\Console\AboutCommand;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
-    protected array $resources = [
-        \BezhanSalleh\FilamentShield\Resources\RoleResource::class,
-    ];
-
     public function configurePackage(Package $package): void
     {
         $package
@@ -64,6 +62,9 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
                 'Views' => is_dir(resource_path('views/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
             ]);
         }
+
+        // $this->mergeConfigFrom(__DIR__ . '/../config/filament-shield.php', 'filament-shield');
+
     }
 
     protected function getCommands(): array
@@ -73,6 +74,13 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             Commands\MakeShieldInstallCommand::class,
             Commands\MakeShieldGenerateCommand::class,
             Commands\MakeShieldSuperAdminCommand::class,
+        ];
+    }
+
+    protected function getResources(): array
+    {
+        return [
+            Utils::isResourceEnabled() ? Utils::getResourceClass() : '',
         ];
     }
 
@@ -87,4 +95,38 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
 
         return '';
     }
+
+    // protected function mergeConfig(array $original, array $merging): array
+    // {
+    //     $array = array_merge($original, $merging);
+
+    //     foreach ($original as $key => $value) {
+    //         if (! is_array($value)) {
+    //             continue;
+    //         }
+
+    //         if (! Arr::exists($merging, $key)) {
+    //             continue;
+    //         }
+
+    //         if (is_numeric($key)) {
+    //             continue;
+    //         }
+
+    //         if ($key === 'middleware' || $key === 'register') {
+    //             continue;
+    //         }
+
+    //         $array[$key] = $this->mergeConfig($value, $merging[$key]);
+    //     }
+
+    //     return $array;
+    // }
+
+    // protected function mergeConfigFrom($path, $key): void
+    // {
+    //     $config = $this->app['config']->get($key, []);
+
+    //     $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
+    // }
 }

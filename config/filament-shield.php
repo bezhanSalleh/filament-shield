@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'shield_resource' => [
+        'enabled' => true,
+        'resource' => \BezhanSalleh\FilamentShield\Resources\RoleResource::class,
+        'slug' => 'shield/roles',
+        'navigation_sort' => -1,
+    ],
+
     'auth_provider_model' => [
         'fqcn' => 'App\\Models\\User'
     ],
