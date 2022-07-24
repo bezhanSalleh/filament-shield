@@ -2,13 +2,13 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Models\Setting;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Artisan;
-use BezhanSalleh\FilamentShield\Models\Setting;
 
 class MakeShieldInstallCommand extends Command
 {
@@ -119,7 +119,6 @@ class MakeShieldInstallCommand extends Command
                 DB::table('migrations')->where('migration', 'like', '%_filament_shield_settings_%')->delete();
                 $this->getTables()->each(fn ($table) => DB::statement('DROP TABLE IF EXISTS '.$table));
                 Schema::enableForeignKeyConstraints();
-
             } catch (\Throwable $e) {
                 $this->info($e);
             }
@@ -129,10 +128,10 @@ class MakeShieldInstallCommand extends Command
             $this->info('running shield migrations.');
         }
 
-        if (!$setting && File::exists($path = glob(database_path('migrations/*_filament_shield_settings_table.php'))[0])) {
+        if (! $setting && File::exists($path = glob(database_path('migrations/*_filament_shield_settings_table.php'))[0])) {
             File::delete($path);
         }
-        
+
         $this->call('migrate');
 
 

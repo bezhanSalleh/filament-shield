@@ -56,6 +56,7 @@ trait HasPageShield
     protected static function getPermissionName(): string
     {
         $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+
         return Str::of(class_basename(static::class))
             ->prepend($prepend);
     }

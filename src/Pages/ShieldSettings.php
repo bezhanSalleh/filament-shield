@@ -2,15 +2,15 @@
 
 namespace BezhanSalleh\FilamentShield\Pages;
 
+use BezhanSalleh\FilamentShield\Models\Setting;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Pages;
 use Filament\Pages\Actions;
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Artisan;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Models\Setting;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormActions
 {
@@ -22,9 +22,8 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
 
     public function mount(): void
     {
-        abort_unless(static::canView(),403,__('filament-shield::filament-shield.forbidden'));
+        abort_unless(static::canView(), 403, __('filament-shield::filament-shield.forbidden'));
         $this->form->fill(Setting::pluck('value', 'key')->toArray());
-
     }
 
     public static function canView(): bool
@@ -35,6 +34,7 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
     protected static function getPermissionName(): string
     {
         $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+
         return Str::of(class_basename(static::class))
             ->prepend($prepend);
     }
@@ -177,7 +177,7 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
                         'sm' => 1,
                         'md' => 2,
                         'lg' => 3,
-                    ])
+                    ]),
 
                 ])
                 ->columns([
@@ -348,7 +348,7 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
 
             Actions\Action::make('save')
                 ->label(__('filament-shield::filament-shield.page.save'))
-                ->action(fn() => $this->save())
+                ->action(fn () => $this->save())
                 ->color('primary'),
 
             Actions\Action::make('generate')

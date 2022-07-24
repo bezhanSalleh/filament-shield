@@ -2,12 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Models\Setting;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Composer\InstalledVersions;
 use Filament\PluginServiceProvider;
-use Spatie\LaravelPackageTools\Package;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Models\Setting;
 use Illuminate\Foundation\Console\AboutCommand;
+use Spatie\LaravelPackageTools\Package;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
@@ -51,7 +51,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         if (class_exists(AboutCommand::class)) {
             AboutCommand::add('Filament Shield', [
                 'Auth Provider' => Utils::getAuthProviderFQCN().'|'.static::authProviderConfigured(),
-                'Role Resource' => Utils::isResourceEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::usesBuiltInResource() ? '|<fg=green;options=bold>BUILT-IN</>' : '|<fg=red;options=bold>CUSTOM</>'): '<fg=red;options=bold>DISABLED</>'.(Utils::usesBuiltInResource() ? '|<fg=green;options=bold>BUILT-IN</>' : '|<fg=red;options=bold>CUSTOM</>'),
+                'Role Resource' => Utils::isResourceEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::usesBuiltInResource() ? '|<fg=green;options=bold>BUILT-IN</>' : '|<fg=red;options=bold>CUSTOM</>') : '<fg=red;options=bold>DISABLED</>'.(Utils::usesBuiltInResource() ? '|<fg=green;options=bold>BUILT-IN</>' : '|<fg=red;options=bold>CUSTOM</>'),
                 'Setting Page' => Utils::isSettingPageEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>') : '<fg=red;options=bold>DISABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>'),
                 'Translations' => is_dir(resource_path('resource/lang/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
                 'Version' => InstalledVersions::getPrettyVersion('bezhansalleh/filament-shield'),
@@ -77,6 +77,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
                 Utils::getResourceClass(),
             ];
         }
+
         return [];
     }
 
