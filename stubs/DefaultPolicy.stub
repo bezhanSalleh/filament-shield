@@ -75,4 +75,59 @@ class {{ modelPolicy }}
         return $user->can('{{ DeleteAny }}');
     }
 
+    /**
+     * Determine whether the user can permanently delete.
+     *
+     * @param  \{{ auth_model_fqcn }}  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function forceDelete({{ auth_model_name }} $user)
+    {
+        return $user->can('{{ ForceDelete }}');
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     *
+     * @param  \{{ auth_model_fqcn }}  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function forceDeleteAny({{ auth_model_name }} $user)
+    {
+        return $user->can('{{ ForceDeleteAny }}');
+    }
+
+    /**
+     * Determine whether the user can restore.
+     *
+     * @param  \{{ auth_model_fqcn }}  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function restore({{ auth_model_name }} $user)
+    {
+        return $user->can('{{ Restore }}');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     *
+     * @param  \{{ auth_model_fqcn }}  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function restoreAny({{ auth_model_name }} $user)
+    {
+        return $user->can('{{ RestoreAny }}');
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     *
+     * @param  \{{ auth_model_fqcn }}  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function replicate({{ auth_model_name }} $user)
+    {
+        return $user->can('{{ Replicate }}');
+    }
+
 }

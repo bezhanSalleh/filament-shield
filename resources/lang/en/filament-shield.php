@@ -63,6 +63,32 @@ return [
         'load_default_settings' => 'Load Default Settings',
         'cancel' => 'Cancel',
     ],
+
+    'settings' => [
+        'driver' => [
+            'label' => 'Settings Driver',
+            'helper_text' => 'Driver to be used for storing Shield\'s Settings for permission generators.',
+            'file' => 'File',
+            'database' => 'Database'
+        ],
+
+        'gui' =>  [
+            'label' => 'Settings GUI',
+            'helper_text' => 'Enable or Disable the settings page access. Only accessible by User with Super Admin Role so make sure you know what you are doing.'
+        ]
+    ],
+
+    'auth_provider' => [
+        'label' => 'Auth Provider Model',
+        'helper_text' => 'Fully Qualified Class Name of the Model used for policy generation.'
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | MISC Labels
+    |--------------------------------------------------------------------------
+    */
+
     'labels.super_admin.toggle_input' => 'Super Admin Role',
     'labels.super_admin.text_input' => 'Role Name',
     'labels.filament_user.toggle_input' => 'Filament User Role',
@@ -122,25 +148,6 @@ return [
         'force_delete_any' => 'Force Delete Any',
         'restore' => 'Restore',
         'restore_any' => 'Restore Any',
+        'replicate' => 'Replicate',
     ],
-
-    'settings' => [
-        'driver' => [
-            'label' => 'Settings Driver',
-            'helper_text' => 'Driver to be used for storing Shield\'s Settings for permission generators.',
-            'file' => 'File',
-            'database' => 'Database'
-        ],
-
-        'gui' =>  [
-            'label' => 'Settings GUI',
-            'helper_text' => 'Enable or Disable the settings page access. Only accessible by User with Super Admin Role so make sure you know what you are doing.'
-        ]
-    ],
-
-    'auth_provider' => [
-        'label' => 'Auth Provider Model',
-        'helper_text' => 'Fully Qualified Class Name of the Model used for policy generation.'
-    ],
-
 ];
