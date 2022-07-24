@@ -144,7 +144,7 @@ class ViewShieldSettings extends Page implements HasFormActions
                     Forms\Components\Grid::make()
                     ->schema([
                             Forms\Components\Placeholder::make('')
-                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700">Generator Option</span>')),
+                                ->content(new HtmlString('<span class="font-medium text-sm text-gray-700 dark:text-gray-300">Generator Option</span>')),
                             Forms\Components\Radio::make('generator.option')
                                 ->label('')
                                 ->options([
