@@ -4,7 +4,6 @@ namespace BezhanSalleh\FilamentShield\Pages;
 
 use BezhanSalleh\FilamentShield\Models\Setting;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Pages\Actions;
