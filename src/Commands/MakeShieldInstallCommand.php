@@ -3,12 +3,14 @@
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\Models\Setting;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 class MakeShieldInstallCommand extends Command
 {
@@ -20,6 +22,12 @@ class MakeShieldInstallCommand extends Command
 
     public function handle(): int
     {
+        if (! Utils::isAuthProviderConfigured()) {
+            $this->error('Please make sure your Auth Provider model (App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
+
+            return self::INVALID;
+        }
+
         $this->alert('Following operations will be performed:');
         $this->info('-  Publishes core package config');
         $this->info('-  Publishes core package migration');
@@ -96,6 +104,7 @@ class MakeShieldInstallCommand extends Command
 
         $this->call('vendor:publish', [
             '--tag' => 'filament-shield-config',
+            '--force' => true,
         ]);
 
         if ($setting) {
@@ -119,7 +128,7 @@ class MakeShieldInstallCommand extends Command
                 DB::table('migrations')->where('migration', 'like', '%_filament_shield_settings_%')->delete();
                 $this->getTables()->each(fn ($table) => DB::statement('DROP TABLE IF EXISTS '.$table));
                 Schema::enableForeignKeyConstraints();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->info($e);
             }
 
@@ -128,8 +137,11 @@ class MakeShieldInstallCommand extends Command
             $this->info('running shield migrations.');
         }
 
-        if (! $setting && File::exists($path = glob(database_path('migrations/*_filament_shield_settings_table.php'))[0])) {
-            File::delete($path);
+        if (! $setting) {
+            $path = glob(database_path('migrations/*_filament_shield_settings_table.php'));
+            if (! blank($path) && File::exists($path[0])) {
+                File::delete($path);
+            }
         }
 
         $this->call('migrate');
@@ -140,16 +152,17 @@ class MakeShieldInstallCommand extends Command
                 '--class' => 'ShieldSettingSeeder',
             ]);
 
-            config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
-
             $this->info('Shield\'s settings configured.');
+
+            config(['filament-shield' => Setting::pluck('value', 'key')->toArray()]);
         }
 
         $this->info('Creating Super Admin...');
+
         $this->call('shield:super-admin');
 
-
         $this->call('shield:generate');
+
         $this->info(Artisan::output());
 
         $this->info('Filament Shield🛡 is now active ✅');

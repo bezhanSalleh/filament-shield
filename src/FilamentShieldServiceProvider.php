@@ -3,16 +3,21 @@
 namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Models\Setting;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Composer\InstalledVersions;
+use BezhanSalleh\FilamentShield\Pages\ShieldSetting;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use Filament\PluginServiceProvider;
-use Illuminate\Foundation\Console\AboutCommand;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelPackageTools\Package;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
+    protected array $pages = [
+        ShieldSetting::class,
+    ];
+
     protected array $resources = [
-        \BezhanSalleh\FilamentShield\Resources\RoleResource::class,
+        RoleResource::class,
     ];
 
     public function configurePackage(Package $package): void
@@ -31,12 +36,13 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        if (Utils::isSettingPageEnabled()) {
-            config(['filament-shield' => Setting::pluck('value', 'key')->toArray()], '');
+        if (config('filament-shield.register_role_policy.enabled')) {
+            Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
         }
 
-        if (config('filament-shield.register_role_policy.enabled')) {
-            \Illuminate\Support\Facades\Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
+        /** @phpstan-ignore-next-line */
+        if (Schema::hasTable('filament_shield_settings')) {
+            config(['filament-shield' => Setting::pluck('value', 'key')->toArray()]);
         }
     }
 
@@ -44,25 +50,13 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageRegistered();
 
-        $this->app->scoped('filament-shield', function (): \BezhanSalleh\FilamentShield\FilamentShield {
-            return new \BezhanSalleh\FilamentShield\FilamentShield();
+        $this->app->scoped('filament-shield', function (): FilamentShield {
+            return new FilamentShield();
         });
 
         $this->publishes([
             $this->package->basePath("/../stubs/ShieldSettingSeeder.stub") => database_path('seeders/ShieldSettingSeeder.php'),
         ], "{$this->package->shortName()}-seeder");
-
-        if (class_exists(AboutCommand::class)) {
-            AboutCommand::add('Filament Shield', [
-                'Auth Provider' => Utils::getAuthProviderFQCN().'|'.static::authProviderConfigured(),
-                'Resource Slug' => Utils::getResourceSlug(),
-                'Resource Sort' => Utils::getResourceNavigationSort(),
-                'Setting Page' => Utils::isSettingPageEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>') : '<fg=red;options=bold>DISABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>'),
-                'Translations' => is_dir(resource_path('resource/lang/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
-                'Version' => InstalledVersions::getPrettyVersion('bezhansalleh/filament-shield'),
-                'Views' => is_dir(resource_path('views/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
-            ]);
-        }
     }
 
     protected function getCommands(): array
@@ -73,28 +67,5 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             Commands\MakeShieldGenerateCommand::class,
             Commands\MakeShieldSuperAdminCommand::class,
         ];
-    }
-
-    protected function getPages(): array
-    {
-        if (Utils::isSettingPageEnabled()) {
-            return [
-                Utils::getSettingPageClass(),
-            ];
-        }
-
-        return [];
-    }
-
-    protected static function authProviderConfigured()
-    {
-        if (class_exists(Utils::getAuthProviderFQCN())) {
-            return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(Utils::getAuthProviderFQCN()))
-            || in_array("Spatie\Permission\Traits\HasRoles", class_uses(Utils::getAuthProviderFQCN()))
-                ? '<fg=green;options=bold>CONFIGURED</>'
-                : '<fg=red;options=bold>NOT CONFIGURED</>' ;
-        }
-
-        return '';
     }
 }

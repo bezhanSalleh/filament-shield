@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Setting whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Setting whereKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Setting whereValue($value)
+ * @method static pluck(string $value, string $key)
+ * @method static updateOrCreate(array $array, array $array1)
  * @mixin \Eloquent
  */
 class Setting extends Model

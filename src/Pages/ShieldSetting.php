@@ -4,19 +4,27 @@ namespace BezhanSalleh\FilamentShield\Pages;
 
 use BezhanSalleh\FilamentShield\Models\Setting;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Pages;
 use Filament\Pages\Actions;
+use Filament\Pages\Concerns;
+use Filament\Pages\Contracts;
+use Filament\Pages\Page;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
-class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormActions
+/**
+ * @property Forms\ComponentContainer|View|mixed|null form
+ */
+class ShieldSetting extends Page implements Contracts\HasFormActions
 {
-    use Pages\Concerns\HasFormActions;
+    use Concerns\HasFormActions;
+    use HasPageShield;
 
-    protected static string $view = 'filament-shield::pages.shield-settings';
+    protected static string $view = 'filament-shield::pages.shield-setting';
 
     protected static ?string $slug = 'shield/settings';
 
@@ -24,27 +32,18 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
 
     public function mount(): void
     {
-        abort_unless(static::canView(), 403, __('filament-shield::filament-shield.forbidden'));
+        if (! Utils::isSettingPageConfigured()) {
+            $this->notify('warning', 'Make sure setting page is properly configured.', true);
+            abort(redirect()->back());
+        }
+
         /** @phpstan-ignore-next-line */
         $this->form->fill(Setting::pluck('value', 'key')->toArray());
     }
 
-    public static function canView(): bool
-    {
-        return Filament::auth()->user()->can(static::getPermissionName());
-    }
-
-    protected static function getPermissionName(): string
-    {
-        $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
-
-        return Str::of(class_basename(static::class))
-            ->prepend($prepend);
-    }
-
     protected static function shouldRegisterNavigation(): bool
     {
-        return static::canView() && Utils::isSettingPageEnabled();
+        return static::canView() && Utils::isSettingPageConfigured();
     }
 
     protected function getTitle(): string

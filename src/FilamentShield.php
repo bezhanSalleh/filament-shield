@@ -179,7 +179,7 @@ class FilamentShield
     {
         $object = static::transformClassString($page);
 
-        if (str($pageTitle = invade(new $object())->getTitle())->isNotEmpty()) {
+        if (Str::of($pageTitle = invade(new $object())->getTitle())->isNotEmpty()) {
             return $pageTitle;
         }
 

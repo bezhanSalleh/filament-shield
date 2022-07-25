@@ -50,7 +50,7 @@ trait HasPageShield
 
     public static function canView(): bool
     {
-        return Filament::auth()->user()->can(static::getPermissionName());
+        return Filament::auth()->user()->can(static::getPermissionName()) || Filament::auth()->user()->hasRole(config('filament-shield.super_admin.name'));
     }
 
     protected static function getPermissionName(): string

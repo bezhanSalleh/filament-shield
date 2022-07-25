@@ -8,7 +8,7 @@ class Utils
 {
     public static function getResourceSlug(): string
     {
-        return config('filament-shield.shield_resource.slug');
+        return (string) config('filament-shield.shield_resource.slug');
     }
 
     public static function getResourceNavigationSort(): int
@@ -16,25 +16,24 @@ class Utils
         return config('filament-shield.shield_resource.navigation_sort');
     }
 
-    public static function isSettingPageEnabled()
+    public static function isSettingPageEnabled(): bool
     {
-        return config('filament-shield.settings.enabled') ?? false;
+        return (bool) config('filament-shield.settings.enabled');
     }
 
-    public static function getSettingPageClass()
+    public static function isSettingPageConfigured(): bool
     {
-        return \BezhanSalleh\FilamentShield\Pages\ShieldSettings::class;
+        return static::isSettingPageEnabled() && Schema::hasTable('filament_shield_settings');
     }
 
-    public static function isSettingPageConfigured()
-    {
-        return static::isSettingPageEnabled()
-            ? Schema::hasTable('filament_shield_settings')
-            : false;
-    }
-
-    public static function getAuthProviderFQCN(): string
+    public static function getAuthProviderFQCN()
     {
         return config('filament-shield.auth_provider_model.fqcn');
+    }
+
+    public static function isAuthProviderConfigured(): bool
+    {
+        return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(static::getAuthProviderFQCN()))
+        || in_array("Spatie\Permission\Traits\HasRoles", class_uses(static::getAuthProviderFQCN())) ;
     }
 }

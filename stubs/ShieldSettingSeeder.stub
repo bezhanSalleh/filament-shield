@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 use BezhanSalleh\FilamentShield\Models\Setting;
-use BezhanSalleh\FilamentShield\Support\Utils;
 
 class ShieldSettingSeeder extends Seeder
 {
@@ -15,12 +15,12 @@ class ShieldSettingSeeder extends Seeder
     */
     public function run()
     {
+        if (Schema::hasTable('filament_shield_settings')) {
+            config(['filament-shield.settings.enabled' => true]);
+        }
+
         /** @var array[string]mixed $settingKeys */
         $settingKeys = config('filament-shield');
-
-        if (Utils::isSettingPageConfigured()) {
-            $settingKeys['settings']['enabled'] = true;
-        }
 
         if (Setting::count()) {
             Setting::truncate();
