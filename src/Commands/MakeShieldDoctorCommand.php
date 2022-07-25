@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Composer\InstalledVersions;
 use Illuminate\Console\Command;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Foundation\Console\AboutCommand;
 
 class MakeShieldDoctorCommand extends Command

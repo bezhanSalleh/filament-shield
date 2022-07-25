@@ -17,12 +17,11 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 /**
- * @property Forms\ComponentContainer|View|mixed|null form
+ * @property Forms\ComponentContainer|View|mixed|null $form
  */
 class ShieldSetting extends Page implements Contracts\HasFormActions
 {
     use Concerns\HasFormActions;
-    use HasPageShield;
 
     protected static string $view = 'filament-shield::pages.shield-setting';
 
@@ -37,8 +36,26 @@ class ShieldSetting extends Page implements Contracts\HasFormActions
             abort(redirect()->back());
         }
 
+        if (! static::canView()) {
+            $this->notify('warning', __('filament-shield::filament-shield.forbidden').' '.Str::of(class_basename(static::class))->headline(), true);
+            abort(redirect()->back());
+        }
+
         /** @phpstan-ignore-next-line */
         $this->form->fill(Setting::pluck('value', 'key')->toArray());
+    }
+
+    public static function canView(): bool
+    {
+        return Filament::auth()->user()->can(static::getPermissionName()) || Filament::auth()->user()->hasRole(config('filament-shield.super_admin.name'));
+    }
+
+    protected static function getPermissionName(): string
+    {
+        $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+
+        return Str::of(class_basename(static::class))
+            ->prepend($prepend);
     }
 
     protected static function shouldRegisterNavigation(): bool
