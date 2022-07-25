@@ -19,7 +19,7 @@ trait HasFilamentShield
 
     public function canAccessFilament(): bool
     {
-        return $this->hasRole(static::filamentUserRole());
+        return $this->hasRole(config('filament-shield.super_admin.name')) || $this->hasRole(static::filamentUserRole());
     }
 
     protected static function filamentUserRole(): string

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 use BezhanSalleh\FilamentShield\Models\Setting;
 
 class ShieldSettingSeeder extends Seeder
@@ -14,54 +15,12 @@ class ShieldSettingSeeder extends Seeder
     */
     public function run()
     {
+        if (Schema::hasTable('filament_shield_settings')) {
+            config(['filament-shield.settings.enabled' => true]);
+        }
+
         /** @var array[string]mixed $settingKeys */
-        $settingKeys = [
-            'super_admin' => [
-                'enabled' => true,
-                'name'  => 'super_admin'
-            ],
-            'filament_user' => [
-                'enabled' => true,
-                'name' => 'filament_user'
-            ],
-
-            'permission_prefixes' => [
-                'resource' => [
-                    'view',
-                    'view_any',
-                    'create',
-                    'delete',
-                    'delete_any',
-                    'update',
-                    'export',
-                ],
-                'page' => 'page',
-                'widget' => 'widget',
-            ],
-
-            'entities' => [
-                'pages' => true,
-                'widgets' => true,
-                'resources' => true,
-                'custom_permissions' => false,
-            ],
-            'generator' => [
-                'option' => 'policies_and_permissions'
-            ],
-            'exclude' => [
-                'enabled' => true,
-                'pages' => [
-                    'Dashboard',
-                ],
-                'widgets' => [
-                    'AccountWidget','FilamentInfoWidget',
-                ],
-                'resources' => [],
-            ],
-            'register_role_policy' => [
-                'enabled' => false
-            ],
-        ];
+        $settingKeys = config('filament-shield');
 
         if (Setting::count()) {
             Setting::truncate();

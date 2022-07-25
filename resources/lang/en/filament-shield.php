@@ -51,24 +51,55 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Role Setting Page
+    | Shield Settings Page
     |--------------------------------------------------------------------------
     */
-    
+
     'page' => [
         'name' => 'Shield Settings',
         'icon' => 'heroicon-o-adjustments',
         'save' => 'Save',
         'generate' => 'Save & Generate',
         'load_default_settings' => 'Load Default Settings',
-        'cancel' => 'Cancel',
     ],
+
+    'settings' => [
+        'enabled' =>  false,
+        'label' => 'Settings Page',
+        'helper_text' => 'Enable/Disable Settings Page. Only available for Super Admin.',
+        'navigation_label' => 'Settings',
+
+        'generator_options' => [
+            'policies_and_permissions' => 'Generate Policies & Permissions',
+            'policies' => 'Generate Only Policies',
+            'permissions' => 'Generate Only Permissions',
+        ],
+
+        'auth_provider' => [
+            'label' => 'Auth Provider Model',
+            'helper_text' => 'Fully Qualified Class Name of the Model used for policy generation.'
+        ],
+
+        'resource' => [
+            'name' => 'Shield Role Resource',
+            'slug' => 'Slug',
+            'navigation_sort' => 'Navigation Sort',
+        ]
+    ],
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MISC Labels
+    |--------------------------------------------------------------------------
+    */
+
     'labels.super_admin.toggle_input' => 'Super Admin Role',
     'labels.super_admin.text_input' => 'Role Name',
     'labels.filament_user.toggle_input' => 'Filament User Role',
     'labels.filament_user.text_input' => 'Role Name',
     'labels.role_policy.toggle_input' => 'Role Policy Registered?',
-    'labels.role_policy.message' => 'Ensure the policy is registered and the permissions are enforced',
+    'labels.role_policy.message' => 'Ensure the Role policy is registered and the permissions are enforced.',
     'labels.permission_prefixes.placeholder' => 'Default Permission Prefixes',
     'labels.permission_prefixes.resource' => 'Resource',
     'labels.permission_prefixes.resource.placeholder' => 'Add or Remove Resource Permissions...',
@@ -122,5 +153,6 @@ return [
         'force_delete_any' => 'Force Delete Any',
         'restore' => 'Restore',
         'restore_any' => 'Restore Any',
-    ]
+        'replicate' => 'Replicate',
+    ],
 ];

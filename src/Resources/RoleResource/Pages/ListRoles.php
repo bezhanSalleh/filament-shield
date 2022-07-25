@@ -14,12 +14,6 @@ class ListRoles extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\Action::make('setting')
-                ->label(__('filament-shield::filament-shield.page.name'))
-                ->url(static::$resource::getUrl('settings'))
-                ->icon(__('filament-shield::filament-shield.page.icon'))
-                ->color('primary')
-                ->outlined(),
         ];
     }
 }

@@ -19,7 +19,7 @@ class FilamentShield
             collect(config('filament-shield.permission_prefixes.resource'))
                 ->each(function ($prefix) use ($resource, $permissions) {
                     $permissions->push(Permission::firstOrCreate(
-                        ['name' => $prefix . '_' . Str::lower($resource)],
+                        ['name' => $prefix . '_' . $resource],
                         ['guard_name' => config('filament.auth.guard')]
                     ));
                 });
@@ -33,7 +33,7 @@ class FilamentShield
     {
         if (config('filament-shield.entities.pages')) {
             $permission = Permission::firstOrCreate(
-                ['name' => config('filament-shield.permission_prefixes.page') . '_' . Str::lower($page)],
+                ['name' => $page ],
                 ['guard_name' => config('filament.auth.guard')]
             )->name;
 
@@ -46,7 +46,7 @@ class FilamentShield
     {
         if (config('filament-shield.entities.widgets')) {
             $permission = Permission::firstOrCreate(
-                ['name' => config('filament-shield.permission_prefixes.widget') . '_' . Str::lower($widget)],
+                ['name' => $widget ],
                 ['guard_name' => config('filament.auth.guard')]
             )->name;
 
@@ -101,11 +101,17 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $resource = Str::of($resource)->afterLast('\\')->before('Resource')->snake()->toString();
-                $resources[$resource] = $resource;
+                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+                $resources["{$name}"] = [
+                    'resource' => "{$name}",
+                    'model' => Str::of($resource::getModel())->afterLast('\\'),
+                    'fqcn' => $resource,
+                ];
 
                 return $resources;
-            }, []);
+            }, collect())
+            ->sortKeys()
+            ->toArray();
     }
 
     /**
@@ -117,7 +123,7 @@ class FilamentShield
     public static function getLocalizedResourceLabel(string $entity): string
     {
         $label = collect(Filament::getResources())->filter(function ($resource) use ($entity) {
-            return Str::of($resource)->endsWith(Str::of($entity)->studly().'Resource');
+            return $resource === $entity;
         })->first()::getModelLabel();
 
         return Str::of($label)->headline();
@@ -152,11 +158,15 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($pages, $page) {
-                $name = Str::of($page)->afterLast('\\')->snake()->prepend(config('filament-shield.permission_prefixes.page').'_');
+                $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+                $name = Str::of(class_basename($page))
+                    ->prepend($prepend);
+
                 $pages["{$name}"] = "{$name}";
 
                 return $pages;
-            }, []);
+            }, collect())
+            ->toArray();
     }
 
     /**
@@ -168,6 +178,10 @@ class FilamentShield
     public static function getLocalizedPageLabel(string $page): string|bool
     {
         $object = static::transformClassString($page);
+
+        if (Str::of($pageTitle = invade(new $object())->getTitle())->isNotEmpty()) {
+            return $pageTitle;
+        }
 
         return invade(new $object())->getNavigationLabel();
     }
@@ -188,11 +202,15 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($widgets, $widget) {
-                $name = Str::of($widget)->after('Widgets\\')->replace('\\', '')->snake()->prepend(config('filament-shield.permission_prefixes.widget').'_');
+                $prepend = Str::of(config('filament-shield.permission_prefixes.widget'))->append('_');
+                $name = Str::of(class_basename($widget))
+                    ->prepend($prepend);
+
                 $widgets["{$name}"] = "{$name}";
 
                 return $widgets;
-            }, []);
+            }, collect())
+            ->toArray();
     }
 
     /**

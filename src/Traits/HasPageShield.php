@@ -50,16 +50,15 @@ trait HasPageShield
 
     public static function canView(): bool
     {
-        return Filament::auth()->user()->can(static::getPermissionName());
+        return Filament::auth()->user()->can(static::getPermissionName()) || Filament::auth()->user()->hasRole(config('filament-shield.super_admin.name'));
     }
 
     protected static function getPermissionName(): string
     {
-        return (string) Str::of(static::class)
-            ->after('Pages\\')
-            ->replace('\\', '')
-            ->snake()
-            ->prepend(config('filament-shield.permission_prefixes.page').'_');
+        $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+
+        return Str::of(class_basename(static::class))
+            ->prepend($prepend);
     }
 
     protected static function shouldRegisterNavigation(): bool

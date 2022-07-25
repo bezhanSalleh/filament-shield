@@ -3,20 +3,28 @@
 namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Models\Setting;
+use BezhanSalleh\FilamentShield\Pages\ShieldSetting;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use Filament\PluginServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelPackageTools\Package;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
+    protected array $pages = [
+        ShieldSetting::class,
+    ];
+
     protected array $resources = [
-        \BezhanSalleh\FilamentShield\Resources\RoleResource::class,
+        RoleResource::class,
     ];
 
     public function configurePackage(Package $package): void
     {
         $package
             ->name('filament-shield')
+            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews()
             ->hasCommands($this->getCommands())
@@ -28,14 +36,13 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        /** @phpstan-ignore-next-line */
-        if (Schema::hasTable('filament_shield_settings')) {
-            /** @phpstan-ignore-next-line */
-            config(['filament-shield' => Setting::pluck('value', 'key')->toArray()], '');
+        if (config('filament-shield.register_role_policy.enabled')) {
+            Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
         }
 
-        if (config('filament-shield.register_role_policy.enabled')) {
-            \Illuminate\Support\Facades\Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
+        /** @phpstan-ignore-next-line */
+        if (Schema::hasTable('filament_shield_settings')) {
+            config(['filament-shield' => Setting::pluck('value', 'key')->toArray()]);
         }
     }
 
@@ -43,8 +50,8 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageRegistered();
 
-        $this->app->scoped('filament-shield', function (): \BezhanSalleh\FilamentShield\FilamentShield {
-            return new \BezhanSalleh\FilamentShield\FilamentShield();
+        $this->app->scoped('filament-shield', function (): FilamentShield {
+            return new FilamentShield();
         });
 
         $this->publishes([
@@ -55,10 +62,10 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     protected function getCommands(): array
     {
         return [
-            Commands\MakeCreateShieldCommand::class,
-            Commands\MakeInstallShieldCommand::class,
-            Commands\MakeGenerateShieldCommand::class,
-            Commands\MakeSuperAdminShieldCommand::class,
+            Commands\MakeShieldDoctorCommand::class,
+            Commands\MakeShieldInstallCommand::class,
+            Commands\MakeShieldGenerateCommand::class,
+            Commands\MakeShieldSuperAdminCommand::class,
         ];
     }
 }
