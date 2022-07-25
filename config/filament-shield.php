@@ -2,8 +2,6 @@
 
 return [
     'shield_resource' => [
-        'enabled' => false,
-        'resource' => "BezhanSalleh\\FilamentShield\\Resources\\RoleResource",
         'slug' => 'shield/roles',
         'navigation_sort' => -1,
     ],
@@ -22,7 +20,7 @@ return [
     ],
 
     'filament_user' => [
-        'enabled' => true,
+        'enabled' => false,
         'name' => 'filament_user'
     ],
 
@@ -32,13 +30,13 @@ return [
             'view_any',
             'create',
             'update',
+            'restore',
+            'restore_any',
+            'replicate',
             'delete',
             'delete_any',
             'force_delete',
             'force_delete_any',
-            'restore',
-            'restore_any',
-            'replicate',
         ],
 
         'page' => 'page',

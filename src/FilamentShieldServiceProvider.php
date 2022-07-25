@@ -11,6 +11,10 @@ use Spatie\LaravelPackageTools\Package;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
+    protected array $resources = [
+        \BezhanSalleh\FilamentShield\Resources\RoleResource::class,
+    ];
+
     public function configurePackage(Package $package): void
     {
         $package
@@ -51,7 +55,8 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         if (class_exists(AboutCommand::class)) {
             AboutCommand::add('Filament Shield', [
                 'Auth Provider' => Utils::getAuthProviderFQCN().'|'.static::authProviderConfigured(),
-                'Role Resource' => Utils::isResourceEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::usesBuiltInResource() ? '|<fg=green;options=bold>BUILT-IN</>' : '|<fg=red;options=bold>CUSTOM</>') : '<fg=red;options=bold>DISABLED</>'.(Utils::usesBuiltInResource() ? '|<fg=green;options=bold>BUILT-IN</>' : '|<fg=red;options=bold>CUSTOM</>'),
+                'Resource Slug' => Utils::getResourceSlug(),
+                'Resource Sort' => Utils::getResourceNavigationSort(),
                 'Setting Page' => Utils::isSettingPageEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>') : '<fg=red;options=bold>DISABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>'),
                 'Translations' => is_dir(resource_path('resource/lang/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
                 'Version' => InstalledVersions::getPrettyVersion('bezhansalleh/filament-shield'),
@@ -70,30 +75,22 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         ];
     }
 
-    protected function getResources(): array
+    protected function getPages(): array
     {
-        if (Utils::isResourceEnabled()) {
+        if (Utils::isSettingPageEnabled()) {
             return [
-                Utils::getResourceClass(),
+                Utils::getSettingPageClass(),
             ];
         }
 
         return [];
     }
 
-    protected function getPages(): array
-    {
-        return [];
-        // return [
-        //     Utils::registerShieldSettingPage(),
-        // ];
-    }
-
     protected static function authProviderConfigured()
     {
-        if (class_exists(config('filament-shield.auth_provider_model.fqcn'))) {
-            return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(config('filament-shield.auth_provider_model.fqcn')))
-            || in_array("Spatie\Permission\Traits\HasRoles", class_uses(config('filament-shield.auth_provider_model.fqcn')))
+        if (class_exists(Utils::getAuthProviderFQCN())) {
+            return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(Utils::getAuthProviderFQCN()))
+            || in_array("Spatie\Permission\Traits\HasRoles", class_uses(Utils::getAuthProviderFQCN()))
                 ? '<fg=green;options=bold>CONFIGURED</>'
                 : '<fg=red;options=bold>NOT CONFIGURED</>' ;
         }

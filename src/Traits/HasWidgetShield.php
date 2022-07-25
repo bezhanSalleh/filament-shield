@@ -14,6 +14,9 @@ trait HasWidgetShield
 
     protected static function getPermissionName(): string
     {
-        return (string) Str::of(static::class) ->after('Widgets\\') ->replace('\\', '') ->snake() ->prepend(config('filament-shield.permission_prefixes.widget').'_');
+        $prepend = Str::of(config('filament-shield.permission_prefixes.widget'))->append('_');
+
+        return Str::of(class_basename(static::class))
+            ->prepend($prepend);
     }
 }

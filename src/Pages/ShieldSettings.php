@@ -20,9 +20,12 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
 
     protected static ?string $slug = 'shield/settings';
 
+    protected static ?int $navigationSort = 2;
+
     public function mount(): void
     {
         abort_unless(static::canView(), 403, __('filament-shield::filament-shield.forbidden'));
+        /** @phpstan-ignore-next-line */
         $this->form->fill(Setting::pluck('value', 'key')->toArray());
     }
 
@@ -62,6 +65,13 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
     protected static function getNavigationLabel(): string
     {
         return __('filament-shield::filament-shield.settings.navigation_label');
+    }
+
+    protected function getBreadcrumbs(): array
+    {
+        return [
+            __('filament-shield::filament-shield.page.name'),
+        ];
     }
 
     protected function getFormSchema(): array
@@ -110,36 +120,20 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
                         ])
                         ->columns(1)
                         ->columnSpan(1),
-                    $layout::make()
+                    Forms\Components\Grid::make()
                         ->schema([
-                            Forms\Components\Toggle::make('settings.enabled')
-                                ->label(__('filament-shield::filament-shield.settings.label'))
-                                ->hint(fn ($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
-                                ->helperText('<span class="text-md text-gray-600 leading-loose">'.__("filament-shield::filament-shield.settings.helper_text").'</span>')
-                                ->reactive()
-                                ->required(),
-                        ])
-                        ->columns(1)
-                        ->columnSpan(1),
-                    $layout::make()
-                        ->schema([
-                            Forms\Components\Grid::make()
+                            $layout::make()
                                 ->schema([
-                                    Forms\Components\Toggle::make('shield_resource.enabled')
-                                        ->label(__('filament-shield::filament-shield.settings.resource.name'))
+                                    Forms\Components\Toggle::make('settings.enabled')
+                                        ->label(__('filament-shield::filament-shield.settings.label'))
                                         ->hint(fn ($state) => $state ? '<span class="font-bold text-success-700">'.__("filament-shield::filament-shield.labels.status.enabled").'</span>' : '<span class="font-bold text-primary-700">'.__("filament-shield::filament-shield.labels.status.disabled").'</span>')
-                                        ->required()
-                                        ->reactive(),
-                                    Forms\Components\TextInput::make('shield_resource.resource')
-                                        ->label(__('filament-shield::filament-shield.settings.resource.label'))
-                                        ->visible(fn ($get) => $get('shield_resource.enabled'))
-                                        ->required(fn ($get) => $get('shield_resource.enabled'))
-                                        ->reactive(),
+                                        ->helperText('<span class="text-md text-gray-600 leading-loose">'.__("filament-shield::filament-shield.settings.helper_text").'</span>')
+                                        ->reactive()
+                                        ->required(),
                                 ])
                                 ->columns(1)
-                                ->columnSpan('full'),
-                            Forms\Components\Grid::make()
-                                ->visible(fn ($get) => $get('shield_resource.enabled') && $get('shield_resource.resource') === "BezhanSalleh\\FilamentShield\\Resources\\RoleResource")
+                                ->columnSpan(1),
+                            $layout::make()
                                 ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
                                 ->schema([
                                     Forms\Components\Toggle::make('register_role_policy.enabled')
@@ -152,32 +146,42 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
                                 ])
                                 ->columns(1)
                                 ->columnSpan(1),
-                            Forms\Components\Grid::make()
-                                ->visible(fn ($get) => $get('shield_resource.enabled'))
-                                ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
-                                ->schema([
-                                    Forms\Components\TextInput::make('shield_resource.slug')
-                                        ->label(__('filament-shield::filament-shield.settings.resource.slug'))
-                                        ->required(fn ($get) => $get('shield_resource.enabled')),
-                                ])
-                                ->columns(1)
-                                ->columnSpan(1),
-                            Forms\Components\Grid::make()
-                                ->visible(fn ($get) => $get('shield_resource.enabled'))
-                                ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
-                                ->schema([
-                                    Forms\Components\TextInput::make('shield_resource.navigation_sort')
-                                        ->label(__('filament-shield::filament-shield.settings.resource.navigation_sort'))
-                                        ->required(fn ($get) => $get('shield_resource.enabled')),
-                                ])
-                                ->columns(1)
-                                ->columnSpan(1),
-                        ])
+                    ])
                     ->columns([
                         'sm' => 1,
                         'md' => 2,
-                        'lg' => 3,
                     ]),
+                    $layout::make()
+                        ->schema([
+                            Forms\Components\Placeholder::make('')
+                                ->label(__('filament-shield::filament-shield.settings.resource.name')),
+                            Forms\Components\Grid::make()
+                                ->schema([
+                                    Forms\Components\Grid::make()
+                                        ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
+                                        ->schema([
+                                            Forms\Components\TextInput::make('shield_resource.slug')
+                                                ->label(__('filament-shield::filament-shield.settings.resource.slug'))
+                                                ->required(),
+                                        ])
+                                        ->columns(1)
+                                        ->columnSpan(1),
+                                    Forms\Components\Grid::make()
+                                        ->extraAttributes(['class' => 'border-0 shadow-sm','style' => 'border:1px solid #d1d5db8c!important'])
+                                        ->schema([
+                                            Forms\Components\TextInput::make('shield_resource.navigation_sort')
+                                                ->label(__('filament-shield::filament-shield.settings.resource.navigation_sort'))
+                                                ->required(),
+                                        ])
+                                        ->columns(1)
+                                        ->columnSpan(1),
+                                ])
+                                ->columns([
+                                    'sm' => 1,
+                                    'md' => 2,
+                                ]),
+                        ])
+                    ,
 
                 ])
                 ->columns([
@@ -320,6 +324,7 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
 
     public function save(bool $notify = true): void
     {
+        /** @phpstan-ignore-next-line */
         $data = $this->form->getState();
 
         $data['permission_prefixes']['resource'] = explode(',', $data['permission_prefixes']['resource']);
@@ -337,6 +342,7 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
         config()->set('filament-shield', Setting::pluck('value', 'key')->toArray());
 
         Artisan::call('optimize:clear');
+
         if ($notify) {
             $this->notify('success', __('filament-shield::filament-shield.update'));
         }
@@ -366,6 +372,7 @@ class ShieldSettings extends Pages\Page implements Pages\Contracts\HasFormAction
             Actions\Action::make('load_defaults')
                 ->label(__('filament-shield::filament-shield.page.load_default_settings'))
                 ->action(function () {
+                    /** @phpstan-ignore-next-line */
                     $this->form->fill(Setting::pluck('default', 'key')->toArray());
 
                     $this->save(false);

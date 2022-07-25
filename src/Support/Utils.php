@@ -6,33 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 class Utils
 {
-    public static function isResourceEnabled(): bool
-    {
-        return config('filament-shield.shield_resource.enabled') ?? false;
-    }
-
-    public static function getResourceClass(): string
-    {
-        return config('filament-shield.shield_resource.resource');
-    }
-
-    public static function usesBuiltInResource()
-    {
-        return static::getResourceClass() === 'BezhanSalleh\\FilamentShield\\Resources\\RoleResource';
-    }
-
     public static function getResourceSlug(): string
     {
-        return static::isResourceEnabled()
-            ? config('filament-shield.shield_resource.slug')
-            : '';
+        return config('filament-shield.shield_resource.slug');
     }
 
     public static function getResourceNavigationSort(): int
     {
-        return static::isResourceEnabled()
-            ? config('filament-shield.shield_resource.navigation_sort')
-            : '' ;
+        return config('filament-shield.shield_resource.navigation_sort');
     }
 
     public static function isSettingPageEnabled()
@@ -47,7 +28,9 @@ class Utils
 
     public static function isSettingPageConfigured()
     {
-        return Schema::hasTable('filament_shield_settings');
+        return static::isSettingPageEnabled()
+            ? Schema::hasTable('filament_shield_settings')
+            : false;
     }
 
     public static function getAuthProviderFQCN(): string

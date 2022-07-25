@@ -82,7 +82,6 @@ return [
 
         'resource' => [
             'name' => 'Shield Role Resource',
-            'label' => 'Resource Class',
             'slug' => 'Slug',
             'navigation_sort' => 'Navigation Sort',
         ]

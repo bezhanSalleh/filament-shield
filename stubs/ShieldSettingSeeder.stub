@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use BezhanSalleh\FilamentShield\Models\Setting;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 class ShieldSettingSeeder extends Seeder
 {
@@ -16,6 +17,10 @@ class ShieldSettingSeeder extends Seeder
     {
         /** @var array[string]mixed $settingKeys */
         $settingKeys = config('filament-shield');
+
+        if (Utils::isSettingPageConfigured()) {
+            $settingKeys['settings']['enabled'] = true;
+        }
 
         if (Setting::count()) {
             Setting::truncate();
