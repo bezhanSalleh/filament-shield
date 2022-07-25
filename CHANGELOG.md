@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v2.0.5 - 2022-07-25
+
+### What's Changed
+
+- Enhancements & improvements by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/69
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v2.0.4...v2.0.5
+
 ## v2.0.4 - 2022-07-21
 
 **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v2.0.3...v2.0.4
@@ -14,21 +22,30 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - - Follow filament plugin standards
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - - Generate config dynamically from setting model
 - 
+- 
 - - Remove Config file
+- 
 - 
 - - Follow new Filament Actions
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - - Add ability to Load default settings from DB
 - 
+- 
 - - Remove `shield:publish` command
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - Italian Translation by @slamservice in https://github.com/bezhanSalleh/filament-shield/pull/50
