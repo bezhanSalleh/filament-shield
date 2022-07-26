@@ -45,36 +45,35 @@ To upgrade to the latest release first run:
 composer update
 ```
 #### v2.x
-> **Note**
-> 
+> **Note** 
 > Minimum **Filament** Requirement is now `2.13`.
-> v2.x uses database to manage **Settings**. 
-> So you need Delete `Shield` folder from `Filament\Resources` and run the following command as well and then go to the settings page and update the settings based on `filament-shield` config file and click on `Save & Generate`, then delete the config file.
 
-```bash
-php artisan shield:install --fresh
-```
-> **Warning**
-> 
-> if you have custom permissions and/or updated policies running the above command will overwrite everything.
-> 
-> So if you do not want to break anything just follow along the below steps:
-1. Delete `Shield` folder from `Filament\Resources`
-2. Run the following commands:
-```bash
-php artisan vendor:publish --tag=filament-shield-migrations
-php artisan vendor:publish --tag=filament-shield-seeder
-```
-3. Open the `Database\Seeders\ShieldSettingSeeder.php` file and update the `$settingKeys` based on your `config` file.
-4. Run the following commands:
-```bash
-php artisan migrate
-php artisan db:seed --class=ShieldSettingSeeder
-```
-5. Go to Sheild's setting page and verify your settings then click on `Save`.
+**Before following along, backup your current `config` first.**
 
+1. Upgrade from **`1.x`**
+   1. Delete `Shield` folder from `App\Filament\Resources`
+   2. Delete `filament-shield` from `resources\lang\vendor`
+   3. Delete `filament-shield.php` from `Config`
+   4. Now either do **`2.Upgrade only`** or **`3.Upgrade and enable Setting Page`**
+
+2. **Upgrade only**
+   1. Run the following command
+        ```bash
+        php artisan shield:install --fresh
+        ```
+   2. Update the new **`published config`** based on your **`backed-up config`** and run the following command:
+        ```bash
+        php artisan shield:generate
+        ```
+
+3. **Upgrade** and enable **`Setting`** Page
+    1. Run the following command
+        ```bash
+        php artisan shield:install --fresh --setting
+        ```
+   1. Open the `Setting` page and update your **settings** based on your **`backed-up config`** when done hit `Generate & Save`.
+   
 > **Note**
-> 
 > for **Filament** prior to 2.13 use [v1.1.12](https://github.com/bezhanSalleh/filament-shield/releases/tag/v1.1.12)
 ## Installation
 
@@ -92,17 +91,21 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasRoles;
+    use HasRoles; //or HasFilamentShield
 
     // ...
 }
 ```
 
 3. Now run the following command to setup everything:
-
-```bash
-php artisan shield:install
-```
+    1. Install only 
+         ```bash
+         php artisan shield:install
+         ```
+    2. Install and Enable `Setting` Page
+        ```bash
+         php artisan shield:install --setting
+         ```
 
 Follow the prompts and enjoy!
 
@@ -219,6 +222,13 @@ protected $policies = [
 ...
 ```
 
+#### Config 
+
+Publish the config using:
+
+```bash
+php artisan vendor:publish --tag="filament-shield-config"
+```
 #### Translations 
 
 Publish the translations using:
