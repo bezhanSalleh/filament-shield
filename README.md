@@ -57,21 +57,30 @@ composer update
    4. Now either do **`2.Upgrade only`** or **`3.Upgrade and enable Setting Page`**
 
 2. **Upgrade only**
-   1. Run the following command
+   1. Publish the `Config`:
+        ```bash
+        php artisan vendor:publish --tag=filament-shield-config --force
+        ```
+   2. Configure:
+        Update the new **`published config`** based on your **`backed-up config`**
+
+   3. Install:
         ```bash
         php artisan shield:install --fresh
         ```
-   2. Update the new **`published config`** based on your **`backed-up config`** and run the following command:
+
+   4. Generate:
         ```bash
         php artisan shield:generate
         ```
 
 3. **Upgrade** and enable **`Setting`** Page
-    1. Run the following command
+    1. Follow **Upgrade only**'s step 1 & 2
+   
+    2. Run the following command
         ```bash
         php artisan shield:install --fresh --setting
         ```
-   1. Open the `Setting` page and update your **settings** based on your **`backed-up config`** when done hit `Generate & Save`.
    
 > **Note**
 > for **Filament** prior to 2.13 use [v1.1.12](https://github.com/bezhanSalleh/filament-shield/releases/tag/v1.1.12)
@@ -96,8 +105,89 @@ class User extends Authenticatable
     // ...
 }
 ```
+3. Publish the `config` using:
+```bash
+php artisan vendor:publish --tag=filament-shield-config
+```
+4. Setup your configuration
+```php
+<?php
 
-3. Now run the following command to setup everything:
+    return [
+
+          'shield_resource' => [
+              'slug' => 'shield/roles',
+              'navigation_sort' => -1,
+          ],
+
+          'auth_provider_model' => [
+              'fqcn' => 'App\\Models\\User'
+          ],
+
+          'settings' => [
+              'enabled' => false,
+          ],
+
+          'super_admin' => [
+              'enabled' => true,
+              'name'  => 'super_admin'
+          ],
+
+          'filament_user' => [
+              'enabled' => false,
+              'name' => 'filament_user'
+          ],
+
+          'permission_prefixes' => [
+              'resource' => [
+                  'view',
+                  'view_any',
+                  'create',
+                  'update',
+                  'restore',
+                  'restore_any',
+                  'replicate',
+                  'delete',
+                  'delete_any',
+                  'force_delete',
+                  'force_delete_any',
+              ],
+
+              'page' => 'page',
+              'widget' => 'widget',
+          ],
+
+          'entities' => [
+              'pages' => true,
+              'widgets' => true,
+              'resources' => true,
+              'custom_permissions' => false,
+          ],
+
+          'generator' => [
+              'option' => 'policies_and_permissions'
+          ],
+
+          'exclude' => [
+              'enabled' => true,
+
+              'pages' => [
+                  'Dashboard',
+              ],
+
+              'widgets' => [
+                  'AccountWidget','FilamentInfoWidget',
+              ],
+
+              'resources' => [],
+          ],
+
+          'register_role_policy' => [
+              'enabled' => false
+          ],
+    ];
+```
+4. Now run the following command to install shield:
     1. Install only 
          ```bash
          php artisan shield:install
@@ -222,13 +312,6 @@ protected $policies = [
 ...
 ```
 
-#### Config 
-
-Publish the config using:
-
-```bash
-php artisan vendor:publish --tag="filament-shield-config"
-```
 #### Translations 
 
 Publish the translations using:
