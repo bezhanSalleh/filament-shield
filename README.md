@@ -28,14 +28,8 @@ The easiest and most intuitive way to add access management to your Filament Adm
 - :fire: **Resources** 
 - :fire: **Pages** 
 - :fire: **Widgets** 
-- :fire: **Settings** <sup><i style="color:red;">New</i></sup>
+- :fire: **Settings**
 <!-- One Plugin to rule them all, One Plugin to find them, One Plugin to bring them all, and in the light bind them, In the Land of Filament where building them is really fun! -->
-
-## Support Filament
-
-<a href="https://github.com/sponsors/danharrin">
-<img width="320" alt="filament-logo" src="https://filamentadmin.com/images/sponsor-banner.jpg">
-</a>
 
 ## Upgrade 
 
