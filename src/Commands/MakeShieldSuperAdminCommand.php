@@ -12,7 +12,8 @@ class MakeShieldSuperAdminCommand extends Command
 {
     use CanValidateInput;
 
-    public $signature = 'shield:super-admin';
+    public $signature = 'shield:super-admin
+        {--user= : ID of user to be made super admin.}';
 
     public $description = 'Creates Filament Super Admin';
 
@@ -38,7 +39,15 @@ class MakeShieldSuperAdminCommand extends Command
             ]);
         }
 
-        if ($userProvider->getModel()::count() === 1) {
+        if ($this->option('user')) {
+            $superAdmin = $userProvider->getModel()::findOrFail($this->option('user'));
+
+            $superAdmin->assignRole(config('filament-shield.super_admin.name'));
+
+            if (config('filament-shield.filament_user.enabled')) {
+                $superAdmin->assignRole(config('filament-shield.filament_user.name'));
+            }
+        } elseif ($userProvider->getModel()::count() === 1) {
             $superAdmin = $userProvider->getModel()::first();
 
             $superAdmin->assignRole(config('filament-shield.super_admin.name'));
