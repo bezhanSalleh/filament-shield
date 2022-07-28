@@ -2,6 +2,11 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v2.0.7 - 2022-07-28
+
+- fix settings table issue
+- **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v2.0.6...v2.0.7
+
 ## v2.0.6 - 2022-07-28
 
 - added the `reorder` policy method and permission_prefix
@@ -30,7 +35,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -38,7 +45,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -46,7 +55,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -54,11 +65,14 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
