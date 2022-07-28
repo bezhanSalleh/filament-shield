@@ -4,6 +4,7 @@ return [
     'shield_resource' => [
         'slug' => 'shield/roles',
         'navigation_sort' => -1,
+        'show_navigation_badge' => true,
     ],
 
     'auth_provider_model' => [
