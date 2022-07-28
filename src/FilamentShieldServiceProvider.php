@@ -50,6 +50,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         return [
             Commands\MakeShieldDoctorCommand::class,
+            Commands\MakeShieldUpgradeCommand::class,
             Commands\MakeShieldInstallCommand::class,
             Commands\MakeShieldGenerateCommand::class,
             Commands\MakeShieldSuperAdminCommand::class,

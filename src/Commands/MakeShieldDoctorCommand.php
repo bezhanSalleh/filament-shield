@@ -20,7 +20,7 @@ class MakeShieldDoctorCommand extends Command
                 'Auth Provider' => Utils::getAuthProviderFQCN().'|'.static::authProviderConfigured(),
                 'Resource Slug' => Utils::getResourceSlug(),
                 'Resource Sort' => Utils::getResourceNavigationSort(),
-                'Setting Page' => Utils::isSettingPageEnabled() ? '<fg=green;options=bold>ENABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>') : '<fg=red;options=bold>DISABLED</>' .(Utils::isSettingPageConfigured() ? '|<fg=green;options=bold>CONFIGURED</>' : '|<fg=red;options=bold>NOT CONFIGURED</>'),
+                'Resource Badge' => Utils::isResourceNavigationBadgeEnabled() ? '<fg=green;options=bold>ENABLED</>' : '<fg=red;options=bold>DISABLED</>',
                 'Translations' => is_dir(resource_path('resource/lang/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
                 'Version' => InstalledVersions::getPrettyVersion('bezhansalleh/filament-shield'),
                 'Views' => is_dir(resource_path('views/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
