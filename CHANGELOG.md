@@ -2,6 +2,22 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v2.0.8 - 2022-07-28
+
+### What's Changed
+
+- New `upgrade` command
+- Removed `Setting` page
+- Add new config key for RoleResource `badge`
+- removed extra keys from lang files
+- Allow user option for shield:super-admin command by @intrepidws in https://github.com/bezhanSalleh/filament-shield/pull/85
+
+### New Contributors
+
+- @intrepidws made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/85
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v2.0.7...v2.0.8
+
 ## v2.0.7 - 2022-07-28
 
 - fix settings table issue
@@ -36,7 +52,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -46,7 +64,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -56,7 +76,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -66,12 +88,15 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
