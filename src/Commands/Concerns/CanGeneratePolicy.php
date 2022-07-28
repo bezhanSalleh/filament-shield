@@ -47,6 +47,7 @@ trait CanGeneratePolicy
             ->replace('\\', DIRECTORY_SEPARATOR)
         ;
         dump($basePath);
+
         return $basePath;
     }
 

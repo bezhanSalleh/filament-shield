@@ -40,8 +40,8 @@ class MakeShieldUpgradeCommand extends Command
 
         $this->info('shield upgraded.');
 
-        $this->call('shield:install',[
-            '--fresh' => true
+        $this->call('shield:install', [
+            '--fresh' => true,
         ]);
 
         return self::SUCCESS;
