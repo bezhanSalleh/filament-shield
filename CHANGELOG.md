@@ -2,6 +2,12 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## v2.0.6 - 2022-07-28
+
+- added the `reorder` policy method and permission_prefix
+- fixes the `setting` db check
+- **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v2.0.5...v2.0.6
+
 ## v2.0.5 - 2022-07-25
 
 ### What's Changed
@@ -23,28 +29,37 @@ All notable changes to `filament-shield` will be documented in this file.
 - - Follow filament plugin standards
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - - Generate config dynamically from setting model
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - - Follow new Filament Actions
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - - Add ability to Load default settings from DB
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
