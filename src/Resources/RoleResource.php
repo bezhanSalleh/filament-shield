@@ -206,7 +206,9 @@ class RoleResource extends Resource
 
     protected static function getNavigationBadge(): ?string
     {
-        return static::$model::count();
+        return config('filament-shield.shield_resource.show_navigation_badge', true)
+            ? static::$model::count()
+            : null;
     }
 
     /**--------------------------------*
