@@ -28,7 +28,7 @@ The easiest and most intuitive way to add access management to your Filament Adm
 - :fire: **Resources** 
 - :fire: **Pages** 
 - :fire: **Widgets** 
-- :fire: **Settings**
+- :fire: **Custome Permission**
 <!-- One Plugin to rule them all, One Plugin to find them, One Plugin to bring them all, and in the light bind them, In the Land of Filament where building them is really fun! -->
 
 ## Upgrade 
@@ -46,9 +46,10 @@ composer update
 
 1. Upgrade from **`1.x`**
    1. Delete `Shield` folder from `App\Filament\Resources`
-   2. Delete `filament-shield` from `resources\lang\vendor`
-   3. Delete `filament-shield.php` from `Config`
-   4. Now either do **`2.Upgrade only`** or **`3.Upgrade and enable Setting Page`**
+   2. Delete `filament-shield` from `resources\lang\vendor or lang\vendor`
+   3. Delete `filament-shield` from `resources\views\vendor`
+   4. Delete `filament-shield.php` from `Config`
+   5. Now either follow **`Upgrade only`**
 
 2. **Upgrade only**
    1. Publish the `Config`:
@@ -60,22 +61,9 @@ composer update
 
    3. Install:
         ```bash
-        php artisan shield:install --fresh
+        php artisan shield:upgrade
         ```
 
-   4. Generate:
-        ```bash
-        php artisan shield:generate
-        ```
-
-3. **Upgrade** and enable **`Setting`** Page
-    1. Follow **Upgrade only**'s step 1 & 2
-   
-    2. Run the following command
-        ```bash
-        php artisan shield:install --fresh --setting
-        ```
-   
 > **Note**
 > for **Filament** prior to 2.13 use [v1.1.12](https://github.com/bezhanSalleh/filament-shield/releases/tag/v1.1.12)
 ## Installation
@@ -112,14 +100,11 @@ php artisan vendor:publish --tag=filament-shield-config
           'shield_resource' => [
               'slug' => 'shield/roles',
               'navigation_sort' => -1,
+              'navigation_badge' => true
           ],
 
           'auth_provider_model' => [
               'fqcn' => 'App\\Models\\User'
-          ],
-
-          'settings' => [
-              'enabled' => false,
           ],
 
           'super_admin' => [
@@ -128,7 +113,7 @@ php artisan vendor:publish --tag=filament-shield-config
           ],
 
           'filament_user' => [
-              'enabled' => false,
+              'enabled' => true,
               'name' => 'filament_user'
           ],
 
@@ -141,6 +126,7 @@ php artisan vendor:publish --tag=filament-shield-config
                   'restore',
                   'restore_any',
                   'replicate',
+                  'reorder',
                   'delete',
                   'delete_any',
                   'force_delete',
@@ -182,20 +168,15 @@ php artisan vendor:publish --tag=filament-shield-config
     ];
 ```
 4. Now run the following command to install shield:
-    1. Install only 
-         ```bash
-         php artisan shield:install
-         ```
-    2. Install and Enable `Setting` Page
-        ```bash
-         php artisan shield:install --setting
-         ```
+```bash
+php artisan shield:install
+```
 
 Follow the prompts and enjoy!
 
 #### Resource Custom Permissions
 
-You can add custom permissions for `Resources` through settings page.
+You can add custom permissions for `Resources` through Config file.
 
 #### Pages
 
@@ -329,6 +310,7 @@ php artisan vendor:publish --tag="filament-shield-views"
 - generate  # (Re)Discovers Filament resources and (re)generates Permissions and Policies.
 - create    # Create Permissions and/or Policy for the given Filament Resource Model
 - super-admin # Create a user with super_admin role
+- upgrade # upgrade shield
 ```
 
 

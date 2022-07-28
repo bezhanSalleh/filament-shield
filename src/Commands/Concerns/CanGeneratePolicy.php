@@ -31,13 +31,22 @@ trait CanGeneratePolicy
 
         $path = (new \ReflectionClass($entity['fqcn']::getModel()))->getFileName();
 
+        if (Str::of($path)->contains('vendor')) {
+            $basePolicyPath = app_path(
+                (string) Str::of($entity['model'])
+                ->prepend('Policies\\')
+                ->replace('\\', DIRECTORY_SEPARATOR),
+            );
+
+            return "{$basePolicyPath}Policy.php";
+        }
         /** @phpstan-ignore-next-line */
         $basePath = Str::of($path)
             ->replace('Models', 'Policies')
             ->replaceLast('.php', 'Policy.php')
             ->replace('\\', DIRECTORY_SEPARATOR)
         ;
-
+        dump($basePath);
         return $basePath;
     }
 
