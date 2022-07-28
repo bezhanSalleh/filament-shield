@@ -8,7 +8,6 @@ use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelPackageTools\Package;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
