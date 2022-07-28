@@ -20,7 +20,7 @@ return [
     ],
 
     'filament_user' => [
-        'enabled' => false,
+        'enabled' => true,
         'name' => 'filament_user'
     ],
 
@@ -33,6 +33,7 @@ return [
             'restore',
             'restore_any',
             'replicate',
+            'reorder',
             'delete',
             'delete_any',
             'force_delete',

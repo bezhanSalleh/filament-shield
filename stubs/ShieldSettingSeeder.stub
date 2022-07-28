@@ -15,7 +15,7 @@ class ShieldSettingSeeder extends Seeder
     */
     public function run()
     {
-        if (Schema::hasTable('filament_shield_settings')) {
+        if (Utils::isSettingPageEnabled()) {
             config(['filament-shield.settings.enabled' => true]);
         }
 

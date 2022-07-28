@@ -5,6 +5,7 @@ namespace BezhanSalleh\FilamentShield;
 use BezhanSalleh\FilamentShield\Models\Setting;
 use BezhanSalleh\FilamentShield\Pages\ShieldSetting;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
@@ -41,7 +42,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         }
 
         /** @phpstan-ignore-next-line */
-        if (Schema::hasTable('filament_shield_settings')) {
+        if (Utils::isSettingPageEnabled()) {
             config(['filament-shield' => Setting::pluck('value', 'key')->toArray()]);
         }
     }

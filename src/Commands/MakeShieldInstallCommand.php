@@ -104,7 +104,6 @@ class MakeShieldInstallCommand extends Command
 
         $this->call('vendor:publish', [
             '--tag' => 'filament-shield-config',
-            '--force' => true,
         ]);
 
         if ($setting) {

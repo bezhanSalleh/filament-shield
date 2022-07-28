@@ -130,4 +130,15 @@ class {{ modelPolicy }}
         return $user->can('{{ Replicate }}');
     }
 
+    /**
+     * Determine whether the user can reorder.
+     *
+     * @param  \{{ auth_model_fqcn }}  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function reorder({{ auth_model_name }} $user)
+    {
+        return $user->can('{{ Reorder }}');
+    }
+
 }
