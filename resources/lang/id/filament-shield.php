@@ -42,56 +42,39 @@ return [
     | Section & Tabs
     |--------------------------------------------------------------------------
     */
+
     'section' => 'Entitas',
     'resources' => 'Sumber Daya',
     'widgets' => 'Widget',
     'pages' => 'Halaman',
     'custom' => 'Izin Kustom',
 
-    /**
-     * Role Setting Page
-     */
-    'page' => [
-        'name' => 'Setting',
-        'icon' => 'heroicon-o-adjustments',
-        'save' => 'Simpan',
-        'generate' => 'Simpan & Generate',
-    ],
-    'labels.super_admin.toggle_input' => 'Peran Super Admin',
-    'labels.super_admin.text_input' => 'Nama Peran',
-    'labels.filament_user.toggle_input' => 'Peran Pengguna',
-    'labels.filament_user.text_input' => 'Nama Peran',
-    'labels.role_policy.toggle_input' => 'Policy Peran Terdaftar?',
-    'labels.role_policy.message' => 'Pastikan policy terdaftar dan izin dipaksakan',
-    'labels.prefixes.placeholder' => 'Awalan Izin Bawaan',
-    'labels.prefixes.resource' => 'Sumber Daya',
-    'labels.prefixes.resource.placeholder' => 'Tambah atau Hapus Izin Sumber Daya ...',
-    'labels.prefixes.page' => 'Page',
-    'labels.prefixes.widget' => 'Widget',
-    'labels.entities.placeholder' => 'Generator Izin Entitas & Tab',
-    'labels.entities.message' => 'Generator & Tab adalah ',
-    'labels.entities.resources' => 'Sumber Daya',
-    'labels.entities.pages' => 'Halaman',
-    'labels.entities.widgets' => 'Widget',
-    'labels.entities.custom_permissions' => 'Kustom Izin',
-    'labels.entities.custom_permissions.message' => 'Tab adalah ',
-    'labels.status.enabled' => 'Aktifkan',
-    'labels.status.disabled' => 'Non Aktifkan',
-    'labels.status.yes' => 'Ya',
-    'labels.status.no' => 'Tidak',
-    'labels.exclude.placeholder' => 'Mode Pengecualian',
-    'labels.exclude.message' => 'Dengan mengaktifkan mode pengecualian, generator izin batal membuat izin untuk entitas yang kamu pilih.',
-    'labels.exclude.resources' => 'Sumber Daya',
-    'labels.exclude.resources.placeholder' => 'Pilih sumber daya ...',
-    'labels.exclude.pages' => 'Halaman',
-    'labels.exclude.pages.placeholder' => 'Pilih halaman ...',
-    'labels.exclude.widgets' => 'Widget',
-    'labels.exclude.widgets.placeholder' => 'Pilih widget ...',
+    /*
+    |--------------------------------------------------------------------------
+    | Messages
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Messages
-     */
     'forbidden' => 'Kamu tidak punya izin akses',
-    'update' => 'Pengaturan Pelindung Sudah Diperbarui!',
-    'generate' => 'Pengaturan Pelindung Sudah Diperbarui & Izin Telat Dibuat Tanpa Policy!',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resource Permissions' Labels
+    |--------------------------------------------------------------------------
+    */
+
+    // 'resource_permission_prefixes_labels' => [
+    //     'view' => 'View',
+    //     'view_any' => 'View Any',
+    //     'create' => 'Create',
+    //     'update' => 'Update',
+    //     'delete' => 'Delete',
+    //     'delete_any' => 'Delete Any',
+    //     'force_delete' => 'Force Delete',
+    //     'force_delete_any' => 'Force Delete Any',
+    //     'restore' => 'Restore',
+    //     'replicate' => 'Replicate',
+    //     'reorder' => 'Reorder',
+    //     'restore_any' => 'Restore Any',
+    // ],
 ];

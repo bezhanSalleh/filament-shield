@@ -3,15 +3,11 @@
 return [
     'shield_resource' => [
         'slug' => 'shield/roles',
-        'navigation_sort' => -1,
+        'navigation_sort' => -1
     ],
 
     'auth_provider_model' => [
         'fqcn' => 'App\\Models\\User'
-    ],
-
-    'settings' => [
-        'enabled' => false,
     ],
 
     'super_admin' => [

@@ -42,56 +42,39 @@ return [
     | Section & Tabs
     |--------------------------------------------------------------------------
     */
+
     'section' => 'الوحدات',
     'resources' => 'المصادر',
     'widgets' => 'الملحقات',
     'pages' => 'الصفحات',
     'custom' => 'أذونات مخصصة',
 
-    /**
-     * Role Setting Page
-     */
-    'page' => [
-        'name' => 'إعدادات',
-        'icon' => 'heroicon-o-adjustments',
-        'save' => 'حفظ',
-        'generate' => 'حفظ وإنشاء',
-    ],
-    'labels.super_admin.toggle_input' => 'صلاحية المدير العام',
-    'labels.super_admin.text_input' => 'اسم الصلاحية',
-    'labels.filament_user.toggle_input' => 'صلاحية المستخدم',
-    'labels.filament_user.text_input' => 'اسم الصلاحية',
-    'labels.role_policy.toggle_input' => 'تسجيل سياسة الصلاحية؟',
-    'labels.role_policy.message' => 'تأكد من تسجيل السياسات وفرض الأذونات',
-    'labels.prefixes.placeholder' => 'البادئة الافتراضية للأذونات',
-    'labels.prefixes.resource' => 'المصدر',
-    'labels.prefixes.resource.placeholder' => 'إضافة أو إزالة مصادر الأذونات...',
-    'labels.prefixes.page' => 'صفحة',
-    'labels.prefixes.widget' => 'ملحق',
-    'labels.entities.placeholder' => 'أذونات المولّدات وعلامات التبويب',
-    'labels.entities.message' => 'مولّدات وعلامات التبويب ',
-    'labels.entities.resources' => 'المصادر',
-    'labels.entities.pages' => 'الصفحات',
-    'labels.entities.widgets' => 'الملحقات',
-    'labels.entities.custom_permissions' => 'أذونات مخصصة',
-    'labels.entities.custom_permissions.message' => 'علامة التبويب ',
-    'labels.status.enabled' => 'مفعل',
-    'labels.status.disabled' => 'غير مفعل',
-    'labels.status.yes' => 'نعم',
-    'labels.status.no' => 'لا',
-    'labels.exclude.placeholder' => 'وضع الاستبعاد',
-    'labels.exclude.message' => 'من خلال تمكين وضع الاستبعاد، يمكنك توجيه مولّد الأذونات لتخطي إنشاء الأذونات للكيانات التي تحددها',
-    'labels.exclude.resources' => 'المصادر',
-    'labels.exclude.resources.placeholder' => 'اختر المصادر ...',
-    'labels.exclude.pages' => 'الصفحات',
-    'labels.exclude.pages.placeholder' => 'اختر الصفحات ...',
-    'labels.exclude.widgets' => 'الملاحق',
-    'labels.exclude.widgets.placeholder' => 'اختر الملاحق ...',
+    /*
+    |--------------------------------------------------------------------------
+    | Messages
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Messages
-     */
-    'forbidden' => 'عذراً، ليست لديك صلاحية تنفيذ هذا الإجراء',
-    'update' => 'تم تحديث إعدادات Shield!',
-    'generate' => 'تم تحديث إعدادات Shield وإنشاء الأذونات مع/بدون السياسات!',
+    'forbidden' => 'You do not have permission to access',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resource Permissions' Labels
+    |--------------------------------------------------------------------------
+    */
+
+    // 'resource_permission_prefixes_labels' => [
+    //     'view' => 'View',
+    //     'view_any' => 'View Any',
+    //     'create' => 'Create',
+    //     'update' => 'Update',
+    //     'delete' => 'Delete',
+    //     'delete_any' => 'Delete Any',
+    //     'force_delete' => 'Force Delete',
+    //     'force_delete_any' => 'Force Delete Any',
+    //     'reorder' => 'Reorder',
+    //     'restore' => 'Restore',
+    //     'restore_any' => 'Restore Any',
+    //     'replicate' => 'Replicate',
+    // ],
 ];

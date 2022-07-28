@@ -48,8 +48,32 @@ return [
     'pages' => 'Páginas',
     'custom' => 'Permissões customizadas',
 
-    /**
-     * HasPageShield Trait Forbidden Message
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Messages
+    |--------------------------------------------------------------------------
+    */
+
     'forbidden' => 'Você não tem permissão para acessar',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resource Permissions' Labels
+    |--------------------------------------------------------------------------
+    */
+
+    // 'resource_permission_prefixes_labels' => [
+    //     'view' => 'View',
+    //     'view_any' => 'View Any',
+    //     'create' => 'Create',
+    //     'update' => 'Update',
+    //     'delete' => 'Delete',
+    //     'delete_any' => 'Delete Any',
+    //     'force_delete' => 'Force Delete',
+    //     'force_delete_any' => 'Force Delete Any',
+    //     'restore' => 'Restore',
+    //     'reorder' => 'Reorder',
+    //     'restore_any' => 'Restore Any',
+    //     'replicate' => 'Replicate',
+    // ],
 ];

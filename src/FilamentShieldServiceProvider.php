@@ -2,21 +2,13 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Models\Setting;
-use BezhanSalleh\FilamentShield\Pages\ShieldSetting;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Schema;
 use Spatie\LaravelPackageTools\Package;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
-    protected array $pages = [
-        ShieldSetting::class,
-    ];
-
     protected array $resources = [
         RoleResource::class,
     ];
@@ -29,7 +21,6 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             ->hasTranslations()
             ->hasViews()
             ->hasCommands($this->getCommands())
-            ->hasMigration('create_filament_shield_settings_table')
         ;
     }
 
@@ -39,11 +30,6 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
 
         if (config('filament-shield.register_role_policy.enabled')) {
             Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
-        }
-
-        /** @phpstan-ignore-next-line */
-        if (Utils::isSettingPageEnabled()) {
-            config(['filament-shield' => Setting::pluck('value', 'key')->toArray()]);
         }
     }
 

@@ -206,7 +206,9 @@ class RoleResource extends Resource
 
     protected static function getNavigationBadge(): ?string
     {
-        return static::$model::count();
+        return Utils::isResourceNavigationBadgeEnabled()
+            ? static::$model::count()
+            : null;
     }
 
     /**--------------------------------*
