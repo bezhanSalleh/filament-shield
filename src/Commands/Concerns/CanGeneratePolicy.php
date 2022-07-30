@@ -46,7 +46,6 @@ trait CanGeneratePolicy
             ->replaceLast('.php', 'Policy.php')
             ->replace('\\', DIRECTORY_SEPARATOR)
         ;
-        dump($basePath);
 
         return $basePath;
     }
