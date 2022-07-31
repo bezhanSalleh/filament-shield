@@ -73,8 +73,8 @@ return [
         'force_delete' => 'Forzar elminación de un registro en particular',
         'force_delete_any' => 'Forzar eliminación de varios registros',
         'restore' => 'Restaurar un registro en particular',
+        'reorder' => 'Reordenar',        
         'restore_any' => 'Restaurar varios registros',
-        // 'reorder' => 'Reorder',
-        // 'replicate' => 'Replicate',
+        'replicate' => 'Replicar',
     ]
 ];
