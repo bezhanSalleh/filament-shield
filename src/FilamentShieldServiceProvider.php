@@ -19,7 +19,6 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             ->name('filament-shield')
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews()
             ->hasCommands($this->getCommands())
         ;
     }

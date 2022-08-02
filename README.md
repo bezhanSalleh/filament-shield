@@ -295,14 +295,6 @@ Publish the translations using:
 php artisan vendor:publish --tag="filament-shield-translations"
 ```
 
-#### Views 
-
-Publish the Views using:
-
-```bash
-php artisan vendor:publish --tag="filament-shield-views"
-```
-
 ## Available Filament Shield Commands
 
 ```php
