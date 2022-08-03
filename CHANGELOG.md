@@ -2,6 +2,22 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.1.1 - 2022-08-03
+
+### What's Changed
+
+- fix entity's state @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/commit/6a3008d0a47c9abdea3e0b4abfbbf6d2d50d73f6
+- Remove dump by @NathanaelGT in https://github.com/bezhanSalleh/filament-shield/pull/88
+- Spanish translation update by @pathros in https://github.com/bezhanSalleh/filament-shield/pull/89
+- remove has Views by @atmonshi in https://github.com/bezhanSalleh/filament-shield/pull/90
+
+### New Contributors
+
+- @NathanaelGT made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/88
+- @atmonshi made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/90
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/v2.1.0...2.1.1
+
 ## v2.1.0 - 2022-07-28
 
 ### What's Changed
@@ -66,7 +82,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -80,7 +98,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -94,7 +114,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -108,6 +130,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
@@ -115,7 +138,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
