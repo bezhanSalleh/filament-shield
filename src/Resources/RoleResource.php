@@ -2,20 +2,21 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use BezhanSalleh\FilamentShield\FilamentShield;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Role;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Permission;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 class RoleResource extends Resource
 {
@@ -362,7 +363,6 @@ class RoleResource extends Resource
         $entities = $record->permissions->pluck('name')
             ->reduce(function ($roles, $role) {
                 $roles[$role] = Str::afterLast($role, '_');
-
                 return $roles;
             }, collect())
             ->values()
@@ -370,7 +370,7 @@ class RoleResource extends Resource
                 return $item;
             })->map->count()
             ->reduce(function ($counts, $role, $key) {
-                if ($role > 1 && $role = count(config('filament-shield.permission_prefixes.resource'))) {
+                if ($role > 1 && $role == count(config('filament-shield.permission_prefixes.resource'))) {
                     $counts[$key] = true;
                 } else {
                     $counts[$key] = false;
@@ -380,7 +380,7 @@ class RoleResource extends Resource
             }, []);
 
         // set entity's state if one are all permissions are true
-        if (in_array($entity, array_keys($entities)) && $entities[$entity]) {
+        if (Arr::exists($entities, $entity) && Arr::get($entities,$entity)) {
             $set($entity, true);
         } else {
             $set($entity, false);
