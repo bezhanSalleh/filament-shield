@@ -12,12 +12,17 @@ class MakeShieldGenerateCommand extends Command
     use Concerns\CanGeneratePolicy;
     use Concerns\CanManipulateFiles;
 
-    public $signature = 'shield:generate';
+    public $signature = 'shield:generate
+        {--option= : Override the config file option setting.}';
 
     public $description = '(Re)Discovers Filament entities and (re)generates Permissions and/or Policies.';
 
+    protected $option;
+
     public function handle(): int
     {
+        $this->option = $this->option('option') ?? config('filament-shield.generator.option');
+
         if (config('filament-shield.entities.resources')) {
             $resources = $this->generateForResources(FilamentShield::getResources());
             $this->resourceInfo($resources->toArray());
@@ -45,16 +50,16 @@ class MakeShieldGenerateCommand extends Command
         return  collect($resources)
             ->values()
             ->each(function ($entity) {
-                if (config('filament-shield.generator.option') === 'policies_and_permissions') {
+                if ($this->option === 'policies_and_permissions') {
                     $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
                     FilamentShield::generateForResource($entity['resource']);
                 }
 
-                if (config('filament-shield.generator.option') === 'policies') {
+                if ($this->option === 'policies') {
                     $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
                 }
 
-                if (config('filament-shield.generator.option') === 'permissions') {
+                if ($this->option === 'permissions') {
                     FilamentShield::generateForResource($entity['resource']);
                 }
             });
@@ -87,11 +92,11 @@ class MakeShieldGenerateCommand extends Command
                 return [
                     '#' => $key + 1,
                     'Resource' => $resource['model'],
-                    'Policy' => "{$resource['model']}Policy.php". (config('filament-shield.generator.option') !== 'permissions' ? ' ✅' : ' ❌') ,
+                    'Policy' => "{$resource['model']}Policy.php". ($this->option !== 'permissions' ? ' ✅' : ' ❌') ,
                     'Permissions' =>
                         implode(',', collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission, $key) use ($resource) {
                             return $permission.'_'.$resource['resource'];
-                        })->toArray()) . (config('filament-shield.generator.option') !== 'policies' ? ' ✅' : ' ❌'),
+                        })->toArray()) . ($this->option !== 'policies' ? ' ✅' : ' ❌'),
                 ];
             })
         );
