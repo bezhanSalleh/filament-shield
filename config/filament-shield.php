@@ -4,21 +4,22 @@ return [
     'shield_resource' => [
         'slug' => 'shield/roles',
         'navigation_sort' => -1,
-        'navigation_badge' => true
+        'navigation_badge' => true,
+        'navigation_group' => true,
     ],
 
     'auth_provider_model' => [
-        'fqcn' => 'App\\Models\\User'
+        'fqcn' => 'App\\Models\\User',
     ],
 
     'super_admin' => [
         'enabled' => true,
-        'name'  => 'super_admin'
+        'name'  => 'super_admin',
     ],
 
     'filament_user' => [
         'enabled' => true,
-        'name' => 'filament_user'
+        'name' => 'filament_user',
     ],
 
     'permission_prefixes' => [
@@ -49,7 +50,7 @@ return [
     ],
 
     'generator' => [
-        'option' => 'policies_and_permissions'
+        'option' => 'policies_and_permissions',
     ],
 
     'exclude' => [
@@ -67,6 +68,6 @@ return [
     ],
 
     'register_role_policy' => [
-        'enabled' => false
+        'enabled' => false,
     ],
 ];

@@ -19,6 +19,11 @@ class Utils
         return config('filament-shield.shield_resource.navigation_badge', true);
     }
 
+    public static function isResourceNavigationGroupEnabled(): bool
+    {
+        return config('filament-shield.shield_resource.navigation_group', true);
+    }
+
     public static function getAuthProviderFQCN()
     {
         return config('filament-shield.auth_provider_model.fqcn');
