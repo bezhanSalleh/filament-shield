@@ -2,6 +2,20 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.1.2 - 2022-08-08
+
+### What's Changed
+
+- Config option to easily turn off navigation group by @intrepidws in https://github.com/bezhanSalleh/filament-shield/pull/94
+- Add flag to `shield:generate` to override generator.option config value by @intrepidws in https://github.com/bezhanSalleh/filament-shield/pull/95
+- Fix small typo by @eugenevdm in https://github.com/bezhanSalleh/filament-shield/pull/97
+
+### New Contributors
+
+- @eugenevdm made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/97
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.1.1...2.1.2
+
 ## 2.1.1 - 2022-08-03
 
 ### What's Changed
@@ -83,7 +97,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -99,7 +115,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -115,7 +133,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -131,6 +151,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
@@ -139,7 +160,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
