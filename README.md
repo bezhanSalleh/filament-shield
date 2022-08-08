@@ -100,7 +100,8 @@ php artisan vendor:publish --tag=filament-shield-config
           'shield_resource' => [
               'slug' => 'shield/roles',
               'navigation_sort' => -1,
-              'navigation_badge' => true
+              'navigation_badge' => true,
+              'navigation_group' => true,
           ],
 
           'auth_provider_model' => [
