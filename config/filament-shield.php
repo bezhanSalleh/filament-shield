@@ -51,6 +51,8 @@ return [
 
     'generator' => [
         'option' => 'policies_and_permissions',
+        'ignore_third_party'=>false
+
     ],
 
     'exclude' => [
