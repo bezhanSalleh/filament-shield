@@ -11,7 +11,7 @@ class MakeShieldDoctorCommand extends Command
 {
     public $signature = 'shield:doctor';
 
-    public $description = 'Show usefull info about Filament Shield';
+    public $description = 'Show useful info about Filament Shield';
 
     public function handle(): int
     {

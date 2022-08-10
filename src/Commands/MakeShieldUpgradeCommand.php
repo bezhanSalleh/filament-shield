@@ -12,7 +12,7 @@ class MakeShieldUpgradeCommand extends Command
 {
     public $signature = 'shield:upgrade';
 
-    public $description = 'upgrade shield';
+    public $description = 'Upgrade shield';
 
     public function handle(): int
     {
