@@ -298,13 +298,24 @@ php artisan vendor:publish --tag="filament-shield-translations"
 
 ## Available Filament Shield Commands
 
-```php
-- install   # One Command to Rule them All 🔥
-- generate  # (Re)Discovers Filament resources and (re)generates Permissions and Policies.
-- create    # Create Permissions and/or Policy for the given Filament Resource Model
-- super-admin # Create a user with super_admin role
-- upgrade # upgrade shield
-```
+#### `shield:doctor` 
+- Show useful info about Filament Shield.
+
+#### `shield:generate` 
+- (Re)Discovers Filament resources and (re)generates Permissions and Policies.
+- The `generator.option` config value controls the scope of this command. Available options are `policies_and_permissions`, `policies` or `permissions`.
+- Accepts an `--option=` argument that will override the config file option setting.
+
+#### `shield:install` 
+- One Command to Rule them All 🔥. This command publishes core package config, publishes core package migration, creates a filament user and discovers filament resources and generates Permissions and Policies accordingly.
+- Accepts a `--fresh` flag, that will refresh the core package tables and setup shield.
+
+#### `shield:super-admin` 
+- Create a user with super_admin role.
+- Accepts an `--user=` argument that will use the provided ID to find the user to be made super admin.
+
+#### `shield:upgrade` 
+- Upgrade shield.
 
 
 ## Testing
