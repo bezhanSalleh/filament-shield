@@ -287,7 +287,20 @@ protected $policies = [
 ];
 ...
 ```
+#### Third-Party Plugins
+Shield also generates policies and permissions for third-party plugins and to enforce the generated policies you will need to register them in your application's `AuthServiceProvider`:
+```
+...
+class AuthServiceProvider extends ServiceProvider
+{
+    ...
+    protected $policies = [
+        ...,
+        'Ramnzys\FilamentEmailLog\Models\Email' => 'App\Policies\EmailPolicy';
 
+    ];
+```
+Same applies for models inside folders.
 #### Translations 
 
 Publish the translations using:
@@ -301,14 +314,16 @@ php artisan vendor:publish --tag="filament-shield-translations"
 #### `shield:doctor` 
 - Show useful info about Filament Shield.
 
+#### `shield:install` 
+- One Command to Rule them All 🔥. This command publishes core package config, publishes core package migration, creates a filament user and discovers filament resources and generates Permissions and Policies accordingly.
+- Accepts a `--fresh` flag, that will refresh the core package tables and setup shield.
+  
 #### `shield:generate` 
 - (Re)Discovers Filament resources and (re)generates Permissions and Policies.
 - The `generator.option` config value controls the scope of this command. Available options are `policies_and_permissions`, `policies` or `permissions`.
 - Accepts an `--option=` argument that will override the config file option setting.
 
-#### `shield:install` 
-- One Command to Rule them All 🔥. This command publishes core package config, publishes core package migration, creates a filament user and discovers filament resources and generates Permissions and Policies accordingly.
-- Accepts a `--fresh` flag, that will refresh the core package tables and setup shield.
+
 
 #### `shield:super-admin` 
 - Create a user with super_admin role.
