@@ -3,6 +3,7 @@
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -21,25 +22,19 @@ class MakeShieldGenerateCommand extends Command
 
     public function handle(): int
     {
-        $this->option = $this->option('option') ?? config('filament-shield.generator.option');
+        $this->option = $this->option('option') ?? Utils::getGeneratorOption();
 
-        if (config('filament-shield.entities.resources')) {
-            $resources = $this->generateForResources(FilamentShield::getResources());
-            $this->resourceInfo($resources->toArray());
-        }
+        $resources = $this->generateForResources(FilamentShield::getResources());
+        $this->resourceInfo($resources->toArray());
 
-        if (config('filament-shield.entities.pages')) {
-            $pages = $this->generateForPages(FilamentShield::getPages());
-            $this->pageInfo($pages->toArray());
-        }
+        $pages = $this->generateForPages(FilamentShield::getPages());
+        $this->pageInfo($pages->toArray());
 
-        if (config('filament-shield.entities.widgets')) {
-            $widgets = $this->generateForWidgets(FilamentShield::getWidgets());
-            $this->widgetInfo($widgets->toArray());
-        } else {
-            $this->comment('Please enable `entities` from config first.');
-        }
+        $widgets = $this->generateForWidgets(FilamentShield::getWidgets());
+        $this->widgetInfo($widgets->toArray());
 
+
+        $this->info('Permission & Policies are generated according to your config.');
         $this->info('Enjoy!');
 
         return self::SUCCESS;
