@@ -74,7 +74,7 @@ class RoleResource extends Resource
                                     ]),
                                 ]),
                             Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-                                ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && count(FilamentShield::getPages())) > 0 ? true : false)
+                                ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
                                 ->reactive()
                                 ->schema([
                                     Forms\Components\Grid::make([
@@ -88,7 +88,7 @@ class RoleResource extends Resource
                                     ]),
                                 ]),
                             Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-                                ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && count(FilamentShield::getWidgets())) > 0 ? true : false)
+                                ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
                                 ->reactive()
                                 ->schema([
                                     Forms\Components\Grid::make([

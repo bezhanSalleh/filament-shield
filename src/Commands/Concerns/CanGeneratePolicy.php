@@ -52,6 +52,7 @@ trait CanGeneratePolicy
 
         $stubVariables['auth_model_fqcn'] = Utils::getAuthProviderFQCN();
         $stubVariables['auth_model_name'] = Str::of($stubVariables['auth_model_fqcn'])->afterLast('\\');
+        $stubVariables['auth_model_variable'] = Str::of($stubVariables['auth_model_name'])->camel();
 
         $reflectionClass = new \ReflectionClass($entity['fqcn']::getModel());
         $namespace = $reflectionClass->getNamespaceName();
@@ -61,6 +62,9 @@ trait CanGeneratePolicy
             ? 'App\Policies'
             : Str::of($namespace)->replace('Models', 'Policies'); /** @phpstan-ignore-line */
 
+        $stubVariables['model_name'] = $entity['model'];
+        $stubVariables['model_fqcn'] = $namespace.'\\'.$entity['model'];
+        $stubVariables['model_variable'] = Str::of($entity['model'])->camel();
         $stubVariables['modelPolicy'] = "{$entity['model']}Policy";
 
         return $stubVariables;
