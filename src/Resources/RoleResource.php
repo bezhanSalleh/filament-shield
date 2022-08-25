@@ -38,7 +38,7 @@ class RoleResource extends Resource
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('guard_name')
                                     ->label(__('filament-shield::filament-shield.field.guard_name'))
-                                    ->default(config('filament.auth.guard'))
+                                    ->default(Utils::getFilamentAuthGuard())
                                     ->nullable()
                                     ->maxLength(255),
                                 Forms\Components\Toggle::make('select_all')
@@ -60,7 +60,7 @@ class RoleResource extends Resource
                     Forms\Components\Tabs::make('Permissions')
                         ->tabs([
                             Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
-                                ->visible(fn (): bool => (bool) config('filament-shield.entities.resources'))
+                                ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
                                 ->reactive()
                                 ->schema([
                                     Forms\Components\Grid::make([
@@ -74,7 +74,7 @@ class RoleResource extends Resource
                                     ]),
                                 ]),
                             Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-                                ->visible(fn (): bool => (bool) (config('filament-shield.entities.pages') && count(FilamentShield::getPages())) > 0 ? true : false)
+                                ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && count(FilamentShield::getPages())) > 0 ? true : false)
                                 ->reactive()
                                 ->schema([
                                     Forms\Components\Grid::make([
@@ -88,7 +88,7 @@ class RoleResource extends Resource
                                     ]),
                                 ]),
                             Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-                                ->visible(fn (): bool => (bool) (config('filament-shield.entities.widgets') && count(FilamentShield::getWidgets())) > 0 ? true : false)
+                                ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && count(FilamentShield::getWidgets())) > 0 ? true : false)
                                 ->reactive()
                                 ->schema([
                                     Forms\Components\Grid::make([
@@ -103,7 +103,7 @@ class RoleResource extends Resource
                                 ]),
 
                             Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
-                                ->visible(fn (): bool => (bool) config('filament-shield.entities.custom_permissions'))
+                                ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
                                 ->reactive()
                                 ->schema([
                                     Forms\Components\Grid::make([
@@ -231,7 +231,7 @@ class RoleResource extends Resource
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
-                                collect(config('filament-shield.permission_prefixes.resource'))->each(function ($permission) use ($set, $entity, $state) {
+                                collect(Utils::getGeneralResourcePermissionPrefixes())->each(function ($permission) use ($set, $entity, $state) {
                                     $set($permission.'_'.$entity['resource'], $state);
                                 });
 
@@ -262,7 +262,7 @@ class RoleResource extends Resource
 
     public static function getResourceEntityPermissionsSchema($entity): ?array
     {
-        return collect(config('filament-shield.permission_prefixes.resource'))->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
+        return collect(Utils::getGeneralResourcePermissionPrefixes())->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity['resource'])
                 ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
@@ -298,9 +298,9 @@ class RoleResource extends Resource
     protected static function refreshSelectAllStateViaEntities(Closure $set, Closure $get): void
     {
         $entitiesStates = collect(FilamentShield::getResources())
-            ->when(config('filament-shield.entities.pages'), fn ($entities) => $entities->merge(FilamentShield::getPages()))
-            ->when(config('filament-shield.entities.widgets'), fn ($entities) => $entities->merge(FilamentShield::getWidgets()))
-            ->when(config('filament-shield.entities.custom_permissions'), fn ($entities) => $entities->merge(static::getCustomEntities()))
+            ->when(Utils::isPageEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getPages()))
+            ->when(Utils::isWidgetEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getWidgets()))
+            ->when(Utils::isCustomerPermissionEntityEnabled(), fn ($entities) => $entities->merge(static::getCustomEntities()))
             ->map(function ($entity) use ($get) {
                 if (is_array($entity)) {
                     return (bool) $get($entity['resource']);
@@ -322,23 +322,25 @@ class RoleResource extends Resource
     {
         collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
             $set($entity['resource'], $state);
-            collect(config('filament-shield.permission_prefixes.resource'))->each(function ($permission) use ($entity, $set, $state) {
+            collect(Utils::getGeneralResourcePermissionPrefixes())->each(function ($permission) use ($entity, $set, $state) {
                 $set($permission.'_'.$entity['resource'], $state);
             });
         });
 
         collect(FilamentShield::getPages())->each(function ($page) use ($set, $state) {
-            if (config('filament-shield.entities.pages')) {
+            if (Utils::isPageEntityEnabled()) {
                 $set($page, $state);
             }
         });
 
         collect(FilamentShield::getWidgets())->each(function ($widget) use ($set, $state) {
-            $set($widget, $state);
+            if (Utils::isWidgetEntityEnabled()) {
+                $set($widget, $state);
+            }
         });
 
         static::getCustomEntities()->each(function ($custom) use ($set, $state) {
-            if (config('filament-shield.entities.custom_permissions')) {
+            if (Utils::isCustomPermissionEntityEnabled()) {
                 $set($custom, $state);
             }
         });
@@ -346,7 +348,7 @@ class RoleResource extends Resource
 
     protected static function refreshResourceEntityStateAfterUpdate(Closure $set, Closure $get, string $entity): void
     {
-        $permissionStates = collect(config('filament-shield.permission_prefixes.resource'))
+        $permissionStates = collect(Utils::getGeneralResourcePermissionPrefixes())
             ->map(function ($permission) use ($get, $entity) {
                 return (bool) $get($permission.'_'.$entity);
             });
@@ -373,7 +375,7 @@ class RoleResource extends Resource
                 return $item;
             })->map->count()
             ->reduce(function ($counts, $role, $key) {
-                if ($role > 1 && $role == count(config('filament-shield.permission_prefixes.resource'))) {
+                if ($role > 1 && $role == count(Utils::getGeneralResourcePermissionPrefixes())) {
                     $counts[$key] = true;
                 } else {
                     $counts[$key] = false;
@@ -480,7 +482,7 @@ class RoleResource extends Resource
     {
         $resourcePermissions = collect();
         collect(FilamentShield::getResources())->each(function ($entity) use ($resourcePermissions) {
-            collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission) use ($resourcePermissions, $entity) {
+            collect(Utils::getGeneralResourcePermissionPrefixes())->map(function ($permission) use ($resourcePermissions, $entity) {
                 $resourcePermissions->push((string) Str::of($permission.'_'.$entity['resource']));
             });
         });

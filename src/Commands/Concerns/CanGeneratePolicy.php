@@ -3,6 +3,7 @@
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
 use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 trait CanGeneratePolicy
 {
@@ -42,14 +43,14 @@ trait CanGeneratePolicy
 
     protected function generatePolicyStubVariables(array $entity): array
     {
-        $stubVariables = collect(config('filament-shield.permission_prefixes.resource'))
+        $stubVariables = collect(Utils::getGeneralResourcePermissionPrefixes())
             ->reduce(function ($gates, $permission) use ($entity) {
                 $gates[Str::studly($permission)] = $permission.'_'.$entity['resource'];
 
                 return $gates;
             }, collect())->toArray();
 
-        $stubVariables['auth_model_fqcn'] = config('filament-shield.auth_provider_model.fqcn');
+        $stubVariables['auth_model_fqcn'] = Utils::getAuthProviderFQCN();
         $stubVariables['auth_model_name'] = Str::of($stubVariables['auth_model_fqcn'])->afterLast('\\');
 
         $reflectionClass = new \ReflectionClass($entity['fqcn']::getModel());

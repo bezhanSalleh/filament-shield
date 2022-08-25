@@ -4,6 +4,11 @@ namespace BezhanSalleh\FilamentShield\Support;
 
 class Utils
 {
+    public static function getFilamentAuthGuard(): string
+    {
+        return (string) config('filament.auth.guard');
+    }
+
     public static function getResourceSlug(): string
     {
         return (string) config('filament-shield.shield_resource.slug');
@@ -33,5 +38,105 @@ class Utils
     {
         return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(static::getAuthProviderFQCN()))
         || in_array("Spatie\Permission\Traits\HasRoles", class_uses(static::getAuthProviderFQCN())) ;
+    }
+
+    public static function isSuperAdminEnabled(): bool
+    {
+        return (bool) config('filament-shield.super_admin.enabled',true);
+    }
+
+    public static function getSuperAdminName(): string
+    {
+        return (string) config('filament-shield.super_admin.name');
+    }
+
+    public static function isSuperAdminDefinedViaGate(): bool
+    {
+        return (bool) static::isSuperAdminEnabled() && config('filament-shield.super_admin.define_via_gate', false);
+    }
+
+    public static function getSuperAdminGateInterceptionStatus(): string
+    {
+        return (string) config('filament-shield.super_admin.intercept_gate');
+    }
+
+    public static function isFilamentUserRoleEnabled(): bool
+    {
+        return (bool) config('filament-shield.filament_user.enabled',true);
+    }
+
+    public static function getFilamentUserRoleName(): string
+    {
+        return (string) config('filament-shield.filament_user.name');
+    }
+
+    public static function getGeneralResourcePermissionPrefixes(): array
+    {
+        return config('filament-shield.permission_prefixes.resource');
+    }
+
+    public static function getPagePermissionPrefix(): string
+    {
+        return (string) config('filament-shield.permission_prefixes.page');
+    }
+
+    public static function getWidgetPermissionPrefix(): string
+    {
+        return (string) config('filament-shield.permission_prefixes.widget');
+    }
+
+    public static function isResourceEntityEnabled(): bool
+    {
+        return (bool) config('filament-shield.entities.resources', true);
+    }
+
+    public static function isPageEntityEnabled(): bool
+    {
+        return (bool) config('filament-shield.entities.pages', true);
+    }
+
+    /**
+     * Widget Entity Status
+     *
+     * @return boolean
+     */
+    public static function isWidgetEntityEnabled(): bool
+    {
+        return (bool) config('filament-shield.entities.widgets', true);
+    }
+
+    public static function isCustomPermissionEntityEnabled(): bool
+    {
+        return (bool) config('filament-shield.entities.widgets', false);
+    }
+
+    public static function getGeneratorOption(): string
+    {
+        return (string) config('filament-shield.generator.option', 'policies_and_permissions');
+    }
+
+    public static function isGeneralExcludeEnabled(): bool
+    {
+        return (bool) config('filament-shield.exclude.enabled', true);
+    }
+
+    public static function getExcludedResouces(): array
+    {
+        return config('filament-shield.exclude.resources');
+    }
+
+    public static function getExcludedPages(): array
+    {
+        return config('filament-shield.exclude.pages');
+    }
+
+    public static function getExcludedWidgets(): array
+    {
+        return config('filament-shield.exclude.widgets');
+    }
+
+    public static function isRolePolicyRegistered(): bool
+    {
+        return (bool) config('filament-shield.register_role_policy', true);
     }
 }
