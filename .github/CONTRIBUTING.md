@@ -4,6 +4,32 @@ Contributions are **welcome** and will be fully **credited**.
 
 Please read and understand the contribution guide before creating an issue or pull request.
 
+## Development setup
+
+to contribute to this packages, you may want to test it in a real Filament project:
+
+- Fork this repository to your GitHub account.
+- Create a Filament app locally.
+- Clone your fork in your Filament app's root directory.
+- In the `/filament-shield` directory, create a branch for your fix, e.g. `fix/error-message`.
+
+Install the packages in your app's `composer.json`:
+
+```json
+"require": {
+    "bezhansalleh/filament-shield": "dev-fix/error-message as main-dev",
+},
+"repositories": [
+    {
+        "type": "path",
+        "url": "filament-shield"
+    }
+]
+```
+
+Now, run `composer update`.
+
+
 ## Etiquette
 
 This project is open source, and as such, the maintainers give their free time to build and maintain the source code
