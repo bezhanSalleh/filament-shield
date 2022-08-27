@@ -24,12 +24,45 @@
 <hr style="background-color: #ebb304">
 
 # Filament Shield
+
 The easiest and most intuitive way to add access management to your Filament Admin:
 - :fire: **Resources** 
 - :fire: **Pages** 
 - :fire: **Widgets** 
 - :fire: **Custom Permissions**
 <!-- One Plugin to rule them all, One Plugin to find them, One Plugin to bring them all, and in the light bind them, In the Land of Filament where building them is really fun! -->
+
+
+Table of contents
+=================
+
+- [Filament Shield](#filament-shield)
+  * [Upgrade](#upgrade)
+  * [Installation](#installation)
+      - [Resource Custom Permissions](#resource-custom-permissions)
+      - [Pages](#pages)
+          + [Pages Hooks](#pages-hooks)
+          + [Pages Redirect Path](#pages-redirect-path)
+      - [Widgets](#widgets)
+      - [RolePolicy](#rolepolicy)
+      - [Third-Party Plugins](#third-party-plugins)
+      - [Translations](#translations)
+  * [Available Filament Shield Commands](#available-filament-shield-commands)
+      - [shield:doctor](#shielddoctor)
+      - [shield:install](#shieldinstall)
+      - [shield:generate](#shieldgenerate)
+      - [shield:super-admin](#shieldsuper-admin)
+      - [shield:upgrade](#shieldupgrade)
+  * [Testing](#testing)
+  * [Changelog](#changelog)
+  * [Contributing](#contributing)
+  * [Security Vulnerabilities](#security-vulnerabilities)
+  * [Credits](#credits)
+  * [License](#license)
+
+
+<hr style="background-color: #ebb304">
+
 
 ## Upgrade 
 
@@ -40,7 +73,7 @@ composer update
 ```
 #### v2.x
 > **Note** 
-> Minimum **Filament** Requirement is now `2.13`.
+> Minimum **Filament** Requirement is now `2.13`. for older versions use [v1.1.12](https://github.com/bezhanSalleh/filament-shield/releases/tag/v1.1.12)
 
 **Before following along, backup your current `config` first.**
 
@@ -49,9 +82,9 @@ composer update
    2. Delete `filament-shield` from `resources\lang\vendor or lang\vendor`
    3. Delete `filament-shield` from `resources\views\vendor`
    4. Delete `filament-shield.php` from `Config`
-   5. Now either follow **`Upgrade only`**
+   5. Now follow **`Upgrade only`**
 
-2. **Upgrade only**
+2. Upgrade only **`2.x`**
    1. Publish the `Config`:
         ```bash
         php artisan vendor:publish --tag=filament-shield-config --force
@@ -64,8 +97,6 @@ composer update
         php artisan shield:upgrade
         ```
 
-> **Note**
-> for **Filament** prior to 2.13 use [v1.1.12](https://github.com/bezhanSalleh/filament-shield/releases/tag/v1.1.12)
 ## Installation
 
 1. Install the package via composer:
@@ -258,6 +289,7 @@ class MyPage extends Page
 ```
 
 #### Widgets
+
 if you have generated permissions for `Widgets` you can toggle their state based on whether a user have permission or not. You can set this up manually but this package comes with a `HasWidgetShield` trait to speed up this process. All you have to do is use the trait in you widgets:
 ```php
 <?php
@@ -274,7 +306,7 @@ class IncomeWidget extends LineChartWidget
 }
 ```
 
-#### `RolePolicy` 
+#### Role Policy
 
 You can skip this if have set the `'register_role_policy' => true` in the config.
 To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AuthServiceProvider`:
@@ -287,7 +319,9 @@ protected $policies = [
 ];
 ...
 ```
+
 #### Third-Party Plugins
+
 Shield also generates policies and permissions for third-party plugins and to enforce the generated policies you will need to register them in your application's `AuthServiceProvider`:
 ```
 ...
@@ -301,6 +335,7 @@ class AuthServiceProvider extends ServiceProvider
     ];
 ```
 Same applies for models inside folders.
+
 #### Translations 
 
 Publish the translations using:
@@ -323,8 +358,6 @@ php artisan vendor:publish --tag="filament-shield-translations"
 - The `generator.option` config value controls the scope of this command. Available options are `policies_and_permissions`, `policies` or `permissions`.
 - Accepts an `--option=` argument that will override the config file option setting.
 
-
-
 #### `shield:super-admin` 
 - Create a user with super_admin role.
 - Accepts an `--user=` argument that will use the provided ID to find the user to be made super admin.
@@ -344,30 +377,6 @@ composer test
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Contributing
-
-If you want to contribute to this packages, you may want to test it in a real Filament project:
-
-- Fork this repository to your GitHub account.
-- Create a Filament app locally.
-- Clone your fork in your Filament app's root directory.
-- In the `/filament-shield` directory, create a branch for your fix, e.g. `fix/error-message`.
-
-Install the packages in your app's `composer.json`:
-
-```json
-"require": {
-    "bezhansalleh/filament-shield": "dev-fix/error-message as main-dev",
-},
-"repositories": [
-    {
-        "type": "path",
-        "url": "filament-shield"
-    }
-]
-```
-
-Now, run `composer update`.
-
 
 Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
