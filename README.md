@@ -37,28 +37,30 @@ Table of contents
 =================
 
 - [Filament Shield](#filament-shield)
-  * [Upgrade](#upgrade)
-  * [Installation](#installation)
+- [Table of contents](#table-of-contents)
+  - [Upgrade](#upgrade)
+      - [v2.x](#v2x)
+  - [Installation](#installation)
       - [Resource Custom Permissions](#resource-custom-permissions)
       - [Pages](#pages)
-          + [Pages Hooks](#pages-hooks)
-          + [Pages Redirect Path](#pages-redirect-path)
+          - [Pages Hooks](#pages-hooks)
+          - [Pages Redirect Path](#pages-redirect-path)
       - [Widgets](#widgets)
-      - [RolePolicy](#rolepolicy)
+      - [Role Policy](#role-policy)
       - [Third-Party Plugins](#third-party-plugins)
       - [Translations](#translations)
-  * [Available Filament Shield Commands](#available-filament-shield-commands)
-      - [shield:doctor](#shielddoctor)
-      - [shield:install](#shieldinstall)
-      - [shield:generate](#shieldgenerate)
-      - [shield:super-admin](#shieldsuper-admin)
-      - [shield:upgrade](#shieldupgrade)
-  * [Testing](#testing)
-  * [Changelog](#changelog)
-  * [Contributing](#contributing)
-  * [Security Vulnerabilities](#security-vulnerabilities)
-  * [Credits](#credits)
-  * [License](#license)
+  - [Available Filament Shield Commands](#available-filament-shield-commands)
+      - [`shield:doctor`](#shielddoctor)
+      - [`shield:install`](#shieldinstall)
+      - [`shield:generate`](#shieldgenerate)
+      - [`shield:super-admin`](#shieldsuper-admin)
+      - [`shield:upgrade`](#shieldupgrade)
+  - [Testing](#testing)
+  - [Changelog](#changelog)
+  - [Contributing](#contributing)
+  - [Security Vulnerabilities](#security-vulnerabilities)
+  - [Credits](#credits)
+  - [License](#license)
 
 
 <hr style="background-color: #ebb304">
@@ -141,7 +143,9 @@ php artisan vendor:publish --tag=filament-shield-config
 
           'super_admin' => [
               'enabled' => true,
-              'name'  => 'super_admin'
+              'name'  => 'super_admin',
+              'define_via_gate' => false,
+              'intercept_gate' => 'before' // after
           ],
 
           'filament_user' => [
@@ -195,7 +199,7 @@ php artisan vendor:publish --tag=filament-shield-config
           ],
 
           'register_role_policy' => [
-              'enabled' => false
+              'enabled' => true
           ],
     ];
 ```
@@ -350,16 +354,22 @@ php artisan vendor:publish --tag="filament-shield-translations"
 - Show useful info about Filament Shield.
 
 #### `shield:install` 
-- One Command to Rule them All 🔥. This command publishes core package config, publishes core package migration, creates a filament user and discovers filament resources and generates Permissions and Policies accordingly.
-- Accepts a `--fresh` flag, that will refresh the core package tables and setup shield.
+Setup Core Package requirements and Install Shield. Accepts the following flags:
+- `--fresh`           re-run the migrations
+- `--only`            Only setups shield without generating permissions and creating super-admin
   
-#### `shield:generate` 
-- (Re)Discovers Filament resources and (re)generates Permissions and Policies.
-- The `generator.option` config value controls the scope of this command. Available options are `policies_and_permissions`, `policies` or `permissions`.
-- Accepts an `--option=` argument that will override the config file option setting.
+#### `shield:generate`
+Generate Permissions and/or Policies for Filament entities. Accepts the following flags: 
+- `--all`                    Generate permissions/policies for all entities
+- `--option[=OPTION]`        Override the config generator option(`policies_and_permissions`,`policies`,`permissions`)
+- `--resource[=RESOURCE]`    One or many resources separated by comma (,)
+- `--page[=PAGE]`            One or many pages separated by comma (,)
+- `--widget[=WIDGET]`        One or many widgets separated by comma (,)
+- `--exclude`                Exclude the given entities during generation
+- `--ignore-config-exclude`  Ignore config `exclude` option during generation
 
 #### `shield:super-admin` 
-- Create a user with super_admin role.
+Create a user with super_admin role.
 - Accepts an `--user=` argument that will use the provided ID to find the user to be made super admin.
 
 #### `shield:upgrade` 
