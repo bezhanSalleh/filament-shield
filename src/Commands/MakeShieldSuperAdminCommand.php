@@ -3,6 +3,8 @@
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\Commands\Concerns\CanValidateInput;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -17,6 +19,8 @@ class MakeShieldSuperAdminCommand extends Command
 
     public $description = 'Creates Filament Super Admin';
 
+    protected $superAdmin;
+
     public function handle(): int
     {
         /** @var SessionGuard $auth */
@@ -25,36 +29,18 @@ class MakeShieldSuperAdminCommand extends Command
         /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
 
-        if (! Role::whereName(config('filament-shield.super_admin.name'))->exists()) {
-            Role::create([
-                'name' => config('filament-shield.super_admin.name'),
-                'guard_name' => config('filament.auth.guard'),
-            ]);
+        if (Role::whereName(Utils::getSuperAdminName())->doesntExist()) {
+            FilamentShield::createRole();
         }
 
-        if (config('filament-shield.filament_user.enabled') && ! Role::whereName(config('filament-shield.filament_user.name'))->exists()) {
-            Role::create([
-                'name' => config('filament-shield.filament_user.name'),
-                'guard_name' => config('filament.auth.guard'),
-            ]);
+        if (Utils::isFilamentUserRoleEnabled() && Role::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
+            FilamentShield::createRole(isSuperAdmin: false);
         }
 
         if ($this->option('user')) {
-            $superAdmin = $userProvider->getModel()::findOrFail($this->option('user'));
-
-            $superAdmin->assignRole(config('filament-shield.super_admin.name'));
-
-            if (config('filament-shield.filament_user.enabled')) {
-                $superAdmin->assignRole(config('filament-shield.filament_user.name'));
-            }
+            $this->superAdmin = $userProvider->getModel()::findOrFail($this->option('user'));
         } elseif ($userProvider->getModel()::count() === 1) {
-            $superAdmin = $userProvider->getModel()::first();
-
-            $superAdmin->assignRole(config('filament-shield.super_admin.name'));
-
-            if (config('filament-shield.filament_user.enabled')) {
-                $superAdmin->assignRole(config('filament-shield.filament_user.name'));
-            }
+            $this->superAdmin = $userProvider->getModel()::first();
         } elseif ($userProvider->getModel()::count() > 1) {
             $this->table(
                 ['ID','Name','Email','Roles'],
@@ -70,29 +56,23 @@ class MakeShieldSuperAdminCommand extends Command
 
             $superAdminId = $this->ask('Please provide the `UserID` to be set as `super_admin`');
 
-            $superAdmin = $userProvider->getModel()::find($superAdminId);
-
-            $superAdmin->assignRole(config('filament-shield.super_admin.name'));
-
-            if (config('filament-shield.filament_user.enabled')) {
-                $superAdmin->assignRole(config('filament-shield.filament_user.name'));
-            }
+            $this->superAdmin = $userProvider->getModel()::findOrFail($superAdminId);
         } else {
-            $superAdmin = $userProvider->getModel()::create([
+            $this->superAdmin = $userProvider->getModel()::create([
                 'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
                 'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $userProvider->getModel()]),
                 'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
             ]);
+        }
 
-            $superAdmin->assignRole(config('filament-shield.super_admin.name'));
+        $this->superAdmin->assignRole(Utils::getSuperAdminName());
 
-            if (config('filament-shield.filament_user.enabled')) {
-                $superAdmin->assignRole(config('filament-shield.filament_user.name'));
-            }
+        if (Utils::isFilamentUserRoleEnabled()) {
+            $this->superAdmin->assignRole(Utils::getFilamentUserRoleName());
         }
 
         $loginUrl = route('filament.auth.login');
-        $this->info("Success! {$superAdmin->email} may now log in at {$loginUrl}.");
+        $this->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
 
         return self::SUCCESS;
     }

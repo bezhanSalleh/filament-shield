@@ -31,7 +31,7 @@ class CreateRole extends CreateRecord
             $permissionModels->push(Permission::firstOrCreate(
                 /** @phpstan-ignore-next-line */
                 ['name' => $permission],
-                ['guard_name' => config('filament.auth.guard')]
+                ['guard_name' => $this->data['guard_name']]
             ));
         });
 

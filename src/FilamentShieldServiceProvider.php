@@ -3,6 +3,7 @@
 namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
@@ -27,7 +28,16 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        if (config('filament-shield.register_role_policy.enabled')) {
+        if (Utils::isSuperAdminDefinedViaGate()) {
+            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
+                return match (Utils::getSuperAdminGateInterceptionStatus()) {
+                    'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
+                    'after' => $user->hasRole(Utils::getSuperAdminName())
+                };
+            });
+        }
+
+        if (Utils::isRolePolicyRegistered()) {
             Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
         }
     }
@@ -39,10 +49,6 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         $this->app->scoped('filament-shield', function (): FilamentShield {
             return new FilamentShield();
         });
-
-        $this->publishes([
-            $this->package->basePath("/../stubs/ShieldSettingSeeder.stub") => database_path('seeders/ShieldSettingSeeder.php'),
-        ], "{$this->package->shortName()}-seeder");
     }
 
     protected function getCommands(): array

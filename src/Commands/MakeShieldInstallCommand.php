@@ -13,9 +13,11 @@ use Throwable;
 class MakeShieldInstallCommand extends Command
 {
     public $signature = 'shield:install
-        {--F|fresh}
+        {--F|fresh : re-run the migrations}
+        {--O|only : Only setups shield without generating permissions and creating super-admin}
     ';
-    public $description = "One Command to Rule them All 🔥";
+
+    public $description = "Setup Core Package requirements and Install Shield";
 
     public function handle(): int
     {
@@ -30,11 +32,7 @@ class MakeShieldInstallCommand extends Command
         $this->info('-  Publishes core package migration');
         $this->warn('   - On fresh applications database will be migrated');
         $this->warn('   - You can also force this behavior by supplying the --fresh option');
-        $this->info('-  Creates a filament user');
-        $this->warn('   - Assigns Super Admin role if enabled in config');
-        $this->warn('   - And/Or Assigns Filament User role if enabled in config');
-        $this->info('-  Discovers filament resources and generates Permissions and Policies accordingly');
-        $this->warn('   - Will override any existing policies if available');
+
 
         $confirmed = $this->confirm('Do you wish to continue?', true);
 
@@ -120,11 +118,19 @@ class MakeShieldInstallCommand extends Command
 
         $this->call('migrate');
 
-        $this->info('Creating Super Admin...');
+        if (! $this->option('only')) {
+            $this->info('Generating permissions ...');
+            $this->call('shield:generate', [
+                '--all' => true,
+            ]);
 
-        $this->call('shield:super-admin');
-
-        $this->call('shield:generate');
+            $this->info('Creating a filament user with Super Admin Role...');
+            $this->call('shield:super-admin');
+        } else {
+            $this->call('shield:generate', [
+                '--resource' => 'RoleResource',
+            ]);
+        }
 
         $this->info(Artisan::output());
 

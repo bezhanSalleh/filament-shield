@@ -2,6 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
@@ -14,71 +15,61 @@ class FilamentShield
 {
     public static function generateForResource(string $resource): void
     {
-        if (config('filament-shield.entities.resources')) {
+        if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();
-            collect(config('filament-shield.permission_prefixes.resource'))
+            collect(Utils::getGeneralResourcePermissionPrefixes())
                 ->each(function ($prefix) use ($resource, $permissions) {
                     $permissions->push(Permission::firstOrCreate(
                         ['name' => $prefix . '_' . $resource],
-                        ['guard_name' => config('filament.auth.guard')]
+                        ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
                 });
 
             static::giveSuperAdminPermission($permissions);
-            static::giveFilamentUserPermission($permissions);
         }
     }
 
     public static function generateForPage(string $page): void
     {
-        if (config('filament-shield.entities.pages')) {
+        if (Utils::isPageEntityEnabled()) {
             $permission = Permission::firstOrCreate(
                 ['name' => $page ],
-                ['guard_name' => config('filament.auth.guard')]
+                ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
 
             static::giveSuperAdminPermission($permission);
-            static::giveFilamentUserPermission($permission);
         }
     }
 
     public static function generateForWidget(string $widget): void
     {
-        if (config('filament-shield.entities.widgets')) {
+        if (Utils::isWidgetEntityEnabled()) {
             $permission = Permission::firstOrCreate(
                 ['name' => $widget ],
-                ['guard_name' => config('filament.auth.guard')]
+                ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
 
             static::giveSuperAdminPermission($permission);
-            static::giveFilamentUserPermission($permission);
         }
     }
 
     protected static function giveSuperAdminPermission(string|array|Collection $permissions): void
     {
-        if (config('filament-shield.super_admin.enabled')) {
-            $superAdmin = Role::firstOrCreate(
-                ['name' => config('filament-shield.super_admin.name')],
-                ['guard_name' => config('filament.auth.guard') ?? 'web']
-            );
+        if (! Utils::isSuperAdminDefinedViaGate()) {
+            $superAdmin = static::createRole();
 
             $superAdmin->givePermissionTo($permissions);
+
             app(PermissionRegistrar::class)->forgetCachedPermissions();
         }
     }
 
-    protected static function giveFilamentUserPermission(string|array|Collection $permissions): void
+    public static function createRole(bool $isSuperAdmin = true): Role
     {
-        if (config('filament-shield.filament_user.enabled')) {
-            $filamentUser = Role::firstOrCreate(
-                ['name' => config('filament-shield.filament_user.name')],
-                ['guard_name' => config('filament.auth.guard')]
-            );
-
-            $filamentUser->givePermissionTo($permissions);
-            app(PermissionRegistrar::class)->forgetCachedPermissions();
-        }
+        return Role::firstOrCreate(
+            ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
+            ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
+        );
     }
 
     /**
@@ -91,10 +82,10 @@ class FilamentShield
         return collect(Filament::getResources())
             ->unique()
             ->filter(function ($resource) {
-                if (config('filament-shield.exclude.enabled')) {
+                if (Utils::isGeneralExcludeEnabled()) {
                     return ! in_array(
                         Str::of($resource)->afterLast('\\'),
-                        config('filament-shield.exclude.resources')
+                        Utils::getExcludedResouces()
                     );
                 }
 
@@ -151,14 +142,14 @@ class FilamentShield
     {
         return collect(Filament::getPages())
             ->filter(function ($page) {
-                if (config('filament-shield.exclude.enabled')) {
-                    return ! in_array(Str::afterLast($page, '\\'), config('filament-shield.exclude.pages'));
+                if (Utils::isGeneralExcludeEnabled()) {
+                    return ! in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
                 }
 
                 return true;
             })
             ->reduce(function ($pages, $page) {
-                $prepend = Str::of(config('filament-shield.permission_prefixes.page'))->append('_');
+                $prepend = Str::of(Utils::getPagePermissionPrefix())->append('_');
                 $name = Str::of(class_basename($page))
                     ->prepend($prepend);
 
@@ -195,14 +186,14 @@ class FilamentShield
     {
         return collect(Filament::getWidgets())
             ->filter(function ($widget) {
-                if (config('filament-shield.exclude.enabled')) {
-                    return ! in_array(Str::afterLast($widget, '\\'), config('filament-shield.exclude.widgets'));
+                if (Utils::isGeneralExcludeEnabled()) {
+                    return ! in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
                 }
 
                 return true;
             })
             ->reduce(function ($widgets, $widget) {
-                $prepend = Str::of(config('filament-shield.permission_prefixes.widget'))->append('_');
+                $prepend = Str::of(Utils::getWidgetPermissionPrefix())->append('_');
                 $name = Str::of(class_basename($widget))
                     ->prepend($prepend);
 
@@ -226,7 +217,7 @@ class FilamentShield
         $grandpa = get_parent_class($parent);
 
         $heading = Str::of($widget)
-            ->after(config('filament-shield.permission_prefixes.widget').'_')
+            ->after(Utils::getPagePermissionPrefix().'_')
             ->headline();
 
         if ($grandpa === "Filament\Widgets\ChartWidget") {
@@ -257,31 +248,5 @@ class FilamentShield
     protected static function hasHeadingForShield(object|string $class): bool
     {
         return method_exists($class, 'getHeadingForShield');
-    }
-
-    /**
-     * Shield structured data.
-     *
-     * @return array
-     */
-    public static function getShieldData(): array
-    {
-        return collect(static::getResources())
-            ->map(function ($entity) {
-                return collect(config('filament-shield.permission_prefixes.resource'))
-                    ->reduce(
-                        function ($option, $permission) use ($entity) {
-                            $option[$permission . '_' . $entity] = ['label' => $permission,'value' => false];
-
-                            return $option;
-                        },
-                        [
-                            'label' => static::getLocalizedResourceLabel($entity),
-                            'value' => false,
-                        ]
-                    );
-            })
-            ->sortKeys()
-            ->all();
     }
 }
