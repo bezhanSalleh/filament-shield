@@ -2,8 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
-use Spatie\Permission\Traits\HasRoles;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Spatie\Permission\Traits\HasRoles;
 
 trait HasFilamentShield
 {

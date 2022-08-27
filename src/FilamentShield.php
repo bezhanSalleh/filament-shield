@@ -2,14 +2,14 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
 
 class FilamentShield
 {
@@ -55,8 +55,7 @@ class FilamentShield
 
     protected static function giveSuperAdminPermission(string|array|Collection $permissions): void
     {
-        if (! Utils::isSuperAdminDefinedViaGate())
-        {
+        if (! Utils::isSuperAdminDefinedViaGate()) {
             $superAdmin = static::createRole();
 
             $superAdmin->givePermissionTo($permissions);

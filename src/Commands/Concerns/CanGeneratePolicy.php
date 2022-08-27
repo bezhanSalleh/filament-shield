@@ -2,8 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
-use Illuminate\Support\Str;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Support\Str;
 
 trait CanGeneratePolicy
 {

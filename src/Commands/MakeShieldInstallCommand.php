@@ -121,14 +121,14 @@ class MakeShieldInstallCommand extends Command
         if (! $this->option('only')) {
             $this->info('Generating permissions ...');
             $this->call('shield:generate', [
-                '--all' => true
+                '--all' => true,
             ]);
 
             $this->info('Creating a filament user with Super Admin Role...');
             $this->call('shield:super-admin');
         } else {
             $this->call('shield:generate', [
-                '--resource' => 'RoleResource'
+                '--resource' => 'RoleResource',
             ]);
         }
 

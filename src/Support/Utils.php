@@ -42,7 +42,7 @@ class Utils
 
     public static function isSuperAdminEnabled(): bool
     {
-        return (bool) config('filament-shield.super_admin.enabled',true);
+        return (bool) config('filament-shield.super_admin.enabled', true);
     }
 
     public static function getSuperAdminName(): string
@@ -62,7 +62,7 @@ class Utils
 
     public static function isFilamentUserRoleEnabled(): bool
     {
-        return (bool) config('filament-shield.filament_user.enabled',true);
+        return (bool) config('filament-shield.filament_user.enabled', true);
     }
 
     public static function getFilamentUserRoleName(): string
@@ -98,7 +98,7 @@ class Utils
     /**
      * Widget Entity Status
      *
-     * @return boolean
+     * @return bool
      */
     public static function isWidgetEntityEnabled(): bool
     {

@@ -2,12 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\FilamentShield;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'shield:generate')]
@@ -59,8 +58,8 @@ class MakeShieldGenerateCommand extends Command
         {--exclude : Exclude the given entities during generation }
         {--ignore-config-exclude : Ignore config `<fg=yellow;options=bold>exclude</>` option during generation }
     ';
-        // {--seeder : Exclude the given entities during generation }
-        // the idea is to generate a seeder that can be used on production deployment
+    // {--seeder : Exclude the given entities during generation }
+    // the idea is to generate a seeder that can be used on production deployment
 
     /**
     * The console command description.
@@ -76,6 +75,7 @@ class MakeShieldGenerateCommand extends Command
         if ($this->option('exclude') && blank($this->option('resource')) && blank($this->option('page')) && blank($this->option('widget'))) {
             $this->comment('<fg=red;>No entites provided for the generators ...</>');
             $this->comment('<fg=yellow;options=bold>... generation SKIPPED</>');
+
             return self::INVALID;
         }
 
@@ -123,17 +123,15 @@ class MakeShieldGenerateCommand extends Command
         $this->excludePages = $this->option('exclude') && filled($this->option('page'));
         $this->excludeWidgets = $this->option('exclude') && filled($this->option('widget'));
 
-        $this->onlyResources = !$this->option('exclude') && filled($this->option('resource'));
-        $this->onlyPages = !$this->option('exclude') && filled($this->option('page'));
-        $this->onlyWidgets = !$this->option('exclude') && filled($this->option('widget'));
-
+        $this->onlyResources = ! $this->option('exclude') && filled($this->option('resource'));
+        $this->onlyPages = ! $this->option('exclude') && filled($this->option('page'));
+        $this->onlyWidgets = ! $this->option('exclude') && filled($this->option('widget'));
     }
 
     protected function generatableResources(): ?array
     {
         return collect(FilamentShield::getResources())
             ->filter(function ($resource) {
-
                 if ($this->excludeResources) {
                     return ! in_array(Str::of($resource['fqcn'])->afterLast('\\'), $this->resources);
                 }
@@ -143,7 +141,6 @@ class MakeShieldGenerateCommand extends Command
                 }
 
                 return true;
-
             })
             ->toArray();
     }
@@ -152,7 +149,6 @@ class MakeShieldGenerateCommand extends Command
     {
         return collect(FilamentShield::getPages())
             ->filter(function ($page) {
-
                 if ($this->excludePages) {
                     return ! in_array($page, $this->pages);
                 }
@@ -162,7 +158,6 @@ class MakeShieldGenerateCommand extends Command
                 }
 
                 return true;
-
             })
             ->toArray();
     }
@@ -171,7 +166,6 @@ class MakeShieldGenerateCommand extends Command
     {
         return collect(FilamentShield::getWidgets())
             ->filter(function ($widget) {
-
                 if ($this->excludeWidgets) {
                     return ! in_array($widget, $this->widgets);
                 }
@@ -181,7 +175,6 @@ class MakeShieldGenerateCommand extends Command
                 }
 
                 return true;
-
             })
             ->toArray();
     }

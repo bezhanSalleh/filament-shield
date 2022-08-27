@@ -2,12 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use Filament\Facades\Filament;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
@@ -31,7 +30,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
 
         if (Utils::isSuperAdminDefinedViaGate()) {
             Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
-                return match(Utils::getSuperAdminGateInterceptionStatus()) {
+                return match (Utils::getSuperAdminGateInterceptionStatus()) {
                     'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
                     'after' => $user->hasRole(Utils::getSuperAdminName())
                 };

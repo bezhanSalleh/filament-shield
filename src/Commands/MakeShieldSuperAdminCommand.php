@@ -38,15 +38,10 @@ class MakeShieldSuperAdminCommand extends Command
         }
 
         if ($this->option('user')) {
-
             $this->superAdmin = $userProvider->getModel()::findOrFail($this->option('user'));
-
         } elseif ($userProvider->getModel()::count() === 1) {
-
             $this->superAdmin = $userProvider->getModel()::first();
-
         } elseif ($userProvider->getModel()::count() > 1) {
-
             $this->table(
                 ['ID','Name','Email','Roles'],
                 $userProvider->getModel()::get()->map(function ($user) {
@@ -62,7 +57,6 @@ class MakeShieldSuperAdminCommand extends Command
             $superAdminId = $this->ask('Please provide the `UserID` to be set as `super_admin`');
 
             $this->superAdmin = $userProvider->getModel()::findOrFail($superAdminId);
-
         } else {
             $this->superAdmin = $userProvider->getModel()::create([
                 'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
