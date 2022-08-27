@@ -300,7 +300,7 @@ class RoleResource extends Resource
         $entitiesStates = collect(FilamentShield::getResources())
             ->when(Utils::isPageEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getPages()))
             ->when(Utils::isWidgetEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getWidgets()))
-            ->when(Utils::isCustomerPermissionEntityEnabled(), fn ($entities) => $entities->merge(static::getCustomEntities()))
+            ->when(Utils::isCustomPermissionEntityEnabled(), fn ($entities) => $entities->merge(static::getCustomEntities()))
             ->map(function ($entity) use ($get) {
                 if (is_array($entity)) {
                     return (bool) $get($entity['resource']);

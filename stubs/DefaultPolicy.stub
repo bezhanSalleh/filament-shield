@@ -14,7 +14,6 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can view any models.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function viewAny({{ auth_model_name }} ${{ auth_model_variable }})
@@ -74,10 +73,9 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can bulk delete.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function deleteAny({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function deleteAny({{ auth_model_name }} ${{ auth_model_variable }})
     {
         return ${{ auth_model_variable }}->can('{{ DeleteAny }}');
     }
@@ -98,10 +96,9 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can permanently bulk delete.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDeleteAny({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function forceDeleteAny({{ auth_model_name }} ${{ auth_model_variable }})
     {
         return ${{ auth_model_variable }}->can('{{ ForceDeleteAny }}');
     }
@@ -122,10 +119,9 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can bulk restore.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restoreAny({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function restoreAny({{ auth_model_name }} ${{ auth_model_variable }})
     {
         return ${{ auth_model_variable }}->can('{{ RestoreAny }}');
     }

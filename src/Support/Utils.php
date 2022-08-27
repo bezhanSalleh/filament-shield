@@ -107,7 +107,7 @@ class Utils
 
     public static function isCustomPermissionEntityEnabled(): bool
     {
-        return (bool) config('filament-shield.entities.widgets', false);
+        return (bool) config('filament-shield.entities.custom_permissions', false);
     }
 
     public static function getGeneratorOption(): string
@@ -118,6 +118,16 @@ class Utils
     public static function isGeneralExcludeEnabled(): bool
     {
         return (bool) config('filament-shield.exclude.enabled', true);
+    }
+
+    public static function enableGeneralExclude(): void
+    {
+        config(['filament-shield.exclude.enabled' => true]);
+    }
+
+    public static function disableGeneralExclude(): void
+    {
+        config(['filament-shield.exclude.enabled' => false]);
     }
 
     public static function getExcludedResouces(): array

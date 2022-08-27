@@ -19,6 +19,8 @@ class MakeShieldSuperAdminCommand extends Command
 
     public $description = 'Creates Filament Super Admin';
 
+    protected $superAdmin;
+
     public function handle(): int
     {
         /** @var SessionGuard $auth */
@@ -28,20 +30,20 @@ class MakeShieldSuperAdminCommand extends Command
         $userProvider = $auth->getProvider();
 
         if (Role::whereName(Utils::getSuperAdminName())->doesntExist()) {
-            FilamentShield::firstOrCreateEitherSuperAdminOrFilamentUserRole();
+            FilamentShield::createRole();
         }
 
         if (Utils::isFilamentUserRoleEnabled() && Role::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
-            FilamentShield::firstOrCreateEitherSuperAdminOrFilamentUserRole(superAdmin: false);
+            FilamentShield::createRole(isSuperAdmin: false);
         }
 
         if ($this->option('user')) {
 
-            $superAdmin = $userProvider->getModel()::findOrFail($this->option('user'));
+            $this->superAdmin = $userProvider->getModel()::findOrFail($this->option('user'));
 
         } elseif ($userProvider->getModel()::count() === 1) {
 
-            $superAdmin = $userProvider->getModel()::first();
+            $this->superAdmin = $userProvider->getModel()::first();
 
         } elseif ($userProvider->getModel()::count() > 1) {
 
@@ -59,24 +61,24 @@ class MakeShieldSuperAdminCommand extends Command
 
             $superAdminId = $this->ask('Please provide the `UserID` to be set as `super_admin`');
 
-            $superAdmin = $userProvider->getModel()::findOrFail($superAdminId);
+            $this->superAdmin = $userProvider->getModel()::findOrFail($superAdminId);
 
         } else {
-            $superAdmin = $userProvider->getModel()::create([
+            $this->superAdmin = $userProvider->getModel()::create([
                 'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
                 'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $userProvider->getModel()]),
                 'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
             ]);
         }
 
-        $superAdmin->assignRole(Utils::getSuperAdminName());
+        $this->superAdmin->assignRole(Utils::getSuperAdminName());
 
         if (Utils::isFilamentUserRoleEnabled()) {
-            $superAdmin->assignRole(Utils::getFilamentUserRoleName());
+            $this->superAdmin->assignRole(Utils::getFilamentUserRoleName());
         }
 
         $loginUrl = route('filament.auth.login');
-        $this->info("Success! {$superAdmin->email} may now log in at {$loginUrl}.");
+        $this->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
 
         return self::SUCCESS;
     }

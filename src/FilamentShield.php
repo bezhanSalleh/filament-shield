@@ -57,7 +57,7 @@ class FilamentShield
     {
         if (! Utils::isSuperAdminDefinedViaGate())
         {
-            $superAdmin = static::firstOrCreateEitherSuperAdminOrFilamentUserRole();
+            $superAdmin = static::createRole();
 
             $superAdmin->givePermissionTo($permissions);
 
@@ -65,7 +65,7 @@ class FilamentShield
         }
     }
 
-    public static function firstOrCreateEitherSuperAdminOrFilamentUserRole(bool $isSuperAdmin = true): Role
+    public static function createRole(bool $isSuperAdmin = true): Role
     {
         return Role::firstOrCreate(
             ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
