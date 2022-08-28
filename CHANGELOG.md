@@ -2,25 +2,55 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.2.1 - 2022-08-28
+
+### What's Changed
+
+- Fixes #108 auth provider policy generation by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/109
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.2.0...2.2.1
+
 ## 2.2.0 - 2022-08-27
 
 ### What's Changed
 
 - adds new features to shield by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/107
 - - adds the ability to define `super-admin` via gage
+- 
 - - new options for `shield:generate`
+- 
 - - - --all                    Generate permissions/policies for all entities
+- - 
+- 
 - - - --option[=OPTION]        Override the config generator option(policies_and_permissions,policies,permissions)
+- - 
+- 
 - - - --resource[=RESOURCE]    One or many resources separated by comma (,)
+- - 
+- 
 - - - --page[=PAGE]            One or many pages separated by comma (,)
+- - 
+- 
 - - - --widget[=WIDGET]        One or many widgets separated by comma (,)
+- - 
+- 
 - - - --exclude                Exclude the given entities during generation
+- - 
+- 
 - - - --ignore-config-exclude  Ignore config `exclude` option during generation
 - - 
+- 
+- - 
+- 
 - - new option for `shield:install`
+- 
 - - - --only            Only setups shield without generating permissions and creating super-admin
 - - 
+- 
+- - 
+- 
 - - redefined the purpose of `filament_user` role, not attaching permissions anymore
+- 
 - 
 - Improve Command Section of README by @intrepidws in https://github.com/bezhanSalleh/filament-shield/pull/102
 - Update README.md by @atmonshi in https://github.com/bezhanSalleh/filament-shield/pull/106
@@ -133,7 +163,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -155,7 +187,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -177,7 +211,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -199,6 +235,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
@@ -210,7 +247,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
