@@ -184,7 +184,6 @@ class MakeShieldGenerateCommand extends Command
         return  collect($resources)
             ->values()
             ->each(function ($entity) {
-
                 if ($this->generatorOption === 'policies_and_permissions') {
                     $this->copyStubToApp(static::getPolicyStub($entity['model']), $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
                     FilamentShield::generateForResource($entity['resource']);
@@ -269,7 +268,7 @@ class MakeShieldGenerateCommand extends Command
 
     protected static function getPolicyStub(string $model): string
     {
-        if (Str::is(Str::of(Utils::getAuthProviderFQCN())->afterLast('\\'),$model)) {
+        if (Str::is(Str::of(Utils::getAuthProviderFQCN())->afterLast('\\'), $model)) {
             return (string) 'UserPolicy';
         }
 
