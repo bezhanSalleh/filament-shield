@@ -184,13 +184,14 @@ class MakeShieldGenerateCommand extends Command
         return  collect($resources)
             ->values()
             ->each(function ($entity) {
+
                 if ($this->generatorOption === 'policies_and_permissions') {
-                    $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
+                    $this->copyStubToApp(static::getPolicyStub($entity['model']), $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
                     FilamentShield::generateForResource($entity['resource']);
                 }
 
                 if ($this->generatorOption === 'policies') {
-                    $this->copyStubToApp('DefaultPolicy', $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
+                    $this->copyStubToApp(static::getPolicyStub($entity['model']), $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
                 }
 
                 if ($this->generatorOption === 'permissions') {
@@ -264,5 +265,14 @@ class MakeShieldGenerateCommand extends Command
                 ];
             })
         );
+    }
+
+    protected static function getPolicyStub(string $model): string
+    {
+        if (Str::is(Str::of(Utils::getAuthProviderFQCN())->afterLast('\\'),$model)) {
+            return (string) 'UserPolicy';
+        }
+
+        return (string) 'DefaultPolicy';
     }
 }
