@@ -3,8 +3,8 @@
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'shield:seeder')]
@@ -38,17 +38,15 @@ class MakeShieldSeederCommand extends Command
         }
 
         if ($this->option('generate')) {
-            $this->call('shield:generate',[
-                '--all' => true
+            $this->call('shield:generate', [
+                '--all' => true,
             ]);
         }
 
         if (Role::doesntExist() && Permission::doesntExist()) {
-
             $this->warn(' There are no roles or permissions to create the seeder. Please first run `shield:generate --all`');
 
             return static::INVALID;
-
         }
 
         $directPermissionNames = collect();
@@ -56,10 +54,8 @@ class MakeShieldSeederCommand extends Command
         $directPermissions = collect();
 
         if (Role::exists()) {
-
             $permissionsViaRoles = collect(Role::with('permissions')->get())
-                ->map(function ($role) use($directPermissionNames){
-
+                ->map(function ($role) use ($directPermissionNames) {
                     $rolePermissions = $role->permissions
                         ->pluck('name')
                         ->toArray();
@@ -69,7 +65,7 @@ class MakeShieldSeederCommand extends Command
                     return [
                         'name' => $role->name,
                         'guard_name' => $role->guard_name,
-                        'permissions' => $rolePermissions
+                        'permissions' => $rolePermissions,
                     ];
                 });
         }
@@ -79,7 +75,7 @@ class MakeShieldSeederCommand extends Command
                 ->filter(fn ($permission) => ! in_array($permission->name, $directPermissionNames->unique()->flatten()->all()))
                 ->map(fn ($permission) => [
                     'name' => $permission->name,
-                    'guard_name' => $permission->guard_name
+                    'guard_name' => $permission->guard_name,
                 ]);
         }
 
@@ -88,7 +84,7 @@ class MakeShieldSeederCommand extends Command
             targetPath: $path,
             replacements: [
                 'RolePermissions' => $permissionsViaRoles->all(),
-                'DirectPermissions' => $directPermissions->all()
+                'DirectPermissions' => $directPermissions->all(),
             ]
         );
 
@@ -97,6 +93,5 @@ class MakeShieldSeederCommand extends Command
         $this->line('<bg=bright-green;options=bold> php artisan db:seed --class=ShieldSeeder </>');
 
         return self::SUCCESS;
-
     }
 }
