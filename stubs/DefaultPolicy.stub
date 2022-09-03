@@ -142,10 +142,9 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can reorder.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function reorder({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function reorder({{ auth_model_name }} ${{ auth_model_variable }})
     {
         return ${{ auth_model_variable }}->can('{{ Reorder }}');
     }
