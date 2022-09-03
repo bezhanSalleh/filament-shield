@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.2.3 - 2022-09-03
+
+### What's Changed
+
+- adds `shield:seeder` new command by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/115
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.2.2...2.2.3
+
 ## 2.2.2 - 2022-09-03
 
 ### What's Changed
@@ -31,7 +39,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - - adds the ability to define `super-admin` via gage
 - 
 - 
+- 
 - - new options for `shield:generate`
+- 
 - 
 - 
 - - - --all                    Generate permissions/policies for all entities
@@ -40,10 +50,18 @@ All notable changes to `filament-shield` will be documented in this file.
 - - 
 - 
 - 
+- - 
+- 
+- 
+- 
 - - - --option[=OPTION]        Override the config generator option(policies_and_permissions,policies,permissions)
 - - 
 - 
 - - 
+- 
+- 
+- - 
+- 
 - 
 - 
 - - - --resource[=RESOURCE]    One or many resources separated by comma (,)
@@ -52,10 +70,18 @@ All notable changes to `filament-shield` will be documented in this file.
 - - 
 - 
 - 
+- - 
+- 
+- 
+- 
 - - - --page[=PAGE]            One or many pages separated by comma (,)
 - - 
 - 
 - - 
+- 
+- 
+- - 
+- 
 - 
 - 
 - - - --widget[=WIDGET]        One or many widgets separated by comma (,)
@@ -64,10 +90,18 @@ All notable changes to `filament-shield` will be documented in this file.
 - - 
 - 
 - 
+- - 
+- 
+- 
+- 
 - - - --exclude                Exclude the given entities during generation
 - - 
 - 
 - - 
+- 
+- 
+- - 
+- 
 - 
 - 
 - - - --ignore-config-exclude  Ignore config `exclude` option during generation
@@ -79,7 +113,13 @@ All notable changes to `filament-shield` will be documented in this file.
 - - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
 - - new option for `shield:install`
+- 
 - 
 - 
 - - - --only            Only setups shield without generating permissions and creating super-admin
@@ -91,7 +131,13 @@ All notable changes to `filament-shield` will be documented in this file.
 - - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
 - - redefined the purpose of `filament_user` role, not attaching permissions anymore
+- 
 - 
 - 
 - 
@@ -208,7 +254,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -234,7 +282,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -260,7 +310,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -286,6 +338,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
@@ -299,7 +352,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
