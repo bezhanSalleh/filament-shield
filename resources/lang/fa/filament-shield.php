@@ -7,11 +7,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'column.name' => 'Name',
-    'column.guard_name' => 'Guard Name',
-    'column.roles' => 'Roles',
-    'column.permissions' => 'Permissions',
-    'column.updated_at' => 'Updated At',
+    'column.name' => 'نام',
+    'column.guard_name' => 'نام گارد',
+    'column.roles' => 'نقش‌ها',
+    'column.permissions' => 'دسترسی‌ها',
+    'column.updated_at' => 'به‌روزشده در',
 
     /*
     |--------------------------------------------------------------------------
@@ -19,11 +19,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'field.name' => 'Name',
-    'field.guard_name' => 'Guard Name',
-    'field.permissions' => 'Permissions',
-    'field.select_all.name' => 'Select All',
-    'field.select_all.message' => 'Enable all Permissions currently <span class="text-primary font-medium">Enabled</span> for this role',
+    'field.name' => 'نام',
+    'field.guard_name' => 'نام گارد',
+    'field.permissions' => 'دسترسی‌ها',
+    'field.select_all.name' => 'انتخاب همه',
+    'field.select_all.message' => 'تمام دسترسی‌های <span class="text-primary font-medium">فعال</span> فعلی را برای این نقش فعال کن.',
 
     /*
     |--------------------------------------------------------------------------
@@ -32,10 +32,10 @@ return [
     */
 
     'nav.group' => 'Filament Shield',
-    'nav.role.label' => 'Roles',
+    'nav.role.label' => 'نقش‌ها',
     'nav.role.icon' => 'heroicon-o-shield-check',
-    'resource.label.role' => 'Role',
-    'resource.label.roles' => 'Roles',
+    'resource.label.role' => 'نقش',
+    'resource.label.roles' => 'نقش‌ها',
 
     /*
     |--------------------------------------------------------------------------
@@ -43,11 +43,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'section' => 'Entities',
-    'resources' => 'Resources',
-    'widgets' => 'Widgets',
-    'pages' => 'Pages',
-    'custom' => 'Custom Permissions',
+    'section' => 'موجودیت‌ها',
+    'resources' => 'منابع',
+    'widgets' => 'ویجت‌ها',
+    'pages' => 'صفحات',
+    'custom' => 'دسترسی‌های سفارشی',
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'forbidden' => 'You do not have permission to access',
+    'forbidden' => 'شما اجازه دسترسی ندارید.',
 
     /*
     |--------------------------------------------------------------------------
@@ -67,14 +67,14 @@ return [
             'view' => 'نمایش',
             'view_any' => 'نمایش همه',
             'create' => 'ایجاد',
-            'update' => 'تجدید',
+            'update' => 'ویرایش',
             'delete' => 'حذف',
             'delete_any' => 'حذف همه',
             'force_delete' => 'حذف اجباری',
             'force_delete_any' => 'حذف اجباری همه',
             'restore' => 'بازیابی',
-            'replicate' => 'تکرار',
-            'reorder' => 'مرتب دوباره',
+            'replicate' => 'تکثیر',
+            'reorder' => 'مرتب‌سازی',
             'restore_any' => 'بازیابی همه',
     ]
 ];
