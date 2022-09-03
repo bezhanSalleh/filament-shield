@@ -37,7 +37,6 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can create models.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function create({{ auth_model_name }} ${{ auth_model_variable }})
