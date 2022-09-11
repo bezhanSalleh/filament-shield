@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.2.4 - 2022-09-11
+
+### What's Changed
+
+- adds the ability to set global search status & fixes #118 by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/119
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.2.3...2.2.4
+
 ## 2.2.3 - 2022-09-03
 
 ### What's Changed
@@ -40,7 +48,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - new options for `shield:generate`
+- 
 - 
 - 
 - 
@@ -54,6 +64,11 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
 - - - --option[=OPTION]        Override the config generator option(policies_and_permissions,policies,permissions)
 - - 
 - 
@@ -61,6 +76,11 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -74,6 +94,11 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
 - - - --page[=PAGE]            One or many pages separated by comma (,)
 - - 
 - 
@@ -81,6 +106,11 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -94,6 +124,11 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
 - - - --exclude                Exclude the given entities during generation
 - - 
 - 
@@ -101,6 +136,11 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -118,7 +158,14 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
+- 
 - - new option for `shield:install`
+- 
 - 
 - 
 - 
@@ -136,7 +183,14 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
+- 
 - - redefined the purpose of `filament_user` role, not attaching permissions anymore
+- 
 - 
 - 
 - 
@@ -255,7 +309,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -283,7 +339,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -311,7 +369,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -339,6 +399,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
@@ -353,7 +414,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
