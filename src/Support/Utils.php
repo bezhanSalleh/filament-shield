@@ -29,6 +29,11 @@ class Utils
         return config('filament-shield.shield_resource.navigation_group', true);
     }
 
+    public static function isResourceGloballySearchable(): bool
+    {
+        return config('filament-shield.shield_resource.is_globally_searchable', false);
+    }
+
     public static function getAuthProviderFQCN()
     {
         return config('filament-shield.auth_provider_model.fqcn');
