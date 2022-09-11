@@ -135,6 +135,7 @@ php artisan vendor:publish --tag=filament-shield-config
               'navigation_sort' => -1,
               'navigation_badge' => true,
               'navigation_group' => true,
+              'is_globally_searchable' => false,
           ],
 
           'auth_provider_model' => [
