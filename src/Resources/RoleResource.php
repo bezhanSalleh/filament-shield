@@ -214,6 +214,11 @@ class RoleResource extends Resource
             : null;
     }
 
+    public static function canGloballySearch(): bool
+    {
+        return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
+    }
+
     /**--------------------------------*
     | Resource Related Logic Start     |
     *----------------------------------*/
