@@ -41,7 +41,7 @@ class MakeShieldDoctorCommand extends Command
             return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(Utils::getAuthProviderFQCN()))
             || in_array("Spatie\Permission\Traits\HasRoles", class_uses(Utils::getAuthProviderFQCN()))
                 ? '<fg=green;options=bold>CONFIGURED</>'
-                : '<fg=red;options=bold>NOT CONFIGURED</>' ;
+                : '<fg=red;options=bold>NOT CONFIGURED</>';
         }
 
         return '';

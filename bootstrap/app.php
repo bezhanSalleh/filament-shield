@@ -1,12 +1,13 @@
 <?php
 
 use Filament\FilamentServiceProvider;
-use Livewire\LivewireServiceProvider;
 use Filament\Support\SupportServiceProvider;
-use Orchestra\Testbench\Foundation\Application;
+use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\CreatesApplication;
+use Orchestra\Testbench\Foundation\Application;
 
-$basePathLocator = new class () {
+$basePathLocator = new class()
+{
     use CreatesApplication;
 };
 

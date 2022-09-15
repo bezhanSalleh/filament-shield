@@ -64,17 +64,17 @@ return [
     */
 
     'resource_permission_prefixes_labels' => [
-            'view' => 'نمایش',
-            'view_any' => 'نمایش همه',
-            'create' => 'ایجاد',
-            'update' => 'ویرایش',
-            'delete' => 'حذف',
-            'delete_any' => 'حذف همه',
-            'force_delete' => 'حذف اجباری',
-            'force_delete_any' => 'حذف اجباری همه',
-            'restore' => 'بازیابی',
-            'replicate' => 'تکثیر',
-            'reorder' => 'مرتب‌سازی',
-            'restore_any' => 'بازیابی همه',
-    ]
+        'view' => 'نمایش',
+        'view_any' => 'نمایش همه',
+        'create' => 'ایجاد',
+        'update' => 'ویرایش',
+        'delete' => 'حذف',
+        'delete_any' => 'حذف همه',
+        'force_delete' => 'حذف اجباری',
+        'force_delete_any' => 'حذف اجباری همه',
+        'restore' => 'بازیابی',
+        'replicate' => 'تکثیر',
+        'reorder' => 'مرتب‌سازی',
+        'restore_any' => 'بازیابی همه',
+    ],
 ];

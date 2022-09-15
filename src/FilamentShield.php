@@ -20,7 +20,7 @@ class FilamentShield
             collect(Utils::getGeneralResourcePermissionPrefixes())
                 ->each(function ($prefix) use ($resource, $permissions) {
                     $permissions->push(Permission::firstOrCreate(
-                        ['name' => $prefix . '_' . $resource],
+                        ['name' => $prefix.'_'.$resource],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
                 });
@@ -33,7 +33,7 @@ class FilamentShield
     {
         if (Utils::isPageEntityEnabled()) {
             $permission = Permission::firstOrCreate(
-                ['name' => $page ],
+                ['name' => $page],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
 
@@ -45,7 +45,7 @@ class FilamentShield
     {
         if (Utils::isWidgetEntityEnabled()) {
             $permission = Permission::firstOrCreate(
-                ['name' => $widget ],
+                ['name' => $widget],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
 
@@ -108,8 +108,8 @@ class FilamentShield
     /**
      * Get the localized resource label
      *
-     * @param string $entity
-     * @return String
+     * @param  string  $entity
+     * @return string
      */
     public static function getLocalizedResourceLabel(string $entity): string
     {
@@ -123,7 +123,7 @@ class FilamentShield
     /**
      * Get the localized resource permission label
      *
-     * @param string $permission
+     * @param  string  $permission
      * @return string
      */
     public static function getLocalizedResourcePermissionLabel(string $permission): string
@@ -134,10 +134,10 @@ class FilamentShield
     }
 
     /**
-    * Transform filament pages to key value pair for shield
-    *
-    * @return array
-    */
+     * Transform filament pages to key value pair for shield
+     *
+     * @return array
+     */
     public static function getPages(): ?array
     {
         return collect(Filament::getPages())
@@ -163,7 +163,7 @@ class FilamentShield
     /**
      * Get localized page label
      *
-     * @param string $page
+     * @param  string  $page
      * @return string|bool
      */
     public static function getLocalizedPageLabel(string $page): string|bool
@@ -178,10 +178,10 @@ class FilamentShield
     }
 
     /**
-    * Transform filament widgets to key value pair for shield
-    *
-    * @return array
-    */
+     * Transform filament widgets to key value pair for shield
+     *
+     * @return array
+     */
     public static function getWidgets(): ?array
     {
         return collect(Filament::getWidgets())
@@ -207,7 +207,7 @@ class FilamentShield
     /**
      * Get localized widget label
      *
-     * @param string $page
+     * @param  string  $page
      * @return string|bool
      */
     public static function getLocalizedWidgetLabel(string $widget): string
@@ -236,8 +236,7 @@ class FilamentShield
     protected static function transformClassString(string $string, bool $isPageClass = true): string
     {
         return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
-            ->first(fn ($item) =>
-                Str::endsWith(
+            ->first(fn ($item) => Str::endsWith(
                     $item,
                     Str::of($string)
                     ->after('_')

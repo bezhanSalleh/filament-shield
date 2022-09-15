@@ -20,8 +20,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             ->name('filament-shield')
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasCommands($this->getCommands())
-        ;
+            ->hasCommands($this->getCommands());
     }
 
     public function packageBooted(): void
