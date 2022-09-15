@@ -31,17 +31,17 @@ trait HasPageShield
 
     protected function beforeBooted(): void
     {
-        return;
+
     }
 
     protected function afterBooted(): void
     {
-        return;
+
     }
 
     protected function beforeShieldRedirects(): void
     {
-        return;
+
     }
 
     protected function getShieldRedirectPath(): string

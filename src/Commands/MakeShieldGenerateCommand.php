@@ -16,33 +16,39 @@ class MakeShieldGenerateCommand extends Command
     use Concerns\CanManipulateFiles;
 
     /**
-    * The resources to generate permissions or policies for, or should be exclude.
-    *
-    * @var array
-    */
+     * The resources to generate permissions or policies for, or should be exclude.
+     *
+     * @var array
+     */
     protected $resources = [];
 
     /**
-    * The pages to generate permissions for, or should be excluded.
-    *
-    * @var array
-    */
+     * The pages to generate permissions for, or should be excluded.
+     *
+     * @var array
+     */
     protected $pages = [];
 
     /**
-    * The widgets to generate permissions for, or should be excluded.
-    *
-    * @var array
-    */
+     * The widgets to generate permissions for, or should be excluded.
+     *
+     * @var array
+     */
     protected $widgets = [];
 
     protected $generatorOption;
+
     protected $excludeResources = false;
-    protected $excludePages = false ;
-    protected $excludeWidgets = false ;
-    protected $onlyResources = false ;
-    protected $onlyPages = false ;
-    protected $onlyWidget = false ;
+
+    protected $excludePages = false;
+
+    protected $excludeWidgets = false;
+
+    protected $onlyResources = false;
+
+    protected $onlyPages = false;
+
+    protected $onlyWidget = false;
 
     /**
      * The console command signature.
@@ -62,10 +68,10 @@ class MakeShieldGenerateCommand extends Command
     // the idea is to generate a seeder that can be used on production deployment
 
     /**
-    * The console command description.
-    *
-    * @var string
-    */
+     * The console command description.
+     *
+     * @var string
+     */
     public $description = 'Generate Permissions and/or Policies for Filament entities.';
 
     public function handle(): int
@@ -93,7 +99,6 @@ class MakeShieldGenerateCommand extends Command
             $widgets = $this->generateForWidgets($this->generatableWidgets());
             $this->widgetInfo($widgets->toArray());
         }
-
 
         $this->info('Permission & Policies are generated according to your config or passed options.');
         $this->info('Enjoy!');
@@ -221,16 +226,15 @@ class MakeShieldGenerateCommand extends Command
     {
         $this->info('Successfully generated Permissions & Policies for:');
         $this->table(
-            ['#','Resource','Policy','Permissions'],
+            ['#', 'Resource', 'Policy', 'Permissions'],
             collect($resources)->map(function ($resource, $key) {
                 return [
                     '#' => $key + 1,
                     'Resource' => $resource['model'],
-                    'Policy' => "{$resource['model']}Policy.php". ($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
-                    'Permissions' =>
-                        implode(','.PHP_EOL, collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission, $key) use ($resource) {
+                    'Policy' => "{$resource['model']}Policy.php".($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
+                    'Permissions' => implode(','.PHP_EOL, collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission, $key) use ($resource) {
                             return $permission.'_'.$resource['resource'];
-                        })->toArray()) . ($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
+                        })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
                 ];
             })
         );
@@ -240,7 +244,7 @@ class MakeShieldGenerateCommand extends Command
     {
         $this->info('Successfully generated Page Permissions for:');
         $this->table(
-            ['#','Page','Permission'],
+            ['#', 'Page', 'Permission'],
             collect($pages)->map(function ($page, $key) {
                 return [
                     '#' => $key + 1,
@@ -255,7 +259,7 @@ class MakeShieldGenerateCommand extends Command
     {
         $this->info('Successfully generated Widget Permissions for:');
         $this->table(
-            ['#','Widget','Permission'],
+            ['#', 'Widget', 'Permission'],
             collect($widgets)->map(function ($widget, $key) {
                 return [
                     '#' => $key + 1,

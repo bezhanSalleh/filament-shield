@@ -42,7 +42,7 @@ return [
     | Section & Tabs
     |--------------------------------------------------------------------------
     */
-    
+
     'section' => 'Entiteiten',
     'resources' => 'Resources',
     'widgets' => 'Widgets',

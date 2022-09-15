@@ -20,8 +20,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             ->name('filament-shield')
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasCommands($this->getCommands())
-        ;
+            ->hasCommands($this->getCommands());
     }
 
     public function packageBooted(): void
@@ -32,7 +31,8 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
                 return match (Utils::getSuperAdminGateInterceptionStatus()) {
                     'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
-                    'after' => $user->hasRole(Utils::getSuperAdminName())
+                    'after' => $user->hasRole(Utils::getSuperAdminName()),
+                    default => false
                 };
             });
         }

@@ -3,7 +3,7 @@
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\Commands\Concerns\CanValidateInput;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
@@ -43,7 +43,7 @@ class MakeShieldSuperAdminCommand extends Command
             $this->superAdmin = $userProvider->getModel()::first();
         } elseif ($userProvider->getModel()::count() > 1) {
             $this->table(
-                ['ID','Name','Email','Roles'],
+                ['ID', 'Name', 'Email', 'Roles'],
                 $userProvider->getModel()::get()->map(function ($user) {
                     return [
                         'id' => $user->id,
@@ -60,7 +60,7 @@ class MakeShieldSuperAdminCommand extends Command
         } else {
             $this->superAdmin = $userProvider->getModel()::create([
                 'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
-                'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $userProvider->getModel()]),
+                'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:'.$userProvider->getModel()]),
                 'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
             ]);
         }

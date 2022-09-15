@@ -42,7 +42,7 @@ class Utils
     public static function isAuthProviderConfigured(): bool
     {
         return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(static::getAuthProviderFQCN()))
-        || in_array("Spatie\Permission\Traits\HasRoles", class_uses(static::getAuthProviderFQCN())) ;
+        || in_array("Spatie\Permission\Traits\HasRoles", class_uses(static::getAuthProviderFQCN()));
     }
 
     public static function isSuperAdminEnabled(): bool

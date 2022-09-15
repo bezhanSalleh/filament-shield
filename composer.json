@@ -32,7 +32,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.12",
-        "friendsofphp/php-cs-fixer": "^3.9",
+        "laravel/pint": "^1.0",
         "nunomaduro/collision": "^5.0|^6.0",
         "nunomaduro/larastan": "^2.0.1",
         "orchestra/testbench": "^6.0|^7.0",
@@ -58,7 +58,7 @@
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        "format": "vendor/bin/pint"
     },
     "config": {
         "sort-packages": true,

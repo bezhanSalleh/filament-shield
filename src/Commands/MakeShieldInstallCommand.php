@@ -17,7 +17,7 @@ class MakeShieldInstallCommand extends Command
         {--O|only : Only setups shield without generating permissions and creating super-admin}
     ';
 
-    public $description = "Setup Core Package requirements and Install Shield";
+    public $description = 'Setup Core Package requirements and Install Shield';
 
     public function handle(): int
     {
@@ -32,7 +32,6 @@ class MakeShieldInstallCommand extends Command
         $this->info('-  Publishes core package migration');
         $this->warn('   - On fresh applications database will be migrated');
         $this->warn('   - You can also force this behavior by supplying the --fresh option');
-
 
         $confirmed = $this->confirm('Do you wish to continue?', true);
 
@@ -86,7 +85,7 @@ class MakeShieldInstallCommand extends Command
 
     protected function getTables(): Collection
     {
-        return collect(['permissions','roles','role_has_permissions','model_has_roles','model_has_permissions']);
+        return collect(['permissions', 'roles', 'role_has_permissions', 'model_has_roles', 'model_has_permissions']);
     }
 
     protected function install(bool $fresh = false)

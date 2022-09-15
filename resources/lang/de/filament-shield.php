@@ -49,7 +49,7 @@ return [
     'pages' => 'Seiten',
     'custom' => 'benutzerdefinierte Berechtigungen',
 
-     /*
+    /*
     |--------------------------------------------------------------------------
     | Messages
     |--------------------------------------------------------------------------
@@ -76,5 +76,5 @@ return [
         // 'replicate' => 'Replicate',
         'restore' => 'Wiederherstellen',
         'restore_any' => 'Alle wiederherstellen',
-    ]
+    ],
 ];

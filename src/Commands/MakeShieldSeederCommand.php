@@ -23,10 +23,10 @@ class MakeShieldSeederCommand extends Command
     ';
 
     /**
-    * The console command description.
-    *
-    * @var string
-    */
+     * The console command description.
+     *
+     * @var string
+     */
     public $description = 'Create a seeder file from existing/configured roles and permission, that could be used within your deploy script.';
 
     public function handle(): int
