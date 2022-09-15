@@ -32,6 +32,13 @@ parameters:
             paths:
                 - src/Resources/RoleResource/Pages/EditRole.php
                 - src/Resources/RoleResource/Pages/CreateRole.php
+        -
+            message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$onlyWidgets#'
+            path: src/Commands/MakeShieldGenerateCommand.php
+        -
+            message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]#'
+            path: src/Commands/MakeShieldSeederCommand.php
+
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true

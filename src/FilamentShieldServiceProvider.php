@@ -32,7 +32,8 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
                 return match (Utils::getSuperAdminGateInterceptionStatus()) {
                     'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
-                    'after' => $user->hasRole(Utils::getSuperAdminName())
+                    'after' => $user->hasRole(Utils::getSuperAdminName()),
+                    default => false
                 };
             });
         }
