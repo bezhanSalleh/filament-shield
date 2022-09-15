@@ -237,11 +237,11 @@ class FilamentShield
     {
         return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
             ->first(fn ($item) => Str::endsWith(
-                    $item,
-                    Str::of($string)
-                    ->after('_')
-                    ->studly()
-                ));
+                $item,
+                Str::of($string)
+                ->after('_')
+                ->studly()
+            ));
     }
 
     protected static function hasHeadingForShield(object|string $class): bool

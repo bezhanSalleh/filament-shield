@@ -233,8 +233,8 @@ class MakeShieldGenerateCommand extends Command
                     'Resource' => $resource['model'],
                     'Policy' => "{$resource['model']}Policy.php".($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
                     'Permissions' => implode(','.PHP_EOL, collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission, $key) use ($resource) {
-                            return $permission.'_'.$resource['resource'];
-                        })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
+                        return $permission.'_'.$resource['resource'];
+                    })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
                 ];
             })
         );
