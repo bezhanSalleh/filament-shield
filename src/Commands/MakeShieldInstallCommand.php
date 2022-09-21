@@ -15,6 +15,7 @@ class MakeShieldInstallCommand extends Command
     public $signature = 'shield:install
         {--F|fresh : re-run the migrations}
         {--O|only : Only setups shield without generating permissions and creating super-admin}
+        {--minimal : Output minimal amount of info to console}
     ';
 
     public $description = 'Setup Core Package requirements and Install Shield';
@@ -27,13 +28,17 @@ class MakeShieldInstallCommand extends Command
             return self::INVALID;
         }
 
-        $this->alert('Following operations will be performed:');
-        $this->info('-  Publishes core package config');
-        $this->info('-  Publishes core package migration');
-        $this->warn('   - On fresh applications database will be migrated');
-        $this->warn('   - You can also force this behavior by supplying the --fresh option');
+        if ($this->option('minimal')) {
+            $confirmed = true;
+        } else {
+            $this->alert('Following operations will be performed:');
+            $this->info('-  Publishes core package config');
+            $this->info('-  Publishes core package migration');
+            $this->warn('   - On fresh applications database will be migrated');
+            $this->warn('   - You can also force this behavior by supplying the --fresh option');
 
-        $confirmed = $this->confirm('Do you wish to continue?', true);
+            $confirmed = $this->confirm('Do you wish to continue?', true);
+        }
 
         if ($this->CheckIfAlreadyInstalled() && ! $this->option('fresh')) {
             $this->comment('Seems you have already installed the Core package(`spatie/laravel-permission`)!');
@@ -52,18 +57,20 @@ class MakeShieldInstallCommand extends Command
             $this->comment('`shield:install` command was cancelled.');
         }
 
-        if ($this->confirm('Would you like to show some love by starring the repo?', true)) {
-            if (PHP_OS_FAMILY === 'Darwin') {
-                exec('open https://github.com/bezhanSalleh/filament-shield');
-            }
-            if (PHP_OS_FAMILY === 'Linux') {
-                exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
-            }
-            if (PHP_OS_FAMILY === 'Windows') {
-                exec('start https://github.com/bezhanSalleh/filament-shield');
-            }
+        if (! $this->option('minimal')) {
+            if ($this->confirm('Would you like to show some love by starring the repo?', true)) {
+                if (PHP_OS_FAMILY === 'Darwin') {
+                    exec('open https://github.com/bezhanSalleh/filament-shield');
+                }
+                if (PHP_OS_FAMILY === 'Linux') {
+                    exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
+                }
+                if (PHP_OS_FAMILY === 'Windows') {
+                    exec('start https://github.com/bezhanSalleh/filament-shield');
+                }
 
-            $this->line('Thank you!');
+                $this->line('Thank you!');
+            }
         }
 
         return self::SUCCESS;
@@ -90,13 +97,13 @@ class MakeShieldInstallCommand extends Command
 
     protected function install(bool $fresh = false)
     {
-        $this->call('vendor:publish', [
+        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--provider' => 'Spatie\Permission\PermissionServiceProvider',
         ]);
 
         $this->info('Core Package config published.');
 
-        $this->call('vendor:publish', [
+        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--tag' => 'filament-shield-config',
         ]);
 
@@ -115,19 +122,23 @@ class MakeShieldInstallCommand extends Command
             $this->info('running shield migrations.');
         }
 
-        $this->call('migrate');
+        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('migrate');
 
         if (! $this->option('only')) {
+            $this->newLine();
             $this->info('Generating permissions ...');
             $this->call('shield:generate', [
                 '--all' => true,
+                '--minimal' => $this->option('minimal'),
             ]);
 
+            $this->newLine();
             $this->info('Creating a filament user with Super Admin Role...');
             $this->call('shield:super-admin');
         } else {
             $this->call('shield:generate', [
                 '--resource' => 'RoleResource',
+                '--minimal' => $this->option('minimal'),
             ]);
         }
 
