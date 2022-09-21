@@ -225,7 +225,9 @@ class MakeShieldGenerateCommand extends Command
 
     protected function resourceInfo(array $resources): void
     {
-        if (! $this->option('minimal')) {
+        if ($this->option('minimal')) {
+            $this->info('Successfully generated Permissions & Policies.');
+        } else {
             $this->info('Successfully generated Permissions & Policies for:');
             $this->table(
                 ['#', 'Resource', 'Policy', 'Permissions'],
@@ -240,14 +242,14 @@ class MakeShieldGenerateCommand extends Command
                     ];
                 })
             );
-        } else {
-            $this->info('Successfully generated Permissions & Policies.');
         }
     }
 
     protected function pageInfo(array $pages): void
     {
-        if (! $this->option('minimal')) {
+        if ($this->option('minimal')) {
+            $this->info('Successfully generated Page Permissions.');
+        } else {
             $this->info('Successfully generated Page Permissions for:');
             $this->table(
                 ['#', 'Page', 'Permission'],
@@ -259,14 +261,14 @@ class MakeShieldGenerateCommand extends Command
                     ];
                 })
             );
-        } else {
-            $this->info('Successfully generated Page Permissions.');
         }
     }
 
     protected function widgetInfo(array $widgets): void
     {
-        if (! $this->option('minimal')) {
+        if ($this->option('minimal')) {
+            $this->info('Successfully generated Widget Permissions.');
+        } else {
             $this->info('Successfully generated Widget Permissions for:');
             $this->table(
                 ['#', 'Widget', 'Permission'],
@@ -278,8 +280,6 @@ class MakeShieldGenerateCommand extends Command
                     ];
                 })
             );
-        } else {
-            $this->info('Successfully generated Widget Permissions.');
         }
     }
 
