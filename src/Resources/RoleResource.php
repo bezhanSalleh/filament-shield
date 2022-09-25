@@ -182,8 +182,8 @@ class RoleResource extends Resource
     protected static function getNavigationGroup(): ?string
     {
         return Utils::isResourceNavigationGroupEnabled()
-            ? __('filament-shield::filament-shield.nav.group')
-            : '';
+            ? config('filament-shield::filament-shield.nav.group')
+            : __('filament-shield::filament-shield.nav.group');
     }
 
     protected static function getNavigationLabel(): string
