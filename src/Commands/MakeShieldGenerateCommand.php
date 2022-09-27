@@ -63,6 +63,7 @@ class MakeShieldGenerateCommand extends Command
         {--widget= : One or many widgets separated by comma (,) }
         {--exclude : Exclude the given entities during generation }
         {--ignore-config-exclude : Ignore config `<fg=yellow;options=bold>exclude</>` option during generation }
+        {--minimal : Output minimal amount of info to console}
     ';
     // {--seeder : Exclude the given entities during generation }
     // the idea is to generate a seeder that can be used on production deployment
@@ -100,7 +101,7 @@ class MakeShieldGenerateCommand extends Command
             $this->widgetInfo($widgets->toArray());
         }
 
-        $this->info('Permission & Policies are generated according to your config or passed options.');
+        $this->comment('Permission & Policies are generated according to your config or passed options.');
         $this->info('Enjoy!');
 
         if (cache()->has('shield_general_exclude')) {
@@ -224,50 +225,62 @@ class MakeShieldGenerateCommand extends Command
 
     protected function resourceInfo(array $resources): void
     {
-        $this->info('Successfully generated Permissions & Policies for:');
-        $this->table(
-            ['#', 'Resource', 'Policy', 'Permissions'],
-            collect($resources)->map(function ($resource, $key) {
-                return [
-                    '#' => $key + 1,
-                    'Resource' => $resource['model'],
-                    'Policy' => "{$resource['model']}Policy.php".($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
-                    'Permissions' => implode(','.PHP_EOL, collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission, $key) use ($resource) {
-                        return $permission.'_'.$resource['resource'];
-                    })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
-                ];
-            })
-        );
+        if ($this->option('minimal')) {
+            $this->info('Successfully generated Permissions & Policies.');
+        } else {
+            $this->info('Successfully generated Permissions & Policies for:');
+            $this->table(
+                ['#', 'Resource', 'Policy', 'Permissions'],
+                collect($resources)->map(function ($resource, $key) {
+                    return [
+                        '#' => $key + 1,
+                        'Resource' => $resource['model'],
+                        'Policy' => "{$resource['model']}Policy.php".($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
+                        'Permissions' => implode(','.PHP_EOL, collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission, $key) use ($resource) {
+                            return $permission.'_'.$resource['resource'];
+                        })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
+                    ];
+                })
+            );
+        }
     }
 
     protected function pageInfo(array $pages): void
     {
-        $this->info('Successfully generated Page Permissions for:');
-        $this->table(
-            ['#', 'Page', 'Permission'],
-            collect($pages)->map(function ($page, $key) {
-                return [
-                    '#' => $key + 1,
-                    'Page' => Str::replace(config('filament-shield.permission_prefixes.page').'_', '', $page),
-                    'Permission' => $page,
-                ];
-            })
-        );
+        if ($this->option('minimal')) {
+            $this->info('Successfully generated Page Permissions.');
+        } else {
+            $this->info('Successfully generated Page Permissions for:');
+            $this->table(
+                ['#', 'Page', 'Permission'],
+                collect($pages)->map(function ($page, $key) {
+                    return [
+                        '#' => $key + 1,
+                        'Page' => Str::replace(config('filament-shield.permission_prefixes.page').'_', '', $page),
+                        'Permission' => $page,
+                    ];
+                })
+            );
+        }
     }
 
     protected function widgetInfo(array $widgets): void
     {
-        $this->info('Successfully generated Widget Permissions for:');
-        $this->table(
-            ['#', 'Widget', 'Permission'],
-            collect($widgets)->map(function ($widget, $key) {
-                return [
-                    '#' => $key + 1,
-                    'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget').'_', '', $widget),
-                    'Permission' => $widget,
-                ];
-            })
-        );
+        if ($this->option('minimal')) {
+            $this->info('Successfully generated Widget Permissions.');
+        } else {
+            $this->info('Successfully generated Widget Permissions for:');
+            $this->table(
+                ['#', 'Widget', 'Permission'],
+                collect($widgets)->map(function ($widget, $key) {
+                    return [
+                        '#' => $key + 1,
+                        'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget').'_', '', $widget),
+                        'Permission' => $widget,
+                    ];
+                })
+            );
+        }
     }
 
     protected static function getPolicyStub(string $model): string
