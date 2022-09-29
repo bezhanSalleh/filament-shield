@@ -235,9 +235,11 @@ class RoleResource extends Resource
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
-                                collect(Utils::getGeneralResourcePermissionPrefixes())->each(function ($permission) use ($set, $entity, $state) {
-                                    $set($permission.'_'.$entity['resource'], $state);
-                                });
+                                collect(Utils::getGeneralResourcePermissionPrefixes())
+                                    ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
+                                    ->each(function ($permission) use ($set, $entity, $state) {
+                                        $set($permission.'_'.$entity['resource'], $state);
+                                    });
 
                                 if (! $state) {
                                     $set('select_all', false);
@@ -265,36 +267,38 @@ class RoleResource extends Resource
 
     public static function getResourceEntityPermissionsSchema($entity): ?array
     {
-        return collect(Utils::getGeneralResourcePermissionPrefixes())->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
-            $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity['resource'])
-                ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
-                ->extraAttributes(['class' => 'text-primary-600'])
-                ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $permission) {
-                    if (is_null($record)) {
-                        return;
-                    }
+        return collect(Utils::getGeneralResourcePermissionPrefixes())
+            ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
+            ->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
+                $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity['resource'])
+                    ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
+                    ->extraAttributes(['class' => 'text-primary-600'])
+                    ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $permission) {
+                        if (is_null($record)) {
+                            return;
+                        }
 
-                    $set($permission.'_'.$entity['resource'], $record->checkPermissionTo($permission.'_'.$entity['resource']));
+                        $set($permission.'_'.$entity['resource'], $record->checkPermissionTo($permission.'_'.$entity['resource']));
 
-                    static::refreshResourceEntityStateAfterHydrated($record, $set, $entity['resource']);
+                        static::refreshResourceEntityStateAfterHydrated($record, $set, $entity['resource']);
 
-                    static::refreshSelectAllStateViaEntities($set, $get);
-                })
-                ->reactive()
-                ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
-                    static::refreshResourceEntityStateAfterUpdate($set, $get, Str::of($entity['resource']));
+                        static::refreshSelectAllStateViaEntities($set, $get);
+                    })
+                    ->reactive()
+                    ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
+                        static::refreshResourceEntityStateAfterUpdate($set, $get, Str::of($entity['resource']));
 
-                    if (! $state) {
-                        $set($entity['resource'], false);
-                        $set('select_all', false);
-                    }
+                        if (! $state) {
+                            $set($entity['resource'], false);
+                            $set('select_all', false);
+                        }
 
-                    static::refreshSelectAllStateViaEntities($set, $get);
-                })
-                ->dehydrated(fn ($state): bool => $state);
+                        static::refreshSelectAllStateViaEntities($set, $get);
+                    })
+                    ->dehydrated(fn ($state): bool => $state);
 
-            return $permissions;
-        }, collect())
+                return $permissions;
+            }, collect())
         ->toArray();
     }
 
@@ -325,9 +329,11 @@ class RoleResource extends Resource
     {
         collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
             $set($entity['resource'], $state);
-            collect(Utils::getGeneralResourcePermissionPrefixes())->each(function ($permission) use ($entity, $set, $state) {
-                $set($permission.'_'.$entity['resource'], $state);
-            });
+            collect(Utils::getGeneralResourcePermissionPrefixes())
+                ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
+                ->each(function ($permission) use ($entity, $set, $state) {
+                    $set($permission.'_'.$entity['resource'], $state);
+                });
         });
 
         collect(FilamentShield::getPages())->each(function ($page) use ($set, $state) {
@@ -352,6 +358,7 @@ class RoleResource extends Resource
     protected static function refreshResourceEntityStateAfterUpdate(Closure $set, Closure $get, string $entity): void
     {
         $permissionStates = collect(Utils::getGeneralResourcePermissionPrefixes())
+            ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
             ->map(function ($permission) use ($get, $entity) {
                 return (bool) $get($permission.'_'.$entity);
             });
@@ -377,8 +384,11 @@ class RoleResource extends Resource
             ->groupBy(function ($item) {
                 return $item;
             })->map->count()
-            ->reduce(function ($counts, $role, $key) {
-                if ($role > 1 && $role == count(Utils::getGeneralResourcePermissionPrefixes())) {
+            ->reduce(function ($counts, $role, $key) use ($entity) {
+                $permissions_count = collect(Utils::getGeneralResourcePermissionPrefixes())
+                    ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
+                    ->count();
+                if ($role > 1 && $role == $permissions_count) {
                     $counts[$key] = true;
                 } else {
                     $counts[$key] = false;
@@ -485,9 +495,11 @@ class RoleResource extends Resource
     {
         $resourcePermissions = collect();
         collect(FilamentShield::getResources())->each(function ($entity) use ($resourcePermissions) {
-            collect(Utils::getGeneralResourcePermissionPrefixes())->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))->map(function ($permission) use ($resourcePermissions, $entity) {
-                $resourcePermissions->push((string) Str::of($permission.'_'.$entity['resource']));
-            });
+            collect(Utils::getGeneralResourcePermissionPrefixes())
+                ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
+                ->map(function ($permission) use ($resourcePermissions, $entity) {
+                    $resourcePermissions->push((string) Str::of($permission.'_'.$entity['resource']));
+                });
         });
 
         $entitiesPermissions = $resourcePermissions

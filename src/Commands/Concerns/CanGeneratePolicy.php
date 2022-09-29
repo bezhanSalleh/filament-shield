@@ -44,6 +44,7 @@ trait CanGeneratePolicy
     protected function generatePolicyStubVariables(array $entity): array
     {
         $stubVariables = collect(Utils::getGeneralResourcePermissionPrefixes())
+            ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
             ->reduce(function ($gates, $permission) use ($entity) {
                 $gates[Str::studly($permission)] = $permission.'_'.$entity['resource'];
 
