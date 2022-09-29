@@ -386,7 +386,7 @@ class RoleResource extends Resource
             })->map->count()
             ->reduce(function ($counts, $role, $key) use ($entity) {
                 $permissions_count = collect(Utils::getGeneralResourcePermissionPrefixes())
-                    ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
+                    ->merge(Utils::getSpecificResourcePermissionPrefixes($entity))
                     ->count();
                 if ($role > 1 && $role == $permissions_count) {
                     $counts[$key] = true;
