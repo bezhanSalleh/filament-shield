@@ -18,6 +18,7 @@ class FilamentShield
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();
             collect(Utils::getGeneralResourcePermissionPrefixes())
+                ->merge(Utils::getSpecificResourcePermissionPrefixes($resource))
                 ->each(function ($prefix) use ($resource, $permissions) {
                     $permissions->push(Permission::firstOrCreate(
                         ['name' => $prefix.'_'.$resource],

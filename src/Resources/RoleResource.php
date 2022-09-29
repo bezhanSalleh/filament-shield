@@ -265,7 +265,7 @@ class RoleResource extends Resource
 
     public static function getResourceEntityPermissionsSchema($entity): ?array
     {
-        return collect(Utils::getGeneralResourcePermissionPrefixes())->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
+        return collect(Utils::getGeneralResourcePermissionPrefixes())->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity['resource'])
                 ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
@@ -485,7 +485,7 @@ class RoleResource extends Resource
     {
         $resourcePermissions = collect();
         collect(FilamentShield::getResources())->each(function ($entity) use ($resourcePermissions) {
-            collect(Utils::getGeneralResourcePermissionPrefixes())->map(function ($permission) use ($resourcePermissions, $entity) {
+            collect(Utils::getGeneralResourcePermissionPrefixes())->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))->map(function ($permission) use ($resourcePermissions, $entity) {
                 $resourcePermissions->push((string) Str::of($permission.'_'.$entity['resource']));
             });
         });

@@ -80,6 +80,11 @@ class Utils
         return config('filament-shield.permission_prefixes.resource');
     }
 
+    public static function getSpecificResourcePermissionPrefixes(string $resource_suffix): array
+	{
+		return config('filament-shield.custom_permissions.resources.' . $resource_suffix, []);
+	}
+
     public static function getPagePermissionPrefix(): string
     {
         return (string) config('filament-shield.permission_prefixes.page');
