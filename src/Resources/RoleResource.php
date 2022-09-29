@@ -358,7 +358,7 @@ class RoleResource extends Resource
     protected static function refreshResourceEntityStateAfterUpdate(Closure $set, Closure $get, string $entity): void
     {
         $permissionStates = collect(Utils::getGeneralResourcePermissionPrefixes())
-            ->merge(Utils::getSpecificResourcePermissionPrefixes($entity['resource']))
+            ->merge(Utils::getSpecificResourcePermissionPrefixes($entity))
             ->map(function ($permission) use ($get, $entity) {
                 return (bool) $get($permission.'_'.$entity);
             });
