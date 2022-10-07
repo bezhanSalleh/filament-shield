@@ -23,7 +23,7 @@ return [
     'field.guard_name' => 'Имя гварда',
     'field.permissions' => 'Разрешения',
     'field.select_all.name' => 'Выбрать все',
-    'field.select_all.message' => 'Включить все разрешения, которые <Span class="text-primary font-medium">Доступны</span> для этой роли',
+    'field.select_all.message' => 'Включить все разрешения, которые <span class="text-primary font-medium">Доступны</span> для этой роли',
 
     /*
     |------------------------------------------------- -------------------------
