@@ -3,6 +3,7 @@
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
@@ -34,9 +35,10 @@ class EditRole extends EditRecord
 
     protected function afterSave(): void
     {
+	$permissionModel = Utils::getPermissionModel();
         $permissionModels = collect();
-        $this->permissions->each(function ($permission) use ($permissionModels) {
-            $permissionModels->push(Permission::firstOrCreate(
+        $this->permissions->each(function ($permission) use ($permissionModel, $permissionModels) {
+            $permissionModels->push((new $permissionModel())::firstOrCreate(
                 ['name' => $permission],
                 ['guard_name' => $this->data['guard_name']]
             ));

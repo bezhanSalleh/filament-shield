@@ -8,14 +8,12 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class MakeShieldSuperAdminCommand extends Command
 {
     use CanValidateInput;
 
-    public $signature = 'shield:super-admin
-        {--user= : ID of user to be made super admin.}';
+    public $signature = 'shield:super-admin {--user= : ID of user to be made super admin.}';
 
     public $description = 'Creates Filament Super Admin';
 
@@ -29,11 +27,13 @@ class MakeShieldSuperAdminCommand extends Command
         /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
 
-        if (Role::whereName(Utils::getSuperAdminName())->doesntExist()) {
+        $roleModel = Utils::getRoleModel();
+
+        if ((new $roleModel())::whereName(Utils::getSuperAdminName())->doesntExist()) {
             FilamentShield::createRole();
         }
 
-        if (Utils::isFilamentUserRoleEnabled() && Role::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
+        if (Utils::isFilamentUserRoleEnabled() && (new $roleModel())::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
             FilamentShield::createRole(isSuperAdmin: false);
         }
 

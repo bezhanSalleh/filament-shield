@@ -4,6 +4,16 @@ namespace BezhanSalleh\FilamentShield\Support;
 
 class Utils
 {
+    public static function getRoleModel(): string
+    {
+        return (string) config('filament-shield.models.role') ?? Spatie\Permission\Models\Role::class;
+    }
+
+    public static function getPermissionModel(): string
+    {
+        return (string) config('filament-shield.models.permission') ?? Spatie\Permission\Models\Permission::class;
+    }
+
     public static function getFilamentAuthGuard(): string
     {
         return (string) config('filament.auth.guard');

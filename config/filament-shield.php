@@ -56,6 +56,11 @@ return [
         'option' => 'policies_and_permissions',
     ],
 
+    'models' =>  [
+        'role' => \Spatie\Permission\Models\Role::class,
+        'permission' => \Spatie\Permission\Models\Permission::class,
+    ],
+
     'exclude' => [
         'enabled' => true,
 

@@ -24,6 +24,11 @@ class RoleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public function __construct()
+    {
+        static::$model = Utils::getRoleModel();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -495,7 +500,9 @@ class RoleResource extends Resource
             ->merge(FilamentShield::getWidgets())
             ->values();
 
-        return Permission::whereNotIn('name', $entitiesPermissions)->pluck('name');
+        $permissionModel = Utils::getPermissionModel();
+
+        return (new $permissionModel())::whereNotIn('name', $entitiesPermissions)->pluck('name');
     }
 
     protected static function getCustomEntitiesPermisssionSchema(): ?array

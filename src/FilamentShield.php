@@ -16,10 +16,11 @@ class FilamentShield
     public static function generateForResource(string $resource): void
     {
         if (Utils::isResourceEntityEnabled()) {
+            $permissionModel = Utils::getPermissionModel();
             $permissions = collect();
             collect(Utils::getGeneralResourcePermissionPrefixes())
-                ->each(function ($prefix) use ($resource, $permissions) {
-                    $permissions->push(Permission::firstOrCreate(
+                ->each(function ($prefix) use ($resource, $permissions, $permissionModel) {
+                    $permissions->push((new $permissionModel())::firstOrCreate(
                         ['name' => $prefix.'_'.$resource],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
@@ -32,7 +33,8 @@ class FilamentShield
     public static function generateForPage(string $page): void
     {
         if (Utils::isPageEntityEnabled()) {
-            $permission = Permission::firstOrCreate(
+            $permissionModel = Utils::getPermissionModel();
+            $permission = (new $permissionModel())::firstOrCreate(
                 ['name' => $page],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -44,7 +46,8 @@ class FilamentShield
     public static function generateForWidget(string $widget): void
     {
         if (Utils::isWidgetEntityEnabled()) {
-            $permission = Permission::firstOrCreate(
+            $permissionModel = Utils::getPermissionModel();
+            $permission = (new $permissionModel())::firstOrCreate(
                 ['name' => $widget],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -66,7 +69,9 @@ class FilamentShield
 
     public static function createRole(bool $isSuperAdmin = true): Role
     {
-        return Role::firstOrCreate(
+        $roleClass = Utils::getRoleModel();
+
+        return (new $roleClass())::firstOrCreate(
             ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
             ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
         );
@@ -83,7 +88,7 @@ class FilamentShield
             ->unique()
             ->filter(function ($resource) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(
+                    return !in_array(
                         Str::of($resource)->afterLast('\\'),
                         Utils::getExcludedResouces()
                     );
@@ -107,9 +112,6 @@ class FilamentShield
 
     /**
      * Get the localized resource label
-     *
-     * @param  string  $entity
-     * @return string
      */
     public static function getLocalizedResourceLabel(string $entity): string
     {
@@ -122,14 +124,11 @@ class FilamentShield
 
     /**
      * Get the localized resource permission label
-     *
-     * @param  string  $permission
-     * @return string
      */
     public static function getLocalizedResourcePermissionLabel(string $permission): string
     {
-        return Lang::has("filament-shield::filament-shield.resource_permission_prefixes_labels.$permission", app()->getLocale())
-            ? __("filament-shield::filament-shield.resource_permission_prefixes_labels.$permission")
+        return Lang::has("filament-shield::filament-shield.resource_permission_prefixes_labels.{$permission}", app()->getLocale())
+            ? __("filament-shield::filament-shield.resource_permission_prefixes_labels.{$permission}")
             : Str::of($permission)->headline();
     }
 
@@ -143,7 +142,7 @@ class FilamentShield
         return collect(Filament::getPages())
             ->filter(function ($page) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
+                    return !in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
                 }
 
                 return true;
@@ -162,9 +161,6 @@ class FilamentShield
 
     /**
      * Get localized page label
-     *
-     * @param  string  $page
-     * @return string|bool
      */
     public static function getLocalizedPageLabel(string $page): string|bool
     {
@@ -187,7 +183,7 @@ class FilamentShield
         return collect(Filament::getWidgets())
             ->filter(function ($widget) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
+                    return !in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
                 }
 
                 return true;
@@ -207,8 +203,9 @@ class FilamentShield
     /**
      * Get localized widget label
      *
-     * @param  string  $page
-     * @return string|bool
+     * @param string $page
+     *
+     * @return bool|string
      */
     public static function getLocalizedWidgetLabel(string $widget): string
     {
@@ -220,15 +217,15 @@ class FilamentShield
             ->after(Utils::getPagePermissionPrefix().'_')
             ->headline();
 
-        if ($grandpa === "Filament\Widgets\ChartWidget") {
+        if ($grandpa === 'Filament\\Widgets\\ChartWidget') {
             return (string) invade(new $class())->getHeading() ?? $heading;
         }
 
         return match ($parent) {
-            "Filament\Widgets\TableWidget" => (string) invade(new $class())->getTableHeading(),
-            "Filament\Widgets\StatsOverviewWidget" => (string) static::hasHeadingForShield($class)
-                ? (new $class())->getHeadingForShield()
-                : $heading,
+        'Filament\\Widgets\\TableWidget' => (string) invade(new $class())->getTableHeading(),
+            'Filament\\Widgets\\StatsOverviewWidget' => (string) static::hasHeadingForShield($class)
+            ? (new $class())->getHeadingForShield()
+            : $heading,
             default => $heading
         };
     }
@@ -239,8 +236,8 @@ class FilamentShield
             ->first(fn ($item) => Str::endsWith(
                 $item,
                 Str::of($string)
-                ->after('_')
-                ->studly()
+                    ->after('_')
+                    ->studly()
             ));
     }
 

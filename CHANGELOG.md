@@ -2,6 +2,10 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.2.8 - 2022-10-10
+
+- introduced ability to override used Role and Permission Model in RoleResource in https://github.com/bezhanSalleh/filament-shield/pull/133
+
 ## 2.2.7 - 2022-09-29
 
 ### What's Changed
