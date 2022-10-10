@@ -126,7 +126,7 @@ class {{ modelPolicy }}
     }
 
     /**
-     * Determine whether the {{ auth_model_variable }} can bulk restore.
+     * Determine whether the {{ auth_model_variable }} can replicate.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
