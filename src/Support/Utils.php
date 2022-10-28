@@ -157,8 +157,15 @@ class Utils
         return (bool) config('filament-shield.register_role_policy', true);
     }
 
-    public static function doesResourceHaveCustomPermissions(string $resourceClass)
+    public static function doesResourceHaveCustomPermissions(string $resourceClass): bool
     {
         return in_array(HasShieldPermissions::class, class_implements($resourceClass));
+    }
+
+    public static function showModelPath(string $resourceFQCN): string
+    {
+        return config('filament-shield.shield_resource.show_model_path', true)
+            ? get_class(new ($resourceFQCN::getModel())())
+            : "";
     }
 }

@@ -238,7 +238,7 @@ class RoleResource extends Resource
                     ->schema([
                         Forms\Components\Toggle::make($entity['resource'])
                             ->label(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
-                            ->helperText(get_class(new ($entity['fqcn']::getModel())()))
+                            ->helperText(Utils::showModelPath($entity['fqcn']))
                             ->onIcon('heroicon-s-lock-open')
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
