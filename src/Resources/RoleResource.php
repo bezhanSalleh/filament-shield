@@ -26,6 +26,8 @@ class RoleResource extends Resource
 
     protected static $permissionsCollection;
 
+    protected static $entities;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -241,9 +243,15 @@ class RoleResource extends Resource
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
-                                collect(Utils::getGeneralResourcePermissionPrefixes())->each(function ($permission) use ($set, $entity, $state) {
-                                    $set($permission.'_'.$entity['resource'], $state);
-                                });
+                                if (Utils::doesResourceHaveCustomPermissions($resource = $entity['fqcn'])) {
+                                    collect($resource::getShieldPermissions())->each(function($permission) use ($set, $entity, $state) {
+                                        $set($permission.'_'.$entity['resource'],$state);
+                                    });
+                                } else {
+                                    collect(Utils::getGeneralResourcePermissionPrefixes())->each(function ($permission) use ($set, $entity, $state) {
+                                        $set($permission.'_'.$entity['resource'], $state);
+                                    });
+                                }
 
                                 if (! $state) {
                                     $set('select_all', false);
@@ -271,7 +279,11 @@ class RoleResource extends Resource
 
     public static function getResourceEntityPermissionsSchema($entity): ?array
     {
-        return collect(Utils::getGeneralResourcePermissionPrefixes())->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
+        $permissionPrefixes = Utils::doesResourceHaveCustomPermissions($resource = $entity['fqcn'])
+            ? $resource::getShieldPermissions()
+            : Utils::getGeneralResourcePermissionPrefixes();
+
+        return collect($permissionPrefixes)->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity['resource'])
                 ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
@@ -282,7 +294,7 @@ class RoleResource extends Resource
 
                     $set($permission.'_'.$entity['resource'], $record->checkPermissionTo($permission.'_'.$entity['resource']));
 
-                    static::refreshResourceEntityStateAfterHydrated($record, $set, $entity['resource']);
+                    static::refreshResourceEntityStateAfterHydrated($record, $set, $entity);
 
                     static::refreshSelectAllStateViaEntities($set, $get);
                 })
@@ -371,33 +383,37 @@ class RoleResource extends Resource
         }
     }
 
-    protected static function refreshResourceEntityStateAfterHydrated(Model $record, Closure $set, string $entity): void
+    protected static function refreshResourceEntityStateAfterHydrated(Model $record, Closure $set, array $entity): void
     {
-        $entities = $record->permissions->pluck('name')
-            ->reduce(function ($roles, $role) {
-                $roles[$role] = Str::afterLast($role, '_');
 
-                return $roles;
-            }, collect())
-            ->values()
-            ->groupBy(function ($item) {
-                return $item;
-            })->map->count()
-            ->reduce(function ($counts, $role, $key) {
-                if ($role > 1 && $role == count(Utils::getGeneralResourcePermissionPrefixes())) {
-                    $counts[$key] = true;
-                } else {
-                    $counts[$key] = false;
-                }
+            $entities = $record->permissions->pluck('name')
+                ->reduce(function ($roles, $role) {
+                    $roles[$role] = Str::afterLast($role, '_');
 
-                return $counts;
-            }, []);
+                    return $roles;
+                }, collect())
+                ->values()
+                ->groupBy(function ($item) {
+                    return $item;
+                })->map->count()
+                ->reduce(function ($counts, $role, $key) use($entity){
+                    $count = Utils::doesResourceHaveCustomPermissions($resource = $entity['fqcn'])
+                        ? count($resource::getShieldPermissions())
+                        : count(Utils::getGeneralResourcePermissionPrefixes());
+                    if ($role > 1 && $role === $count ) {
+                        $counts[$key] = true;
+                    } else {
+                        $counts[$key] = false;
+                    }
+
+                    return $counts;
+                }, []);
 
         // set entity's state if one are all permissions are true
-        if (Arr::exists($entities, $entity) && Arr::get($entities, $entity)) {
-            $set($entity, true);
+        if (Arr::exists($entities, $entity['resource']) && Arr::get($entities, $entity['resource'])) {
+            $set($entity['resource'], true);
         } else {
-            $set($entity, false);
+            $set($entity['resource'], false);
             $set('select_all', false);
         }
     }

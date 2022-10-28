@@ -192,7 +192,7 @@ class MakeShieldGenerateCommand extends Command
             ->each(function ($entity) {
                 if ($this->generatorOption === 'policies_and_permissions') {
                     $this->copyStubToApp(static::getPolicyStub($entity['model']), $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
-                    FilamentShield::generateForResource($entity['resource']);
+                    FilamentShield::generateForResource($entity);
                 }
 
                 if ($this->generatorOption === 'policies') {
@@ -200,7 +200,7 @@ class MakeShieldGenerateCommand extends Command
                 }
 
                 if ($this->generatorOption === 'permissions') {
-                    FilamentShield::generateForResource($entity['resource']);
+                    FilamentShield::generateForResource($entity);
                 }
             });
     }
@@ -236,7 +236,12 @@ class MakeShieldGenerateCommand extends Command
                         '#' => $key + 1,
                         'Resource' => $resource['model'],
                         'Policy' => "{$resource['model']}Policy.php".($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
-                        'Permissions' => implode(','.PHP_EOL, collect(config('filament-shield.permission_prefixes.resource'))->map(function ($permission, $key) use ($resource) {
+                        'Permissions' => implode(','.PHP_EOL,
+                            collect(
+                                Utils::doesResourceHaveCustomPermissions($resource['fqcn'])
+                                ? $resource['fqcn']::getShieldPermissions()
+                                : Utils::getGeneralResourcePermissionPrefixes()
+                            )->map(function ($permission, $key) use ($resource) {
                             return $permission.'_'.$resource['resource'];
                         })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
                     ];
