@@ -24,6 +24,8 @@ class RoleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static $permissionsCollection;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -224,6 +226,10 @@ class RoleResource extends Resource
 
     public static function getResourceEntitiesSchema(): ?array
     {
+        if (blank(static::$permissionsCollection)) {
+            static::$permissionsCollection = Permission::all();
+        }
+
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
             $entities[] = Forms\Components\Card::make()
                     ->extraAttributes(['class' => 'border-0 shadow-lg'])
@@ -495,7 +501,7 @@ class RoleResource extends Resource
             ->merge(FilamentShield::getWidgets())
             ->values();
 
-        return Permission::whereNotIn('name', $entitiesPermissions)->pluck('name');
+        return static::$permissionsCollection->whereNotIn('name', $entitiesPermissions)->pluck('name');
     }
 
     protected static function getCustomEntitiesPermisssionSchema(): ?array
