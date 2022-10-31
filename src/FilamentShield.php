@@ -7,19 +7,27 @@ use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
 {
+    public static function getRoleModel(): string
+    {
+        return config('permission.models.role');
+    }
+
+    public static function getPermissionModel(): string
+    {
+        return config('permission.models.permission');
+    }
+
     public static function generateForResource(string $resource): void
     {
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();
             collect(Utils::getGeneralResourcePermissionPrefixes())
                 ->each(function ($prefix) use ($resource, $permissions) {
-                    $permissions->push(Permission::firstOrCreate(
+                    $permissions->push(static::getPermissionModel()::firstOrCreate(
                         ['name' => $prefix.'_'.$resource],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
@@ -32,7 +40,7 @@ class FilamentShield
     public static function generateForPage(string $page): void
     {
         if (Utils::isPageEntityEnabled()) {
-            $permission = Permission::firstOrCreate(
+            $permission = static::getPermissionModel()::firstOrCreate(
                 ['name' => $page],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -44,7 +52,7 @@ class FilamentShield
     public static function generateForWidget(string $widget): void
     {
         if (Utils::isWidgetEntityEnabled()) {
-            $permission = Permission::firstOrCreate(
+            $permission = static::getPermissionModel()::firstOrCreate(
                 ['name' => $widget],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -64,9 +72,9 @@ class FilamentShield
         }
     }
 
-    public static function createRole(bool $isSuperAdmin = true): Role
+    public static function createRole(bool $isSuperAdmin = true)
     {
-        return Role::firstOrCreate(
+        return static::getRoleModel()::firstOrCreate(
             ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
             ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
         );

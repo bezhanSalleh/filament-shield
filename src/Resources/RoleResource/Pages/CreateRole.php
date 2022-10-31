@@ -2,12 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
+use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
 
 class CreateRole extends CreateRecord
 {
@@ -28,7 +28,7 @@ class CreateRole extends CreateRecord
     {
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
-            $permissionModels->push(Permission::firstOrCreate(
+            $permissionModels->push(FilamentShield::getPermissionModel()::firstOrCreate(
                 /** @phpstan-ignore-next-line */
                 ['name' => $permission],
                 ['guard_name' => $this->data['guard_name']]
