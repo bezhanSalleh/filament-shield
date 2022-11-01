@@ -2,7 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -42,7 +42,7 @@ class MakeShieldSeederCommand extends Command
             ]);
         }
 
-        if (FilamentShield::getRoleModel()::doesntExist() && FilamentShield::getPermissionModel()::doesntExist()) {
+        if (Utils::getRoleModel()::doesntExist() && Utils::getPermissionModel()::doesntExist()) {
             $this->warn(' There are no roles or permissions to create the seeder. Please first run `shield:generate --all`');
 
             return static::INVALID;
@@ -52,8 +52,8 @@ class MakeShieldSeederCommand extends Command
         $permissionsViaRoles = collect();
         $directPermissions = collect();
 
-        if (FilamentShield::getRoleModel()::exists()) {
-            $permissionsViaRoles = collect(FilamentShield::getRoleModel()::with('permissions')->get())
+        if (Utils::getRoleModel()::exists()) {
+            $permissionsViaRoles = collect(Utils::getRoleModel()::with('permissions')->get())
                 ->map(function ($role) use ($directPermissionNames) {
                     $rolePermissions = $role->permissions
                         ->pluck('name')
@@ -69,8 +69,8 @@ class MakeShieldSeederCommand extends Command
                 });
         }
 
-        if (FilamentShield::getPermissionModel()::exists()) {
-            $directPermissions = collect(FilamentShield::getPermissionModel()::get())
+        if (Utils::getPermissionModel()::exists()) {
+            $directPermissions = collect(Utils::getPermissionModel()::get())
                 ->filter(fn ($permission) => ! in_array($permission->name, $directPermissionNames->unique()->flatten()->all()))
                 ->map(fn ($permission) => [
                     'name' => $permission->name,

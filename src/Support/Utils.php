@@ -2,6 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+
 class Utils
 {
     public static function getFilamentAuthGuard(): string
@@ -153,5 +155,34 @@ class Utils
     public static function isRolePolicyRegistered(): bool
     {
         return (bool) config('filament-shield.register_role_policy', true);
+    }
+
+    public static function doesResourceHaveCustomPermissions(string $resourceClass): bool
+    {
+        return in_array(HasShieldPermissions::class, class_implements($resourceClass));
+    }
+
+    public static function showModelPath(string $resourceFQCN): string
+    {
+        return config('filament-shield.shield_resource.show_model_path', true)
+            ? get_class(new ($resourceFQCN::getModel())())
+            : '';
+    }
+
+    public static function getResourcePermissionPrefixes(string $resourceFQCN): array
+    {
+        return static::doesResourceHaveCustomPermissions($resourceFQCN)
+            ? $resourceFQCN::getPermissionPrefixes()
+            : static::getGeneralResourcePermissionPrefixes();
+    }
+
+    public static function getRoleModel(): string
+    {
+        return config('permission.models.role');
+    }
+
+    public static function getPermissionModel(): string
+    {
+        return config('permission.models.permission');
     }
 }

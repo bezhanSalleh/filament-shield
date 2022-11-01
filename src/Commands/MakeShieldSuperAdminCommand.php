@@ -28,11 +28,11 @@ class MakeShieldSuperAdminCommand extends Command
         /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
 
-        if (FilamentShield::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
+        if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
             FilamentShield::createRole();
         }
 
-        if (Utils::isFilamentUserRoleEnabled() && FilamentShield::getRoleModel()::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
+        if (Utils::isFilamentUserRoleEnabled() && Utils::getRoleModel()::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
             FilamentShield::createRole(isSuperAdmin: false);
         }
 

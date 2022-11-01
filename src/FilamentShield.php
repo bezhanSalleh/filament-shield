@@ -11,24 +11,18 @@ use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
 {
-    public static function getRoleModel(): string
+    public static function generateForResource(array $entity): void
     {
-        return config('permission.models.role');
-    }
+        $resourceByFQCN = $entity['fqcn'];
+        $resourceName = $entity['resource'];
+        $permissionPrefixes = Utils::getResourcePermissionPrefixes($resourceByFQCN);
 
-    public static function getPermissionModel(): string
-    {
-        return config('permission.models.permission');
-    }
-
-    public static function generateForResource(string $resource): void
-    {
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();
-            collect(Utils::getGeneralResourcePermissionPrefixes())
-                ->each(function ($prefix) use ($resource, $permissions) {
-                    $permissions->push(static::getPermissionModel()::firstOrCreate(
-                        ['name' => $prefix.'_'.$resource],
+            collect($permissionPrefixes)
+                ->each(function ($prefix) use ($resourceName, $permissions) {
+                    $permissions->push(Utils::getPermissionModel()::firstOrCreate(
+                        ['name' => $prefix.'_'.$resourceName],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
                 });
@@ -40,7 +34,7 @@ class FilamentShield
     public static function generateForPage(string $page): void
     {
         if (Utils::isPageEntityEnabled()) {
-            $permission = static::getPermissionModel()::firstOrCreate(
+            $permission = Utils::getPermissionModel()::firstOrCreate(
                 ['name' => $page],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -52,7 +46,7 @@ class FilamentShield
     public static function generateForWidget(string $widget): void
     {
         if (Utils::isWidgetEntityEnabled()) {
-            $permission = static::getPermissionModel()::firstOrCreate(
+            $permission = Utils::getPermissionModel()::firstOrCreate(
                 ['name' => $widget],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -74,7 +68,7 @@ class FilamentShield
 
     public static function createRole(bool $isSuperAdmin = true)
     {
-        return static::getRoleModel()::firstOrCreate(
+        return Utils::getRoleModel()::firstOrCreate(
             ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
             ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
         );
@@ -247,8 +241,8 @@ class FilamentShield
             ->first(fn ($item) => Str::endsWith(
                 $item,
                 Str::of($string)
-                ->after('_')
-                ->studly()
+                    ->after('_')
+                    ->studly()
             ));
     }
 

@@ -7,6 +7,7 @@ return [
         'navigation_badge' => true,
         'navigation_group' => true,
         'is_globally_searchable' => false,
+        'show_model_path' => true,
     ],
 
     'auth_provider_model' => [

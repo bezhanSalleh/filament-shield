@@ -2,8 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
@@ -36,7 +36,7 @@ class EditRole extends EditRecord
     {
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
-            $permissionModels->push(FilamentShield::getPermissionModel()::firstOrCreate(
+            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate(
                 ['name' => $permission],
                 ['guard_name' => $this->data['guard_name']]
             ));

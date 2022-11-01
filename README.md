@@ -41,7 +41,9 @@ Table of contents
   - [Upgrade](#upgrade)
       - [v2.x](#v2x)
   - [Installation](#installation)
-      - [Resource Custom Permissions](#resource-custom-permissions)
+      - [Resources](#resources)
+        - [Default](#default)
+        - [Custom Permissions](#custom-permissions)
       - [Pages](#pages)
           - [Pages Hooks](#pages-hooks)
           - [Pages Redirect Path](#pages-redirect-path)
@@ -136,6 +138,7 @@ php artisan vendor:publish --tag=filament-shield-config
               'navigation_badge' => true,
               'navigation_group' => true,
               'is_globally_searchable' => false,
+              'show_model_path' => true,
           ],
 
           'auth_provider_model' => [
@@ -211,9 +214,96 @@ php artisan shield:install
 
 Follow the prompts and enjoy!
 
-#### Resource Custom Permissions
+#### Resources
+Generally there are two scenraios that shield handles permissions for your `Filament` resources.
 
-You can add custom permissions for `Resources` through Config file.
+##### Default
+Out of the box `Shield` handles the predefined permissions for `Filament` resources. So if that's all what you need you are all set. 
+If you need to add a single permission(for instance `lock`) and have it available for all your resources just append it to following `config` key:
+
+```php
+    permission_prefixes' => [
+        'resource' => [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'restore',
+            'restore_any',
+            'replicate',
+            'reorder',
+            'delete',
+            'delete_any',
+            'force_delete',
+            'force_delete_any',
+            'lock'
+        ],
+        ...
+    ],
+```
+:bulb: Now you are thinking **`what if I need a permission to be only avaialble for just one resource?`**
+No worries, that's where [Custom Permissions](#custom-permissions) come to play.
+
+##### Custom Permissions
+To define custom permissions per `Resource` your `Resource` must implement the `HasShieldPermissions` contract.
+This contract has a `getPermissionPrefixes()` method which returns an array of permission prefixes for your `Resource`.
+
+Consider you have a `PostResource` and you want a couple of the predefined permissions plus a new permission called `publish_posts` to be only available for `PostResource` only.
+
+```php
+<?php
+
+namespace BezhanSalleh\FilamentShield\Resources;
+
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+...
+
+class RoleResource extends Resource implements HasShieldPermissions
+{
+    ...
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
+        ];
+    }
+
+    ...
+}
+```
+In the above example the `getPermissionPrefixes()` method returns the permission prefixes `Shield` needs to generate the permissions.
+
+✅ Now to enforce `publish_post` permission headover to your `PostPolicy` and add a `publish()` method:
+```php
+    /**
+     * Determine whether the user can publish posts.
+     *
+     * @param  \App\Models\User  $admin
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function publish(User $user)
+    {
+        return $user->can('publish_post');
+    } 
+```
+🅰️/🈯️ To make the prefix translatable, publish `Shield`'s translations and append the prefix inside `resource_permission_prefixes_labels` as key and it's translation as value for the languages you need.
+```php
+//lang/en/filament-shield.php
+'resource_permission_prefixes_labels' => [
+    'publish' => 'Publish'    
+],
+//lang/es/filament-shield.php
+'resource_permission_prefixes_labels' => [
+    'publish' => 'Publicar'    
+],
+```
 
 #### Pages
 
