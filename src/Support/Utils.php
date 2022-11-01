@@ -166,7 +166,7 @@ class Utils
     {
         return config('filament-shield.shield_resource.show_model_path', true)
             ? get_class(new ($resourceFQCN::getModel())())
-            : "";
+            : '';
     }
 
     public static function getResourcePermissionPrefixes(string $resourceFQCN): array

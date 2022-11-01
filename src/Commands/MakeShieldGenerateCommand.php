@@ -239,8 +239,8 @@ class MakeShieldGenerateCommand extends Command
                         'Permissions' => implode(','.PHP_EOL,
                             collect(Utils::getResourcePermissionPrefixes($resource['fqcn'])
                             )->map(function ($permission, $key) use ($resource) {
-                            return $permission.'_'.$resource['resource'];
-                        })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
+                                return $permission.'_'.$resource['resource'];
+                            })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
                     ];
                 })
             );

@@ -254,11 +254,9 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
                             ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
-
-                                collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->each(function($permission) use ($set, $entity, $state) {
-                                    $set($permission.'_'.$entity['resource'],$state);
+                                collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->each(function ($permission) use ($set, $entity, $state) {
+                                    $set($permission.'_'.$entity['resource'], $state);
                                 });
-
 
                                 if (! $state) {
                                     $set('select_all', false);
@@ -388,27 +386,26 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function refreshResourceEntityStateAfterHydrated(Model $record, Closure $set, array $entity): void
     {
+        $entities = $record->permissions->pluck('name')
+            ->reduce(function ($roles, $role) {
+                $roles[$role] = Str::afterLast($role, '_');
 
-            $entities = $record->permissions->pluck('name')
-                ->reduce(function ($roles, $role) {
-                    $roles[$role] = Str::afterLast($role, '_');
+                return $roles;
+            }, collect())
+            ->values()
+            ->groupBy(function ($item) {
+                return $item;
+            })->map->count()
+            ->reduce(function ($counts, $role, $key) use ($entity) {
+                $count = count(Utils::getResourcePermissionPrefixes($entity['fqcn']));
+                if ($role > 1 && $role === $count) {
+                    $counts[$key] = true;
+                } else {
+                    $counts[$key] = false;
+                }
 
-                    return $roles;
-                }, collect())
-                ->values()
-                ->groupBy(function ($item) {
-                    return $item;
-                })->map->count()
-                ->reduce(function ($counts, $role, $key) use($entity){
-                    $count = count(Utils::getResourcePermissionPrefixes($entity['fqcn']));
-                    if ($role > 1 && $role === $count ) {
-                        $counts[$key] = true;
-                    } else {
-                        $counts[$key] = false;
-                    }
-
-                    return $counts;
-                }, []);
+                return $counts;
+            }, []);
 
         // set entity's state if one are all permissions are true
         if (Arr::exists($entities, $entity['resource']) && Arr::get($entities, $entity['resource'])) {
