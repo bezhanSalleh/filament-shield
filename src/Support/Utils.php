@@ -168,4 +168,11 @@ class Utils
             ? get_class(new ($resourceFQCN::getModel())())
             : "";
     }
+
+    public static function getResourcePermissionPrefixes(string $resourceFQCN): array
+    {
+        return static::doesResourceHaveCustomPermissions($resourceFQCN)
+            ? $resourceFQCN::getPermissionPrefixes()
+            : static::getGeneralResourcePermissionPrefixes();
+    }
 }

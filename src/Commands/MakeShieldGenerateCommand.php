@@ -237,10 +237,7 @@ class MakeShieldGenerateCommand extends Command
                         'Resource' => $resource['model'],
                         'Policy' => "{$resource['model']}Policy.php".($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
                         'Permissions' => implode(','.PHP_EOL,
-                            collect(
-                                Utils::doesResourceHaveCustomPermissions($resource['fqcn'])
-                                ? $resource['fqcn']::getShieldPermissions()
-                                : Utils::getGeneralResourcePermissionPrefixes()
+                            collect(Utils::getResourcePermissionPrefixes($resource['fqcn'])
                             )->map(function ($permission, $key) use ($resource) {
                             return $permission.'_'.$resource['resource'];
                         })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),

@@ -17,9 +17,7 @@ class FilamentShield
     {
         $resourceByFQCN = $entity['fqcn'];
         $resourceName = $entity['resource'];
-        $permissionPrefixes = Utils::doesResourceHaveCustomPermissions($resourceByFQCN)
-            ? $resourceByFQCN::getShieldPermissions()
-            : Utils::getGeneralResourcePermissionPrefixes();
+        $permissionPrefixes = Utils::getResourcePermissionPrefixes($resourceByFQCN);
 
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();

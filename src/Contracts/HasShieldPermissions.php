@@ -6,5 +6,5 @@ namespace BezhanSalleh\FilamentShield\Contracts;
 
 interface HasShieldPermissions
 {
-    public static function getShieldPermissions(): array;
+    public static function getPermissionPrefixes(): array;
 }
