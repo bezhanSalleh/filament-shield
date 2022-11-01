@@ -13,14 +13,18 @@ use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
 {
-    public static function generateForResource(string $resource): void
+    public static function generateForResource(array $entity): void
     {
+        $resourceByFQCN = $entity['fqcn'];
+        $resourceName = $entity['resource'];
+        $permissionPrefixes = Utils::getResourcePermissionPrefixes($resourceByFQCN);
+
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();
-            collect(Utils::getGeneralResourcePermissionPrefixes())
-                ->each(function ($prefix) use ($resource, $permissions) {
+            collect($permissionPrefixes)
+                ->each(function ($prefix) use ($resourceName, $permissions) {
                     $permissions->push(Permission::firstOrCreate(
-                        ['name' => $prefix.'_'.$resource],
+                        ['name' => $prefix.'_'.$resourceName],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
                 });
