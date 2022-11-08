@@ -3,12 +3,12 @@
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
 
 class EditRole extends EditRecord
 {
@@ -36,7 +36,7 @@ class EditRole extends EditRecord
     {
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
-            $permissionModels->push(Permission::firstOrCreate(
+            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate(
                 ['name' => $permission],
                 ['guard_name' => $this->data['guard_name']]
             ));

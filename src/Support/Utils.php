@@ -175,4 +175,14 @@ class Utils
             ? $resourceFQCN::getPermissionPrefixes()
             : static::getGeneralResourcePermissionPrefixes();
     }
+
+    public static function getRoleModel(): string
+    {
+        return config('permission.models.role');
+    }
+
+    public static function getPermissionModel(): string
+    {
+        return config('permission.models.permission');
+    }
 }

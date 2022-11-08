@@ -16,13 +16,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
-    protected static ?string $model = Role::class;
-
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static $permissionsCollection;
@@ -184,6 +180,11 @@ class RoleResource extends Resource implements HasShieldPermissions
         ];
     }
 
+    public static function getModel(): string
+    {
+        return Utils::getRoleModel();
+    }
+
     public static function getModelLabel(): string
     {
         return __('filament-shield::filament-shield.resource.label.role');
@@ -224,7 +225,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     protected static function getNavigationBadge(): ?string
     {
         return Utils::isResourceNavigationBadgeEnabled()
-            ? static::$model::count()
+            ? static::getModel()::count()
             : null;
     }
 
@@ -240,7 +241,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function getResourceEntitiesSchema(): ?array
     {
         if (blank(static::$permissionsCollection)) {
-            static::$permissionsCollection = Permission::all();
+            static::$permissionsCollection = Utils::getPermissionModel()::all();
         }
 
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {

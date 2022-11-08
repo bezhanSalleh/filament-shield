@@ -7,8 +7,6 @@ use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
@@ -23,7 +21,7 @@ class FilamentShield
             $permissions = collect();
             collect($permissionPrefixes)
                 ->each(function ($prefix) use ($resourceName, $permissions) {
-                    $permissions->push(Permission::firstOrCreate(
+                    $permissions->push(Utils::getPermissionModel()::firstOrCreate(
                         ['name' => $prefix.'_'.$resourceName],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
@@ -36,7 +34,7 @@ class FilamentShield
     public static function generateForPage(string $page): void
     {
         if (Utils::isPageEntityEnabled()) {
-            $permission = Permission::firstOrCreate(
+            $permission = Utils::getPermissionModel()::firstOrCreate(
                 ['name' => $page],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -48,7 +46,7 @@ class FilamentShield
     public static function generateForWidget(string $widget): void
     {
         if (Utils::isWidgetEntityEnabled()) {
-            $permission = Permission::firstOrCreate(
+            $permission = Utils::getPermissionModel()::firstOrCreate(
                 ['name' => $widget],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -68,9 +66,9 @@ class FilamentShield
         }
     }
 
-    public static function createRole(bool $isSuperAdmin = true): Role
+    public static function createRole(bool $isSuperAdmin = true)
     {
-        return Role::firstOrCreate(
+        return Utils::getRoleModel()::firstOrCreate(
             ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
             ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
         );
@@ -243,8 +241,8 @@ class FilamentShield
             ->first(fn ($item) => Str::endsWith(
                 $item,
                 Str::of($string)
-                ->after('_')
-                ->studly()
+                    ->after('_')
+                    ->studly()
             ));
     }
 
