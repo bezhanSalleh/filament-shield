@@ -16,6 +16,11 @@ class Utils
         return (string) config('filament-shield.shield_resource.slug');
     }
 
+    public static function isResourceNavigationItemEnabled(): bool
+    {
+        return config('filament-shield.shield_resource.show_in_navigation', true);
+    }
+    
     public static function getResourceNavigationSort(): int
     {
         return config('filament-shield.shield_resource.navigation_sort');
