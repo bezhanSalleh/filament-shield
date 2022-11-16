@@ -43,7 +43,7 @@ class MakeShieldSuperAdminCommand extends Command
         } elseif ($userProvider->getModel()::count() > 1) {
             $this->table(
                 ['ID', 'Name', 'Email', 'Roles'],
-                $userProvider->getModel()::get()->map(function ($user) {
+                $userProvider->getModel()::with('roles')->get()->map(function ($user) {
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
