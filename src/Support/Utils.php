@@ -20,7 +20,7 @@ class Utils
     {
         return config('filament-shield.shield_resource.show_in_navigation', true);
     }
-    
+
     public static function getResourceNavigationSort(): int
     {
         return config('filament-shield.shield_resource.navigation_sort');

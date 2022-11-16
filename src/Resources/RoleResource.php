@@ -199,7 +199,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         return Utils::isResourceNavigationItemEnabled();
     }
-    
+
     protected static function getNavigationGroup(): ?string
     {
         return Utils::isResourceNavigationGroupEnabled()
