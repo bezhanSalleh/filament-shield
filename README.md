@@ -44,6 +44,7 @@ Table of contents
       - [Resources](#resources)
         - [Default](#default)
         - [Custom Permissions](#custom-permissions)
+          - [Custom Permissions Suffix](#custom-permissions-suffix)
       - [Pages](#pages)
           - [Pages Hooks](#pages-hooks)
           - [Pages Redirect Path](#pages-redirect-path)
@@ -304,6 +305,31 @@ In the above example the `getPermissionPrefixes()` method returns the permission
     'publish' => 'Publicar'    
 ],
 ```
+
+###### Custom Permissions Suffix
+
+You can also customize the suffix for `Resource` permissions. For example if you have a `CategoryResource` in the `Resources\Tenant\Blog` directory, by default suffix for all permissions will be `tenant::blog::category`, but you can change it to be shorter, like `category`.
+
+```php
+<?php
+
+namespace BezhanSalleh\FilamentShield\Resources\Tenant\Blog;
+
+...
+
+class CategoryResource extends Resource
+{
+    ...
+
+    public static function getPermissionSuffix(): string
+    {
+        return 'category';
+    }
+
+    ...
+}
+```
+✅ In this way all permission names will be shorter. For example instead of the default `force_delete_tenant::blog::category` you will have `force_delete_category`;
 
 #### Pages
 
