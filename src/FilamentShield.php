@@ -94,7 +94,12 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+                if (static::hasPermissionSuffix($resource)) {
+                    $name = $resource::getPermissionSuffix();
+                } else {
+                    $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+                }
+
                 $resources["{$name}"] = [
                     'resource' => "{$name}",
                     'model' => Str::of($resource::getModel())->afterLast('\\'),
@@ -249,5 +254,10 @@ class FilamentShield
     protected static function hasHeadingForShield(object|string $class): bool
     {
         return method_exists($class, 'getHeadingForShield');
+    }
+
+    protected static function hasPermissionSuffix(object|string $class): bool
+    {
+        return method_exists($class, 'getPermissionSuffix');
     }
 }
