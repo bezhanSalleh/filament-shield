@@ -11,8 +11,6 @@ use Illuminate\Support\Str;
 
 class CreateRole extends CreateRecord
 {
-    protected static string $resource = RoleResource::class;
-
     public Collection $permissions;
 
     protected function mutateFormDataBeforeCreate(array $data): array
@@ -36,5 +34,10 @@ class CreateRole extends CreateRecord
         });
 
         $this->record->syncPermissions($permissionModels);
+    }
+
+    public static function getResource(): string
+    {
+        return config('filament-shield.shield_resource.role_resource') ?? RoleResource::class;
     }
 }

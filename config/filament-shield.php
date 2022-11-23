@@ -9,6 +9,7 @@ return [
         'navigation_group' => true,
         'is_globally_searchable' => false,
         'show_model_path' => true,
+        'role_resource' => \BezhanSalleh\FilamentShield\Resources\RoleResource::class,
     ],
 
     'auth_provider_model' => [

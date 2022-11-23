@@ -12,8 +12,6 @@ use Illuminate\Support\Str;
 
 class EditRole extends EditRecord
 {
-    protected static string $resource = RoleResource::class;
-
     public Collection $permissions;
 
     protected function getActions(): array
@@ -43,5 +41,10 @@ class EditRole extends EditRecord
         });
 
         $this->record->syncPermissions($permissionModels);
+    }
+
+    public static function getResource(): string
+    {
+        return config('filament-shield.shield_resource.role_resource') ?? RoleResource::class;
     }
 }
