@@ -215,11 +215,11 @@ php artisan shield:install
 Follow the prompts and enjoy!
 
 #### Resources
-Generally there are two scenraios that shield handles permissions for your `Filament` resources.
+Generally there are two scenarios that shield handles permissions for your `Filament` resources.
 
 ##### Default
-Out of the box `Shield` handles the predefined permissions for `Filament` resources. So if that's all what you need you are all set. 
-If you need to add a single permission(for instance `lock`) and have it available for all your resources just append it to following `config` key:
+Out of the box `Shield` handles the predefined permissions for `Filament` resources. So if that's all that you need you are all set. 
+If you need to add a single permission (for instance `lock`) and have it available for all your resources just append it to the following `config` key:
 
 ```php
     permission_prefixes' => [
