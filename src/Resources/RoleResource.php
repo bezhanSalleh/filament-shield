@@ -78,7 +78,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     'sm' => 2,
                                     'lg' => 3,
                                 ])
-                                ->schema(static::getResourceEntitiesSchema())
+                                ->schema(static::getResourceEntitiesSchema())\
                                 ->columns([
                                     'sm' => 2,
                                     'lg' => 3,
@@ -157,6 +157,7 @@ class RoleResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
