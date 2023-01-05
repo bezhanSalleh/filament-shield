@@ -20,13 +20,13 @@ class ShieldSeeder extends Seeder
         $rolesWithPermissions = '{{ RolePermissions }}';
         $directPermissions = '{{ DirectPermissions }}';
 
-        static::makeRolesWithPemrissions($rolesWithPermissions);
+        static::makeRolesWithPermissions($rolesWithPermissions);
         static::makeDirectPermissions($directPermissions);
 
         $this->command->info('Shield Seeding Completed.');
     }
 
-    protected static function makeRolesWithPemrissions(string $rolesWithPermissions): void
+    protected static function makeRolesWithPermissions(string $rolesWithPermissions): void
     {
         if (! blank($rolePlusPermissions = json_decode($rolesWithPermissions,true))) {
 
