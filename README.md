@@ -258,7 +258,7 @@ namespace BezhanSalleh\FilamentShield\Resources;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 ...
 
-class RoleResource extends Resource implements HasShieldPermissions
+class PostResource extends Resource implements HasShieldPermissions
 {
     ...
 
