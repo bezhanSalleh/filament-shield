@@ -16,8 +16,8 @@ class MakeShieldPublishCommand extends Command
 
     public function handle(): int
     {
-        $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'), );
-        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'), );
+        $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'));
+        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
 
         if ($this->checkForCollision([$roleResourcePath])) {
             $confirmed = $this->confirm('Shield Resource already exists. Overwrite?', true);
@@ -29,15 +29,14 @@ class MakeShieldPublishCommand extends Command
         (new Filesystem())->ensureDirectoryExists($baseResourcePath);
         (new Filesystem())->copyDirectory(__DIR__.'/../Resources', $baseResourcePath);
 
-
         $currentNamespace = 'BezhanSalleh\\FilamentShield\\Resources';
         $newNamespace = 'App\\Filament\\Resources\\Shield';
 
         $this->replaceInFile($roleResourcePath, $currentNamespace, $newNamespace);
-        $this->replaceInFile($baseResourcePath . '/RoleResource/Pages/CreateRole.php', $currentNamespace, $newNamespace);
-        $this->replaceInFile($baseResourcePath . '/RoleResource/Pages/EditRole.php', $currentNamespace, $newNamespace);
-        $this->replaceInFile($baseResourcePath . '/RoleResource/Pages/ViewRole.php', $currentNamespace, $newNamespace);
-        $this->replaceInFile($baseResourcePath . '/RoleResource/Pages/ListRoles.php', $currentNamespace, $newNamespace);
+        $this->replaceInFile($baseResourcePath.'/RoleResource/Pages/CreateRole.php', $currentNamespace, $newNamespace);
+        $this->replaceInFile($baseResourcePath.'/RoleResource/Pages/EditRole.php', $currentNamespace, $newNamespace);
+        $this->replaceInFile($baseResourcePath.'/RoleResource/Pages/ViewRole.php', $currentNamespace, $newNamespace);
+        $this->replaceInFile($baseResourcePath.'/RoleResource/Pages/ListRoles.php', $currentNamespace, $newNamespace);
 
         $this->info('Shield\'s Resource have been published successfully!');
 

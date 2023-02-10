@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use Illuminate\Support\Str;
-use Illuminate\Filesystem\Filesystem;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class Utils
 {
@@ -15,7 +15,7 @@ class Utils
 
     public static function isResourcePublished(): bool
     {
-        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'), );
+        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
 
         $filesystem = new Filesystem();
 
@@ -194,7 +194,7 @@ class Utils
 
     public static function getRoleModel(): string
     {
-        return config('permission.models.role','Spatie\\Permission\\Models\\Role');
+        return config('permission.models.role', 'Spatie\\Permission\\Models\\Role');
     }
 
     public static function getPermissionModel(): string
