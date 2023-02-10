@@ -57,4 +57,12 @@ trait CanManipulateFiles
 
         $filesystem->put($path, $contents);
     }
+
+    protected function replaceInFile(string $file, string $search, string $replace): void
+    {
+        file_put_contents(
+            $file,
+            str_replace($search, $replace, file_get_contents($file))
+        );
+    }
 }

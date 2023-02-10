@@ -10,10 +10,6 @@ use Spatie\LaravelPackageTools\Package;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
-    protected array $resources = [
-        RoleResource::class,
-    ];
-
     public function configurePackage(Package $package): void
     {
         $package
@@ -56,10 +52,22 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         return [
             Commands\MakeShieldDoctorCommand::class,
             Commands\MakeShieldSeederCommand::class,
+            Commands\MakeShieldPublishCommand::class,
             Commands\MakeShieldUpgradeCommand::class,
             Commands\MakeShieldInstallCommand::class,
             Commands\MakeShieldGenerateCommand::class,
             Commands\MakeShieldSuperAdminCommand::class,
+        ];
+    }
+
+    protected function getResources(): array
+    {
+        if (Utils::isResourcePublished()) {
+            return [];
+        }
+
+        return [
+            RoleResource::class,
         ];
     }
 }
