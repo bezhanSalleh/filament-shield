@@ -56,6 +56,8 @@ Table of contents
       - [`shield:install`](#shieldinstall)
       - [`shield:generate`](#shieldgenerate)
       - [`shield:super-admin`](#shieldsuper-admin)
+    - [`shield:publish`](#shieldpublish)
+    - [`shield:seeder`](#shieldseeder)
       - [`shield:upgrade`](#shieldupgrade)
   - [Testing](#testing)
   - [Changelog](#changelog)
@@ -463,6 +465,12 @@ Generate Permissions and/or Policies for Filament entities. Accepts the followin
 Create a user with super_admin role.
 - Accepts an `--user=` argument that will use the provided ID to find the user to be made super admin.
 
+### `shield:publish`
+- Publish the Shield `RoleResource` and customize it however you like
+
+### `shield:seeder`
+- Deploy easily by setting up your roles and permissions or add your custom seeds
+  
 #### `shield:upgrade` 
 - Upgrade shield.
 
