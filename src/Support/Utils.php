@@ -3,12 +3,23 @@
 namespace BezhanSalleh\FilamentShield\Support;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class Utils
 {
     public static function getFilamentAuthGuard(): string
     {
         return (string) config('filament.auth.guard');
+    }
+
+    public static function isResourcePublished(): bool
+    {
+        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
+
+        $filesystem = new Filesystem();
+
+        return (bool) $filesystem->exists($roleResourcePath);
     }
 
     public static function getResourceSlug(): string
@@ -183,11 +194,11 @@ class Utils
 
     public static function getRoleModel(): string
     {
-        return config('permission.models.role');
+        return config('permission.models.role', 'Spatie\\Permission\\Models\\Role');
     }
 
     public static function getPermissionModel(): string
     {
-        return config('permission.models.permission');
+        return config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission');
     }
 }
