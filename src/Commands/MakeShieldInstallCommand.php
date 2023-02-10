@@ -110,14 +110,13 @@ class MakeShieldInstallCommand extends Command
         if ($fresh) {
             try {
                 Schema::disableForeignKeyConstraints();
-                DB::table('migrations')->where('migration', 'like', '%_create_permission_tables')->delete();
-                $this->getTables()->each(fn ($table) => DB::statement('DROP TABLE IF EXISTS '.$table));
+                $this->getTables()->each(fn ($table) => DB::table($table)->truncate());
                 Schema::enableForeignKeyConstraints();
             } catch (Throwable $e) {
                 $this->info($e);
             }
 
-            $this->info('Freshening up shield migrations.');
+            $this->info('Freshening up shield permissions.');
         } else {
             $this->info('running shield migrations.');
         }
