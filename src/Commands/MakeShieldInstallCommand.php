@@ -92,7 +92,7 @@ class MakeShieldInstallCommand extends Command
 
     protected function getTables(): Collection
     {
-        return collect(['permissions', 'roles', 'role_has_permissions', 'model_has_roles', 'model_has_permissions']);
+        return collect(['role_has_permissions', 'model_has_roles', 'model_has_permissions', 'roles', 'permissions']);
     }
 
     protected function install(bool $fresh = false)
