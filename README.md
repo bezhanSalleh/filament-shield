@@ -243,7 +243,7 @@ If you need to add a single permission (for instance `lock`) and have it availab
         ...
     ],
 ```
-:bulb: Now you are thinking **`what if I need a permission to be only avaialble for just one resource?`**
+:bulb: Now you are thinking **`what if I need a permission to be only available for just one resource?`**
 No worries, that's where [Custom Permissions](#custom-permissions) come to play.
 
 ##### Custom Permissions
