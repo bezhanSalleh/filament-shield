@@ -2,27 +2,51 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
+use Closure;
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Support\Concerns\EvaluatesClosures;
+
 
 class FilamentShield
 {
-    public static function generateForResource(array $entity): void
+    use EvaluatesClosures;
+
+    protected ?Closure $configurePermissionIdentifierUsing = null;
+
+    public function configurePermissionIdentifierUsing(Closure $callback): static
+    {
+        $this->configurePermissionIdentifierUsing = $callback;
+
+        return $this;
+    }
+
+    public function getPermissionIdentifier(string $resource): string
+    {
+        if (blank($this->configurePermissionIdentifierUsing)) {
+            return Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+        }
+
+        return $this->evaluate($this->configurePermissionIdentifierUsing, [
+            'resource' => $resource,
+        ]);
+    }
+
+    public function generateForResource(array $entity): void
     {
         $resourceByFQCN = $entity['fqcn'];
-        $resourceName = $entity['resource'];
         $permissionPrefixes = Utils::getResourcePermissionPrefixes($resourceByFQCN);
 
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();
             collect($permissionPrefixes)
-                ->each(function ($prefix) use ($resourceName, $permissions) {
+                ->each(function ($prefix) use ($entity, $permissions) {
                     $permissions->push(Utils::getPermissionModel()::firstOrCreate(
-                        ['name' => $prefix.'_'.$resourceName],
+                        ['name' => $prefix.'_'.$entity['resource']],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
                 });
@@ -79,7 +103,7 @@ class FilamentShield
      *
      * @return array
      */
-    public static function getResources(): ?array
+    public function getResources(): ?array
     {
         return collect(Filament::getResources())
             ->unique()
@@ -94,7 +118,8 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+                $name = $this->getPermissionIdentifier($resource);
+
                 $resources["{$name}"] = [
                     'resource' => "{$name}",
                     'model' => Str::of($resource::getModel())->afterLast('\\'),
