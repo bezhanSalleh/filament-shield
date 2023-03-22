@@ -37,10 +37,18 @@ class ShieldSeeder extends Seeder
                     'guard_name' => $rolePlusPermission['guard_name']
                 ]);
 
-                if (! blank($rolePlusPermission['permissions'])) {
+                if (!blank($permissions = $rolePlusPermission['permissions'])) {
+
+                    foreach ($permissions as $permission) {
+                        if (Permission::whereName($permission)->doesntExist()) {
+                            Permission::create([
+                                'name' => $permission,
+                                'guard_name' => $rolePlusPermission['guard_name'],
+                            ]);
+                        }
+                    }
 
                     $role->givePermissionTo($rolePlusPermission['permissions']);
-
                 }
             }
         }
