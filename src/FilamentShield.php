@@ -27,13 +27,14 @@ class FilamentShield
 
     public function getPermissionIdentifier(string $resource): string
     {
-        if (blank($this->configurePermissionIdentifierUsing)) {
-            return Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
-        }
-
-        return $this->evaluate($this->configurePermissionIdentifierUsing, [
-            'resource' => $resource,
-        ]);
+        return $this->configurePermissionIdentifierUsing
+            ? $this->evaluate(
+                value: $this->configurePermissionIdentifierUsing,
+                parameters: [
+                    'resource' => $resource,
+                ]
+            )
+            : Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
     }
 
     public function generateForResource(array $entity): void
