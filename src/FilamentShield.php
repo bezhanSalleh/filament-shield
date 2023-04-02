@@ -2,15 +2,14 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
-
 
 class FilamentShield
 {
@@ -191,9 +190,9 @@ class FilamentShield
      * Get localized page label
      *
      * @param  string  $page
-     * @return string|bool
+     * @return string
      */
-    public static function getLocalizedPageLabel(string $page): string|bool
+    public static function getLocalizedPageLabel(string $page): string
     {
         $object = static::transformClassString($page);
 
@@ -234,8 +233,8 @@ class FilamentShield
     /**
      * Get localized widget label
      *
-     * @param  string  $page
-     * @return string|bool
+     * @param  string  $widget
+     * @return string
      */
     public static function getLocalizedWidgetLabel(string $widget): string
     {

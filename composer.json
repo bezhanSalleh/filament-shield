@@ -31,7 +31,6 @@
         "spatie/invade": "^1.0"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^2.12",
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^5.0|^6.0",
         "nunomaduro/larastan": "^2.0.1",
