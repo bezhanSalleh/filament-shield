@@ -235,12 +235,15 @@ class MakeShieldGenerateCommand extends Command
                     return [
                         '#' => $key + 1,
                         'Resource' => $resource['model'],
-                        'Policy' => "{$resource['model']}Policy.php".($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
-                        'Permissions' => implode(','.PHP_EOL,
-                            collect(Utils::getResourcePermissionPrefixes($resource['fqcn'])
+                        'Policy' => "{$resource['model']}Policy.php" . ($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
+                        'Permissions' => implode(
+                            ',' . PHP_EOL,
+                            collect(
+                                Utils::getResourcePermissionPrefixes($resource['fqcn'])
                             )->map(function ($permission, $key) use ($resource) {
-                                return $permission.'_'.$resource['resource'];
-                            })->toArray()).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
+                                return $permission . '_' . $resource['resource'];
+                            })->toArray()
+                        ) . ($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
                     ];
                 })
             );
@@ -258,7 +261,7 @@ class MakeShieldGenerateCommand extends Command
                 collect($pages)->map(function ($page, $key) {
                     return [
                         '#' => $key + 1,
-                        'Page' => Str::replace(config('filament-shield.permission_prefixes.page').'_', '', $page),
+                        'Page' => Str::replace(config('filament-shield.permission_prefixes.page') . '_', '', $page),
                         'Permission' => $page,
                     ];
                 })
@@ -277,7 +280,7 @@ class MakeShieldGenerateCommand extends Command
                 collect($widgets)->map(function ($widget, $key) {
                     return [
                         '#' => $key + 1,
-                        'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget').'_', '', $widget),
+                        'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget') . '_', '', $widget),
                         'Permission' => $widget,
                     ];
                 })

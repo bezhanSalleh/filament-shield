@@ -17,7 +17,7 @@ class MakeShieldDoctorCommand extends Command
     {
         if (class_exists(AboutCommand::class)) {
             AboutCommand::add('Filament Shield', [
-                'Auth Provider' => Utils::getAuthProviderFQCN().'|'.static::authProviderConfigured(),
+                'Auth Provider' => Utils::getAuthProviderFQCN() . '|' . static::authProviderConfigured(),
                 'Resource' => Utils::isResourcePublished() ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
                 'Resource Slug' => Utils::getResourceSlug(),
                 'Resource Sort' => Utils::getResourceNavigationSort(),

@@ -2,15 +2,14 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
-
 
 class FilamentShield
 {
@@ -47,7 +46,7 @@ class FilamentShield
             collect($permissionPrefixes)
                 ->each(function ($prefix) use ($entity, $permissions) {
                     $permissions->push(Utils::getPermissionModel()::firstOrCreate(
-                        ['name' => $prefix.'_'.$entity['resource']],
+                        ['name' => $prefix . '_' . $entity['resource']],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
                 });
@@ -80,7 +79,7 @@ class FilamentShield
         }
     }
 
-    protected static function giveSuperAdminPermission(string|array|Collection $permissions): void
+    protected static function giveSuperAdminPermission(string | array | Collection $permissions): void
     {
         if (! Utils::isSuperAdminDefinedViaGate()) {
             $superAdmin = static::createRole();
@@ -194,7 +193,7 @@ class FilamentShield
      * @param  string  $page
      * @return string|bool
      */
-    public static function getLocalizedPageLabel(string $page): string|bool
+    public static function getLocalizedPageLabel(string $page): string | bool
     {
         $object = static::transformClassString($page);
 
@@ -245,7 +244,7 @@ class FilamentShield
         $grandpa = get_parent_class($parent);
 
         $heading = Str::of($widget)
-            ->after(Utils::getPagePermissionPrefix().'_')
+            ->after(Utils::getPagePermissionPrefix() . '_')
             ->headline();
 
         if ($grandpa === "Filament\Widgets\ChartWidget") {
@@ -272,7 +271,7 @@ class FilamentShield
             ));
     }
 
-    protected static function hasHeadingForShield(object|string $class): bool
+    protected static function hasHeadingForShield(object | string $class): bool
     {
         return method_exists($class, 'getHeadingForShield');
     }

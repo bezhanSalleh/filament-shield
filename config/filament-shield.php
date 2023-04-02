@@ -15,6 +15,10 @@ return [
         'fqcn' => 'App\\Models\\User',
     ],
 
+    'user_resource' => [
+        'enabled' => true,
+    ],
+
     'super_admin' => [
         'enabled' => true,
         'name' => 'super_admin',

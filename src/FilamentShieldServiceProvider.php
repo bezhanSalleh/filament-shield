@@ -3,6 +3,7 @@
 namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Resources\UserResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -62,12 +63,14 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
 
     protected function getResources(): array
     {
-        if (Utils::isResourcePublished()) {
+        if (Utils::isResourcePublished() && Utils::isUserResourceEnabled()) {
             return [];
         }
 
         return [
             RoleResource::class,
+            UserResource::class,
+
         ];
     }
 }

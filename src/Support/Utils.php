@@ -22,6 +22,11 @@ class Utils
         return (bool) $filesystem->exists($roleResourcePath);
     }
 
+    public static function isUserResourceEnabled(): bool
+    {
+        return (bool) config('filament-shield.user_resource.enabled', false);
+    }
+
     public static function getResourceSlug(): string
     {
         return (string) config('filament-shield.shield_resource.slug');
@@ -54,7 +59,7 @@ class Utils
 
     public static function getAuthProviderFQCN()
     {
-        return config('filament-shield.auth_provider_model.fqcn');
+        return config('filament-shield.auth_provider_model.fqcn', 'App\\Models\\User');
     }
 
     public static function isAuthProviderConfigured(): bool
