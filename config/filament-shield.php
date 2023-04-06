@@ -1,6 +1,9 @@
 <?php
 
 return [
+
+    'driver' => 'spatie', // bouncer or custom
+
     'shield_resource' => [
         'should_register_navigation' => true,
         'slug' => 'shield/roles',

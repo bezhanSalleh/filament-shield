@@ -134,9 +134,6 @@ class FilamentShield
 
     /**
      * Get the localized resource label
-     *
-     * @param  string  $entity
-     * @return string
      */
     public static function getLocalizedResourceLabel(string $entity): string
     {
@@ -149,9 +146,6 @@ class FilamentShield
 
     /**
      * Get the localized resource permission label
-     *
-     * @param  string  $permission
-     * @return string
      */
     public static function getLocalizedResourcePermissionLabel(string $permission): string
     {
@@ -189,9 +183,6 @@ class FilamentShield
 
     /**
      * Get localized page label
-     *
-     * @param  string  $page
-     * @return string
      */
     public static function getLocalizedPageLabel(string $page): string
     {
@@ -233,9 +224,6 @@ class FilamentShield
 
     /**
      * Get localized widget label
-     *
-     * @param  string  $widget
-     * @return string
      */
     public static function getLocalizedWidgetLabel(string $widget): string
     {

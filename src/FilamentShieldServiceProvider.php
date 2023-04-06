@@ -2,11 +2,16 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\LaravelPackageTools\Package;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Console\Events\CommandFinished;
+use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use Illuminate\Console\Events\ArtisanStarting;
 
 class FilamentShieldServiceProvider extends PluginServiceProvider
 {
@@ -23,24 +28,51 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        if (Utils::isSuperAdminDefinedViaGate()) {
-            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
-                return match (Utils::getSuperAdminGateInterceptionStatus()) {
-                    'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
-                    'after' => $user->hasRole(Utils::getSuperAdminName()),
-                    default => false
-                };
-            });
+        if (Utils::isShieldUsingSpatieDriver()) {
+            if (Utils::isSuperAdminDefinedViaGate()) {
+                Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
+                    return match (Utils::getSuperAdminGateInterceptionStatus()) {
+                        'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
+                        'after' => $user->hasRole(Utils::getSuperAdminName()),
+                        default => false
+                    };
+                });
+            }
+
+            if (Utils::isRolePolicyRegistered()) {
+                Gate::policy(Utils::getRoleModel(), 'App\Policies\RolePolicy');
+            }
         }
 
-        if (Utils::isRolePolicyRegistered()) {
-            Gate::policy(Utils::getRoleModel(), 'App\Policies\RolePolicy');
-        }
+        Event::listen(CommandFinished::class, function ($event) {
+            if (filled($command = $event->command) && $command === 'shield:install') {
+                // Artisan::call('migrate');
+                // if (! $event->input->getOption('refresh')) {
+                //     sleep(5);
+                //     Artisan::call('shield:setup', [
+                //         'driver' => $event->input->getArgument('driver'),
+                //         '--refresh' => true
+                //     ]);
+                // }
+            }
+        });
+
+
     }
 
     public function packageRegistered(): void
     {
         parent::packageRegistered();
+
+        if (Utils::isShieldUsingBouncerDriver()) {
+            $this->app->singleton('shield', function () {
+                $driverManager = new ShieldManager();
+
+                return $driverManager->make();
+            });
+
+            $this->app->alias('shield', ShieldDriver::class);
+        }
 
         $this->app->scoped('filament-shield', function (): FilamentShield {
             return new FilamentShield();
@@ -57,6 +89,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
             Commands\MakeShieldInstallCommand::class,
             Commands\MakeShieldGenerateCommand::class,
             Commands\MakeShieldSuperAdminCommand::class,
+            Commands\MakeShieldSetupDriverCommand::class,
         ];
     }
 

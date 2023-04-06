@@ -2,9 +2,13 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Schema;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 class Utils
 {
@@ -120,8 +124,6 @@ class Utils
 
     /**
      * Widget Entity Status
-     *
-     * @return bool
      */
     public static function isWidgetEntityEnabled(): bool
     {
@@ -192,6 +194,21 @@ class Utils
             : static::getGeneralResourcePermissionPrefixes();
     }
 
+    public static function getDriver(): string
+    {
+        return (string) config('filament-shield.driver');
+    }
+
+    public static function isShieldUsingSpatieDriver(): bool
+    {
+        return static::getDriver() === 'spatie';
+    }
+
+    public static function isShieldUsingBouncerDriver(): bool
+    {
+        return static::getDriver() === 'bouncer';
+    }
+
     public static function getRoleModel(): string
     {
         return config('permission.models.role', 'Spatie\\Permission\\Models\\Role');
@@ -200,5 +217,83 @@ class Utils
     public static function getPermissionModel(): string
     {
         return config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission');
+    }
+
+    public static function getTables(): Collection
+    {
+        return collect([
+            'role_has_permissions',
+            'model_has_roles',
+            'model_has_permissions',
+            'permissions',
+            'assigned_roles',
+            'roles',
+            'abilities'
+        ]);
+    }
+
+    public static function getMigrationRecord(): string
+    {
+        return match (static::getDriver()) {
+            'spatie' => '_create_permission_tables',
+            'bouncer' => '_create_bouncer_tables',
+            default => '',
+        };
+    }
+
+    public static function dropMigrationRecord(): void
+    {
+        if (filled(static::getMigrationRecord())) {
+            DB::table('migrations')
+                ->where(
+                    'migration',
+                    'like',
+                    '%'.static::getMigrationRecord()
+                )
+                ->delete();
+        }
+    }
+
+    public static function getMigrationFile(string $name): ?string
+    {
+        $filesystem = new Filesystem;
+
+        return collect($filesystem->glob(database_path('migrations').DIRECTORY_SEPARATOR.'*_'.$name))
+            ->first();
+    }
+
+    public static function removeMigrationFile(): void
+    {
+        $filesystem = new Filesystem;
+
+        collect([
+            'create_permission_tables.php',
+            'create_bouncer_tables.php',
+        ])->each(function ($name) use ($filesystem) {
+            $filesystem->when(filled($name), fn () => $filesystem->delete(static::getMigrationFile($name)));
+        });
+    }
+
+    public static function dropTables(): void
+    {
+        Schema::disableForeignKeyConstraints();
+
+        static::getTables()->each(fn ($table) => Schema::dropIfExists($table));
+
+        Schema::enableForeignKeyConstraints();
+
+        static::dropMigrationRecord();
+    }
+
+    public static function showSomeLove(): void
+    {
+        $cmd = match (PHP_OS_FAMILY) {
+            'Darwin' => 'open',
+            'Linux' => 'xdg-open',
+            'Windows' => 'start',
+            default => 'echo',
+        };
+
+        exec("{$cmd} https://github.com/bezhanSalleh/filament-shield");
     }
 }

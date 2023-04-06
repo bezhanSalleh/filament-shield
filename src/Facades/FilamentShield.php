@@ -5,7 +5,6 @@ namespace BezhanSalleh\FilamentShield\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static configurePermissionIdentifierUsing(callable $callback)
  * @method static string getPermissionIdentifier(string $resource)
  * @method static void generateForResource(array $entity)
  * @method static void generateForPage(string $page)
@@ -24,6 +23,6 @@ class FilamentShield extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return FilamentShield::class;
+        return 'filament-shield';
     }
 }

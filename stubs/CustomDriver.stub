@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources\Shield;
+
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
+
+class CustomDriver implements ShieldDriver
+{
+    public function createRole(array $data)
+    {
+        // return Role::firstOrCreate();
+    }
+
+    public function createPermission(array $data)
+    {
+        // return Permission::firstOrCreate();
+    }
+
+    public function hasRole($user, string $role): bool
+    {
+        // return $user->hasRole($role);
+    }
+
+    public function hasPermission($user, string $permission): bool
+    {
+        // return $user->hasPermission($permission);
+    }
+
+    public function syncPermissions($user, array $permissions): void
+    {
+        // $user->syncPermissions($permissions);
+    }
+
+    public function syncRoles($user, array $roles): void
+    {
+        // $user->syncRoles($roles);
+    }
+}

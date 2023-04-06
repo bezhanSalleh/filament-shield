@@ -2,12 +2,23 @@
 
 declare(strict_types=1);
 
-namespace BezhanSalleh\FilamentShield\Drivers;
+namespace App\Filament\Resources\Shield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
 
-class Spatie implements ShieldDriver
+class SpatieDriver implements ShieldDriver
 {
+    public function createRole(array $data): void
+    {
+        Utils::getRoleModel()::firstOrCreate($data);
+    }
+
+    public function createPermission(array $data): void
+    {
+        Utils::getPermissionModel()::firstOrCreate($data);
+    }
+
     public function hasRole($user, string $role): bool
     {
         return $user->hasRole($role);

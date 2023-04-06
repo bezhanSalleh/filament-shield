@@ -2,148 +2,144 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
+use Composer\InstalledVersions;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Throwable;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 class MakeShieldInstallCommand extends Command
 {
-    public $signature = 'shield:install
-        {--F|fresh : re-run the migrations}
-        {--O|only : Only setups shield without generating permissions and creating super-admin}
-        {--minimal : Output minimal amount of info to console}
+    use Concerns\CanManipulateFiles;
+
+    protected $signature = 'shield:install
+        {driver? : The driver to install `default:Spatie` }
+        {--R|refresh : refresh the driver}
     ';
 
-    public $description = 'Setup Core Package requirements and Install Shield';
+    protected $description = 'Installs Shield and setups the driver';
+
 
     public function handle(): int
     {
-        if (! Utils::isAuthProviderConfigured()) {
-            $this->error('Please make sure your Auth Provider model (App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
+        $this->info(app()->version());
+        $this->components->info('Installing Shield...');
 
-            return self::INVALID;
-        }
+        // Publish the config file
+        $this->call('vendor:publish', [
+            '--tag' => 'filament-shield-config',
+        ]);
 
-        if ($this->option('minimal')) {
-            $confirmed = true;
+        // ask for the driver
+        $driver = $this->argument('driver') ?? $this->components->choice(
+            'Select a driver for Shield?',
+            [
+                'spatie' => 'Spatie\'s Laravel Permission',
+                'bouncer' => 'Joseph Silber\'s Bouncer',
+                'custom' => 'Bring Your Own',
+            ],
+            'spatie'
+        );
+
+        if (str($driver)->contains('Custom')) {
+
         } else {
-            $this->alert('Following operations will be performed:');
-            $this->info('-  Publishes core package config');
-            $this->info('-  Publishes core package migration');
-            $this->warn('   - On fresh applications database will be migrated');
-            $this->warn('   - You can also force this behavior by supplying the --fresh option');
 
-            $confirmed = $this->confirm('Do you wish to continue?', true);
-        }
+            $otherPackage = $driver === 'spatie' ? 'silber/bouncer' : 'spatie/laravel-permission';
+            $otherDriver = $driver === 'spatie' ? 'bouncer' : 'spatie';
+            $installedDriver = $driver === 'spatie' ? 'spatie/laravel-permission' : 'silber/bouncer';
 
-        if ($this->CheckIfAlreadyInstalled() && ! $this->option('fresh')) {
-            $this->comment('Seems you have already installed the Core package(`spatie/laravel-permission`)!');
-            $this->comment('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
+            if (InstalledVersions::isInstalled($installedDriver) && InstalledVersions::isInstalled($otherPackage)) {
 
-            if ($this->confirm('Run `shield:install --fresh` instead?', false)) {
-                $this->install(true);
+                $this->components->info("Uninstalling the {$otherDriver} driver...");
+
+                $this->call('shield:setup', [
+                    'driver' => $otherDriver,
+                    '--uninstall' => true,
+                ]);
+
+                $this->success("{$otherDriver} driver uninstalled!");
             }
 
-            return self::INVALID;
-        }
+            else if (InstalledVersions::isInstalled($otherPackage)) {
+                if ($this->components->confirm("The {$otherDriver} driver is already installed. Do you want to remove it and install {$driver} instead?", true)) {
 
-        if ($confirmed) {
-            $this->install($this->option('fresh'));
-        } else {
-            $this->comment('`shield:install` command was cancelled.');
-        }
+                    $this->components->info("Uninstalling the {$otherDriver} driver...");
 
-        if (! $this->option('minimal')) {
-            if ($this->confirm('Would you like to show some love by starring the repo?', true)) {
-                if (PHP_OS_FAMILY === 'Darwin') {
-                    exec('open https://github.com/bezhanSalleh/filament-shield');
-                }
-                if (PHP_OS_FAMILY === 'Linux') {
-                    exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
-                }
-                if (PHP_OS_FAMILY === 'Windows') {
-                    exec('start https://github.com/bezhanSalleh/filament-shield');
-                }
+                    $this->call('shield:setup', [
+                        'driver' => $otherDriver,
+                        '--uninstall' => true,
+                    ]);
 
-                $this->line('Thank you!');
+                    $this->success("{$otherDriver} driver uninstalled!");
+
+                    $this->swapDriver($driver);
+
+                    $this->components->info("Installing the {$driver} driver...");
+
+                    $this->call('shield:setup', [
+                        'driver' => $driver,
+                    ]);
+
+                    $this->success("{$driver} driver installed!");
+                }
+            } elseif (InstalledVersions::isInstalled($installedDriver)) {
+                if ($this->option('refresh') || $this->components->confirm("The {$driver} driver is already installed. Do you want to refresh it?",true)) {
+
+                    $this->components->info("Refreshing the {$driver} driver...");
+
+                    $this->call('shield:setup', [
+                        'driver' => $driver,
+                        '--refresh' => true,
+                    ]);
+
+                    $this->success("{$driver} driver refreshed!");
+
+                    return self::SUCCESS;
+                }
+            } else {
+
+                $this->components->info("Installing the {$driver} driver...");
+
+                    $this->call('shield:setup', [
+                        'driver' => $driver,
+                    ]);
+
+                    $this->success("{$driver} driver installed!");
             }
         }
+
+        $this->call('shield:setup', [
+            'driver' => $driver,
+            '--refresh' => true,
+        ]);
+
+        if ($this->components->confirm('Would you like to show some love by starring the repo?', true)) {
+            Utils::showSomeLove(/* 💖 */);
+            $this->line('Thank you!');
+        }
+
 
         return self::SUCCESS;
     }
 
-    protected function CheckIfAlreadyInstalled(): bool
+    protected function swapDriver(string $driver): void
     {
-        $count = $this->getTables()
-                ->filter(function ($table) {
-                    return Schema::hasTable($table);
-                })
-                ->count();
-        if ($count !== 0) {
-            return true;
+        $current = config('filament-shield.driver');
+
+        config(['filament-shield.driver' => $driver]);
+
+        if ($current !== $driver) {
+            $this->replaceInFile(
+                $current,
+                $driver,
+                config_path('filament-shield.php')
+            );
         }
 
-        return false;
     }
 
-    protected function getTables(): Collection
+    protected function success(string $message)
     {
-        return collect(['role_has_permissions', 'model_has_roles', 'model_has_permissions', 'roles', 'permissions']);
-    }
-
-    protected function install(bool $fresh = false)
-    {
-        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
-            '--provider' => 'Spatie\Permission\PermissionServiceProvider',
-        ]);
-
-        $this->info('Core Package config published.');
-
-        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
-            '--tag' => 'filament-shield-config',
-        ]);
-
-        if ($fresh) {
-            try {
-                Schema::disableForeignKeyConstraints();
-                DB::table('migrations')->where('migration', 'like', '%_create_permission_tables')->delete();
-                $this->getTables()->each(fn ($table) => DB::statement('DROP TABLE IF EXISTS '.$table));
-                Schema::enableForeignKeyConstraints();
-            } catch (Throwable $e) {
-                $this->info($e);
-            }
-
-            $this->info('Freshening up shield migrations.');
-        } else {
-            $this->info('running shield migrations.');
-        }
-
-        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('migrate');
-
-        if (! $this->option('only')) {
-            $this->newLine();
-            $this->info('Generating permissions ...');
-            $this->call('shield:generate', [
-                '--all' => true,
-                '--minimal' => $this->option('minimal'),
-            ]);
-
-            $this->newLine();
-            $this->info('Creating a filament user with Super Admin Role...');
-            $this->call('shield:super-admin');
-        } else {
-            $this->call('shield:generate', [
-                '--resource' => 'RoleResource',
-                '--minimal' => $this->option('minimal'),
-            ]);
-        }
-
-        $this->info(Artisan::output());
-
-        $this->info('Filament Shield🛡 is now active ✅');
+        $this->line('  <bg=bright-green;fg=white;> SUCCESS </> ' . $message);
+        $this->newLine();
     }
 }

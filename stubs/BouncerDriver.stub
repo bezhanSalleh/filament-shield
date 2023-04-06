@@ -2,12 +2,23 @@
 
 declare(strict_types=1);
 
-namespace BezhanSalleh\FilamentShield\Drivers;
+namespace App\Filament\Resources\Shield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
 
-class Bouncer implements ShieldDriver
+class BouncerDriver implements ShieldDriver
 {
+    public function createRole(array $data)
+    {
+        return Bouncer::role()->firstOrCreate($data);
+    }
+
+    public function createPermission(array $data)
+    {
+        return Bouncer::ability()->firstOrCreate($data);
+    }
+
     public function hasRole($user, string $role): bool
     {
         return $user->is($role);

@@ -26,12 +26,11 @@
         "php": "^8.0|^8.1",
         "filament/filament": "^2.13",
         "illuminate/contracts": "^8.6|^9.0|^10.0",
-        "spatie/laravel-package-tools": "^1.9.2",
-        "spatie/laravel-permission": "^5.0",
-        "spatie/invade": "^1.0"
+        "spatie/laravel-package-tools": "^1.9.2"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
+        "mockery/mockery": "^1.5",
         "nunomaduro/collision": "^5.0|^6.0",
         "nunomaduro/larastan": "^2.0.1",
         "orchestra/testbench": "^6.0|^7.0",
@@ -40,7 +39,8 @@
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "spatie/laravel-ray": "^1.32"
     },
     "autoload": {
         "psr-4": {
@@ -72,7 +72,8 @@
                 "BezhanSalleh\\FilamentShield\\FilamentShieldServiceProvider"
             ],
             "aliases": {
-                "FilamentShield": "BezhanSalleh\\FilamentShield\\Facades\\FilamentShield"
+                "FilamentShield": "BezhanSalleh\\FilamentShield\\Facades\\FilamentShield",
+                "Shield": "BezhanSalleh\\FilamentShield\\Facades\\Shield"
             }
         }
     },
