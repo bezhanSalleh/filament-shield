@@ -62,9 +62,36 @@ trait CanManipulateFiles
 
     protected function replaceInFile(string $search, string $replace, string $path): void
     {
-        file_put_contents(
-            $path,
-            str_replace($search, $replace, file_get_contents($path))
-        );
+        $fileContent = file($path, FILE_IGNORE_NEW_LINES);
+        $newContent = [];
+
+        $found = false;
+        foreach ($fileContent as $line) {
+            if (!$found && strpos($line, $search) !== false) {
+                if (filled($replace)) {
+                    $line = str_replace($search, $replace, $line);
+                    $newContent[] = $line;
+                }
+                $found = true;
+            } else {
+                $newContent[] = $line;
+            }
+        }
+
+        file_put_contents($path, implode(PHP_EOL, $newContent));
+        // $content = file_get_contents($path);
+        // $position = strpos($content, $search);
+
+        // if ($position !== false) {
+        //     file_put_contents(
+        //         $path,
+        //         substr_replace($content, $replace, $position, strlen($search))
+        //     );
+        // }
+    }
+
+    protected function existsInFile(string $search, string $path): bool
+    {
+        return Str::contains(file_get_contents($path), $search);
     }
 }

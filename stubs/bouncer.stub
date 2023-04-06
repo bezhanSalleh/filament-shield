@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Shield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
+use Bouncer;
+use Illuminate\Database\Eloquent\Model;
 use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
 
 class BouncerShieldDriver implements ShieldDriver
 {
-    public function createRole(array $data)
+    public function createRole(array $data): Model
     {
         return Bouncer::role()->firstOrCreate($data);
     }
 
-    public function createPermission(array $data)
+    public function createPermission(array $data): Model
     {
         return Bouncer::ability()->firstOrCreate($data);
     }

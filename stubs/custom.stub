@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Shield;
 
+use Illuminate\Database\Eloquent\Model;
 use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
 
 class CustomShieldDriver implements ShieldDriver
 {
-    public function createRole(array $data)
+    public function createRole(array $data): Model
     {
         // return Role::firstOrCreate();
     }
 
-    public function createPermission(array $data)
+    public function createPermission(array $data): Model
     {
         // return Permission::firstOrCreate();
     }

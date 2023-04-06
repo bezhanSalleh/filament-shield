@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
+
 interface ShieldDriver
 {
-    public function createRole(array $data);
+    public function createRole(array $data): Model;
 
-    public function createPermission(array $data);
+    public function createPermission(array $data): Model;
 
     public function hasRole($user, string $role): bool;
 

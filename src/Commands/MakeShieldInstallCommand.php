@@ -6,6 +6,7 @@ use Composer\InstalledVersions;
 use Illuminate\Console\Command;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Filesystem\Filesystem;
+use ReflectionClass;
 
 class MakeShieldInstallCommand extends Command
 {
@@ -46,7 +47,7 @@ class MakeShieldInstallCommand extends Command
         $otherDriver = $driver === 'spatie' ? 'bouncer' : 'spatie';
         $installedDriver = $driver === 'spatie' ? 'spatie/laravel-permission' : 'silber/bouncer';
 
-        $this->cleanRisdualHandlers($driver);
+        $this->cleanup($driver);
 
         if ($driver === 'custom') {
 
@@ -126,7 +127,6 @@ class MakeShieldInstallCommand extends Command
 
                     $this->success("{$otherDriver} driver uninstalled!");
 
-
                     $this->swapDriver($driver);
 
                     $this->components->info("Installing the {$driver} driver...");
@@ -148,6 +148,8 @@ class MakeShieldInstallCommand extends Command
                         'driver' => $driver,
                         '--refresh' => true,
                     ]);
+
+                    $this->configureShieldUserProvider();
 
                     $this->success("{$driver} driver refreshed!");
 
@@ -172,6 +174,9 @@ class MakeShieldInstallCommand extends Command
             'driver' => $driver,
             '--refresh' => true,
         ]);
+
+        $this->manageDriverConfig();
+        $this->configureShieldUserProvider();
 
         if ($this->option('generate')) {
             $this->call('shield:generate');
@@ -201,7 +206,6 @@ class MakeShieldInstallCommand extends Command
                 config_path('filament-shield.php')
             );
         }
-
     }
 
     protected function success(string $message)
@@ -236,8 +240,10 @@ class MakeShieldInstallCommand extends Command
         }
     }
 
-    protected function cleanRisdualHandlers(string $driver): void
+    protected function cleanup(string $driver): void
     {
+        $path = $this->getShieldUserProviderPath();
+
         $filesystem = new Filesystem();
 
         $currentHandler = $this->getDriverHandler($driver);
@@ -253,6 +259,131 @@ class MakeShieldInstallCommand extends Command
         foreach ($risdualHandlers as $handler) {
             if ($this->fileExists($this->getBasePath().DIRECTORY_SEPARATOR.$handler)) {
                 $filesystem->delete($this->getBasePath().DIRECTORY_SEPARATOR.$handler);
+            }
+        }
+
+        if ($this->existsInFile('use Silber\Bouncer\Database\HasRolesAndAbilities;', $path)) {
+            $this->replaceInFile(
+                'use Silber\Bouncer\Database\HasRolesAndAbilities;',
+                '',
+                $path
+            );
+            $this->replaceInFile(
+                'use HasRolesAndAbilities;',
+                '',
+                $path
+            );
+        }
+
+        if ($this->existsInFile('use Spatie\Permission\Traits\HasRoles;', $path)) {
+            $this->replaceInFile(
+                'use Spatie\Permission\Traits\HasRoles;',
+                '',
+                $path
+            );
+            $this->replaceInFile(
+                'use HasRoles;',
+                '',
+                $path
+            );
+        }
+    }
+
+    protected function manageDriverConfig(): void
+    {
+        $spatie = "'name' => 'super_admin',
+        'define_via_gate' => false,
+        'intercept_gate' => 'before', // after
+        ";
+
+        if (Utils::isShieldUsingSpatieDriver()) {
+            if (! $this->existsInFile("'define_via_gate' => false,", config_path('filament-shield.php'))) {
+                $this->replaceInFile(
+                    "'name' => 'super_admin',",
+                    $spatie,
+                    config_path('filament-shield.php')
+                );
+            }
+        } else {
+            $this->replaceInFile(
+                "'define_via_gate' => false,",
+                '',
+                config_path('filament-shield.php')
+            );
+            $this->replaceInFile(
+                "'intercept_gate' => 'before', // after",
+                '',
+                config_path('filament-shield.php')
+            );
+        }
+    }
+
+    protected function getShieldUserProviderPath(): string
+    {
+        $model = Utils::getAuthProviderFQCN();
+
+        return (new ReflectionClass(new $model()))->getFileName();
+    }
+
+    protected function configureShieldUserProvider(): void
+    {
+        $path = $this->getShieldUserProviderPath();
+
+        if (Utils::isShieldUsingSpatieDriver()) {
+            if ($this->existsInFile('use Silber\Bouncer\Database\HasRolesAndAbilities;', $path)) {
+                $this->replaceInFile(
+                    'use Silber\Bouncer\Database\HasRolesAndAbilities;',
+                    'use Spatie\Permission\Traits\HasRoles;',
+                    $path
+                );
+                $this->replaceInFile(
+                    'use HasRolesAndAbilities;',
+                    'use HasRoles;',
+                    $path
+                );
+            }
+
+            if (! $this->existsInFile('use Spatie\Permission\Traits\HasRoles;', $path)) {
+                $this->replaceInFile(
+                    'use Illuminate\Foundation\Auth\User as Authenticatable;',
+                    'use Illuminate\Foundation\Auth\User as Authenticatable;'.PHP_EOL.'use Spatie\Permission\Traits\HasRoles;',
+                    $path
+                );
+
+                $this->replaceInFile(
+                    '{',
+                    '{'.PHP_EOL.'    use HasRoles;',
+                    $path
+                );
+            }
+        }
+
+        if (Utils::isShieldUsingBouncerDriver()) {
+            if ($this->existsInFile('use Spatie\Permission\Traits\HasRoles;', $path)) {
+                $this->replaceInFile(
+                    'use Spatie\Permission\Traits\HasRoles;',
+                    'use Silber\Bouncer\Database\HasRolesAndAbilities;',
+                    $path
+                );
+                $this->replaceInFile(
+                    'use HasRoles;',
+                    'use HasRolesAndAbilities;',
+                    $path
+                );
+            }
+
+            if (! $this->existsInFile('use Silber\Bouncer\Database\HasRolesAndAbilities;', $path)) {
+                $this->replaceInFile(
+                    'use Illuminate\Foundation\Auth\User as Authenticatable;',
+                    'use Illuminate\Foundation\Auth\User as Authenticatable;'.PHP_EOL.'use Silber\Bouncer\Database\HasRolesAndAbilities;',
+                    $path
+                );
+
+                $this->replaceInFile(
+                    '{',
+                    '{'.PHP_EOL.'    use HasRolesAndAbilities;',
+                    $path
+                );
             }
         }
     }

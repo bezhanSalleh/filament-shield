@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Shield;
 
+use Illuminate\Database\Eloquent\Model;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
 
 class SpatieShieldDriver implements ShieldDriver
 {
-    public function createRole(array $data): void
+    public function createRole(array $data): Model
     {
-        Utils::getRoleModel()::firstOrCreate($data);
+        return Utils::getRoleModel()::firstOrCreate($data);
     }
 
-    public function createPermission(array $data): void
+    public function createPermission(array $data): Model
     {
-        Utils::getPermissionModel()::firstOrCreate($data);
+        return Utils::getPermissionModel()::firstOrCreate($data);
     }
 
     public function hasRole($user, string $role): bool

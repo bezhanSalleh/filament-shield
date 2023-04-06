@@ -45,16 +45,14 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageRegistered();
 
-        if (Utils::isShieldUsingBouncerDriver()) {
-            $this->app->singleton('shield', function () {
-                $driverManager = new ShieldManager();
+        $this->app->singleton('shield', function () {
+            $driverManager = new ShieldManager();
 
-                return $driverManager->make();
-            });
+            return $driverManager::make();
+        });
 
-            $this->app->alias('shield', ShieldDriver::class);
-        }
-
+        $this->app->alias('shield', ShieldDriver::class);
+        
         $this->app->scoped('filament-shield', function (): FilamentShield {
             return new FilamentShield();
         });

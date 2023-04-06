@@ -40,7 +40,7 @@ trait CanRunShellCommands
 
     protected function runProcess(array $command)
     {
-        $process = new SymfonyProcess($command, base_path(), null, null, null);
+        $process = new SymfonyProcess($command, base_path(), ['COMPOSER_MEMORY_LIMIT' => '-1','COMPOSER_DISABLE_NETWORK' => '1'], null, null);
         $process->setTimeout(null);
         // $process->run();
         $process->run(function ($type, $buffer) {
