@@ -427,7 +427,7 @@ class AuthServiceProvider extends ServiceProvider
     ...
     protected $policies = [
         ...,
-        'Ramnzys\FilamentEmailLog\Models\Email' => 'App\Policies\EmailPolicy';
+        'Ramnzys\FilamentEmailLog\Models\Email' => 'App\Policies\EmailPolicy'
 
     ];
 ```
