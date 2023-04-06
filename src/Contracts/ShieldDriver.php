@@ -6,9 +6,9 @@ namespace BezhanSalleh\FilamentShield\Contracts;
 
 interface ShieldDriver
 {
-    public function createRole(array $data): void;
+    public function createRole(array $data);
 
-    public function createPermission(array $data): void;
+    public function createPermission(array $data);
 
     public function hasRole($user, string $role): bool;
 

@@ -5,14 +5,17 @@ namespace BezhanSalleh\FilamentShield\Commands;
 use Composer\InstalledVersions;
 use Illuminate\Console\Command;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Filesystem\Filesystem;
 
 class MakeShieldInstallCommand extends Command
 {
     use Concerns\CanManipulateFiles;
+    use Concerns\CanGetBasePath;
 
     protected $signature = 'shield:install
         {driver? : The driver to install `default:Spatie` }
         {--R|refresh : refresh the driver}
+        {--G|generate : Generate everything based on the config, create a super-admin and give all the permissions required}
     ';
 
     protected $description = 'Installs Shield and setups the driver';
@@ -20,13 +23,13 @@ class MakeShieldInstallCommand extends Command
 
     public function handle(): int
     {
-        $this->info(app()->version());
         $this->components->info('Installing Shield...');
 
         // Publish the config file
         $this->call('vendor:publish', [
             '--tag' => 'filament-shield-config',
         ]);
+
 
         // ask for the driver
         $driver = $this->argument('driver') ?? $this->components->choice(
@@ -39,13 +42,60 @@ class MakeShieldInstallCommand extends Command
             'spatie'
         );
 
-        if (str($driver)->contains('Custom')) {
+        $otherPackage = $driver === 'spatie' ? 'silber/bouncer' : 'spatie/laravel-permission';
+        $otherDriver = $driver === 'spatie' ? 'bouncer' : 'spatie';
+        $installedDriver = $driver === 'spatie' ? 'spatie/laravel-permission' : 'silber/bouncer';
+
+        $this->cleanRisdualHandlers($driver);
+
+        if ($driver === 'custom') {
+
+            $this->components->info("Installing the {$driver} driver...");
+
+            $this->swapDriver($driver);
+
+            $this->publishDriverHandler($driver);
+
+            $spatie = 'spatie/laravel-permission';
+            $bouncer = 'silber/bouncer';
+
+            if (InstalledVersions::isInstalled($spatie)) {
+
+                $this->components->info("Uninstalling the Spatie driver...");
+
+                $this->call('shield:setup', [
+                    'driver' => 'spatie',
+                    '--uninstall' => true,
+                ]);
+
+                $this->newLine();
+                $this->success("Spatie driver uninstalled!");
+            }
+
+            if (InstalledVersions::isInstalled($bouncer)) {
+
+                $this->components->info("Uninstalling the `Bouncer` driver...");
+
+                $this->call('shield:setup', [
+                    'driver' => 'bouncer',
+                    '--uninstall' => true,
+                ]);
+
+                $this->newLine();
+                $this->success("Bouncer driver uninstalled!");
+            }
+
+            $this->success("`Custom` driver installed!");
+
+            if ($this->components->confirm('Would you like to show some love by starring the repo?', true)) {
+                Utils::showSomeLove(/* 💖 */);
+                $this->line('Thank you!');
+            }
+
+
+            return self::SUCCESS;
 
         } else {
-
-            $otherPackage = $driver === 'spatie' ? 'silber/bouncer' : 'spatie/laravel-permission';
-            $otherDriver = $driver === 'spatie' ? 'bouncer' : 'spatie';
-            $installedDriver = $driver === 'spatie' ? 'spatie/laravel-permission' : 'silber/bouncer';
 
             if (InstalledVersions::isInstalled($installedDriver) && InstalledVersions::isInstalled($otherPackage)) {
 
@@ -56,6 +106,9 @@ class MakeShieldInstallCommand extends Command
                     '--uninstall' => true,
                 ]);
 
+                $this->deleteDriverHandler($otherDriver);
+
+                $this->newLine();
                 $this->success("{$otherDriver} driver uninstalled!");
             }
 
@@ -69,7 +122,10 @@ class MakeShieldInstallCommand extends Command
                         '--uninstall' => true,
                     ]);
 
+                    $this->deleteDriverHandler($otherDriver);
+
                     $this->success("{$otherDriver} driver uninstalled!");
+
 
                     $this->swapDriver($driver);
 
@@ -78,6 +134,8 @@ class MakeShieldInstallCommand extends Command
                     $this->call('shield:setup', [
                         'driver' => $driver,
                     ]);
+
+                    $this->publishDriverHandler($driver);
 
                     $this->success("{$driver} driver installed!");
                 }
@@ -98,10 +156,13 @@ class MakeShieldInstallCommand extends Command
             } else {
 
                 $this->components->info("Installing the {$driver} driver...");
+                    $this->swapDriver($driver);
 
                     $this->call('shield:setup', [
                         'driver' => $driver,
                     ]);
+
+                    $this->publishDriverHandler($driver);
 
                     $this->success("{$driver} driver installed!");
             }
@@ -111,6 +172,12 @@ class MakeShieldInstallCommand extends Command
             'driver' => $driver,
             '--refresh' => true,
         ]);
+
+        if ($this->option('generate')) {
+            $this->call('shield:generate');
+            $this->call('shield:super-admin');
+        }
+
 
         if ($this->components->confirm('Would you like to show some love by starring the repo?', true)) {
             Utils::showSomeLove(/* 💖 */);
@@ -141,5 +208,52 @@ class MakeShieldInstallCommand extends Command
     {
         $this->line('  <bg=bright-green;fg=white;> SUCCESS </> ' . $message);
         $this->newLine();
+    }
+
+    protected function getDriverHandler(string $driver): string
+    {
+        return match($driver) {
+            'custom' => 'CustomShieldDriver.php',
+            'spatie' => 'SpatieShieldDriver.php',
+            'bouncer' => 'BouncerShieldDriver.php',
+        };
+    }
+
+    protected function publishDriverHandler(string $driver): void
+    {
+
+        if (! $this->checkForCollision([$this->getBasePath(). DIRECTORY_SEPARATOR. $this->getDriverHandler($driver)])) {
+            $this->copyStubToApp($driver, $this->getBasePath().DIRECTORY_SEPARATOR.$this->getDriverHandler($driver));
+        }
+    }
+
+    protected function deleteDriverHandler(string $driver): void
+    {
+        $filesystem = new Filesystem();
+
+        if ($this->fileExists($this->getBasePath().DIRECTORY_SEPARATOR.$this->getDriverHandler($driver))) {
+            $filesystem->delete($this->getBasePath().DIRECTORY_SEPARATOR.$this->getDriverHandler($driver));
+        }
+    }
+
+    protected function cleanRisdualHandlers(string $driver): void
+    {
+        $filesystem = new Filesystem();
+
+        $currentHandler = $this->getDriverHandler($driver);
+
+        $risdualHandlers = [
+            'CustomShieldDriver.php',
+            'SpatieShieldDriver.php',
+            'BouncerShieldDriver.php',
+        ];
+
+        unset($risdualHandlers[$currentHandler]);
+
+        foreach ($risdualHandlers as $handler) {
+            if ($this->fileExists($this->getBasePath().DIRECTORY_SEPARATOR.$handler)) {
+                $filesystem->delete($this->getBasePath().DIRECTORY_SEPARATOR.$handler);
+            }
+        }
     }
 }

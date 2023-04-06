@@ -7,7 +7,7 @@ namespace App\Filament\Resources\Shield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
 
-class SpatieDriver implements ShieldDriver
+class SpatieShieldDriver implements ShieldDriver
 {
     public function createRole(array $data): void
     {
