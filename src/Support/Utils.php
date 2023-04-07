@@ -32,7 +32,7 @@ class Utils
         return config('filament-shield.shield_resource.should_register_navigation', true);
     }
 
-    public static function getResourceNavigationSort(): int
+    public static function getResourceNavigationSort(): ?int
     {
         return config('filament-shield.shield_resource.navigation_sort');
     }
