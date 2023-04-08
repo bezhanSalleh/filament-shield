@@ -2,20 +2,21 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use BezhanSalleh\FilamentShield\ShieldManager;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -144,9 +145,9 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->searchable(),
                 Tables\Columns\BadgeColumn::make('guard_name')
                     ->label(__('filament-shield::filament-shield.column.guard_name')),
-                Tables\Columns\BadgeColumn::make('permissions_count')
+                Tables\Columns\BadgeColumn::make(Utils::getDriver() === 'spatie' ? 'permissions_count' : 'abilities_count')
                     ->label(__('filament-shield::filament-shield.column.permissions'))
-                    ->counts('permissions')
+                    ->counts(Utils::getDriver() === 'spatie' ? 'permissions' : 'abilities')
                     ->colors(['success']),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('filament-shield::filament-shield.column.updated_at'))
@@ -240,6 +241,11 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
     }
 
+    public static function shouldAuthorizeWithGate(): bool
+    {
+        return Utils::isShieldUsingBouncerDriver() ?: static::$shouldAuthorizeWithGate;
+    }
+
     /**--------------------------------*
     | Resource Related Logic Start     |
     *----------------------------------*/
@@ -299,7 +305,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                         return;
                     }
 
-                    $set($permission.'_'.$entity['resource'], $record->checkPermissionTo($permission.'_'.$entity['resource']));
+                    $set($permission.'_'.$entity['resource'], ShieldManager::has('permission', $record,$permission.'_'.$entity['resource']));
 
                     static::refreshResourceEntityStateAfterHydrated($record, $set, $entity);
 
@@ -392,7 +398,11 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function refreshResourceEntityStateAfterHydrated(Model $record, Closure $set, array $entity): void
     {
-        $entities = $record->permissions->pluck('name')
+        $permissions = Utils::getDriver() === 'spaite'
+         ? $record->permissions->pluck('name')
+         : $record->abilities->pluck('name');
+
+        $entities = $permissions
             ->reduce(function ($roles, $role) {
                 $roles[$role] = Str::afterLast($role, '_');
 
@@ -442,7 +452,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     return;
                                 }
 
-                                $set($page, $record->checkPermissionTo($page));
+                                $set($page, ShieldManager::has('permission', $record,$page));
 
                                 static::refreshSelectAllStateViaEntities($set, $get);
                             })
@@ -483,7 +493,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     return;
                                 }
 
-                                $set($widget, $record->checkPermissionTo($widget));
+                                $set($widget, ShieldManager::has('permission', $record,$widget));
 
                                 static::refreshSelectAllStateViaEntities($set, $get);
                             })
@@ -537,7 +547,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     return;
                                 }
 
-                                $set($customPermission, $record->checkPermissionTo($customPermission));
+                                $set($customPermission, ShieldManager::has('permission', $record,$customPermission));
 
                                 static::refreshSelectAllStateViaEntities($set, $get);
                             })

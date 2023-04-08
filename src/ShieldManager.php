@@ -44,7 +44,7 @@ class ShieldManager
             ],
             'bouncer' => [
                 'name' => $data['name'],
-                'title' => $data['title'] ?? '',
+                'title' => $data['title'] ?? str($data['name'])->headline()->toString(),
             ],
             'custom' => $data,
             default => $data
