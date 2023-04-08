@@ -6,13 +6,13 @@ return [
 
     'models' => [
         'user' => 'App\\Models\\User',
-        'role' => 'Silber\\Bouncer\\Database\\Role',//config('permission.models.role', 'Spatie\\Permission\\Models\\Role'),
-        'permission' => 'Silber\\Bouncer\\Database\\Ability',//config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission'),
+        'role' => 'Silber\\Bouncer\\Database\\Role', //config('permission.models.role', 'Spatie\\Permission\\Models\\Role'),
+        'permission' => 'Silber\\Bouncer\\Database\\Ability', //config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission'),
     ],
 
     'separators' => [
         'prefix' => '_',
-        'identifier' => '::'
+        'identifier' => '::',
     ],
 
     'shield_resource' => [

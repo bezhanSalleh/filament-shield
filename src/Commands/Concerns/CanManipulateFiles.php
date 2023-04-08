@@ -12,9 +12,10 @@ trait CanManipulateFiles
         foreach ($paths as $path) {
             if ($this->fileExists($path)) {
                 $this->components->error("$path already exists, waiting for user confirmation ...");
-                if($this->components->confirm('Do you want to overwrite the existing file?')) {
+                if ($this->components->confirm('Do you want to overwrite the existing file?')) {
                     return false;
                 }
+
                 return true;
             }
         }
@@ -67,7 +68,7 @@ trait CanManipulateFiles
 
         $found = false;
         foreach ($fileContent as $line) {
-            if (!$found && strpos($line, $search) !== false) {
+            if (! $found && strpos($line, $search) !== false) {
                 if (filled($replace)) {
                     $line = str_replace($search, $replace, $line);
                     $newContent[] = $line;

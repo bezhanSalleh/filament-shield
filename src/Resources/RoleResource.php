@@ -2,22 +2,21 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use Closure;
-use Filament\Forms;
-use Filament\Tables;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
-use Illuminate\Database\Eloquent\Model;
-use BezhanSalleh\FilamentShield\ShieldManager;
-use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\ShieldManager;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Closure;
+use Filament\Forms;
+use Filament\Resources\Form;
+use Filament\Resources\Resource;
+use Filament\Resources\Table;
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -51,7 +50,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->maxLength(255)
                                     ->reactive()
                                     ->afterStateUpdated(function (Closure $set, $state) {
-                                        $set('title',str($state)->headline()->toString());
+                                        $set('title', str($state)->headline()->toString());
                                     }),
                                 Utils::isShieldUsingSpatieDriver()
                                     ? Forms\Components\TextInput::make('guard_name')
@@ -316,7 +315,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                         return;
                     }
 
-                    $set($permission.'_'.$entity['resource'], ShieldManager::has('permission', $record,$permission.'_'.$entity['resource']));
+                    $set($permission.'_'.$entity['resource'], ShieldManager::has('permission', $record, $permission.'_'.$entity['resource']));
 
                     static::refreshResourceEntityStateAfterHydrated($record, $set, $entity);
 
@@ -463,7 +462,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     return;
                                 }
 
-                                $set($page, ShieldManager::has('permission', $record,$page));
+                                $set($page, ShieldManager::has('permission', $record, $page));
 
                                 static::refreshSelectAllStateViaEntities($set, $get);
                             })
@@ -504,7 +503,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     return;
                                 }
 
-                                $set($widget, ShieldManager::has('permission', $record,$widget));
+                                $set($widget, ShieldManager::has('permission', $record, $widget));
 
                                 static::refreshSelectAllStateViaEntities($set, $get);
                             })
@@ -558,7 +557,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     return;
                                 }
 
-                                $set($customPermission, ShieldManager::has('permission', $record,$customPermission));
+                                $set($customPermission, ShieldManager::has('permission', $record, $customPermission));
 
                                 static::refreshSelectAllStateViaEntities($set, $get);
                             })

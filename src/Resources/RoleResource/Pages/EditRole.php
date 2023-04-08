@@ -2,14 +2,14 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use Filament\Pages\Actions;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Filament\Resources\Pages\EditRecord;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\ShieldManager;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use Filament\Pages\Actions;
+use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class EditRole extends EditRecord
 {
@@ -30,7 +30,7 @@ class EditRole extends EditRecord
             return ! in_array($key, ['name', 'guard_name', 'title', 'select_all']) && Str::contains($key, '_');
         })->keys();
 
-        return Arr::only($data, Utils::isShieldUsingBouncerDriver() ? ['name','title'] : ['name', 'guard_name']);
+        return Arr::only($data, Utils::isShieldUsingBouncerDriver() ? ['name', 'title'] : ['name', 'guard_name']);
     }
 
     protected function afterSave(): void
