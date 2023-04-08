@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Composer\InstalledVersions;
 use Illuminate\Console\Command;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Filesystem\Filesystem;
 use ReflectionClass;
 
@@ -21,7 +21,6 @@ class MakeShieldInstallCommand extends Command
 
     protected $description = 'Installs Shield and setups the driver';
 
-
     public function handle(): int
     {
         $this->components->info('Installing Shield...');
@@ -30,7 +29,6 @@ class MakeShieldInstallCommand extends Command
         $this->call('vendor:publish', [
             '--tag' => 'filament-shield-config',
         ]);
-
 
         // ask for the driver
         $driver = $this->argument('driver') ?? $this->components->choice(
@@ -50,7 +48,6 @@ class MakeShieldInstallCommand extends Command
         $this->cleanup($driver);
 
         if ($driver === 'custom') {
-
             $this->components->info("Installing the {$driver} driver...");
 
             $this->swapDriver($driver);
@@ -61,8 +58,7 @@ class MakeShieldInstallCommand extends Command
             $bouncer = 'silber/bouncer';
 
             if (InstalledVersions::isInstalled($spatie)) {
-
-                $this->components->info("Uninstalling the Spatie driver...");
+                $this->components->info('Uninstalling the Spatie driver...');
 
                 $this->call('shield:setup', [
                     'driver' => 'spatie',
@@ -70,12 +66,11 @@ class MakeShieldInstallCommand extends Command
                 ]);
 
                 $this->newLine();
-                $this->success("Spatie driver uninstalled!");
+                $this->success('Spatie driver uninstalled!');
             }
 
             if (InstalledVersions::isInstalled($bouncer)) {
-
-                $this->components->info("Uninstalling the `Bouncer` driver...");
+                $this->components->info('Uninstalling the `Bouncer` driver...');
 
                 $this->call('shield:setup', [
                     'driver' => 'bouncer',
@@ -83,23 +78,19 @@ class MakeShieldInstallCommand extends Command
                 ]);
 
                 $this->newLine();
-                $this->success("Bouncer driver uninstalled!");
+                $this->success('Bouncer driver uninstalled!');
             }
 
-            $this->success("`Custom` driver installed!");
+            $this->success('`Custom` driver installed!');
 
             if ($this->components->confirm('Would you like to show some love by starring the repo?', true)) {
                 Utils::showSomeLove(/* 💖 */);
                 $this->line('Thank you!');
             }
 
-
             return self::SUCCESS;
-
         } else {
-
             if (InstalledVersions::isInstalled($installedDriver) && InstalledVersions::isInstalled($otherPackage)) {
-
                 $this->components->info("Uninstalling the {$otherDriver} driver...");
 
                 $this->call('shield:setup', [
@@ -111,11 +102,8 @@ class MakeShieldInstallCommand extends Command
 
                 $this->newLine();
                 $this->success("{$otherDriver} driver uninstalled!");
-            }
-
-            else if (InstalledVersions::isInstalled($otherPackage)) {
+            } elseif (InstalledVersions::isInstalled($otherPackage)) {
                 if ($this->components->confirm("The {$otherDriver} driver is already installed. Do you want to remove it and install {$driver} instead?", true)) {
-
                     $this->components->info("Uninstalling the {$otherDriver} driver...");
 
                     $this->call('shield:setup', [
@@ -140,14 +128,15 @@ class MakeShieldInstallCommand extends Command
                     $this->success("{$driver} driver installed!");
                 }
             } elseif (InstalledVersions::isInstalled($installedDriver)) {
-                if ($this->option('refresh') || $this->components->confirm("The {$driver} driver is already installed. Do you want to refresh it?",true)) {
-
+                if ($this->option('refresh') || $this->components->confirm("The {$driver} driver is already installed. Do you want to refresh it?", true)) {
                     $this->components->info("Refreshing the {$driver} driver...");
 
                     $this->call('shield:setup', [
                         'driver' => $driver,
                         '--refresh' => true,
                     ]);
+
+                    $this->publishDriverHandler($driver);
 
                     $this->configureShieldUserProvider();
 
@@ -156,17 +145,16 @@ class MakeShieldInstallCommand extends Command
                     return self::SUCCESS;
                 }
             } else {
-
                 $this->components->info("Installing the {$driver} driver...");
-                    $this->swapDriver($driver);
+                $this->swapDriver($driver);
 
-                    $this->call('shield:setup', [
-                        'driver' => $driver,
-                    ]);
+                $this->call('shield:setup', [
+                    'driver' => $driver,
+                ]);
 
-                    $this->publishDriverHandler($driver);
+                $this->publishDriverHandler($driver);
 
-                    $this->success("{$driver} driver installed!");
+                $this->success("{$driver} driver installed!");
             }
         }
 
@@ -183,12 +171,10 @@ class MakeShieldInstallCommand extends Command
             $this->call('shield:super-admin');
         }
 
-
         if ($this->components->confirm('Would you like to show some love by starring the repo?', true)) {
             Utils::showSomeLove(/* 💖 */);
             $this->line('Thank you!');
         }
-
 
         return self::SUCCESS;
     }
@@ -210,13 +196,13 @@ class MakeShieldInstallCommand extends Command
 
     protected function success(string $message)
     {
-        $this->line('  <bg=bright-green;fg=white;> SUCCESS </> ' . $message);
+        $this->line('  <bg=bright-green;fg=white;> SUCCESS </> '.$message);
         $this->newLine();
     }
 
     protected function getDriverHandler(string $driver): string
     {
-        return match($driver) {
+        return match ($driver) {
             'custom' => 'CustomShieldDriver.php',
             'spatie' => 'SpatieShieldDriver.php',
             'bouncer' => 'BouncerShieldDriver.php',
@@ -225,8 +211,7 @@ class MakeShieldInstallCommand extends Command
 
     protected function publishDriverHandler(string $driver): void
     {
-
-        if (! $this->checkForCollision([$this->getBasePath(). DIRECTORY_SEPARATOR. $this->getDriverHandler($driver)])) {
+        if (! $this->checkForCollision([$this->getBasePath().DIRECTORY_SEPARATOR.$this->getDriverHandler($driver)])) {
             $this->copyStubToApp($driver, $this->getBasePath().DIRECTORY_SEPARATOR.$this->getDriverHandler($driver));
         }
     }

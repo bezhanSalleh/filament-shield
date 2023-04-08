@@ -14,14 +14,19 @@ class CustomShieldDriver implements ShieldDriver
         // return Role::firstOrCreate();
     }
 
-    public function createPermission(array $data): Model
-    {
-        // return Permission::firstOrCreate();
-    }
-
     public function hasRole($user, string $role): bool
     {
         return false; // $user->hasRole($role);
+    }
+
+    public function syncRoles($user, string|array $roles): void
+    {
+        // $user->syncRoles($roles);
+    }
+
+    public function createPermission(array $data): Model
+    {
+        // return Permission::firstOrCreate();
     }
 
     public function hasPermission($user, string $permission): bool
@@ -29,13 +34,13 @@ class CustomShieldDriver implements ShieldDriver
         return false; // $user->hasPermission($permission);
     }
 
-    public function syncPermissions($user, array $permissions): void
+    public function syncPermissions($user, string|array $permissions): void
     {
         // $user->syncPermissions($permissions);
     }
 
-    public function syncRoles($user, array $roles): void
+    public function givePermissionsToRole(Model $role, mixed $permissions): void
     {
-        // $user->syncRoles($roles);
+        // $role->givePermissionTo($permissions);
     }
 }

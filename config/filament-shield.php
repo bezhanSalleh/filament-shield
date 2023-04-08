@@ -4,6 +4,12 @@ return [
 
     'driver' => 'spatie', // bouncer or custom
 
+    'models' => [
+        'user' => 'App\\Models\\User',
+        'role' => config('permission.models.role', 'Spatie\\Permission\\Models\\Role'),
+        'permission' => config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission'),
+    ],
+
     'shield_resource' => [
         'should_register_navigation' => true,
         'slug' => 'shield/roles',
@@ -12,10 +18,6 @@ return [
         'navigation_group' => true,
         'is_globally_searchable' => false,
         'show_model_path' => true,
-    ],
-
-    'auth_provider_model' => [
-        'fqcn' => 'App\\Models\\User',
     ],
 
     'super_admin' => [

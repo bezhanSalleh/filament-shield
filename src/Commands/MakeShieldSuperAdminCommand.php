@@ -4,6 +4,7 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\Commands\Concerns\CanValidateInput;
 use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\ShieldManager;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
@@ -29,11 +30,11 @@ class MakeShieldSuperAdminCommand extends Command
         $userProvider = $auth->getProvider();
 
         if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
-            FilamentShield::createRole();
+            FilamentShield::getSuperAdminRole();
         }
 
         if (Utils::isFilamentUserRoleEnabled() && Utils::getRoleModel()::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
-            FilamentShield::createRole(isSuperAdmin: false);
+            FilamentShield::getSuperAdminRole();
         }
 
         if ($this->option('user')) {
@@ -44,6 +45,8 @@ class MakeShieldSuperAdminCommand extends Command
             $this->table(
                 ['ID', 'Name', 'Email', 'Roles'],
                 $userProvider->getModel()::with('roles')->get()->map(function ($user) {
+                    $user->load('roles');
+
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
@@ -64,13 +67,10 @@ class MakeShieldSuperAdminCommand extends Command
             ]);
         }
 
-        $this->superAdmin->assignRole(Utils::getSuperAdminName());
-
-        if (Utils::isFilamentUserRoleEnabled()) {
-            $this->superAdmin->assignRole(Utils::getFilamentUserRoleName());
-        }
+        ShieldManager::sync('roles', $this->superAdmin, Utils::getSuperAdminName());
 
         $loginUrl = route('filament.auth.login');
+
         $this->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
 
         return self::SUCCESS;

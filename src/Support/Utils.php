@@ -2,13 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Schema;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Support\Str;
 
 class Utils
 {
@@ -58,7 +57,7 @@ class Utils
 
     public static function getAuthProviderFQCN()
     {
-        return config('filament-shield.auth_provider_model.fqcn');
+        return config('filament-shield.models.user');
     }
 
     public static function isAuthProviderConfigured(): bool
@@ -211,12 +210,12 @@ class Utils
 
     public static function getRoleModel(): string
     {
-        return config('permission.models.role', 'Spatie\\Permission\\Models\\Role');
+        return config('filament-shield.models.role');
     }
 
     public static function getPermissionModel(): string
     {
-        return config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission');
+        return config('filament-shield.models.permission');
     }
 
     public static function getTables(): Collection
@@ -228,7 +227,7 @@ class Utils
             'permissions',
             'assigned_roles',
             'roles',
-            'abilities'
+            'abilities',
         ]);
     }
 

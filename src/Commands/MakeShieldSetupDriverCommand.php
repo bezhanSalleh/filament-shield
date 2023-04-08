@@ -2,9 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Console\Command;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Commands\Concerns;
+use Illuminate\Console\Command;
 
 class MakeShieldSetupDriverCommand extends Command
 {
@@ -47,7 +46,7 @@ class MakeShieldSetupDriverCommand extends Command
     protected function install(): void
     {
         $this->requireComposerPackages([
-            $this->determineThePackageToInstall()
+            $this->determineThePackageToInstall(),
         ]);
     }
 
@@ -56,7 +55,7 @@ class MakeShieldSetupDriverCommand extends Command
         $this->clean();
 
         $this->removeComposerPackages([
-            $this->determineThePackageToInstall()
+            $this->determineThePackageToInstall(),
         ]);
     }
 
@@ -85,7 +84,7 @@ class MakeShieldSetupDriverCommand extends Command
         $this->runProcess([
             'php',
             'artisan',
-            'migrate'
+            'migrate',
         ]);
     }
 

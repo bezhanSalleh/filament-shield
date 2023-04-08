@@ -15,14 +15,25 @@ class BouncerShieldDriver implements ShieldDriver
         return Bouncer::role()->firstOrCreate($data);
     }
 
-    public function createPermission(array $data): Model
-    {
-        return Bouncer::ability()->firstOrCreate($data);
-    }
-
     public function hasRole($user, string $role): bool
     {
         return $user->is($role);
+    }
+
+    public function syncRoles($user, string|array $roles): void
+    {
+        $user->roles->each(function ($role) use ($user) {
+            $user->retract($role->name);
+        });
+
+        foreach ($roles as $role) {
+            $user->assign($role);
+        }
+    }
+
+    public function createPermission(array $data): Model
+    {
+        return Bouncer::ability()->firstOrCreate($data);
     }
 
     public function hasPermission($user, string $permission): bool
@@ -30,7 +41,7 @@ class BouncerShieldDriver implements ShieldDriver
         return $user->can($permission);
     }
 
-    public function syncPermissions($user, array $permissions): void
+    public function syncPermissions($user, string|array $permissions): void
     {
         $user->abilities->each(function ($ability) use ($user) {
             $user->disallow($ability->name);
@@ -41,14 +52,10 @@ class BouncerShieldDriver implements ShieldDriver
         }
     }
 
-    public function syncRoles($user, array $roles): void
+    public function givePermissionsToRole(Model $role, mixed $permissions): void
     {
-        $user->roles->each(function ($role) use ($user) {
-            $user->retract($role->name);
-        });
+        Bouncer::allow($role)->to($permissions);
 
-        foreach ($roles as $role) {
-            $user->assign($role);
-        }
+        Bouncer::refresh();
     }
 }

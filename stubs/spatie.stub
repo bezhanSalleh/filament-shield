@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Shield;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\PermissionRegistrar;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Contracts\ShieldDriver;
 
@@ -15,14 +16,19 @@ class SpatieShieldDriver implements ShieldDriver
         return Utils::getRoleModel()::firstOrCreate($data);
     }
 
-    public function createPermission(array $data): Model
-    {
-        return Utils::getPermissionModel()::firstOrCreate($data);
-    }
-
     public function hasRole($user, string $role): bool
     {
         return $user->hasRole($role);
+    }
+
+    public function syncRoles($user, string|array $roles): void
+    {
+        $user->syncRoles($roles);
+    }
+
+    public function createPermission(array $data): Model
+    {
+        return Utils::getPermissionModel()::firstOrCreate($data);
     }
 
     public function hasPermission($user, string $permission): bool
@@ -30,13 +36,14 @@ class SpatieShieldDriver implements ShieldDriver
         return $user->hasPermissionTo($permission);
     }
 
-    public function syncPermissions($user, array $permissions): void
+    public function syncPermissions($user, string|array $permissions): void
     {
         $user->syncPermissions($permissions);
     }
 
-    public function syncRoles($user, array $roles): void
+    public function givePermissionsToRole(Model $role, mixed $permissions): void
     {
-        $user->syncRoles($roles);
+        $role->givePermissionTo($permissions);
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

@@ -6,10 +6,9 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Support\Concerns\EvaluatesClosures;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
-use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
 {
@@ -45,12 +44,14 @@ class FilamentShield
             $permissions = collect();
             collect($permissionPrefixes)
                 ->each(function ($prefix) use ($entity, $permissions) {
-                    $permissions->push(Utils::getPermissionModel()::firstOrCreate(
-                        ['name' => $prefix.'_'.$entity['resource']],
-                        ['guard_name' => Utils::getFilamentAuthGuard()]
-                    ));
+                    $permissions->push(ShieldManager::firstOrCreate('permission', [
+                        'name' => $prefix.'_'.$entity['resource'],
+                        'guard_name' => Utils::getFilamentAuthGuard(),
+                    ])
+                        ->name
+                    );
                 });
-
+            ray($permissions)->blue();
             static::giveSuperAdminPermission($permissions);
         }
     }
@@ -58,10 +59,10 @@ class FilamentShield
     public static function generateForPage(string $page): void
     {
         if (Utils::isPageEntityEnabled()) {
-            $permission = Utils::getPermissionModel()::firstOrCreate(
-                ['name' => $page],
-                ['guard_name' => Utils::getFilamentAuthGuard()]
-            )->name;
+            $permission = ShieldManager::firstOrCreate('permission', [
+                'name' => $page,
+                'guard_name' => Utils::getFilamentAuthGuard(),
+            ])->name;
 
             static::giveSuperAdminPermission($permission);
         }
@@ -70,32 +71,33 @@ class FilamentShield
     public static function generateForWidget(string $widget): void
     {
         if (Utils::isWidgetEntityEnabled()) {
-            $permission = Utils::getPermissionModel()::firstOrCreate(
-                ['name' => $widget],
-                ['guard_name' => Utils::getFilamentAuthGuard()]
-            )->name;
+            $permission = ShieldManager::firstOrCreate('permission', [
+                'name' => $widget,
+                'guard_name' => Utils::getFilamentAuthGuard(),
+            ])->name;
 
             static::giveSuperAdminPermission($permission);
         }
     }
 
-    protected static function giveSuperAdminPermission(string|array|Collection $permissions): void
+    protected static function giveSuperAdminPermission(mixed $permissions): void
     {
         if (! Utils::isSuperAdminDefinedViaGate()) {
-            $superAdmin = static::createRole();
-
-            $superAdmin->givePermissionTo($permissions);
-
-            app(PermissionRegistrar::class)->forgetCachedPermissions();
+            ShieldManager::giveRolePermissions(
+                static::getSuperAdminRole(),
+                $permissions
+            );
         }
     }
 
-    public static function createRole(bool $isSuperAdmin = true)
+    public static function getSuperAdminRole(): Model
     {
-        return Utils::getRoleModel()::firstOrCreate(
-            ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
-            ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
-        );
+        $data = [
+            'name' => Utils::getSuperAdminName(),
+            'guard_name' => Utils::getFilamentAuthGuard(),
+        ];
+
+        return ShieldManager::firstOrCreate('role', $data);
     }
 
     /**
