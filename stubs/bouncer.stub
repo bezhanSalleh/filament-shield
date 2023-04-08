@@ -22,6 +22,10 @@ class BouncerShieldDriver implements ShieldDriver
 
     public function syncRoles($user, string|array $roles): void
     {
+        if (! is_array($roles)) {
+            $roles = [$roles];
+        }
+
         $user->roles->each(function ($role) use ($user) {
             $user->retract($role->name);
         });
@@ -43,6 +47,10 @@ class BouncerShieldDriver implements ShieldDriver
 
     public function syncPermissions($user, string|array $permissions): void
     {
+        if (! is_array($permissions)) {
+            $permissions = [$permissions];
+        }
+
         $user->abilities->each(function ($ability) use ($user) {
             $user->disallow($ability->name);
         });
