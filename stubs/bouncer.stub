@@ -62,7 +62,7 @@ class BouncerShieldDriver implements ShieldDriver
 
     public function givePermissionsToRole(Model $role, mixed $permissions): void
     {
-        Bouncer::allow($role)->to($permissions);
+        Bouncer::sync($role)->abilities($permissions);
 
         Bouncer::refresh();
     }

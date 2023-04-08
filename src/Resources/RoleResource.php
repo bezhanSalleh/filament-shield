@@ -11,6 +11,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
 use BezhanSalleh\FilamentShield\ShieldManager;
 use BezhanSalleh\FilamentShield\Support\Utils;
@@ -47,12 +48,22 @@ class RoleResource extends Resource implements HasShieldPermissions
                                 Forms\Components\TextInput::make('name')
                                     ->label(__('filament-shield::filament-shield.field.name'))
                                     ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('guard_name')
-                                    ->label(__('filament-shield::filament-shield.field.guard_name'))
-                                    ->default(Utils::getFilamentAuthGuard())
-                                    ->nullable()
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->reactive()
+                                    ->afterStateUpdated(function (Closure $set, $state) {
+                                        $set('title',str($state)->headline()->toString());
+                                    }),
+                                Utils::isShieldUsingSpatieDriver()
+                                    ? Forms\Components\TextInput::make('guard_name')
+                                        ->label(__('filament-shield::filament-shield.field.guard_name'))
+                                        ->default(Utils::getFilamentAuthGuard())
+                                        ->nullable()
+                                        ->maxLength(255)
+                                    : Forms\Components\TextInput::make('title')
+                                        ->default(Utils::getFilamentAuthGuard())
+                                        ->nullable()
+                                        ->maxLength(255)
+                                        ->disabled(),
                                 Forms\Components\Toggle::make('select_all')
                                     ->onIcon('heroicon-s-shield-check')
                                     ->offIcon('heroicon-s-shield-exclamation')
@@ -205,7 +216,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     protected static function getNavigationGroup(): ?string
     {
         return Utils::isResourceNavigationGroupEnabled()
-            ? __('filament-shield::filament-shield.nav.group')
+            ? __('filament-shield::filament-shield.nav.group').' '.Utils::getDriver()
             : '';
     }
 
@@ -241,10 +252,10 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
     }
 
-    public static function shouldAuthorizeWithGate(): bool
-    {
-        return Utils::isShieldUsingBouncerDriver() ?: static::$shouldAuthorizeWithGate;
-    }
+    // public static function shouldAuthorizeWithGate(): bool
+    // {
+    //     return Utils::isShieldUsingBouncerDriver() ?: static::$shouldAuthorizeWithGate;
+    // }
 
     /**--------------------------------*
     | Resource Related Logic Start     |
@@ -398,7 +409,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function refreshResourceEntityStateAfterHydrated(Model $record, Closure $set, array $entity): void
     {
-        $permissions = Utils::getDriver() === 'spaite'
+        $permissions = Utils::isShieldUsingSpatieDriver()
          ? $record->permissions->pluck('name')
          : $record->abilities->pluck('name');
 

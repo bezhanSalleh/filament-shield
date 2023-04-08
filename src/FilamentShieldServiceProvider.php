@@ -24,20 +24,14 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        if (Utils::isShieldUsingSpatieDriver()) {
-            if (Utils::isSuperAdminDefinedViaGate()) {
-                Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
-                    return match (Utils::getSuperAdminGateInterceptionStatus()) {
-                        'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
-                        'after' => $user->hasRole(Utils::getSuperAdminName()),
-                        default => false
-                    };
-                });
-            }
-
-            if (Utils::isRolePolicyRegistered()) {
-                Gate::policy(Utils::getRoleModel(), 'App\Policies\RolePolicy');
-            }
+        if (Utils::isSuperAdminDefinedViaGate()) {
+            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
+                return match (Utils::getSuperAdminGateInterceptionStatus()) {
+                    'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
+                    'after' => $user->hasRole(Utils::getSuperAdminName()),
+                    default => false
+                };
+            });
         }
     }
 

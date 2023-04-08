@@ -6,8 +6,13 @@ return [
 
     'models' => [
         'user' => 'App\\Models\\User',
-        'role' => config('permission.models.role', 'Spatie\\Permission\\Models\\Role'),
-        'permission' => config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission'),
+        'role' => 'Silber\\Bouncer\\Database\\Role',//config('permission.models.role', 'Spatie\\Permission\\Models\\Role'),
+        'permission' => 'Silber\\Bouncer\\Database\\Ability',//config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission'),
+    ],
+
+    'separators' => [
+        'prefix' => '_',
+        'identifier' => '::'
     ],
 
     'shield_resource' => [
@@ -75,10 +80,6 @@ return [
         ],
 
         'resources' => [],
-    ],
-
-    'register_role_policy' => [
-        'enabled' => true,
     ],
 
 ];
