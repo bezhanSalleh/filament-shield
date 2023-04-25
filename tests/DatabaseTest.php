@@ -16,7 +16,7 @@ it('can check if the permission name can be configured using the closure', funct
     // expect(FilamentShield::getPermissionIdentifier($resource))->toBe('role::resource');
 
     FilamentShield::configurePermissionIdentifierUsing(
-        fn($resource) => str($resource::getModel())
+        fn ($resource) => str($resource::getModel())
             ->afterLast('\\')
             ->lower()
             ->toString()
