@@ -5,6 +5,7 @@ namespace BezhanSalleh\FilamentShield;
 use Closure;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
+use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Spatie\Permission\PermissionRegistrar;
@@ -27,14 +28,23 @@ class FilamentShield
 
     public function getPermissionIdentifier(string $resource): string
     {
-        return $this->configurePermissionIdentifierUsing
-            ? $this->evaluate(
+        if ($this->configurePermissionIdentifierUsing) {
+
+            $identifier = $this->evaluate(
                 value: $this->configurePermissionIdentifierUsing,
                 parameters: [
                     'resource' => $resource,
                 ]
-            )
-            : Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+            );
+
+            if (Str::contains($identifier, '_')) {
+                throw new \InvalidArgumentException("Permission identifier `$identifier` for `$resource` cannot contain underscores.");
+            }
+
+            return $identifier;
+        }
+
+        return $this->getDefaultPermissionIdentifier($resource);
     }
 
     public function generateForResource(array $entity): void
@@ -275,5 +285,16 @@ class FilamentShield
     protected static function hasHeadingForShield(object|string $class): bool
     {
         return method_exists($class, 'getHeadingForShield');
+    }
+
+    protected function getDefaultPermissionIdentifier(string $resource): string
+    {
+        return Str::of($resource)
+                ->afterLast('Resources\\')
+                ->before('Resource')
+                ->replace('\\', '')
+                ->headline()
+                ->snake()
+                ->replace('_', '::');
     }
 }
