@@ -293,7 +293,6 @@ class FilamentShield
                 ->afterLast('Resources\\')
                 ->before('Resource')
                 ->replace('\\', '')
-                ->headline()
                 ->snake()
                 ->replace('_', '::');
     }

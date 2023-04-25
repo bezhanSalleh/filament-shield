@@ -44,6 +44,7 @@ Table of contents
       - [Resources](#resources)
         - [Default](#default)
         - [Custom Permissions](#custom-permissions)
+        - [Configure Permission Identifier](#configure-permission-identifier)
       - [Pages](#pages)
           - [Pages Hooks](#pages-hooks)
           - [Pages Redirect Path](#pages-redirect-path)
@@ -306,6 +307,35 @@ In the above example the `getPermissionPrefixes()` method returns the permission
     'publish' => 'Publicar'    
 ],
 ```
+
+##### Configure Permission Identifier
+By default the permission identifier is generated as follow:
+```php
+Str::of($resource)
+    ->afterLast('Resources\\')
+    ->before('Resource')
+    ->replace('\\', '')
+    ->snake()
+    ->replace('_', '::');
+```
+So for instance if you have a resource like `App\Filament\Resources\Shop\CategoryResource` then the permission identifier would be `shop::category` and then it would be prefixed with your defined prefixex or what comes default with shield.
+
+If you wish to change the default behaviour, then you can call the static `configurePermissionIdentifierUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the logic. The Closure receives the fully qualified class name as `$resource` which gives you the ability to access any property or method defined within the resource.
+
+For example, if you wish to use the model name as the permission identifier, you can do it like so:
+
+```php
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+
+FilamentShield::configurePermissionIdentifierUsing(
+    fn($resource) => str($resource::getModel())
+        ->afterLast('\\')
+        ->lower()
+        ->toString()
+);
+```
+> **Warning**
+> Keep in mind that ensuring the uniqueness of the permission identifier is up to you now.
 
 #### Pages
 
