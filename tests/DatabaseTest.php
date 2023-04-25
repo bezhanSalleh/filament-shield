@@ -7,7 +7,7 @@ it('can check if package testing is configured', function () {
     expect(true)->toBeTrue();
 });
 
-it('can check if the permission name can be configured using the closure', function() {
+it('can check if the permission name can be configured using the closure', function () {
     $resource = RoleResource::class;
 
     FilamentShield::configurePermissionIdentifierUsing(fn () => str($resource)->afterLast('Resources\\')->replace('\\', '')->headline()->snake()->replace('_', '.'));

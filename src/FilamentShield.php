@@ -2,16 +2,15 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
-
 
 class FilamentShield
 {
@@ -145,9 +144,6 @@ class FilamentShield
 
     /**
      * Get the localized resource label
-     *
-     * @param  string  $entity
-     * @return string
      */
     public static function getLocalizedResourceLabel(string $entity): string
     {
@@ -160,9 +156,6 @@ class FilamentShield
 
     /**
      * Get the localized resource permission label
-     *
-     * @param  string  $permission
-     * @return string
      */
     public static function getLocalizedResourcePermissionLabel(string $permission): string
     {
@@ -200,9 +193,6 @@ class FilamentShield
 
     /**
      * Get localized page label
-     *
-     * @param  string  $page
-     * @return string|bool
      */
     public static function getLocalizedPageLabel(string $page): string|bool
     {
@@ -290,11 +280,11 @@ class FilamentShield
     protected function getDefaultPermissionIdentifier(string $resource): string
     {
         return Str::of($resource)
-                ->afterLast('Resources\\')
-                ->before('Resource')
-                ->replace('\\', '')
-                ->headline()
-                ->snake()
-                ->replace('_', '::');
+            ->afterLast('Resources\\')
+            ->before('Resource')
+            ->replace('\\', '')
+            ->headline()
+            ->snake()
+            ->replace('_', '::');
     }
 }
