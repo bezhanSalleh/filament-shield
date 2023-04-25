@@ -320,7 +320,7 @@ Str::of($resource)
 ```
 So for instance if you have a resource like `App\Filament\Resources\Shop\CategoryResource` then the permission identifier would be `shop::category` and then it would be prefixed with your defined prefixes or what comes default with shield.
 
-If you wish to change the default behaviour, then you can call the static `configurePermissionIdentifierUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the logic. The Closure receives the fully qualified class name as `$resource` which gives you the ability to access any property or method defined within the resource.
+If you wish to change the default behaviour, then you can call the static `configurePermissionIdentifierUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the logic. The Closure receives the fully qualified class name of the resource as `$resource` which gives you the ability to access any property or method defined within the resource.
 
 For example, if you wish to use the model name as the permission identifier, you can do it like so:
 
