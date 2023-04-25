@@ -120,8 +120,6 @@ class Utils
 
     /**
      * Widget Entity Status
-     *
-     * @return bool
      */
     public static function isWidgetEntityEnabled(): bool
     {
