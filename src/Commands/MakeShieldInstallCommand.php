@@ -122,8 +122,8 @@ class MakeShieldInstallCommand extends Command
             $this->info('running shield migrations.');
         }
 
-        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('migrate',[
-            '--force' => true
+        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('migrate', [
+            '--force' => true,
         ]);
 
         if (! $this->option('only')) {
