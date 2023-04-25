@@ -2,6 +2,26 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.4.3 - 2023-04-25
+
+### What's Changed
+
+- Feature/configure permission identifier by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/186
+- chore(documentation): typo by @JohnnyEvo in https://github.com/bezhanSalleh/filament-shield/pull/178
+- Update README.md by @chiwex in https://github.com/bezhanSalleh/filament-shield/pull/181
+- refactor: make getResourceNavigationSort nullable by @JaZo in https://github.com/bezhanSalleh/filament-shield/pull/182
+- Bump aglipanci/laravel-pint-action from 2.1.0 to 2.2.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/180
+- Bump dependabot/fetch-metadata from 1.3.6 to 1.4.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/185
+- 
+
+### New Contributors
+
+- @JohnnyEvo made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/178
+- @chiwex made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/181
+- @JaZo made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/182
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.2...2.4.3
+
 ## 2.4.2 - 2023-02-10
 
 ### What's Changed
@@ -187,7 +207,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - new options for `shield:generate`
+- 
 - 
 - 
 - 
@@ -339,6 +361,23 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --option[=OPTION]        Override the config generator option(policies_and_permissions,policies,permissions)
 - - 
 - 
@@ -460,6 +499,23 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -611,6 +667,23 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --page[=PAGE]            One or many pages separated by comma (,)
 - - 
 - 
@@ -732,6 +805,23 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -883,6 +973,23 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --exclude                Exclude the given entities during generation
 - - 
 - 
@@ -1004,6 +1111,23 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -1171,7 +1295,26 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - new option for `shield:install`
+- 
 - 
 - 
 - 
@@ -1339,7 +1482,26 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - redefined the purpose of `filament_user` role, not attaching permissions anymore
+- 
 - 
 - 
 - 
@@ -1482,7 +1644,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -1534,7 +1698,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -1586,7 +1752,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -1638,6 +1806,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
@@ -1664,7 +1833,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
