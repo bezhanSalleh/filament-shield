@@ -45,6 +45,7 @@ Table of contents
         - [Default](#default)
         - [Custom Permissions](#custom-permissions)
         - [Configure Permission Identifier](#configure-permission-identifier)
+        - [Custom Navigation Group](#custom-navigation-group)
       - [Pages](#pages)
           - [Pages Hooks](#pages-hooks)
           - [Pages Redirect Path](#pages-redirect-path)
@@ -336,6 +337,20 @@ FilamentShield::configurePermissionIdentifierUsing(
 ```
 > **Warning**
 > Keep in mind that ensuring the uniqueness of the permission identifier is now up to you.
+
+##### Custom Navigation Group
+By default the english translation renders Roles and Permissions under 'Filament Shield' if you wish to change this, first publish the [translations files](#translations) and change the relative locale to the group of your choosing for example:
+
+```php
+'nav.group' => 'Filament Shield',
+```
+
+to
+
+```php
+'nav.group' => 'User Management',
+```
+apply this to each lanugage you have groups in.
 
 #### Pages
 
