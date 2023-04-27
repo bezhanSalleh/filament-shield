@@ -18,6 +18,10 @@ use Illuminate\Support\Str;
 
 class UserResource extends Resource
 {
+    /**
+     * Note: this is pre-driver PR.
+     * Once the PR is merged, this will require the necessary adjustments.
+     */
     protected static ?string $label = 'User';
 
     protected static ?string $navigationGroup = 'Filament Shield';
