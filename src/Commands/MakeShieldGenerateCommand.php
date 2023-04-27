@@ -187,7 +187,7 @@ class MakeShieldGenerateCommand extends Command
 
     protected function generateForResources(array $resources): Collection
     {
-        return  collect($resources)
+        return collect($resources)
             ->values()
             ->each(function ($entity) {
                 if ($this->generatorOption === 'policies_and_permissions') {
