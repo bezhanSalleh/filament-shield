@@ -8,7 +8,6 @@ use BezhanSalleh\FilamentShield\Resources\UserResource\Pages;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Forms;
-use Filament\Forms\FormsComponent;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -72,39 +71,39 @@ class UserResource extends Resource
                     // ->collapsible()
                     ->schema([
                         Forms\Components\Toggle::make('select_all')
-                                    ->onIcon('heroicon-s-shield-check')
-                                    ->offIcon('heroicon-s-shield-exclamation')
-                                    ->label(__('filament-shield::filament-shield.field.select_all.name'))
-                                    ->helperText(__('filament-shield::filament-shield.field.select_all.message'))
-                                    ->reactive()
-                                    ->afterStateUpdated(function (Closure $set, $state) {
-                                        RoleResource::refreshEntitiesStatesViaSelectAll($set, $state);
-                                    })
-                                    ->dehydrated(fn ($state): bool => $state),
+                            ->onIcon('heroicon-s-shield-check')
+                            ->offIcon('heroicon-s-shield-exclamation')
+                            ->label(__('filament-shield::filament-shield.field.select_all.name'))
+                            ->helperText(__('filament-shield::filament-shield.field.select_all.message'))
+                            ->reactive()
+                            ->afterStateUpdated(function (Closure $set, $state) {
+                                RoleResource::refreshEntitiesStatesViaSelectAll($set, $state);
+                            })
+                            ->dehydrated(fn ($state): bool => $state),
                         Forms\Components\Tabs::make('Permissions')
-                        ->tabs([
-                            Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
-                                ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
-                                ->reactive()
-                                ->schema(RoleResource::getResourceEntitiesSchema()),
-                            Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-                                ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
-                                ->reactive()
-                                ->schema(RoleResource::getPageEntityPermissionsSchema()),
-                            Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-                                ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
-                                ->reactive()
-                                ->schema(RoleResource::getWidgetEntityPermissionSchema()),
-                            Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
-                                ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
-                                ->reactive()
-                                ->schema(RoleResource::getCustomEntitiesPermisssionSchema()),
-                        ])
-                        ->columns([
-                            'sm' => 2,
-                            'lg' => 3
-                        ])
-                        ->columnSpan('full'),
+                            ->tabs([
+                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
+                                    ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
+                                    ->reactive()
+                                    ->schema(RoleResource::getResourceEntitiesSchema()),
+                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
+                                    ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
+                                    ->reactive()
+                                    ->schema(RoleResource::getPageEntityPermissionsSchema()),
+                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
+                                    ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
+                                    ->reactive()
+                                    ->schema(RoleResource::getWidgetEntityPermissionSchema()),
+                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
+                                    ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
+                                    ->reactive()
+                                    ->schema(RoleResource::getCustomEntitiesPermisssionSchema()),
+                            ])
+                            ->columns([
+                                'sm' => 2,
+                                'lg' => 3,
+                            ])
+                            ->columnSpan('full'),
                     ]),
             ]);
     }

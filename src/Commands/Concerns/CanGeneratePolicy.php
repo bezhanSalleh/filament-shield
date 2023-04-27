@@ -25,8 +25,8 @@ trait CanGeneratePolicy
         if (Str::of($path)->contains(['vendor', 'src'])) {
             $basePolicyPath = app_path(
                 (string) Str::of($entity['model'])
-                ->prepend('Policies\\')
-                ->replace('\\', DIRECTORY_SEPARATOR),
+                    ->prepend('Policies\\')
+                    ->replace('\\', DIRECTORY_SEPARATOR),
             );
 
             return "{$basePolicyPath}Policy.php";
