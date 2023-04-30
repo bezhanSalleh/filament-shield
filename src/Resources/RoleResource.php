@@ -78,7 +78,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     'sm' => 2,
                                     'lg' => 3,
                                 ])
-                                    ->schema(static::getResourceEntitiesSchema())
+                                    ->schema(static::getResourceEntitiesSchema(static::class))
                                     ->columns([
                                         'sm' => 2,
                                         'lg' => 3,
@@ -244,15 +244,17 @@ class RoleResource extends Resource implements HasShieldPermissions
     | Resource Related Logic Start     |
     *----------------------------------*/
 
-    public static function getResourceEntitiesSchema(): ?array
+    public static function getResourceEntitiesSchema(string $class): ?array
     {
         if (blank(static::$permissionsCollection)) {
             static::$permissionsCollection = Utils::getPermissionModel()::all();
         }
 
-        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
-            $entities[] = Forms\Components\Card::make()
-                ->extraAttributes(['class' => 'border-0 shadow-lg'])
+        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) use($class){
+            $entities[] = Forms\Components\Section::make(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
+                ->collapsed()
+                ->collapsible()
+                ->extraAttributes(['class' => 'text-md font-semibold'])
                 ->schema([
                     Forms\Components\Toggle::make($entity['resource'])
                         ->label(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
@@ -281,7 +283,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                             // 'md' => 4,
                             'lg' => 4,
                         ])
-                        ->schema(static::getResourceEntityPermissionsSchema($entity)),
+                        ->schema(static::getResourceEntityPermissionsSchema($entity, $class)),
                 ])
                 ->columnSpan('full');
 
@@ -290,20 +292,20 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->toArray();
     }
 
-    public static function getResourceEntityPermissionsSchema($entity): ?array
+    public static function getResourceEntityPermissionsSchema($entity, string $class): ?array
     {
-        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
+        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity, $class) {
             $permissions[] = Forms\Components\Checkbox::make($permission . '_' . $entity['resource'])
                 ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
-                ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $permission) {
+                ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $permission, $class) {
                     if (is_null($record)) {
                         return;
                     }
 
                     $set($permission . '_' . $entity['resource'], $record->checkPermissionTo($permission . '_' . $entity['resource']));
 
-                    static::refreshResourceEntityStateAfterHydrated($record, $set, $entity);
+                    static::refreshResourceEntityStateAfterHydrated($record, $set, $entity, $class);
 
                     static::refreshSelectAllStateViaEntities($set, $get);
                 })
@@ -392,13 +394,12 @@ class RoleResource extends Resource implements HasShieldPermissions
         }
     }
 
-    public static function refreshResourceEntityStateAfterHydrated(Model $record, $set, array $entity): void
+    public static function refreshResourceEntityStateAfterHydrated(Model $record, $set, array $entity, string $class): void
     {
         $permissions = $record->permissions->pluck('name');
 
-        if (class_basename(static::class) === 'UserResource') {
-            logger('touched here');
-            $permissions = collect(array_merge($record->getPermissionsViaRoles()->pluck('name'), $permissions))->unique();
+        if (class_basename($class) === 'UserResource') {
+            $permissions = collect(array_merge($record->getPermissionsViaRoles()->pluck('name')->toArray(), $permissions->toArray()))->unique();
         }
 
         $entities = $permissions

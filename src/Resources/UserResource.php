@@ -33,82 +33,174 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Details')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
+                Forms\Components\Tabs::make('User_Management')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Details')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->reactive(),
+                                Forms\Components\TextInput::make('email')
+                                    ->required()
+                                    ->email()
+                                    ->unique(User::class, 'email', fn ($record) => $record),
+                            ])
                             ->reactive(),
-                        Forms\Components\TextInput::make('email')
-                            ->required()
-                            ->email()
-                            ->unique(User::class, 'email', fn ($record) => $record),
-                        Forms\Components\Toggle::make('reset_password')
-                            ->columnSpan('full')
-                            ->reactive()
-                            ->dehydrated(false)
-                            ->hiddenOn('create'),
-                        Forms\Components\TextInput::make('password')
-                            ->columnSpan('full')
-                            ->visible(fn (string $context, Closure $get) => $context === 'create' || $get('reset_password') == true)
-                            // ->rules('max:8')
-                            ->required()
-                            ->dehydrateStateUsing(function ($state) {
-                                return \Illuminate\Support\Facades\Hash::make($state);
-                            }),
-                        Forms\Components\CheckboxList::make('roles')
-                            ->columnSpan('full')
-                            ->reactive()
-                            ->relationship('roles', 'name', function (Builder $query) {
-                                if (! auth()->user()->hasRole('super_admin')) {
-                                    return $query->where('name', '<>', 'super_admin');
-                                }
+                        Forms\Components\Tabs\Tab::make('Roles')
+                            ->schema([
+                                Forms\Components\CheckboxList::make('roles')
+                                    ->columnSpan('full')
+                                    ->reactive()
+                                    ->relationship('roles', 'name', function (Builder $query) {
+                                        if (! auth()->user()->hasRole('super_admin')) {
+                                            return $query->where('name', '<>', 'super_admin');
+                                        }
 
-                                return $query;
-                            })
-                            ->getOptionLabelFromRecordUsing(function ($record) {
-                                return Str::of($record->name)->headline();
-                            })
-                            ->columns(4),
-                    ])->columns(['md' => 2]),
-                Forms\Components\Grid::make()
-                    // ->description('Users with roles have permission to completely manage resources based on the permissions set under the Roles Menu. To limit a user\'s access to specific resources disable thier roles and assign them individual permissions below.')
-                    // ->collapsible()
-                    ->schema([
-                        Forms\Components\Toggle::make('select_all')
-                            ->onIcon('heroicon-s-shield-check')
-                            ->offIcon('heroicon-s-shield-exclamation')
-                            ->label(__('filament-shield::filament-shield.field.select_all.name'))
-                            ->helperText(__('filament-shield::filament-shield.field.select_all.message'))
-                            ->reactive()
-                            ->afterStateUpdated(function (Closure $set, $state) {
-                                RoleResource::refreshEntitiesStatesViaSelectAll($set, $state);
-                            })
-                            ->dehydrated(fn ($state): bool => $state),
-                        Forms\Components\Tabs::make('Permissions')
-                            ->tabs([
-                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
-                                    ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
-                                    ->reactive()
-                                    ->schema(RoleResource::getResourceEntitiesSchema()),
-                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-                                    ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
-                                    ->reactive()
-                                    ->schema(RoleResource::getPageEntityPermissionsSchema()),
-                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-                                    ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
-                                    ->reactive()
-                                    ->schema(RoleResource::getWidgetEntityPermissionSchema()),
-                                Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
-                                    ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
-                                    ->reactive()
-                                    ->schema(RoleResource::getCustomEntitiesPermisssionSchema()),
+                                        return $query;
+                                    })
+                                    ->getOptionLabelFromRecordUsing(function ($record) {
+                                        return Str::of($record->name)->headline();
+                                    })
+                                    ->columns(4)
                             ])
-                            ->columns([
-                                'sm' => 2,
-                                'lg' => 3,
+                            ->reactive(),
+                        Forms\Components\Tabs\Tab::make('Direct Permissions')
+                            ->schema([
+                                Forms\Components\Toggle::make('select_all')
+                                    ->onIcon('heroicon-s-shield-check')
+                                    ->offIcon('heroicon-s-shield-exclamation')
+                                    ->label(__('filament-shield::filament-shield.field.select_all.name'))
+                                    ->helperText('Enable all permissions currently <span class="text-primary font-medium">Selected</span> for this user')
+                                    ->reactive()
+                                    ->afterStateUpdated(function (Closure $set, $state) {
+                                        RoleResource::refreshEntitiesStatesViaSelectAll($set, $state);
+                                    })
+                                    ->dehydrated(fn ($state): bool => $state),
+                                Forms\Components\Tabs::make('Permissions')
+                                    ->tabs([
+                                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
+                                            ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
+                                            ->reactive()
+                                            ->schema(RoleResource::getResourceEntitiesSchema(static::class)),
+                                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
+                                            ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
+                                            ->reactive()
+                                            ->schema(RoleResource::getPageEntityPermissionsSchema()),
+                                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
+                                            ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
+                                            ->reactive()
+                                            ->schema(RoleResource::getWidgetEntityPermissionSchema()),
+                                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
+                                            ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
+                                            ->reactive()
+                                            ->schema(RoleResource::getCustomEntitiesPermisssionSchema()),
+                                    ])
+                                    ->columns([
+                                        'sm' => 2,
+                                        'lg' => 3,
+                                    ])
+                                    ->columnSpan('full'),
                             ])
-                            ->columnSpan('full'),
-                    ]),
+                            ->reactive(),
+                        Forms\Components\Tabs\Tab::make('Reset Password')
+                            ->schema([
+                                Forms\Components\Toggle::make('reset_password')
+                                    ->columnSpan('full')
+                                    ->reactive()
+                                    ->dehydrated(false)
+                                    ->hiddenOn('create'),
+                                Forms\Components\TextInput::make('password')
+                                    ->columnSpan('full')
+                                    ->visible(fn (string $context, Closure $get) => $context === 'create' || $get('reset_password') == true)
+                                    ->rules('max:8')
+                                    ->password()
+                                    ->required()
+                                    ->dehydrateStateUsing(function ($state) {
+                                        return \Illuminate\Support\Facades\Hash::make($state);
+                                    }),
+                            ])
+                            ->reactive(),
+                    ])
+                    ->columnSpanFull(),
+                // Forms\Components\Section::make('Details')
+                //     ->schema([
+                //         Forms\Components\TextInput::make('name')
+                //             ->required()
+                //             ->reactive(),
+                //         Forms\Components\TextInput::make('email')
+                //             ->required()
+                //             ->email()
+                //             ->unique(User::class, 'email', fn ($record) => $record),
+                //         Forms\Components\Toggle::make('reset_password')
+                //             ->columnSpan('full')
+                //             ->reactive()
+                //             ->dehydrated(false)
+                //             ->hiddenOn('create'),
+                //         Forms\Components\TextInput::make('password')
+                //             ->columnSpan('full')
+                //             ->visible(fn (string $context, Closure $get) => $context === 'create' || $get('reset_password') == true)
+                //             ->rules('max:8')
+                //             ->password()
+                //             ->required()
+                //             ->dehydrateStateUsing(function ($state) {
+                //                 return \Illuminate\Support\Facades\Hash::make($state);
+                //             }),
+                //         Forms\Components\CheckboxList::make('roles')
+                //             ->columnSpan('full')
+                //             ->reactive()
+                //             ->relationship('roles', 'name', function (Builder $query) {
+                //                 if (! auth()->user()->hasRole('super_admin')) {
+                //                     return $query->where('name', '<>', 'super_admin');
+                //                 }
+
+                //                 return $query;
+                //             })
+                //             ->getOptionLabelFromRecordUsing(function ($record) {
+                //                 return Str::of($record->name)->headline();
+                //             })
+                //             ->columns(4),
+                //     ])->columns(['md' => 2]),
+                // Forms\Components\Section::make('Direct Permissions')
+                //     ->description('Instead of roles, you can opt to control a users access more granularily via direct permissions')
+                //     ->collapsible()
+                //     ->collapsed()
+                //     ->compact()
+                //     ->schema([
+                //         Forms\Components\Toggle::make('select_all')
+                //             ->onIcon('heroicon-s-shield-check')
+                //             ->offIcon('heroicon-s-shield-exclamation')
+                //             ->label(__('filament-shield::filament-shield.field.select_all.name'))
+                //             ->helperText('Enable all permissions currently <span class="text-primary font-medium">Selected</span> for this user')
+                //             ->reactive()
+                //             ->afterStateUpdated(function (Closure $set, $state) {
+                //                 RoleResource::refreshEntitiesStatesViaSelectAll($set, $state);
+                //             })
+                //             ->dehydrated(fn ($state): bool => $state),
+                //         Forms\Components\Tabs::make('Permissions')
+                //             ->tabs([
+                //                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
+                //                     ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
+                //                     ->reactive()
+                //                     ->schema(RoleResource::getResourceEntitiesSchema(static::class)),
+                //                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
+                //                     ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
+                //                     ->reactive()
+                //                     ->schema(RoleResource::getPageEntityPermissionsSchema()),
+                //                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
+                //                     ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
+                //                     ->reactive()
+                //                     ->schema(RoleResource::getWidgetEntityPermissionSchema()),
+                //                 Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
+                //                     ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
+                //                     ->reactive()
+                //                     ->schema(RoleResource::getCustomEntitiesPermisssionSchema()),
+                //             ])
+                //             ->columns([
+                //                 'sm' => 2,
+                //                 'lg' => 3,
+                //             ])
+                //             ->columnSpan('full'),
+                //     ]),
             ]);
     }
 
