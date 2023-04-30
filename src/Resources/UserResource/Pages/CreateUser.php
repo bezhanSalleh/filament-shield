@@ -17,7 +17,7 @@ class CreateUser extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $except = ['name', 'email', 'password','select_all'];
+        $except = ['name', 'email', 'password', 'select_all'];
 
         $this->permissions = collect($data)->filter(function ($permission, $key) use ($except) {
             return ! in_array($key, $except) && Str::contains($key, '_');

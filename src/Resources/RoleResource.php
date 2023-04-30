@@ -250,7 +250,7 @@ class RoleResource extends Resource implements HasShieldPermissions
             static::$permissionsCollection = Utils::getPermissionModel()::all();
         }
 
-        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) use($class){
+        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) use ($class) {
             $entities[] = Forms\Components\Section::make(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
                 ->collapsed()
                 ->collapsible()

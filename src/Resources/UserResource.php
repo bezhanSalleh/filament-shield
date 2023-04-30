@@ -61,7 +61,7 @@ class UserResource extends Resource
                                     ->getOptionLabelFromRecordUsing(function ($record) {
                                         return Str::of($record->name)->headline();
                                     })
-                                    ->columns(4)
+                                    ->columns(4),
                             ])
                             ->reactive(),
                         Forms\Components\Tabs\Tab::make('Direct Permissions')
