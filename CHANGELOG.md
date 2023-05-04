@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.4.5 - 2023-05-04
+
+**What's new in 2.4.5?**
+
+- Fixes `ShieldSeeder`
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.4...2.4.5
+
 ## 2.4.4 - 2023-04-25
 
 **what's changed?**
@@ -217,7 +225,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - new options for `shield:generate`
+- 
 - 
 - 
 - 
@@ -406,6 +416,25 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --option[=OPTION]        Override the config generator option(policies_and_permissions,policies,permissions)
 - - 
 - 
@@ -560,6 +589,25 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -748,6 +796,25 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --page[=PAGE]            One or many pages separated by comma (,)
 - - 
 - 
@@ -902,6 +969,25 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -1090,6 +1176,25 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --exclude                Exclude the given entities during generation
 - - 
 - 
@@ -1244,6 +1349,25 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
 - 
 - 
 - 
@@ -1450,7 +1574,28 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - new option for `shield:install`
+- 
 - 
 - 
 - 
@@ -1657,7 +1802,28 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - redefined the purpose of `filament_user` role, not attaching permissions anymore
+- 
 - 
 - 
 - 
@@ -1804,7 +1970,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Add Setting Model (DB)
+- 
 - 
 - 
 - 
@@ -1860,7 +2028,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove Config file
+- 
 - 
 - 
 - 
@@ -1916,7 +2086,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Make default permissions translatable
+- 
 - 
 - 
 - 
@@ -1972,6 +2144,7 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `shield:publish` command
 - 
 - 
@@ -2000,7 +2173,9 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
 - - Remove `RoleResource` stubs
+- 
 - 
 - 
 - 
