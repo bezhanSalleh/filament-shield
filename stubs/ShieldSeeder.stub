@@ -31,15 +31,23 @@ class ShieldSeeder extends Seeder
         if (! blank($rolePlusPermissions = json_decode($rolesWithPermissions,true))) {
 
             foreach ($rolePlusPermissions as $rolePlusPermission) {
-
-                $role = Role::firstOrCreate([
+                $role = Utils::getRoleModel()::firstOrCreate([
                     'name' => $rolePlusPermission['name'],
                     'guard_name' => $rolePlusPermission['guard_name']
                 ]);
 
                 if (! blank($rolePlusPermission['permissions'])) {
 
-                    $role->givePermissionTo($rolePlusPermission['permissions']);
+                    $permissionModels = collect();
+
+                    collect($rolePlusPermission['permissions'])
+                        ->each(function ($permission) use($permissionModels) {
+                            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
+                                'name' => $permission,
+                                'guard_name' => 'web'
+                            ]));
+                        });
+                    $role->syncPermissions($permissionModels);
 
                 }
             }
@@ -52,8 +60,8 @@ class ShieldSeeder extends Seeder
 
             foreach($permissions as $permission) {
 
-                if (Permission::whereName($permission)->doesntExist()) {
-                    Permission::create([
+                if (Utils::getPermissionModel()::whereName($permission)->doesntExist()) {
+                    Utils::getPermissionModel()::create([
                         'name' => $permission['name'],
                         'guard_name' => $permission['guard_name'],
                     ]);
