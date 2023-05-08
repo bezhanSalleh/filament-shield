@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Support\Utils;
 class ShieldSeeder extends Seeder
 {
     /**
