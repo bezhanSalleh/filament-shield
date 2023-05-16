@@ -31,7 +31,7 @@ class CreateRole extends CreateRecord
             $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
                 /** @phpstan-ignore-next-line */
                 'name' => $permission,
-                'guard_name' => $this->data['guard_name']
+                'guard_name' => $this->data['guard_name'],
             ]));
         });
 
