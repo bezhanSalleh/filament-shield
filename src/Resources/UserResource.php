@@ -44,6 +44,20 @@ class UserResource extends Resource
                                     ->required()
                                     ->email()
                                     ->unique(User::class, 'email', fn ($record) => $record),
+                                Forms\Components\Toggle::make('reset_password')
+                                    ->columnSpan('full')
+                                    ->reactive()
+                                    ->dehydrated(false)
+                                    ->hiddenOn('create'),
+                                Forms\Components\TextInput::make('password')
+                                    ->columnSpan('full')
+                                    ->visible(fn (string $context, Closure $get) => $context === 'create' || $get('reset_password') == true)
+                                    ->rules('max:8')
+                                    ->password()
+                                    ->required()
+                                    ->dehydrateStateUsing(function ($state) {
+                                        return \Illuminate\Support\Facades\Hash::make($state);
+                                    }),
                             ])
                             ->reactive(),
                         Forms\Components\Tabs\Tab::make('Roles')
@@ -75,7 +89,7 @@ class UserResource extends Resource
                                     ->afterStateUpdated(function (Closure $set, $state) {
                                         RoleResource::refreshEntitiesStatesViaSelectAll($set, $state);
                                     })
-                                    ->dehydrated(fn ($state): bool => $state),
+                                    ->dehydrated(false),
                                 Forms\Components\Tabs::make('Permissions')
                                     ->tabs([
                                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
@@ -100,24 +114,6 @@ class UserResource extends Resource
                                         'lg' => 3,
                                     ])
                                     ->columnSpan('full'),
-                            ])
-                            ->reactive(),
-                        Forms\Components\Tabs\Tab::make('Reset Password')
-                            ->schema([
-                                Forms\Components\Toggle::make('reset_password')
-                                    ->columnSpan('full')
-                                    ->reactive()
-                                    ->dehydrated(false)
-                                    ->hiddenOn('create'),
-                                Forms\Components\TextInput::make('password')
-                                    ->columnSpan('full')
-                                    ->visible(fn (string $context, Closure $get) => $context === 'create' || $get('reset_password') == true)
-                                    ->rules('max:8')
-                                    ->password()
-                                    ->required()
-                                    ->dehydrateStateUsing(function ($state) {
-                                        return \Illuminate\Support\Facades\Hash::make($state);
-                                    }),
                             ])
                             ->reactive(),
                     ])

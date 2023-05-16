@@ -2,20 +2,20 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -68,9 +68,9 @@ class RoleResource extends Resource implements HasShieldPermissions
                                 'lg' => 3,
                             ]),
                     ]),
-                Forms\Components\Tabs::make('Permissions')
-                    ->tabs([
-                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
+                \BezhanSalleh\FilamentAddons\Forms\Components\Pills::make('Permissions')
+                    ->pills([
+                        \BezhanSalleh\FilamentAddons\Forms\Components\Pills\Pill::make(__('filament-shield::filament-shield.resources'))
                             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
                             ->reactive()
                             ->schema([
@@ -79,12 +79,13 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     'lg' => 3,
                                 ])
                                     ->schema(static::getResourceEntitiesSchema(static::class))
+                                    ->extraAttributes(['class' => 'divide-y-2'])
                                     ->columns([
                                         'sm' => 2,
                                         'lg' => 3,
                                     ]),
                             ]),
-                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
+                        \BezhanSalleh\FilamentAddons\Forms\Components\Pills\Pill::make(__('filament-shield::filament-shield.pages'))
                             ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
                             ->reactive()
                             ->schema([
@@ -98,7 +99,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                         'lg' => 4,
                                     ]),
                             ]),
-                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
+                        \BezhanSalleh\FilamentAddons\Forms\Components\Pills\Pill::make(__('filament-shield::filament-shield.widgets'))
                             ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
                             ->reactive()
                             ->schema([
@@ -113,7 +114,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ]),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
+                        \BezhanSalleh\FilamentAddons\Forms\Components\Pills\Pill::make(__('filament-shield::filament-shield.custom'))
                             ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
                             ->reactive()
                             ->schema([
@@ -251,10 +252,8 @@ class RoleResource extends Resource implements HasShieldPermissions
         }
 
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) use ($class) {
-            $entities[] = Forms\Components\Section::make(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
-                ->collapsed()
-                ->collapsible()
-                ->extraAttributes(['class' => 'text-md font-semibold'])
+            $entities[] = Forms\Components\Card::make()
+                ->extraAttributes(['class' => ''])
                 ->schema([
                     Forms\Components\Toggle::make($entity['resource'])
                         ->label(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))

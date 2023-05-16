@@ -23,7 +23,7 @@ class EditUser extends EditRecord
             return ! in_array($key, $except) && Str::contains($key, '_');
         })->keys();
 
-        return Arr::only($data, $except);
+        return Arr::only($data,$except);
     }
 
     protected function afterSave(): void
