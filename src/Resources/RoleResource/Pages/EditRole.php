@@ -36,10 +36,10 @@ class EditRole extends EditRecord
     {
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
-            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate(
-                ['name' => $permission],
-                ['guard_name' => $this->data['guard_name']]
-            ));
+            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => $this->data['guard_name'],
+            ]));
         });
 
         $this->record->syncPermissions($permissionModels);

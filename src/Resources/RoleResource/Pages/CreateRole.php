@@ -28,11 +28,11 @@ class CreateRole extends CreateRecord
     {
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
-            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate(
+            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
                 /** @phpstan-ignore-next-line */
-                ['name' => $permission],
-                ['guard_name' => $this->data['guard_name']]
-            ));
+                'name' => $permission,
+                'guard_name' => $this->data['guard_name'],
+            ]));
         });
 
         $this->record->syncPermissions($permissionModels);
