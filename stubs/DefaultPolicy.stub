@@ -16,7 +16,7 @@ class {{ modelPolicy }}
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny({{ auth_model_name }} ${{ auth_model_variable }})
+    public function viewAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ ViewAny }}');
     }
@@ -28,7 +28,7 @@ class {{ modelPolicy }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function view({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ View }}');
     }
@@ -39,7 +39,7 @@ class {{ modelPolicy }}
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create({{ auth_model_name }} ${{ auth_model_variable }})
+    public function create({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Create }}');
     }
@@ -51,7 +51,7 @@ class {{ modelPolicy }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function update({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Update }}');
     }
@@ -63,7 +63,7 @@ class {{ modelPolicy }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function delete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Delete }}');
     }
@@ -74,7 +74,7 @@ class {{ modelPolicy }}
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function deleteAny({{ auth_model_name }} ${{ auth_model_variable }})
+    public function deleteAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ DeleteAny }}');
     }
@@ -86,7 +86,7 @@ class {{ modelPolicy }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function forceDelete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ ForceDelete }}');
     }
@@ -97,7 +97,7 @@ class {{ modelPolicy }}
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDeleteAny({{ auth_model_name }} ${{ auth_model_variable }})
+    public function forceDeleteAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ ForceDeleteAny }}');
     }
@@ -109,7 +109,7 @@ class {{ modelPolicy }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function restore({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Restore }}');
     }
@@ -120,7 +120,7 @@ class {{ modelPolicy }}
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restoreAny({{ auth_model_name }} ${{ auth_model_variable }})
+    public function restoreAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ RestoreAny }}');
     }
@@ -132,7 +132,7 @@ class {{ modelPolicy }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function replicate({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }})
+    public function replicate({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Replicate }}');
     }
@@ -143,7 +143,7 @@ class {{ modelPolicy }}
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function reorder({{ auth_model_name }} ${{ auth_model_variable }})
+    public function reorder({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Reorder }}');
     }
