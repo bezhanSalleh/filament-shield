@@ -65,16 +65,16 @@ return [
 
     'resource_permission_prefixes_labels' => [
         'view' => '表示',
-        'view_any' => 'どれでも 表示',
+        'view_any' => 'どれでも表示',
         'create' => '作成',
         'update' => '更新',
         'delete' => '削除',
-        'delete_any' => 'どれでも 削除',
+        'delete_any' => 'どれでも削除',
         'force_delete' => '強制削除',
-        'force_delete_any' => 'どれでも 強制削除',
+        'force_delete_any' => 'どれでも強制削除',
         'restore' => 'リストア',
         'reorder' => '並べ直し',
-        'restore_any' => 'どれでも リストア',
+        'restore_any' => 'どれでもリストア',
         'replicate' => 'レプリカ',
     ],
 ];
