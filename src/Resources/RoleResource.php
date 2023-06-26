@@ -8,6 +8,7 @@ use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Forms;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -72,7 +73,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->tabs([
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
                             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
-                            ->reactive()
+                            //->reactive()
                             ->schema([
                                 Forms\Components\Grid::make([
                                     'sm' => 2,
@@ -250,36 +251,41 @@ class RoleResource extends Resource implements HasShieldPermissions
             static::$permissionsCollection = Utils::getPermissionModel()::all();
         }
 
-        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
+        return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity, $record) {
+
+            $resources = [];
+
+            foreach (Utils::getResourcePermissionPrefixes($entity['fqcn']) as $permission) {
+                $resources[$permission] = FilamentShield::getLocalizedResourcePermissionLabel($permission);
+            }
+
+            $key = 'resource_'.$entity['resource'];
+
             $entities[] = Forms\Components\Card::make()
                 ->extraAttributes(['class' => 'border-0 shadow-lg'])
                 ->schema([
-                    Forms\Components\Toggle::make($entity['resource'])
+                    CheckboxList::make($key)
+                        ->bulkToggleable()
                         ->label(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
                         ->helperText(Utils::showModelPath($entity['fqcn']))
-                        ->onIcon('heroicon-s-lock-open')
-                        ->offIcon('heroicon-s-lock-closed')
-                        ->reactive()
-                        ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
-                            collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->each(function ($permission) use ($set, $entity, $state) {
-                                $set($permission.'_'.$entity['resource'], $state);
-                            });
-
-                            if (! $state) {
-                                $set('select_all', false);
+                        ->columns(2)
+                        ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $key, $resources) {
+                            if (is_null($record)) {
+                                return;
                             }
 
-                            static::refreshSelectAllStateViaEntities($set, $get);
+                            $enabledPermissions = [];
+
+                            foreach ($resources as $p => $label) {
+                                if ($record->checkPermissionTo($p.'_'.$entity['resource'])) {
+                                    $enabledPermissions[] = $p;
+                                }
+                            }
+
+                            $set($key, $enabledPermissions);
+
                         })
-                        ->dehydrated(false),
-                    Forms\Components\Fieldset::make('Permissions')
-                        ->label(__('filament-shield::filament-shield.column.permissions'))
-                        ->extraAttributes(['class' => 'text-primary-600', 'style' => 'border-color:var(--primary)'])
-                        ->columns([
-                            'default' => 2,
-                            'xl' => 2,
-                        ])
-                        ->schema(static::getResourceEntityPermissionsSchema($entity)),
+                        ->options($resources),
                 ])
                 ->columnSpan(1);
 
@@ -350,8 +356,23 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
             $set($entity['resource'], $state);
-            collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->each(function ($permission) use ($entity, $set, $state) {
-                $set($permission.'_'.$entity['resource'], $state);
+            collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity, $record) use ($set) {
+                $resources = [];
+
+                foreach (Utils::getResourcePermissionPrefixes($entity['fqcn']) as $permission) {
+                    $resources[$permission] = FilamentShield::getLocalizedResourcePermissionLabel($permission);
+                }
+
+                $key = 'resource_'.$entity['resource'];
+
+                $enabledPermissions = [];
+
+                foreach ($resources as $p => $label) {
+                    $enabledPermissions[] = $p;
+                }
+
+                $set($key, $enabledPermissions);
+
             });
         });
 
