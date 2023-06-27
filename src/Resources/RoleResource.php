@@ -354,26 +354,24 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function refreshEntitiesStatesViaSelectAll(Closure $set, $state): void
     {
-        collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
+        collect(FilamentShield::getResources())->each(function ($entities, $entity, $record) use ($set, $state) {
             $set($entity['resource'], $state);
-            collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity, $record) use ($set) {
-                $resources = [];
 
-                foreach (Utils::getResourcePermissionPrefixes($entity['fqcn']) as $permission) {
-                    $resources[$permission] = FilamentShield::getLocalizedResourcePermissionLabel($permission);
-                }
+            $resources = [];
 
-                $key = 'resource_'.$entity['resource'];
+            foreach (Utils::getResourcePermissionPrefixes($entity['fqcn']) as $permission) {
+                $resources[$permission] = FilamentShield::getLocalizedResourcePermissionLabel($permission);
+            }
 
-                $enabledPermissions = [];
+            $key = 'resource_'.$entity['resource'];
 
-                foreach ($resources as $p => $label) {
-                    $enabledPermissions[] = $p;
-                }
+            $enabledPermissions = [];
 
-                $set($key, $enabledPermissions);
+            foreach ($resources as $p => $label) {
+                $enabledPermissions[] = $p;
+            }
 
-            });
+            $set($key, $enabledPermissions);
         });
 
         collect(FilamentShield::getPages())->each(function ($page) use ($set, $state) {
