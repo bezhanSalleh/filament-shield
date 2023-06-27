@@ -73,7 +73,6 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->tabs([
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
                             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
-                            //->reactive()
                             ->schema([
                                 Forms\Components\Grid::make([
                                     'sm' => 2,
@@ -243,7 +242,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     /**--------------------------------*
     | Resource Related Logic Start     |
-     *----------------------------------*/
+    *----------------------------------*/
 
     public static function getResourceEntitiesSchema(): ?array
     {
@@ -296,7 +295,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function getResourceEntityPermissionsSchema($entity): ?array
     {
         return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->reduce(function ($permissions
-        /** @phpstan ignore-line */
+            /** @phpstan ignore-line */
             , $permission) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity['resource'])
                 ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
@@ -396,10 +395,10 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function refreshResourceEntityStateAfterUpdate(Closure $set, Closure $get, array $entity): void
     {
-        $permissionStates = collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
+        /* $permissionStates = collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
             ->map(function ($permission) use ($get, $entity) {
                 return (bool) $get($permission.'_'.$entity['resource']);
-            });
+            }); */
 
         if ($permissionStates->containsStrict(false) === false) {
             $set($entity['resource'], true);
@@ -443,11 +442,11 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
     /**--------------------------------*
     | Resource Related Logic End       |
-     *----------------------------------*/
+    *----------------------------------*/
 
     /**--------------------------------*
     | Page Related Logic Start       |
-     *----------------------------------*/
+    *----------------------------------*/
 
     protected static function getPageEntityPermissionsSchema(): ?array
     {
@@ -484,11 +483,11 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
     /**--------------------------------*
     | Page Related Logic End          |
-     *----------------------------------*/
+    *----------------------------------*/
 
     /**--------------------------------*
     | Widget Related Logic Start       |
-     *----------------------------------*/
+    *----------------------------------*/
 
     protected static function getWidgetEntityPermissionSchema(): ?array
     {
@@ -525,7 +524,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
     /**--------------------------------*
     | Widget Related Logic End          |
-     *----------------------------------*/
+    *----------------------------------*/
 
     protected static function getCustomEntities(): ?Collection
     {
