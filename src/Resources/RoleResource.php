@@ -243,7 +243,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     /**--------------------------------*
     | Resource Related Logic Start     |
-    *----------------------------------*/
+     *----------------------------------*/
 
     public static function getResourceEntitiesSchema(): ?array
     {
@@ -253,10 +253,10 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity, $record) {
 
-            $resources = [];
+            $permissions = [];
 
             foreach (Utils::getResourcePermissionPrefixes($entity['fqcn']) as $permission) {
-                $resources[$permission] = FilamentShield::getLocalizedResourcePermissionLabel($permission);
+                $permissions[$permission] = FilamentShield::getLocalizedResourcePermissionLabel($permission);
             }
 
             $key = 'resource_'.$entity['resource'];
@@ -269,23 +269,22 @@ class RoleResource extends Resource implements HasShieldPermissions
                         ->label(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
                         ->helperText(Utils::showModelPath($entity['fqcn']))
                         ->columns(2)
-                        ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $key, $resources) {
+                        ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $key, $permissions) {
                             if (is_null($record)) {
                                 return;
                             }
 
                             $enabledPermissions = [];
 
-                            foreach ($resources as $p => $label) {
+                            foreach ($permissions as $p => $label) {
                                 if ($record->checkPermissionTo($p.'_'.$entity['resource'])) {
                                     $enabledPermissions[] = $p;
                                 }
                             }
 
                             $set($key, $enabledPermissions);
-
                         })
-                        ->options($resources),
+                        ->options($permissions),
                 ])
                 ->columnSpan(1);
 
@@ -296,7 +295,9 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getResourceEntityPermissionsSchema($entity): ?array
     {
-        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
+        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->reduce(function ($permissions
+        /** @phpstan ignore-line */
+            , $permission) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity['resource'])
                 ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
@@ -354,7 +355,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function refreshEntitiesStatesViaSelectAll(Closure $set, $state): void
     {
-        collect(FilamentShield::getResources())->each(function ($entities, $entity, $record) use ($set, $state) {
+        collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
             $set($entity['resource'], $state);
 
             $resources = [];
@@ -442,11 +443,11 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
     /**--------------------------------*
     | Resource Related Logic End       |
-    *----------------------------------*/
+     *----------------------------------*/
 
     /**--------------------------------*
     | Page Related Logic Start       |
-    *----------------------------------*/
+     *----------------------------------*/
 
     protected static function getPageEntityPermissionsSchema(): ?array
     {
@@ -483,11 +484,11 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
     /**--------------------------------*
     | Page Related Logic End          |
-    *----------------------------------*/
+     *----------------------------------*/
 
     /**--------------------------------*
     | Widget Related Logic Start       |
-    *----------------------------------*/
+     *----------------------------------*/
 
     protected static function getWidgetEntityPermissionSchema(): ?array
     {
@@ -524,7 +525,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
     /**--------------------------------*
     | Widget Related Logic End          |
-    *----------------------------------*/
+     *----------------------------------*/
 
     protected static function getCustomEntities(): ?Collection
     {

@@ -3,18 +3,16 @@
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
-use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\Concerns\SyncPermissions;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class EditRole extends EditRecord
 {
-    protected static string $resource = RoleResource::class;
+    use SyncPermissions;
 
-    public Collection $resources;
+    protected static string $resource = RoleResource::class;
 
     protected function getActions(): array
     {
@@ -25,27 +23,17 @@ class EditRole extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $this->resources = collect($data)
-            ->reject(fn ($resource, $key) => in_array($key, ['name', 'guard_name', 'select_all']) || ! Str::contains($key, 'resource_')
-            )
-            ->mapWithKeys(fn ($resource, $key) => [
-                Str::replaceFirst('resource_', '', $key) => $resource,
-            ]);
+        $this->resources = $this->getPermissions($data, 'resource');
+        // $this->pages = $this->getPermissions($data, 'page');
+        // $this->widgets = $this->getPermissions($data, 'widget');
 
         return Arr::only($data, ['name', 'guard_name']);
     }
 
     protected function afterSave(): void
     {
-
-        $permissionModels = $this->resources
-            ->flatMap(fn ($permissions, $resource) => collect($permissions)->map(fn ($permission) => Utils::getPermissionModel()::firstOrCreate([
-                'name' => $permission.'_'.$resource,
-                'guard_name' => $this->data['guard_name'],
-            ]))
-            )
-            ->all();
-
-        $this->record->syncPermissions($permissionModels);
+        $this->syncPermissions($this->resources, 'resource');
+        // $this->syncPermissions($this->pages, 'page');
+        // $this->syncPermissions($this->widgets, 'widget');
     }
 }
