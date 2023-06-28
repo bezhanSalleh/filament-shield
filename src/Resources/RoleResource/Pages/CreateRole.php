@@ -12,17 +12,13 @@ class CreateRole extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $this->resources = $this->getPermissions($data, 'resource');
-        // $this->pages = $this->getPermissions($data, 'page');
-        // $this->widgets = $this->getPermissions($data, 'widget');
+        $this->mutateData($data);
 
         return Arr::only($data, ['name', 'guard_name']);
     }
 
     protected function afterCreate(): void
     {
-        $this->syncPermissions($this->resources, 'resource');
-        // $this->syncPermissions($this->pages, 'page');
-        // $this->syncPermissions($this->widgets, 'widget');
+        $this->syncPermissions();
     }
 }

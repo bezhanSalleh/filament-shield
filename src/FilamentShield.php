@@ -5,7 +5,6 @@ namespace BezhanSalleh\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Resources\Resource;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
@@ -205,6 +204,17 @@ class FilamentShield
         return invade(new $object())->getNavigationLabel();
     }
 
+    public static function getPageOptions()
+    {
+        $options = [];
+
+        foreach (FilamentShield::getPages() as $page) {
+            $options[$page] = FilamentShield::getLocalizedPageLabel($page);
+        }
+
+        return $options;
+    }
+
     /**
      * Transform filament widgets to key value pair for shield
      *
@@ -259,6 +269,17 @@ class FilamentShield
                 : $heading,
             default => $heading
         };
+    }
+
+    public static function geWidgetOptions()
+    {
+        $options = [];
+
+        foreach (FilamentShield::getWidgets() as $page) {
+            $options[$page] = FilamentShield::getLocalizedWidgetLabel($page);
+        }
+
+        return $options;
     }
 
     protected static function transformClassString(string $string, bool $isPageClass = true): string
