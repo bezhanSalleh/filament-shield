@@ -296,10 +296,6 @@ class RoleResource extends Resource implements HasShieldPermissions
     | Resource Related Logic End     |
     *----------------------------------*/
 
-    /**--------------------------------*
-    | Widget Related Logic End          |
-    *----------------------------------*/
-
     protected static function getCustomEntities(): ?Collection
     {
         $resourcePermissions = collect();
