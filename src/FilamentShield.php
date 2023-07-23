@@ -297,6 +297,7 @@ class FilamentShield implements Plugin
 
     public function register(Panel $panel): void
     {
+
         $panel->resources([
             RoleResource::class,
         ]);

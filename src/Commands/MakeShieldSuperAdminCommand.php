@@ -6,6 +6,8 @@ use BezhanSalleh\FilamentShield\Commands\Concerns\CanValidateInput;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
+use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
