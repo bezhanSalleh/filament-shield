@@ -34,7 +34,7 @@ class FilamentShield implements Plugin
 
             $identifier = $this->evaluate(
                 value: $this->configurePermissionIdentifierUsing,
-                parameters: [
+                namedInjections: [
                     'resource' => $resource,
                 ]
             );
@@ -252,7 +252,7 @@ class FilamentShield implements Plugin
             ->headline();
 
         if ($grandpa === "Filament\Widgets\ChartWidget") {
-            return (string) invade(new $class())->getHeading() ?? $heading;
+            return (string) (invade(new $class())->getHeading() ?? $heading);
         }
 
         return match ($parent) {
