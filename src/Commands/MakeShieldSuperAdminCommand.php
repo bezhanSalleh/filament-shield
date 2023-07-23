@@ -14,7 +14,9 @@ class MakeShieldSuperAdminCommand extends Command
     use CanValidateInput;
 
     public $signature = 'shield:super-admin
-        {--user= : ID of user to be made super admin.}§';
+        {--user= : ID of user to be made super admin.}
+        {--panel= : Panel ID to get the configuration from.}
+        ';
 
     public $description = 'Creates Filament Super Admin';
 
@@ -22,6 +24,10 @@ class MakeShieldSuperAdminCommand extends Command
 
     public function handle(): int
     {
+        if ($this->option('panel')) {
+            Filament::setCurrentPanel(Filament::getPanel($this->option('panel')));
+        }
+
         /** @var SessionGuard $auth */
         $auth = Filament::getCurrentPanel()?->auth();
 
