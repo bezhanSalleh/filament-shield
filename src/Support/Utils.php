@@ -2,11 +2,13 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
+use Filament\Facades\Filament;
+
 class Utils
 {
     public static function getFilamentAuthGuard(): string
     {
-        return (string) config('filament.auth.guard');
+        return Filament::getCurrentPanel()->getAuthGuard();
     }
 
     public static function getResourceSlug(): string

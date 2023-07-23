@@ -2,8 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
+use Filament\Panel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
@@ -11,7 +14,7 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
-class FilamentShield
+class FilamentShield implements Plugin
 {
     public static function generateForResource(string $resource): void
     {
@@ -66,6 +69,7 @@ class FilamentShield
 
     public static function createRole(bool $isSuperAdmin = true): Role
     {
+       
         return Role::firstOrCreate(
             ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
             ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
@@ -247,5 +251,22 @@ class FilamentShield
     protected static function hasHeadingForShield(object|string $class): bool
     {
         return method_exists($class, 'getHeadingForShield');
+    }
+
+    public function getId(): string
+    {
+        return 'filament-shield';
+    }
+
+    public function register(Panel $panel): void
+    {
+        $panel->resources([
+            RoleResource::class,
+        ]);
+    }
+
+    public function boot(Panel $panel): void
+    {
+        // TODO: Implement boot() method.
     }
 }
