@@ -36,7 +36,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         }
 
         if (Utils::isRolePolicyRegistered()) {
-            Gate::policy('Spatie\Permission\Models\Role', 'App\Policies\RolePolicy');
+            Gate::policy(Utils::getRoleModel(), 'App\Policies\RolePolicy');
         }
     }
 
@@ -54,10 +54,22 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         return [
             Commands\MakeShieldDoctorCommand::class,
             Commands\MakeShieldSeederCommand::class,
+            Commands\MakeShieldPublishCommand::class,
             Commands\MakeShieldUpgradeCommand::class,
             Commands\MakeShieldInstallCommand::class,
             Commands\MakeShieldGenerateCommand::class,
             Commands\MakeShieldSuperAdminCommand::class,
+        ];
+    }
+
+    protected function getResources(): array
+    {
+        if (Utils::isResourcePublished()) {
+            return [];
+        }
+
+        return [
+            RoleResource::class,
         ];
     }
 }

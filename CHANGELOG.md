@@ -2,6 +2,173 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.4.7 - 2023-05-21
+
+**What's new in 2.4.7?**
+
+- fix guard issue while creating and updating role
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.6...2.4.7
+
+## 2.4.6 - 2023-05-08
+
+**What's new in 2.4.6**
+
+- fix shield seeder
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.5...2.4.6
+
+## 2.4.5 - 2023-05-04
+
+**What's new in 2.4.5?**
+
+- Fixes `ShieldSeeder`
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.4...2.4.5
+
+## 2.4.4 - 2023-04-25
+
+**what's changed?**
+
+- [feature] make install command runnable on production environment
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.3...2.4.4
+
+## 2.4.3 - 2023-04-25
+
+### What's Changed
+
+- Feature/configure permission identifier by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/186
+- chore(documentation): typo by @JohnnyEvo in https://github.com/bezhanSalleh/filament-shield/pull/178
+- Update README.md by @chiwex in https://github.com/bezhanSalleh/filament-shield/pull/181
+- refactor: make getResourceNavigationSort nullable by @JaZo in https://github.com/bezhanSalleh/filament-shield/pull/182
+- Bump aglipanci/laravel-pint-action from 2.1.0 to 2.2.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/180
+- Bump dependabot/fetch-metadata from 1.3.6 to 1.4.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/185
+- 
+
+### New Contributors
+
+- @JohnnyEvo made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/178
+- @chiwex made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/181
+- @JaZo made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/182
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.2...2.4.3
+
+## 2.4.2 - 2023-02-10
+
+### What's Changed
+
+- Fixes #172 by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/176
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.1...2.4.2
+
+## 2.4.1 - 2023-02-10
+
+### What's Changed
+
+- Laravel 10 Support by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/174
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.0...2.4.1
+
+## 2.4.0 - 2023-02-10
+
+### What's Changed
+
+- feature: publish command by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/173
+- Fixed typo in ShieldSeeder.stub by @Jehizkia in https://github.com/bezhanSalleh/filament-shield/pull/150
+- Bump ramsey/composer-install from 1 to 2 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/151
+- Fix minor typo and grammar by @lioneaglesolutions in https://github.com/bezhanSalleh/filament-shield/pull/156
+- Typo in example for custom permission by @bmckay959 in https://github.com/bezhanSalleh/filament-shield/pull/159
+- Add DeleteAction in RoleResource by @jvkassi in https://github.com/bezhanSalleh/filament-shield/pull/160
+- Bump aglipanci/laravel-pint-action from 1.0.0 to 2.1.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/162
+- feat: add hungarian translation by @torosegon in https://github.com/bezhanSalleh/filament-shield/pull/163
+- Bump dependabot/fetch-metadata from 1.3.5 to 1.3.6 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/169
+- Complete Arabic translation by @ahmed-abobaker in https://github.com/bezhanSalleh/filament-shield/pull/168
+- Fix role resource card columns by @maaz1n in https://github.com/bezhanSalleh/filament-shield/pull/167
+
+### New Contributors
+
+- @Jehizkia made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/150
+- @lioneaglesolutions made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/156
+- @bmckay959 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/159
+- @torosegon made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/163
+- @ahmed-abobaker made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/168
+- @maaz1n made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/167
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.3.2...2.4.0
+
+## 2.3.2 - 2022-11-16
+
+### What's Changed
+
+- Make Navigation Item visible/hidden by @ThijmenKort in https://github.com/bezhanSalleh/filament-shield/pull/146
+- fix:install and super-admin commands when `Model::preventLazyLoading()` by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/147
+
+### New Contributors
+
+- @ThijmenKort made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/146
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.3.1...2.3.2
+
+## 2.3.1 - 2022-11-08
+
+### What's Changed
+
+- Bump dependabot/fetch-metadata from 1.3.4 to 1.3.5 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/141
+- feat: use config models by @FurkanGM in https://github.com/bezhanSalleh/filament-shield/pull/139
+
+### New Contributors
+
+- @FurkanGM made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/139
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.3.0...2.3.1
+
+## 2.3.0 - 2022-11-01
+
+### What's Changed
+
+- Feature/liberating resource permissions by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/140
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.2.9...2.3.0
+
+## 2.2.9 - 2022-10-28
+
+### What's Changed
+
+- some optimization courtesy of @SkeyPunyapal
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.2.8...2.2.9
+
+## 2.2.8 - 2022-10-28
+
+### What's Changed
+
+- Bump dependabot/fetch-metadata from 1.3.3 to 1.3.4 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/129
+- ro language by @boyfromhell in https://github.com/bezhanSalleh/filament-shield/pull/127
+- Ru & UA translation by @HomaEEE in https://github.com/bezhanSalleh/filament-shield/pull/128
+- Improve Default Policy Stub Replicate Comment by @intrepidws in https://github.com/bezhanSalleh/filament-shield/pull/130
+
+### New Contributors
+
+- @boyfromhell made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/127
+- @HomaEEE made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/128
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.2.7...2.2.8
+
+## 2.2.7 - 2022-09-29
+
+### What's Changed
+
+- vi translations by @datlechin in https://github.com/bezhanSalleh/filament-shield/pull/123
+- Feature: Implement optional --minimal flag by @awcodes in https://github.com/bezhanSalleh/filament-shield/pull/124
+
+### New Contributors
+
+- @datlechin made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/123
+- @awcodes made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/124
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.2.6...2.2.7
+
 ## 2.2.6 - 2022-09-15
 
 ### What's Changed
@@ -63,7 +230,35 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - new options for `shield:generate`
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -98,6 +293,209 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --option[=OPTION]        Override the config generator option(policies_and_permissions,policies,permissions)
 - - 
 - 
@@ -120,6 +518,209 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -154,6 +755,209 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --page[=PAGE]            One or many pages separated by comma (,)
 - - 
 - 
@@ -176,6 +980,209 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -210,6 +1217,209 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - - --exclude                Exclude the given entities during generation
 - - 
 - 
@@ -232,6 +1442,209 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - - 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -273,7 +1686,238 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - new option for `shield:install`
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -315,7 +1959,238 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - redefined the purpose of `filament_user` role, not attaching permissions anymore
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -440,7 +2315,35 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - Add Setting Model (DB)
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -474,7 +2377,35 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - Remove Config file
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -508,7 +2439,35 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - Make default permissions translatable
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 
@@ -542,6 +2501,20 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - Remove `shield:publish` command
 - 
 - 
@@ -559,7 +2532,35 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - - Remove `RoleResource` stubs
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
 - 
 - 
 - 

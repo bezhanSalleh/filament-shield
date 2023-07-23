@@ -8,7 +8,6 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class MakeShieldSuperAdminCommand extends Command
 {
@@ -29,11 +28,11 @@ class MakeShieldSuperAdminCommand extends Command
         /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
 
-        if (Role::whereName(Utils::getSuperAdminName())->doesntExist()) {
+        if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
             FilamentShield::createRole();
         }
 
-        if (Utils::isFilamentUserRoleEnabled() && Role::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
+        if (Utils::isFilamentUserRoleEnabled() && Utils::getRoleModel()::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
             FilamentShield::createRole(isSuperAdmin: false);
         }
 
@@ -44,7 +43,7 @@ class MakeShieldSuperAdminCommand extends Command
         } elseif ($userProvider->getModel()::count() > 1) {
             $this->table(
                 ['ID', 'Name', 'Email', 'Roles'],
-                $userProvider->getModel()::get()->map(function ($user) {
+                $userProvider->getModel()::with('roles')->get()->map(function ($user) {
                     return [
                         'id' => $user->id,
                         'name' => $user->name,

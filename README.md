@@ -10,10 +10,10 @@
         <img alt="Packagist" src="https://img.shields.io/packagist/v/bezhansalleh/filament-shield.svg?style=for-the-badge&logo=packagist">
     </a>
     <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3Amain">
-        <img alt="Tests Passing" src="https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/run-tests?style=for-the-badge&logo=github&label=tests">
+        <img alt="Tests Passing" src="https://img.shields.io/github/actions/workflow/status/bezhansalleh/filament-shield/run-tests.yml?style=for-the-badge&logo=github&label=tests">
     </a>
     <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain">
-        <img alt="Code Style Passing" src="https://img.shields.io/github/workflow/status/bezhansalleh/filament-shield/run-tests?style=for-the-badge&logo=github&label=code%20style">
+        <img alt="Code Style Passing" src="https://img.shields.io/github/actions/workflow/status/bezhansalleh/filament-shield/laravel-pint.yml?style=for-the-badge&logo=github&label=code%20style">
     </a>
 
 <a href="https://packagist.org/packages/bezhansalleh/filament-shield">
@@ -41,7 +41,10 @@ Table of contents
   - [Upgrade](#upgrade)
       - [v2.x](#v2x)
   - [Installation](#installation)
-      - [Resource Custom Permissions](#resource-custom-permissions)
+      - [Resources](#resources)
+        - [Default](#default)
+        - [Custom Permissions](#custom-permissions)
+        - [Configure Permission Identifier](#configure-permission-identifier)
       - [Pages](#pages)
           - [Pages Hooks](#pages-hooks)
           - [Pages Redirect Path](#pages-redirect-path)
@@ -54,6 +57,8 @@ Table of contents
       - [`shield:install`](#shieldinstall)
       - [`shield:generate`](#shieldgenerate)
       - [`shield:super-admin`](#shieldsuper-admin)
+    - [`shield:publish`](#shieldpublish)
+    - [`shield:seeder`](#shieldseeder)
       - [`shield:upgrade`](#shieldupgrade)
   - [Testing](#testing)
   - [Changelog](#changelog)
@@ -136,6 +141,7 @@ php artisan vendor:publish --tag=filament-shield-config
               'navigation_badge' => true,
               'navigation_group' => true,
               'is_globally_searchable' => false,
+              'show_model_path' => true,
           ],
 
           'auth_provider_model' => [
@@ -211,9 +217,125 @@ php artisan shield:install
 
 Follow the prompts and enjoy!
 
-#### Resource Custom Permissions
+#### Resources
+Generally there are two scenarios that shield handles permissions for your `Filament` resources.
 
-You can add custom permissions for `Resources` through Config file.
+##### Default
+Out of the box `Shield` handles the predefined permissions for `Filament` resources. So if that's all that you need you are all set. 
+If you need to add a single permission (for instance `lock`) and have it available for all your resources just append it to the following `config` key:
+
+```php
+    permission_prefixes' => [
+        'resource' => [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'restore',
+            'restore_any',
+            'replicate',
+            'reorder',
+            'delete',
+            'delete_any',
+            'force_delete',
+            'force_delete_any',
+            'lock'
+        ],
+        ...
+    ],
+```
+:bulb: Now you are thinking **`what if I need a permission to be only available for just one resource?`**
+No worries, that's where [Custom Permissions](#custom-permissions) come to play.
+
+##### Custom Permissions
+To define custom permissions per `Resource` your `Resource` must implement the `HasShieldPermissions` contract.
+This contract has a `getPermissionPrefixes()` method which returns an array of permission prefixes for your `Resource`.
+
+Consider you have a `PostResource` and you want a couple of the predefined permissions plus a new permission called `publish_posts` to be only available for `PostResource` only.
+
+```php
+<?php
+
+namespace BezhanSalleh\FilamentShield\Resources;
+
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+...
+
+class PostResource extends Resource implements HasShieldPermissions
+{
+    ...
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
+        ];
+    }
+
+    ...
+}
+```
+In the above example the `getPermissionPrefixes()` method returns the permission prefixes `Shield` needs to generate the permissions.
+
+✅ Now to enforce `publish_post` permission headover to your `PostPolicy` and add a `publish()` method:
+```php
+    /**
+     * Determine whether the user can publish posts.
+     *
+     * @param  \App\Models\User  $admin
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function publish(User $user)
+    {
+        return $user->can('publish_post');
+    } 
+```
+🅰️/🈯️ To make the prefix translatable, publish `Shield`'s translations and append the prefix inside `resource_permission_prefixes_labels` as key and it's translation as value for the languages you need.
+```php
+//lang/en/filament-shield.php
+'resource_permission_prefixes_labels' => [
+    'publish' => 'Publish'    
+],
+//lang/es/filament-shield.php
+'resource_permission_prefixes_labels' => [
+    'publish' => 'Publicar'    
+],
+```
+
+##### Configure Permission Identifier
+By default the permission identifier is generated as follow:
+```php
+Str::of($resource)
+    ->afterLast('Resources\\')
+    ->before('Resource')
+    ->replace('\\', '')
+    ->snake()
+    ->replace('_', '::');
+```
+So for instance if you have a resource like `App\Filament\Resources\Shop\CategoryResource` then the permission identifier would be `shop::category` and then it would be prefixed with your defined prefixes or what comes default with shield.
+
+If you wish to change the default behaviour, then you can call the static `configurePermissionIdentifierUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the logic. The Closure receives the fully qualified class name of the resource as `$resource` which gives you the ability to access any property or method defined within the resource.
+
+For example, if you wish to use the model name as the permission identifier, you can do it like so:
+
+```php
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+
+FilamentShield::configurePermissionIdentifierUsing(
+    fn($resource) => str($resource::getModel())
+        ->afterLast('\\')
+        ->lower()
+        ->toString()
+);
+```
+> **Warning**
+> Keep in mind that ensuring the uniqueness of the permission identifier is now up to you.
 
 #### Pages
 
@@ -335,7 +457,7 @@ class AuthServiceProvider extends ServiceProvider
     ...
     protected $policies = [
         ...,
-        'Ramnzys\FilamentEmailLog\Models\Email' => 'App\Policies\EmailPolicy';
+        'Ramnzys\FilamentEmailLog\Models\Email' => 'App\Policies\EmailPolicy'
 
     ];
 ```
@@ -373,6 +495,12 @@ Generate Permissions and/or Policies for Filament entities. Accepts the followin
 Create a user with super_admin role.
 - Accepts an `--user=` argument that will use the provided ID to find the user to be made super admin.
 
+### `shield:publish`
+- Publish the Shield `RoleResource` and customize it however you like
+
+### `shield:seeder`
+- Deploy easily by setting up your roles and permissions or add your custom seeds
+  
 #### `shield:upgrade` 
 - Upgrade shield.
 

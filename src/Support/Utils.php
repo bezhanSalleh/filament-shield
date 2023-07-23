@@ -4,6 +4,10 @@ namespace BezhanSalleh\FilamentShield\Support;
 
 use Filament\Facades\Filament;
 
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
+
 class Utils
 {
     public static function getFilamentAuthGuard(): string
@@ -11,12 +15,26 @@ class Utils
         return Filament::getCurrentPanel()->getAuthGuard();
     }
 
+    public static function isResourcePublished(): bool
+    {
+        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
+
+        $filesystem = new Filesystem();
+
+        return (bool) $filesystem->exists($roleResourcePath);
+    }
+
     public static function getResourceSlug(): string
     {
         return (string) config('filament-shield.shield_resource.slug');
     }
 
-    public static function getResourceNavigationSort(): int
+    public static function isResourceNavigationRegistered(): bool
+    {
+        return config('filament-shield.shield_resource.should_register_navigation', true);
+    }
+
+    public static function getResourceNavigationSort(): ?int
     {
         return config('filament-shield.shield_resource.navigation_sort');
     }
@@ -104,8 +122,6 @@ class Utils
 
     /**
      * Widget Entity Status
-     *
-     * @return bool
      */
     public static function isWidgetEntityEnabled(): bool
     {
@@ -155,5 +171,34 @@ class Utils
     public static function isRolePolicyRegistered(): bool
     {
         return (bool) config('filament-shield.register_role_policy', true);
+    }
+
+    public static function doesResourceHaveCustomPermissions(string $resourceClass): bool
+    {
+        return in_array(HasShieldPermissions::class, class_implements($resourceClass));
+    }
+
+    public static function showModelPath(string $resourceFQCN): string
+    {
+        return config('filament-shield.shield_resource.show_model_path', true)
+            ? get_class(new ($resourceFQCN::getModel())())
+            : '';
+    }
+
+    public static function getResourcePermissionPrefixes(string $resourceFQCN): array
+    {
+        return static::doesResourceHaveCustomPermissions($resourceFQCN)
+            ? $resourceFQCN::getPermissionPrefixes()
+            : static::getGeneralResourcePermissionPrefixes();
+    }
+
+    public static function getRoleModel(): string
+    {
+        return config('permission.models.role', 'Spatie\\Permission\\Models\\Role');
+    }
+
+    public static function getPermissionModel(): string
+    {
+        return config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission');
     }
 }

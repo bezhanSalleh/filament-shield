@@ -55,7 +55,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'forbidden' => 'You do not have permission to access',
+    'forbidden' => 'ليس لديك الإذن للوصول',
 
     /*
     |--------------------------------------------------------------------------
@@ -63,18 +63,18 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    // 'resource_permission_prefixes_labels' => [
-    //     'view' => 'View',
-    //     'view_any' => 'View Any',
-    //     'create' => 'Create',
-    //     'update' => 'Update',
-    //     'delete' => 'Delete',
-    //     'delete_any' => 'Delete Any',
-    //     'force_delete' => 'Force Delete',
-    //     'force_delete_any' => 'Force Delete Any',
-    //     'reorder' => 'Reorder',
-    //     'restore' => 'Restore',
-    //     'restore_any' => 'Restore Any',
-    //     'replicate' => 'Replicate',
-    // ],
+    'resource_permission_prefixes_labels' => [
+        'view' => 'عرض',
+        'view_any' => 'عرض الكل',
+        'create' => 'إضافة',
+        'update' => 'تعديل',
+        'delete' => 'حذف',
+        'delete_any' => 'حذف الكل',
+        'force_delete' => 'فرض الحذف',
+        'force_delete_any' => 'فرض حذف أي',
+        'reorder' => 'إعادة ترتيب',
+        'restore' => 'استرجاع',
+        'restore_any' => 'استرجاع الكل',
+        'replicate' => 'استنساخ',
+    ],
 ];

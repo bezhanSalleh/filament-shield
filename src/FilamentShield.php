@@ -5,25 +5,61 @@ namespace BezhanSalleh\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Contracts\Plugin;
+use Closure;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Resources\Resource;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield implements Plugin
 {
-    public static function generateForResource(string $resource): void
+    use EvaluatesClosures;
+
+    protected ?Closure $configurePermissionIdentifierUsing = null;
+
+    public function configurePermissionIdentifierUsing(Closure $callback): static
     {
+        $this->configurePermissionIdentifierUsing = $callback;
+
+        return $this;
+    }
+
+    public function getPermissionIdentifier(string $resource): string
+    {
+        if ($this->configurePermissionIdentifierUsing) {
+
+            $identifier = $this->evaluate(
+                value: $this->configurePermissionIdentifierUsing,
+                parameters: [
+                    'resource' => $resource,
+                ]
+            );
+
+            if (Str::contains($identifier, '_')) {
+                throw new \InvalidArgumentException("Permission identifier `$identifier` for `$resource` cannot contain underscores.");
+            }
+
+            return $identifier;
+        }
+
+        return $this->getDefaultPermissionIdentifier($resource);
+    }
+
+    public function generateForResource(array $entity): void
+    {
+        $resourceByFQCN = $entity['fqcn'];
+        $permissionPrefixes = Utils::getResourcePermissionPrefixes($resourceByFQCN);
+
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();
-            collect(Utils::getGeneralResourcePermissionPrefixes())
-                ->each(function ($prefix) use ($resource, $permissions) {
-                    $permissions->push(Permission::firstOrCreate(
-                        ['name' => $prefix.'_'.$resource],
+            collect($permissionPrefixes)
+                ->each(function ($prefix) use ($entity, $permissions) {
+                    $permissions->push(Utils::getPermissionModel()::firstOrCreate(
+                        ['name' => $prefix.'_'.$entity['resource']],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
                 });
@@ -35,7 +71,7 @@ class FilamentShield implements Plugin
     public static function generateForPage(string $page): void
     {
         if (Utils::isPageEntityEnabled()) {
-            $permission = Permission::firstOrCreate(
+            $permission = Utils::getPermissionModel()::firstOrCreate(
                 ['name' => $page],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -47,7 +83,7 @@ class FilamentShield implements Plugin
     public static function generateForWidget(string $widget): void
     {
         if (Utils::isWidgetEntityEnabled()) {
-            $permission = Permission::firstOrCreate(
+            $permission = Utils::getPermissionModel()::firstOrCreate(
                 ['name' => $widget],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
@@ -67,10 +103,9 @@ class FilamentShield implements Plugin
         }
     }
 
-    public static function createRole(bool $isSuperAdmin = true): Role
+    public static function createRole(bool $isSuperAdmin = true)
     {
-       
-        return Role::firstOrCreate(
+        return Utils::getRoleModel()::firstOrCreate(
             ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
             ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
         );
@@ -81,7 +116,7 @@ class FilamentShield implements Plugin
      *
      * @return array
      */
-    public static function getResources(): ?array
+    public function getResources(): ?array
     {
         return collect(Filament::getResources())
             ->unique()
@@ -96,7 +131,8 @@ class FilamentShield implements Plugin
                 return true;
             })
             ->reduce(function ($resources, $resource) {
-                $name = Str::of($resource)->afterLast('Resources\\')->before('Resource')->replace('\\', '')->headline()->snake()->replace('_', '::');
+                $name = $this->getPermissionIdentifier($resource);
+
                 $resources["{$name}"] = [
                     'resource' => "{$name}",
                     'model' => Str::of($resource::getModel())->afterLast('\\'),
@@ -111,9 +147,6 @@ class FilamentShield implements Plugin
 
     /**
      * Get the localized resource label
-     *
-     * @param  string  $entity
-     * @return string
      */
     public static function getLocalizedResourceLabel(string $entity): string
     {
@@ -126,9 +159,6 @@ class FilamentShield implements Plugin
 
     /**
      * Get the localized resource permission label
-     *
-     * @param  string  $permission
-     * @return string
      */
     public static function getLocalizedResourcePermissionLabel(string $permission): string
     {
@@ -166,9 +196,6 @@ class FilamentShield implements Plugin
 
     /**
      * Get localized page label
-     *
-     * @param  string  $page
-     * @return string|bool
      */
     public static function getLocalizedPageLabel(string $page): string|bool
     {
@@ -243,14 +270,24 @@ class FilamentShield implements Plugin
             ->first(fn ($item) => Str::endsWith(
                 $item,
                 Str::of($string)
-                ->after('_')
-                ->studly()
+                    ->after('_')
+                    ->studly()
             ));
     }
 
     protected static function hasHeadingForShield(object|string $class): bool
     {
         return method_exists($class, 'getHeadingForShield');
+    }
+
+    protected function getDefaultPermissionIdentifier(string $resource): string
+    {
+        return Str::of($resource)
+            ->afterLast('Resources\\')
+            ->before('Resource')
+            ->replace('\\', '')
+            ->snake()
+            ->replace('_', '::');
     }
 
     public function getId(): string

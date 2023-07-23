@@ -25,8 +25,8 @@ trait CanGeneratePolicy
         if (Str::of($path)->contains(['vendor', 'src'])) {
             $basePolicyPath = app_path(
                 (string) Str::of($entity['model'])
-                ->prepend('Policies\\')
-                ->replace('\\', DIRECTORY_SEPARATOR),
+                    ->prepend('Policies\\')
+                    ->replace('\\', DIRECTORY_SEPARATOR),
             );
 
             return "{$basePolicyPath}Policy.php";
@@ -43,7 +43,7 @@ trait CanGeneratePolicy
 
     protected function generatePolicyStubVariables(array $entity): array
     {
-        $stubVariables = collect(Utils::getGeneralResourcePermissionPrefixes())
+        $stubVariables = collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
             ->reduce(function ($gates, $permission) use ($entity) {
                 $gates[Str::studly($permission)] = $permission.'_'.$entity['resource'];
 
