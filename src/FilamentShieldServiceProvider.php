@@ -4,11 +4,12 @@ namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\PluginServiceProvider;
+
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class FilamentShieldServiceProvider extends PluginServiceProvider
+class FilamentShieldServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
