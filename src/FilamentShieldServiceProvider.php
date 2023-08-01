@@ -2,10 +2,6 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
-use BezhanSalleh\FilamentShield\Support\Utils;
-
-use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -24,19 +20,6 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
     {
         parent::packageBooted();
 
-        if (Utils::isSuperAdminDefinedViaGate()) {
-            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
-                return match (Utils::getSuperAdminGateInterceptionStatus()) {
-                    'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
-                    'after' => $user->hasRole(Utils::getSuperAdminName()),
-                    default => false
-                };
-            });
-        }
-
-        if (Utils::isRolePolicyRegistered()) {
-            Gate::policy(Utils::getRoleModel(), 'App\Policies\RolePolicy');
-        }
     }
 
     public function packageRegistered(): void
@@ -58,17 +41,6 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
             Commands\MakeShieldInstallCommand::class,
             Commands\MakeShieldGenerateCommand::class,
             Commands\MakeShieldSuperAdminCommand::class,
-        ];
-    }
-
-    protected function getResources(): array
-    {
-        if (Utils::isResourcePublished()) {
-            return [];
-        }
-
-        return [
-            RoleResource::class,
         ];
     }
 }

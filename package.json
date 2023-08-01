@@ -1,0 +1,11 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "prettier": "npx prettier --write ."
+    },
+    "devDependencies": {
+        "prettier": "^2.7.1",
+        "prettier-plugin-blade": "^1.5.3"
+    }
+}

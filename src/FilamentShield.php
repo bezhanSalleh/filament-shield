@@ -2,20 +2,16 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Contracts\Plugin;
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Panel;
-use Filament\Resources\Resource;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
 
-class FilamentShield implements Plugin
+class FilamentShield
 {
     use EvaluatesClosures;
 
@@ -59,7 +55,7 @@ class FilamentShield implements Plugin
             collect($permissionPrefixes)
                 ->each(function ($prefix) use ($entity, $permissions) {
                     $permissions->push(Utils::getPermissionModel()::firstOrCreate(
-                        ['name' => $prefix.'_'.$entity['resource']],
+                        ['name' => $prefix . '_' . $entity['resource']],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     ));
                 });
@@ -92,7 +88,7 @@ class FilamentShield implements Plugin
         }
     }
 
-    protected static function giveSuperAdminPermission(string|array|Collection $permissions): void
+    protected static function giveSuperAdminPermission(string | array | Collection $permissions): void
     {
         if (! Utils::isSuperAdminDefinedViaGate()) {
             $superAdmin = static::createRole();
@@ -197,7 +193,7 @@ class FilamentShield implements Plugin
     /**
      * Get localized page label
      */
-    public static function getLocalizedPageLabel(string $page): string|bool
+    public static function getLocalizedPageLabel(string $page): string | bool
     {
         $object = static::transformClassString($page);
 
@@ -248,7 +244,7 @@ class FilamentShield implements Plugin
         $grandpa = get_parent_class($parent);
 
         $heading = Str::of($widget)
-            ->after(Utils::getPagePermissionPrefix().'_')
+            ->after(Utils::getPagePermissionPrefix() . '_')
             ->headline();
 
         if ($grandpa === "Filament\Widgets\ChartWidget") {
@@ -275,7 +271,7 @@ class FilamentShield implements Plugin
             ));
     }
 
-    protected static function hasHeadingForShield(object|string $class): bool
+    protected static function hasHeadingForShield(object | string $class): bool
     {
         return method_exists($class, 'getHeadingForShield');
     }
@@ -288,22 +284,5 @@ class FilamentShield implements Plugin
             ->replace('\\', '')
             ->snake()
             ->replace('_', '::');
-    }
-
-    public function getId(): string
-    {
-        return 'filament-shield';
-    }
-
-    public function register(Panel $panel): void
-    {
-        $panel->resources([
-            RoleResource::class,
-        ]);
-    }
-
-    public function boot(Panel $panel): void
-    {
-        // TODO: Implement boot() method.
     }
 }
