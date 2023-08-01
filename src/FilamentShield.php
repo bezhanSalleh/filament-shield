@@ -4,8 +4,8 @@ namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Contracts\Plugin;
 use Closure;
+use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Resources\Resource;

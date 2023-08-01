@@ -4,7 +4,6 @@ namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
-
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
