@@ -64,14 +64,7 @@ class User extends Authenticatable
 ```bash
 php artisan vendor:publish --tag=filament-shield-config
 ```
-4. Now run the following command to install shield:
-```bash
-php artisan shield:install
-```
-Follow the prompts and enjoy!
-
-## Filament Panels
-Finally enable/register Shield plugin for your Filament Panels.
+4. Register the plugin for the Filament Panel
 ```php
 public function panel(Panel $panel): Panel
 {
@@ -81,7 +74,15 @@ public function panel(Panel $panel): Panel
         ]);
 }
 ```
-If you have more than one panel you need to repeat the above step for each panel you want Shield to be enabled.
+5. Now run the following command to install shield:
+```bash
+php artisan shield:install
+```
+Follow the prompts and enjoy!
+
+## Filament Panels
+If you want to enable `Shield` for more than one panel then you need to register the plugin for each panel.
+
 #### Resources
 Generally there are two scenarios that shield handles permissions for your `Filament` resources.
 
