@@ -2,6 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
+use Filament\Facades\Filament;
+
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -10,7 +12,7 @@ class Utils
 {
     public static function getFilamentAuthGuard(): string
     {
-        return (string) config('filament.auth.guard');
+        return Filament::getCurrentPanel()?->getAuthGuard() ?? '';
     }
 
     public static function isResourcePublished(): bool

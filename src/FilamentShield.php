@@ -2,9 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Contracts\Plugin;
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Panel;
 use Filament\Resources\Resource;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Collection;
@@ -12,7 +15,7 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
 
-class FilamentShield
+class FilamentShield implements Plugin
 {
     use EvaluatesClosures;
 
@@ -31,7 +34,7 @@ class FilamentShield
 
             $identifier = $this->evaluate(
                 value: $this->configurePermissionIdentifierUsing,
-                parameters: [
+                namedInjections: [
                     'resource' => $resource,
                 ]
             );
@@ -249,7 +252,7 @@ class FilamentShield
             ->headline();
 
         if ($grandpa === "Filament\Widgets\ChartWidget") {
-            return (string) invade(new $class())->getHeading() ?? $heading;
+            return (string) (invade(new $class())->getHeading() ?? $heading);
         }
 
         return match ($parent) {
@@ -285,5 +288,22 @@ class FilamentShield
             ->replace('\\', '')
             ->snake()
             ->replace('_', '::');
+    }
+
+    public function getId(): string
+    {
+        return 'filament-shield';
+    }
+
+    public function register(Panel $panel): void
+    {
+        $panel->resources([
+            RoleResource::class,
+        ]);
+    }
+
+    public function boot(Panel $panel): void
+    {
+        // TODO: Implement boot() method.
     }
 }

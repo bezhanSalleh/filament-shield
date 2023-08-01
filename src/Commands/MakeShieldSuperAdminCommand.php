@@ -14,7 +14,9 @@ class MakeShieldSuperAdminCommand extends Command
     use CanValidateInput;
 
     public $signature = 'shield:super-admin
-        {--user= : ID of user to be made super admin.}';
+        {--user= : ID of user to be made super admin.}
+        {--panel= : Panel ID to get the configuration from.}
+        ';
 
     public $description = 'Creates Filament Super Admin';
 
@@ -22,8 +24,12 @@ class MakeShieldSuperAdminCommand extends Command
 
     public function handle(): int
     {
+        if ($this->option('panel')) {
+            Filament::setCurrentPanel(Filament::getPanel($this->option('panel')));
+        }
+
         /** @var SessionGuard $auth */
-        $auth = Filament::auth();
+        $auth = Filament::getCurrentPanel()?->auth();
 
         /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
@@ -63,14 +69,14 @@ class MakeShieldSuperAdminCommand extends Command
                 'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
             ]);
         }
-
         $this->superAdmin->assignRole(Utils::getSuperAdminName());
 
         if (Utils::isFilamentUserRoleEnabled()) {
             $this->superAdmin->assignRole(Utils::getFilamentUserRoleName());
         }
 
-        $loginUrl = route('filament.auth.login');
+        $loginUrl = Filament::getCurrentPanel()?->getLoginUrl();
+
         $this->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
 
         return self::SUCCESS;

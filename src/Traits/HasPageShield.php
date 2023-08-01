@@ -59,7 +59,7 @@ trait HasPageShield
             ->prepend($prepend);
     }
 
-    protected static function shouldRegisterNavigation(): bool
+    public static function shouldRegisterNavigation(): bool
     {
         return static::canView() && static::$shouldRegisterNavigation;
     }
