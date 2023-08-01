@@ -16,12 +16,6 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
             ->hasCommands($this->getCommands());
     }
 
-    public function packageBooted(): void
-    {
-        parent::packageBooted();
-
-    }
-
     public function packageRegistered(): void
     {
         parent::packageRegistered();

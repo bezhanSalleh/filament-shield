@@ -4,6 +4,7 @@ namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
+use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Collection;
