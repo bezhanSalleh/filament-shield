@@ -1,8 +1,8 @@
-<a href="https://github.com/bezhansalleh/filament-shield">
+<a href="https://github.com/bezhansalleh/filament-shield" class="filament-hidden">
 <img style="width: 100%; max-width: 100%;" alt="filament-shield-art" src="https://user-images.githubusercontent.com/10007504/148662315-35d4bd74-fc1c-4f8c-8c02-689309b414b0.png" >
 </a>
 
-<p align="center">
+<p align="center" class="flex justify-center items-center">
     <a href="https://filamentadmin.com/docs/2.x/admin/installation">
         <img alt="FILAMENT 8.x" src="https://img.shields.io/badge/FILAMENT-2.x-EBB304?style=for-the-badge">
     </a>
@@ -10,9 +10,9 @@
         <img alt="Packagist" src="https://img.shields.io/packagist/v/bezhansalleh/filament-shield.svg?style=for-the-badge&logo=packagist">
     </a>
     <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3Amain">
-        <img alt="Tests Passing" src="https://img.shields.io/github/actions/workflow/status/bezhansalleh/filament-shield/run-tests.yml?style=for-the-badge&logo=github&label=tests">
+        <img alt="Tests Passing" src="https://img.shields.io/github/actions/workflow/status/bezhansalleh/filament-shield/run-tests.yml?style=for-the-badge&logo=github&label=tests" class="filament-hidden">
     </a>
-    <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain">
+    <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain" class="filament-hidden">
         <img alt="Code Style Passing" src="https://img.shields.io/github/actions/workflow/status/bezhansalleh/filament-shield/laravel-pint.yml?style=for-the-badge&logo=github&label=code%20style">
     </a>
 
@@ -21,90 +21,20 @@
     </a>
 </p>
 
-<hr style="background-color: #ebb304">
+<hr style="background-color: #ebb304" class="filament-hidden">
 
-# Filament Shield
+# Shield
 
 The easiest and most intuitive way to add access management to your Filament Admin:
 - :fire: **Resources** 
 - :fire: **Pages** 
 - :fire: **Widgets** 
 - :fire: **Custom Permissions**
-<!-- One Plugin to rule them all, One Plugin to find them, One Plugin to bring them all, and in the light bind them, In the Land of Filament where building them is really fun! -->
 
-
-Table of contents
-=================
-
-- [Filament Shield](#filament-shield)
-- [Table of contents](#table-of-contents)
-  - [Upgrade](#upgrade)
-      - [v2.x](#v2x)
-  - [Installation](#installation)
-      - [Resources](#resources)
-        - [Default](#default)
-        - [Custom Permissions](#custom-permissions)
-        - [Configure Permission Identifier](#configure-permission-identifier)
-        - [Custom Navigation Group](#custom-navigation-group)
-      - [Pages](#pages)
-          - [Pages Hooks](#pages-hooks)
-          - [Pages Redirect Path](#pages-redirect-path)
-      - [Widgets](#widgets)
-      - [Role Policy](#role-policy)
-      - [Third-Party Plugins](#third-party-plugins)
-      - [Translations](#translations)
-  - [Available Filament Shield Commands](#available-filament-shield-commands)
-      - [`shield:doctor`](#shielddoctor)
-      - [`shield:install`](#shieldinstall)
-      - [`shield:generate`](#shieldgenerate)
-      - [`shield:super-admin`](#shieldsuper-admin)
-    - [`shield:publish`](#shieldpublish)
-    - [`shield:seeder`](#shieldseeder)
-      - [`shield:upgrade`](#shieldupgrade)
-  - [Testing](#testing)
-  - [Changelog](#changelog)
-  - [Contributing](#contributing)
-  - [Security Vulnerabilities](#security-vulnerabilities)
-  - [Credits](#credits)
-  - [License](#license)
-
+> **Note** 
+> For **Filament 2.x** use **[2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)** branch
 
 <hr style="background-color: #ebb304">
-
-
-## Upgrade 
-
-To upgrade to the latest release first run:
-
-```bash
-composer update
-```
-#### v2.x
-> **Note** 
-> Minimum **Filament** Requirement is now `2.13`. for older versions use [v1.1.12](https://github.com/bezhanSalleh/filament-shield/releases/tag/v1.1.12)
-
-**Before following along, backup your current `config` first.**
-
-1. Upgrade from **`1.x`**
-   1. Delete `Shield` folder from `App\Filament\Resources`
-   2. Delete `filament-shield` from `resources\lang\vendor or lang\vendor`
-   3. Delete `filament-shield` from `resources\views\vendor`
-   4. Delete `filament-shield.php` from `Config`
-   5. Now follow **`Upgrade only`**
-
-2. Upgrade only **`2.x`**
-   1. Publish the `Config`:
-        ```bash
-        php artisan vendor:publish --tag=filament-shield-config --force
-        ```
-   2. Configure:
-        Update the new **`published config`** based on your **`backed-up config`**
-
-   3. Install:
-        ```bash
-        php artisan shield:upgrade
-        ```
-
 ## Installation
 
 1. Install the package via composer:
@@ -516,9 +446,6 @@ Create a user with super_admin role.
 ### `shield:seeder`
 - Deploy easily by setting up your roles and permissions or add your custom seeds
   
-#### `shield:upgrade` 
-- Upgrade shield.
-
 
 ## Testing
 
