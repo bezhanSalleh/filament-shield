@@ -2,9 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use Filament\Facades\Filament;
-
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Facades\Filament;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 

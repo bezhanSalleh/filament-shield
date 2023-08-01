@@ -27,16 +27,16 @@ class MakeShieldPublishCommand extends Command
         }
 
         (new Filesystem())->ensureDirectoryExists($baseResourcePath);
-        (new Filesystem())->copyDirectory(__DIR__.'/../Resources', $baseResourcePath);
+        (new Filesystem())->copyDirectory(__DIR__ . '/../Resources', $baseResourcePath);
 
         $currentNamespace = 'BezhanSalleh\\FilamentShield\\Resources';
         $newNamespace = 'App\\Filament\\Resources\\Shield';
 
         $this->replaceInFile($roleResourcePath, $currentNamespace, $newNamespace);
-        $this->replaceInFile($baseResourcePath.'/RoleResource/Pages/CreateRole.php', $currentNamespace, $newNamespace);
-        $this->replaceInFile($baseResourcePath.'/RoleResource/Pages/EditRole.php', $currentNamespace, $newNamespace);
-        $this->replaceInFile($baseResourcePath.'/RoleResource/Pages/ViewRole.php', $currentNamespace, $newNamespace);
-        $this->replaceInFile($baseResourcePath.'/RoleResource/Pages/ListRoles.php', $currentNamespace, $newNamespace);
+        $this->replaceInFile($baseResourcePath . '/RoleResource/Pages/CreateRole.php', $currentNamespace, $newNamespace);
+        $this->replaceInFile($baseResourcePath . '/RoleResource/Pages/EditRole.php', $currentNamespace, $newNamespace);
+        $this->replaceInFile($baseResourcePath . '/RoleResource/Pages/ViewRole.php', $currentNamespace, $newNamespace);
+        $this->replaceInFile($baseResourcePath . '/RoleResource/Pages/ListRoles.php', $currentNamespace, $newNamespace);
 
         $this->info('Shield\'s Resource have been published successfully!');
 

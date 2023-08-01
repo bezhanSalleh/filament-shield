@@ -65,7 +65,7 @@ class MakeShieldSuperAdminCommand extends Command
         } else {
             $this->superAdmin = $userProvider->getModel()::create([
                 'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
-                'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:'.$userProvider->getModel()]),
+                'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $userProvider->getModel()]),
                 'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
             ]);
         }

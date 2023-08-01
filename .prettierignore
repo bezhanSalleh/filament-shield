@@ -1,0 +1,6 @@
+*.md
+**/.github
+**/dist
+**/vendor
+**/build
+composer.lock
