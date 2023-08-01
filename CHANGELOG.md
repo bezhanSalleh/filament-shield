@@ -2,6 +2,24 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 2.4.8 - 2023-08-01
+
+### What's Changed
+
+- Bump aglipanci/laravel-pint-action from 2.2.0 to 2.3.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/194
+- Bump dependabot/fetch-metadata from 1.4.0 to 1.6.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/203
+- Add Group Naming change howto by @tonypartridge in https://github.com/bezhanSalleh/filament-shield/pull/187
+- Policies return type by @Frameck in https://github.com/bezhanSalleh/filament-shield/pull/192
+- Add lang ja (Japanese) by @shibomb in https://github.com/bezhanSalleh/filament-shield/pull/198
+
+### New Contributors
+
+- @tonypartridge made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/187
+- @Frameck made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/192
+- @shibomb made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/198
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.4.7...2.4.8
+
 ## 2.4.7 - 2023-05-21
 
 **What's new in 2.4.7?**
@@ -223,7 +241,8 @@ All notable changes to `filament-shield` will be documented in this file.
 ### What's Changed
 
 - adds new features to shield by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/107
-- - adds the ability to define `super-admin` via gage
+- - adds the ability to define `super-admin` via gage   
+  
 - 
 - 
 - 
@@ -244,7 +263,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - new options for `shield:generate`
+- - new options for `shield:generate`   
+  
 - 
 - 
 - 
@@ -265,35 +285,44 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - - --all                    Generate permissions/policies for all entities
-- - 
+- - - --all                    Generate permissions/policies for all entities      
+       
+  
+- -    
+  
 - 
-- - 
+- -    
+  
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -301,7 +330,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -310,7 +340,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -320,7 +351,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -331,7 +363,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -343,7 +376,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -356,7 +390,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -370,7 +405,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -385,7 +421,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -401,7 +438,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -418,7 +456,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -436,7 +475,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -455,7 +495,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -475,7 +516,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -496,35 +538,44 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - - --option[=OPTION]        Override the config generator option(policies_and_permissions,policies,permissions)
-- - 
+- - - --option[=OPTION]        Override the config generator option(policies_and_permissions,policies,permissions)      
+       
+  
+- -    
+  
 - 
-- - 
+- -    
+  
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -532,7 +583,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -541,7 +593,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -551,7 +604,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -562,7 +616,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -574,7 +629,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -587,7 +643,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -601,7 +658,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -616,7 +674,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -632,7 +691,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -649,7 +709,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -667,7 +728,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -686,7 +748,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -706,7 +769,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -727,35 +791,44 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - - --resource[=RESOURCE]    One or many resources separated by comma (,)
-- - 
+- - - --resource[=RESOURCE]    One or many resources separated by comma (,)      
+       
+  
+- -    
+  
 - 
-- - 
+- -    
+  
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -763,7 +836,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -772,7 +846,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -782,7 +857,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -793,7 +869,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -805,7 +882,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -818,7 +896,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -832,7 +911,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -847,7 +927,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -863,7 +944,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -880,7 +962,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -898,7 +981,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -917,7 +1001,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -937,7 +1022,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -958,35 +1044,44 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - - --page[=PAGE]            One or many pages separated by comma (,)
-- - 
+- - - --page[=PAGE]            One or many pages separated by comma (,)      
+       
+  
+- -    
+  
 - 
-- - 
+- -    
+  
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -994,7 +1089,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1003,7 +1099,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1013,7 +1110,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1024,7 +1122,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1036,7 +1135,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1049,7 +1149,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1063,7 +1164,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1078,7 +1180,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1094,7 +1197,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1111,7 +1215,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1129,7 +1234,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1148,7 +1254,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1168,7 +1275,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1189,35 +1297,44 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - - --widget[=WIDGET]        One or many widgets separated by comma (,)
-- - 
+- - - --widget[=WIDGET]        One or many widgets separated by comma (,)      
+       
+  
+- -    
+  
 - 
-- - 
+- -    
+  
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1225,7 +1342,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1234,7 +1352,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1244,7 +1363,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1255,7 +1375,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1267,7 +1388,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1280,7 +1402,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1294,7 +1417,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1309,7 +1433,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1325,7 +1450,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1342,7 +1468,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1360,7 +1487,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1379,7 +1507,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1399,7 +1528,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1420,35 +1550,44 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - - --exclude                Exclude the given entities during generation
-- - 
+- - - --exclude                Exclude the given entities during generation      
+       
+  
+- -    
+  
 - 
-- - 
+- -    
+  
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1456,7 +1595,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1465,7 +1605,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1475,7 +1616,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1486,7 +1628,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1498,7 +1641,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1511,7 +1655,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1525,7 +1670,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1540,7 +1686,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1556,7 +1703,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1573,7 +1721,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1591,7 +1740,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1610,7 +1760,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1630,7 +1781,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1651,35 +1803,44 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - - --ignore-config-exclude  Ignore config `exclude` option during generation
-- - 
+- - - --ignore-config-exclude  Ignore config `exclude` option during generation      
+       
+  
+- -    
+  
 - 
-- - 
+- -    
+  
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1687,7 +1848,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1696,7 +1858,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1706,7 +1869,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1717,7 +1881,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1729,7 +1894,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1742,7 +1908,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1756,7 +1923,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1771,7 +1939,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1787,7 +1956,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1804,7 +1974,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1822,7 +1993,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1841,7 +2013,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1861,7 +2034,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1882,7 +2056,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1903,7 +2078,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - new option for `shield:install`
+- - new option for `shield:install`   
+  
 - 
 - 
 - 
@@ -1924,35 +2100,44 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - - --only            Only setups shield without generating permissions and creating super-admin
-- - 
+- - - --only            Only setups shield without generating permissions and creating super-admin      
+       
+  
+- -    
+  
 - 
-- - 
+- -    
+  
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1960,7 +2145,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1969,7 +2155,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1979,7 +2166,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -1990,7 +2178,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2002,7 +2191,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2015,7 +2205,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2029,7 +2220,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2044,7 +2236,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2060,7 +2253,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2077,7 +2271,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2095,7 +2290,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2114,7 +2310,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2134,7 +2331,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2155,7 +2353,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - 
+- -    
+  
 - 
 - 
 - 
@@ -2176,7 +2375,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - redefined the purpose of `filament_user` role, not attaching permissions anymore
+- - redefined the purpose of `filament_user` role, not attaching permissions anymore   
+  
 - 
 - 
 - 
@@ -2298,7 +2498,8 @@ All notable changes to `filament-shield` will be documented in this file.
 
 - 2.x by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/61
 - 
-- - Follow filament plugin standards
+- - Follow filament plugin standards   
+  
 - 
 - 
 - 
@@ -2329,7 +2530,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - Add Setting Model (DB)
+- - Add Setting Model (DB)   
+  
 - 
 - 
 - 
@@ -2360,7 +2562,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - Generate config dynamically from setting model
+- - Generate config dynamically from setting model   
+  
 - 
 - 
 - 
@@ -2391,7 +2594,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - Remove Config file
+- - Remove Config file   
+  
 - 
 - 
 - 
@@ -2422,7 +2626,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - Follow new Filament Actions
+- - Follow new Filament Actions   
+  
 - 
 - 
 - 
@@ -2453,7 +2658,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - Make default permissions translatable
+- - Make default permissions translatable   
+  
 - 
 - 
 - 
@@ -2484,7 +2690,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - Add ability to Load default settings from DB
+- - Add ability to Load default settings from DB   
+  
 - 
 - 
 - 
@@ -2515,7 +2722,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - Remove `shield:publish` command
+- - Remove `shield:publish` command   
+  
 - 
 - 
 - 
@@ -2546,7 +2754,8 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- - Remove `RoleResource` stubs
+- - Remove `RoleResource` stubs   
+  
 - 
 - 
 - 
