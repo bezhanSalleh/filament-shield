@@ -4,7 +4,7 @@
 
 <p align="center" class="flex justify-center items-center">
     <a href="https://filamentadmin.com/docs/2.x/admin/installation">
-        <img alt="FILAMENT 8.x" src="https://img.shields.io/badge/FILAMENT-2.x-EBB304?style=for-the-badge">
+        <img alt="FILAMENT 8.x" src="https://img.shields.io/badge/FILAMENT-3.x-EBB304?style=for-the-badge">
     </a>
     <a href="https://packagist.org/packages/bezhansalleh/filament-shield">
         <img alt="Packagist" src="https://img.shields.io/packagist/v/bezhansalleh/filament-shield.svg?style=for-the-badge&logo=packagist">
@@ -31,8 +31,12 @@ The easiest and most intuitive way to add access management to your Filament Adm
 - :fire: **Widgets** 
 - :fire: **Custom Permissions**
 
+> **Warning**
+> The 3.x is still in beta but compatible for filament 3.x
+
 > **Note** 
 > For **Filament 2.x** use **[2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)** branch
+
 
 <hr style="background-color: #ebb304">
 ## Installation
@@ -40,7 +44,7 @@ The easiest and most intuitive way to add access management to your Filament Adm
 1. Install the package via composer:
 
 ```bash
-composer require bezhansalleh/filament-shield
+composer require bezhansalleh/filament-shield "^3.0@beta"
 ```
 
 2. Add the `Spatie\Permission\Traits\HasRoles` trait to your User model(s):
@@ -56,98 +60,28 @@ class User extends Authenticatable
     // ...
 }
 ```
-3. Publish the `config` using:
+3. Publish the `config` file then setup your configuration:
 ```bash
 php artisan vendor:publish --tag=filament-shield-config
-```
-4. Setup your configuration
-```php
-<?php
-
-    return [
-
-          'shield_resource' => [
-              'slug' => 'shield/roles',
-              'navigation_sort' => -1,
-              'navigation_badge' => true,
-              'navigation_group' => true,
-              'is_globally_searchable' => false,
-              'show_model_path' => true,
-          ],
-
-          'auth_provider_model' => [
-              'fqcn' => 'App\\Models\\User'
-          ],
-
-          'super_admin' => [
-              'enabled' => true,
-              'name'  => 'super_admin',
-              'define_via_gate' => false,
-              'intercept_gate' => 'before' // after
-          ],
-
-          'filament_user' => [
-              'enabled' => true,
-              'name' => 'filament_user'
-          ],
-
-          'permission_prefixes' => [
-              'resource' => [
-                  'view',
-                  'view_any',
-                  'create',
-                  'update',
-                  'restore',
-                  'restore_any',
-                  'replicate',
-                  'reorder',
-                  'delete',
-                  'delete_any',
-                  'force_delete',
-                  'force_delete_any',
-              ],
-
-              'page' => 'page',
-              'widget' => 'widget',
-          ],
-
-          'entities' => [
-              'pages' => true,
-              'widgets' => true,
-              'resources' => true,
-              'custom_permissions' => false,
-          ],
-
-          'generator' => [
-              'option' => 'policies_and_permissions'
-          ],
-
-          'exclude' => [
-              'enabled' => true,
-
-              'pages' => [
-                  'Dashboard',
-              ],
-
-              'widgets' => [
-                  'AccountWidget','FilamentInfoWidget',
-              ],
-
-              'resources' => [],
-          ],
-
-          'register_role_policy' => [
-              'enabled' => true
-          ],
-    ];
 ```
 4. Now run the following command to install shield:
 ```bash
 php artisan shield:install
 ```
-
 Follow the prompts and enjoy!
 
+## Filament Panels
+Finally enable/register Shield plugin for your Filament Panels.
+```php
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        ->plugins([
+            \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
+        ]);
+}
+```
+If you have more than one panel you need to repeat the above step for each panel you want Shield to be enabled.
 #### Resources
 Generally there are two scenarios that shield handles permissions for your `Filament` resources.
 
