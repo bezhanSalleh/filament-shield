@@ -18,8 +18,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getLocalizedPageLabel(string $page)
  * @method static string getLocalizedWidgetLabel(string $widget)
  *
- *
- *
  * @see \BezhanSalleh\FilamentShield\FilamentShield
  */
 class FilamentShield extends Facade

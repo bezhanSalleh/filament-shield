@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use Filament\Panel;
-use Filament\FilamentManager;
-use Filament\Contracts\Plugin;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Contracts\Plugin;
+use Filament\FilamentManager;
+use Filament\Panel;
 
 class FilamentShieldPlugin implements Plugin
 {
@@ -39,7 +39,7 @@ class FilamentShieldPlugin implements Plugin
      * Class MyClass overrides inline block form.
      *
      * @phpstan-ignore-next-line */
-    public static function get(): Plugin|FilamentManager
+    public static function get(): Plugin | FilamentManager
     {
         return filament(app(static::class)->getId());
     }
