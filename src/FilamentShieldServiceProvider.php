@@ -2,6 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -23,6 +25,25 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         $this->app->scoped('filament-shield', function (): FilamentShield {
             return new FilamentShield();
         });
+    }
+
+    public function packageBooted(): void
+    {
+        parent::packageBooted();
+
+        if (Utils::isSuperAdminDefinedViaGate()) {
+            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
+                return match (Utils::getSuperAdminGateInterceptionStatus()) {
+                    'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
+                    'after' => $user->hasRole(Utils::getSuperAdminName()),
+                    default => false
+                };
+            });
+        }
+
+        if (Utils::isRolePolicyRegistered()) {
+            Gate::policy(Utils::getRoleModel(), 'App\Policies\RolePolicy');
+        }
     }
 
     protected function getCommands(): array

@@ -193,15 +193,16 @@ class FilamentShield
     /**
      * Get localized page label
      */
-    public static function getLocalizedPageLabel(string $page): string | bool
+    public static function getLocalizedPageLabel(string $page): string
     {
         $object = static::transformClassString($page);
 
-        if (Str::of($pageTitle = invade(new $object())->getTitle())->isNotEmpty()) {
-            return $pageTitle;
-        }
+        $pageObject = invade(new $object());
 
-        return invade(new $object())->getNavigationLabel();
+        return $pageObject->getTitle()
+                ?? $pageObject->getHeading()
+                ?? $pageObject->getNavigationLabel()
+                ?? '';
     }
 
     /**
@@ -252,7 +253,7 @@ class FilamentShield
         }
 
         return match ($parent) {
-            "Filament\Widgets\TableWidget" => (string) invade(new $class())->getTableHeading(),
+            "Filament\Widgets\TableWidget" => (string) invade(new $class())->makeTable()->getHeading(),
             "Filament\Widgets\StatsOverviewWidget" => (string) static::hasHeadingForShield($class)
                 ? (new $class())->getHeadingForShield()
                 : $heading,

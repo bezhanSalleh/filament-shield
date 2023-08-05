@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Illuminate\Support\Facades\Gate;
+use Filament\FilamentManager;
+use Filament\Contracts\Plugin;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 class FilamentShieldPlugin implements Plugin
 {
@@ -23,29 +23,23 @@ class FilamentShieldPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->resources([
-            Resources\RoleResource::class,
-        ]);
+        if (! Utils::isResourcePublished()) {
+            $panel->resources([
+                Resources\RoleResource::class,
+            ]);
+        }
     }
 
     public function boot(Panel $panel): void
     {
-        if (Utils::isSuperAdminDefinedViaGate()) {
-            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
-                return match (Utils::getSuperAdminGateInterceptionStatus()) {
-                    'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
-                    'after' => $user->hasRole(Utils::getSuperAdminName()),
-                    default => false
-                };
-            });
-        }
-
-        if (Utils::isRolePolicyRegistered()) {
-            Gate::policy(Utils::getRoleModel(), 'App\Policies\RolePolicy');
-        }
+        //
     }
 
-    public static function get(): static
+    /**
+     * Class MyClass overrides inline block form.
+     *
+     * @phpstan-ignore-next-line */
+    public static function get(): Plugin|FilamentManager
     {
         return filament(app(static::class)->getId());
     }
