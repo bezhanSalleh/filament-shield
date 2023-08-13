@@ -375,6 +375,12 @@ class RoleResource extends Resource implements HasShieldPermissions
             });
         });
 
+        collect(FilamentShield::getPanels())->each(function ($page) use ($set, $state) {
+            if (Utils::isPanelEntityEnabled()) {
+                $set($page, $state);
+            }
+        });
+
         collect(FilamentShield::getPages())->each(function ($page) use ($set, $state) {
             if (Utils::isPageEntityEnabled()) {
                 $set($page, $state);
