@@ -47,6 +47,7 @@ return [
     'resources' => 'リソース',
     'widgets' => 'ウィジェット',
     'pages' => 'ページ',
+    'panels' => 'パネル',
     'custom' => 'カスタムパーミッション',
 
     /*

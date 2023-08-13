@@ -47,6 +47,7 @@ return [
     'resources' => 'منابع',
     'widgets' => 'ویجت‌ها',
     'pages' => 'صفحات',
+    'panels' => '',
     'custom' => 'دسترسی‌های سفارشی',
 
     /*

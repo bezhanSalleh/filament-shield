@@ -47,6 +47,7 @@ return [
     'resources' => 'Tài nguyên',
     'widgets' => 'Widget',
     'pages' => 'Trang',
+    'panels' => '',
     'custom' => 'Quyền tùy chỉnh',
 
     /*

@@ -47,6 +47,7 @@ return [
     'resources' => 'Kaynaklar',
     'widgets' => 'Araçlar',
     'pages' => 'Sayfalar',
+    'panels' => '',
     'custom' => 'Özel İzinler',
 
     /*

@@ -47,6 +47,7 @@ return [
     'resources' => 'Resources',
     'widgets' => 'Widgets',
     'pages' => 'Pagina\'s',
+    'panels' => '',
     'custom' => 'Andere permissies',
 
     /*

@@ -47,6 +47,7 @@ return [
     'resources' => 'Sumber Daya',
     'widgets' => 'Widget',
     'pages' => 'Halaman',
+    'panels' => '',
     'custom' => 'Izin Kustom',
 
     /*
