@@ -188,14 +188,6 @@ class MakeShieldGenerateCommand extends Command
     {
         return collect(FilamentShield::getPanels())
             ->filter(function ($panel) {
-                // if ($this->excludePages) {
-                //     return ! in_array($panel, $this->panels);
-                // }
-
-                // if ($this->onlyPanels) {
-                //     return in_array($panels, $this->panels);
-                // }
-
                 return true;
             })
             ->toArray();
@@ -295,15 +287,15 @@ class MakeShieldGenerateCommand extends Command
     protected function panelInfo(array $panels): void
     {
         if ($this->option('minimal')) {
-            $this->info('Successfully generated Page Permissions.');
+            $this->info('Successfully generated Panel Permissions.');
         } else {
-            $this->info('Successfully generated Page Permissions for:');
+            $this->info('Successfully generated Panel Permissions for:');
             $this->table(
                 ['#', 'Panel', 'Permission'],
                 collect($panels)->map(function ($panel, $key) {
                     return [
                         '#' => $key + 1,
-                        'Panel' => Str::replace(config('filament-shield.permission_prefixes.panel') . '_', '', $panel),
+                        'Panel' => Str::replace(config('filament-shield.permission_prefixes.panel') . '_', ' ', $panel),
                         'Permission' => $panel,
                     ];
                 })
