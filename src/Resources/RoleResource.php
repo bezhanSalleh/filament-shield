@@ -6,6 +6,7 @@ use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,6 +17,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use PhpParser\Node\Stmt\Label;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -70,6 +72,20 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ]),
                 Forms\Components\Tabs::make('Permissions')
                     ->tabs([
+                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.panels'))
+                            ->visible(fn (): bool => (bool) Utils::isPanelEntityEnabled() && count(FilamentShield::getPanels()))
+                            ->live()
+                            ->schema([
+                                Forms\Components\Grid::make([
+                                    'sm' => 2,
+                                    'lg' => 3,
+                                ])
+                                    ->schema(static::getPanelEntityPermissionsSchema())
+                                    ->columns([
+                                        'sm' => 2,
+                                        'lg' => 3,
+                                    ]),
+                            ]),
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
                             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
                             ->live()
@@ -329,6 +345,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     protected static function refreshSelectAllStateViaEntities(Forms\Set $set, Forms\Get $get): void
     {
         $entitiesStates = collect(FilamentShield::getResources())
+            ->when(Utils::isPanelEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getPanels()))
             ->when(Utils::isPageEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getPages()))
             ->when(Utils::isWidgetEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getWidgets()))
             ->when(Utils::isCustomPermissionEntityEnabled(), fn ($entities) => $entities->merge(static::getCustomEntities()))
@@ -429,6 +446,47 @@ class RoleResource extends Resource implements HasShieldPermissions
     *----------------------------------*/
 
     /**--------------------------------*
+    | Panel Related Logic Start       |
+    *----------------------------------*/
+
+    protected static function getPanelEntityPermissionsSchema(): ?array
+    {
+        return collect(FilamentShield::getPanels())->sortKeys()->reduce(function ($panels, $panel) {
+            $panels[] = Forms\Components\Grid::make()
+                ->schema([
+                    Forms\Components\Checkbox::make($panel)
+                        ->label(FilamentShield::getLocalizedPanelLabel($panel))
+                        ->inline()
+                        ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $record) use ($panel) {
+                            if (is_null($record)) {
+                                return;
+                            }
+
+                            $set($panel, $record->checkPermissionTo($panel));
+
+                            static::refreshSelectAllStateViaEntities($set, $get);
+                        })
+                        ->live()
+                        ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
+                            if (! $state) {
+                                $set('select_all', false);
+                            }
+
+                            static::refreshSelectAllStateViaEntities($set, $get);
+                        })
+                        ->dehydrated(fn ($state): bool => $state),
+                ])
+                ->columns(1)
+                ->columnSpan(1);
+
+            return $panels;
+        }, []);
+    }
+    /**--------------------------------*
+    | Panel Related Logic End          |
+    *----------------------------------*/
+
+    /**--------------------------------*
     | Page Related Logic Start       |
     *----------------------------------*/
 
@@ -520,6 +578,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         });
 
         $entitiesPermissions = $resourcePermissions
+            ->merge(FilamentShield::getPanels())
             ->merge(FilamentShield::getPages())
             ->merge(FilamentShield::getWidgets())
             ->values();

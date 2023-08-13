@@ -99,6 +99,11 @@ class Utils
         return config('filament-shield.permission_prefixes.resource');
     }
 
+    public static function getPanelPermissionPrefix(): string
+    {
+        return (string) config('filament-shield.permission_prefixes.panel', 'panel');
+    }
+
     public static function getPagePermissionPrefix(): string
     {
         return (string) config('filament-shield.permission_prefixes.page');
@@ -117,6 +122,11 @@ class Utils
     public static function isPageEntityEnabled(): bool
     {
         return (bool) config('filament-shield.entities.pages', true);
+    }
+
+    public static function isPanelEntityEnabled(): bool
+    {
+        return (bool) config('filament-shield.entities.panel', true);
     }
 
     /**

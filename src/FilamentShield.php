@@ -64,6 +64,18 @@ class FilamentShield
         }
     }
 
+    public static function generateForPanel(string $panel): void
+    {
+        if (Utils::isPanelEntityEnabled()) {
+            $permission = Utils::getPermissionModel()::firstOrCreate(
+                ['name' => $panel],
+                ['guard_name' => Utils::getFilamentAuthGuard()]
+            )->name;
+
+            static::giveSuperAdminPermission($permission);
+        }
+    }
+
     public static function generateForPage(string $page): void
     {
         if (Utils::isPageEntityEnabled()) {
@@ -90,7 +102,7 @@ class FilamentShield
 
     protected static function giveSuperAdminPermission(string | array | Collection $permissions): void
     {
-        if (! Utils::isSuperAdminDefinedViaGate()) {
+        if (!Utils::isSuperAdminDefinedViaGate()) {
             $superAdmin = static::createRole();
 
             $superAdmin->givePermissionTo($permissions);
@@ -112,13 +124,18 @@ class FilamentShield
      *
      * @return array
      */
+    // MODIFIED
     public function getResources(): ?array
     {
-        return collect(Filament::getResources())
+        $resources = [];
+        foreach (Filament::getPanels() as $panel) {
+            $resources = array_merge($resources, $panel->getResources());
+        }
+        return collect($resources)
             ->unique()
             ->filter(function ($resource) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(
+                    return !in_array(
                         Str::of($resource)->afterLast('\\'),
                         Utils::getExcludedResouces()
                     );
@@ -144,9 +161,15 @@ class FilamentShield
     /**
      * Get the localized resource label
      */
-    public static function getLocalizedResourceLabel(string $entity): string
+    // MODIFIED
+     public static function getLocalizedResourceLabel(string $entity): string
     {
-        $label = collect(Filament::getResources())->filter(function ($resource) use ($entity) {
+        $resources = [];
+        foreach (Filament::getPanels() as $panel) {
+            $resources = array_merge($resources, $panel->getResources());
+        }
+
+        $label = collect($resources)->filter(function ($resource) use ($entity) {
             return $resource === $entity;
         })->first()::getModelLabel();
 
@@ -163,17 +186,32 @@ class FilamentShield
             : Str::of($permission)->headline();
     }
 
-    /**
-     * Transform filament pages to key value pair for shield
-     *
-     * @return array
-     */
+    public static function getPanels(): ?array
+    {
+        return collect(Filament::getPanels())
+            // ->filter(function ($panel) {
+            //     if (Utils::isGeneralExcludeEnabled()) {
+            //         return !in_array(Str::afterLast($panel, '\\'), Utils::getExcludedPages());
+            //     }
+
+            //     return true;
+            // })
+            ->reduce(function ($panels, $panel) {
+                $prepend = Str::of(Utils::getPanelPermissionPrefix())->append('_');
+                $name = $panel->getId();
+                $name = $prepend.$name;
+                $panels["{$name}"] = "{$name}";
+                return $panels;
+            }, collect())
+            ->toArray();
+    }
+
     public static function getPages(): ?array
     {
         return collect(Filament::getPages())
             ->filter(function ($page) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
+                    return !in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
                 }
 
                 return true;
@@ -191,6 +229,17 @@ class FilamentShield
     }
 
     /**
+     * Get localized panel label
+     */
+    public static function getLocalizedPanelLabel(string $panel): string
+    {
+        $prepend = Str::of(Utils::getPanelPermissionPrefix())->append('_');
+        $name = str_replace($prepend, '', $panel);
+        $prefix = Utils::getPanelPermissionPrefix();
+        return ucwords($name . ' ' . $prefix);
+    }
+
+    /**
      * Get localized page label
      */
     public static function getLocalizedPageLabel(string $page): string
@@ -200,9 +249,9 @@ class FilamentShield
         $pageObject = invade(new $object());
 
         return $pageObject->getTitle()
-                ?? $pageObject->getHeading()
-                ?? $pageObject->getNavigationLabel()
-                ?? '';
+            ?? $pageObject->getHeading()
+            ?? $pageObject->getNavigationLabel()
+            ?? '';
     }
 
     /**
@@ -215,7 +264,7 @@ class FilamentShield
         return collect(Filament::getWidgets())
             ->filter(function ($widget) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
+                    return !in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
                 }
 
                 return true;

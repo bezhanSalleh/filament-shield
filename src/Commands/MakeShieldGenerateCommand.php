@@ -28,6 +28,7 @@ class MakeShieldGenerateCommand extends Command
      * @var array
      */
     protected $pages = [];
+    protected $panels = [];
 
     /**
      * The widgets to generate permissions for, or should be excluded.
@@ -40,11 +41,15 @@ class MakeShieldGenerateCommand extends Command
 
     protected $excludeResources = false;
 
+    protected $excludePanels = false;
+
     protected $excludePages = false;
 
     protected $excludeWidgets = false;
 
     protected $onlyResources = false;
+
+    protected $onlyPanels = false;
 
     protected $onlyPages = false;
 
@@ -59,6 +64,7 @@ class MakeShieldGenerateCommand extends Command
         {--all : Generate permissions/policies for all entities }
         {--option= : Override the config generator option(<fg=green;options=bold>policies_and_permissions,policies,permissions</>)}
         {--resource= : One or many resources separated by comma (,) }
+        {--panel= : One or many panels separated by comma (,) }
         {--page= : One or many pages separated by comma (,) }
         {--widget= : One or many widgets separated by comma (,) }
         {--exclude : Exclude the given entities during generation }
@@ -79,7 +85,7 @@ class MakeShieldGenerateCommand extends Command
     {
         $this->determinGeneratorOptionAndEntities();
 
-        if ($this->option('exclude') && blank($this->option('resource')) && blank($this->option('page')) && blank($this->option('widget'))) {
+        if ($this->option('exclude') && blank($this->option('resource')) && blank($this->option('page')) && blank($this->option('widget')) && blank($this->option('panel'))) {
             $this->comment('<fg=red;>No entites provided for the generators ...</>');
             $this->comment('<fg=yellow;options=bold>... generation SKIPPED</>');
 
@@ -89,6 +95,11 @@ class MakeShieldGenerateCommand extends Command
         if (filled($this->option('resource')) || $this->option('all')) {
             $resources = $this->generateForResources($this->generatableResources());
             $this->resourceInfo($resources->toArray());
+        }
+
+        if (filled($this->option('panel')) || $this->option('all')) {
+            $panels = $this->generateForPanels($this->generatablePanels());
+            $this->panelInfo($panels->toArray());
         }
 
         if (filled($this->option('page')) || $this->option('all')) {
@@ -115,21 +126,26 @@ class MakeShieldGenerateCommand extends Command
     protected function determinGeneratorOptionAndEntities(): void
     {
         $this->generatorOption = $this->option('option') ?? Utils::getGeneratorOption();
+        
 
         if ($this->option('ignore-config-exclude') && Utils::isGeneralExcludeEnabled()) {
             cache()->add('shield_general_exclude', true, 3600);
             Utils::disableGeneralExclude();
         }
 
+
         $this->resources = (array) explode(',', $this->option('resource'));
+        $this->panels = (array) explode(',', $this->option('panel'));
         $this->pages = (array) explode(',', $this->option('page'));
         $this->widgets = (array) explode(',', $this->option('widget'));
-
+        
         $this->excludeResources = $this->option('exclude') && filled($this->option('resource'));
         $this->excludePages = $this->option('exclude') && filled($this->option('page'));
+        $this->excludePanels = [];
         $this->excludeWidgets = $this->option('exclude') && filled($this->option('widget'));
 
         $this->onlyResources = ! $this->option('exclude') && filled($this->option('resource'));
+        $this->onlyPanels = [];
         $this->onlyPages = ! $this->option('exclude') && filled($this->option('page'));
         $this->onlyWidgets = ! $this->option('exclude') && filled($this->option('widget'));
     }
@@ -162,6 +178,23 @@ class MakeShieldGenerateCommand extends Command
                 if ($this->onlyPages) {
                     return in_array($page, $this->pages);
                 }
+
+                return true;
+            })
+            ->toArray();
+    }
+
+    protected function generatablePanels(): ?array
+    {
+        return collect(FilamentShield::getPanels())
+            ->filter(function ($panel) {
+                // if ($this->excludePages) {
+                //     return ! in_array($panel, $this->panels);
+                // }
+
+                // if ($this->onlyPanels) {
+                //     return in_array($panels, $this->panels);
+                // }
 
                 return true;
             })
@@ -205,6 +238,15 @@ class MakeShieldGenerateCommand extends Command
             });
     }
 
+    protected function generateForPanels(array $panels): Collection
+    {
+        return collect($panels)
+            ->values()
+            ->each(function ($panel) {
+                FilamentShield::generateForPanel($panel);
+            });
+    }
+
     protected function generateForPages(array $pages): Collection
     {
         return collect($pages)
@@ -244,6 +286,25 @@ class MakeShieldGenerateCommand extends Command
                                 return $permission . '_' . $resource['resource'];
                             })->toArray()
                         ) . ($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
+                    ];
+                })
+            );
+        }
+    }
+
+    protected function panelInfo(array $panels): void
+    {
+        if ($this->option('minimal')) {
+            $this->info('Successfully generated Page Permissions.');
+        } else {
+            $this->info('Successfully generated Page Permissions for:');
+            $this->table(
+                ['#', 'Panel', 'Permission'],
+                collect($panels)->map(function ($panel, $key) {
+                    return [
+                        '#' => $key + 1,
+                        'Panel' => Str::replace(config('filament-shield.permission_prefixes.panel') . '_', '', $panel),
+                        'Permission' => $panel,
                     ];
                 })
             );
