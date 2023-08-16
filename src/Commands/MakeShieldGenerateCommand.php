@@ -64,6 +64,7 @@ class MakeShieldGenerateCommand extends Command
         {--exclude : Exclude the given entities during generation }
         {--ignore-config-exclude : Ignore config `<fg=yellow;options=bold>exclude</>` option during generation }
         {--minimal : Output minimal amount of info to console}
+        {--ignore-existing-policies : Ignore generating policies that already exist }
     ';
     // {--seeder : Exclude the given entities during generation }
     // the idea is to generate a seeder that can be used on production deployment
@@ -191,12 +192,18 @@ class MakeShieldGenerateCommand extends Command
             ->values()
             ->each(function ($entity) {
                 if ($this->generatorOption === 'policies_and_permissions') {
-                    $this->copyStubToApp(static::getPolicyStub($entity['model']), $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
+                    $policyPath = $this->generatePolicyPath($entity);
+                    if (!$this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && !$this->fileExists($policyPath))) {
+                        $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
+                    }
                     FilamentShield::generateForResource($entity);
                 }
 
                 if ($this->generatorOption === 'policies') {
-                    $this->copyStubToApp(static::getPolicyStub($entity['model']), $this->generatePolicyPath($entity), $this->generatePolicyStubVariables($entity));
+                    $policyPath = $this->generatePolicyPath($entity);
+                    if (!$this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && !$this->fileExists($policyPath))) {
+                        $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
+                    }
                 }
 
                 if ($this->generatorOption === 'permissions') {
