@@ -72,6 +72,12 @@ return [
         'resources' => [],
     ],
 
+    'discovery' => [
+        'discover_all_resources' => true,
+        'discover_all_widgets' => true,
+        'discover_all_pages' => true,
+    ],
+
     'register_role_policy' => [
         'enabled' => true,
     ],
