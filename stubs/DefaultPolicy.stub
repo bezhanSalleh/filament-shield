@@ -14,7 +14,7 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can view any models.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function viewAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
@@ -26,7 +26,7 @@ class {{ modelPolicy }}
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function view({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
@@ -37,7 +37,7 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can create models.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function create({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
@@ -49,7 +49,7 @@ class {{ modelPolicy }}
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function update({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
@@ -61,7 +61,7 @@ class {{ modelPolicy }}
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function delete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
@@ -72,7 +72,7 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can bulk delete.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function deleteAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
@@ -84,7 +84,7 @@ class {{ modelPolicy }}
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function forceDelete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
@@ -95,7 +95,7 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can permanently bulk delete.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function forceDeleteAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
@@ -107,7 +107,7 @@ class {{ modelPolicy }}
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function restore({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
@@ -118,7 +118,7 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can bulk restore.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function restoreAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
@@ -130,7 +130,7 @@ class {{ modelPolicy }}
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
      * @param  \{{ model_fqcn }}  ${{ model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function replicate({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
@@ -141,7 +141,7 @@ class {{ modelPolicy }}
      * Determine whether the {{ auth_model_variable }} can reorder.
      *
      * @param  \{{ auth_model_fqcn }}  ${{ auth_model_variable }}
-     * @return \Illuminate\Auth\Access\Response|bool
+     * @return bool
      */
     public function reorder({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
