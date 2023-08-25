@@ -333,7 +333,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         $component->state(
             collect(static::experimentalGetEntityPermissions($entity))
-                ->reduce(function ($permissions, $value, $key) use($record) {
+                ->reduce(function ($permissions, $value, $key) use ($record) {
                     /** @phpstan-ignore-next-line */
                     if ($record->checkPermissionTo($key)) {
                         $permissions[] = $key;
@@ -400,7 +400,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         $component->state(
             collect(static::experimentalGetWidgetPermissions())
                 /** @phpstan-ignore-next-line */
-                ->filter(fn($value, $key) => $record->checkPermissionTo($key))
+                ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
                 ->keys()
                 ->toArray()
         );
@@ -425,7 +425,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         $component->state(
             collect(static::experimentalGetPagePermissions())
                 /** @phpstan-ignore-next-line */
-                ->filter(fn($value, $key) => $record->checkPermissionTo($key))
+                ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
                 ->keys()
                 ->toArray()
         );
@@ -449,7 +449,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         $component->state(
             collect(static::experimentalGetCustomPermissions())
                 /** @phpstan-ignore-next-line */
-                ->filter(fn($value, $key) => $record->checkPermissionTo($key))
+                ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
                 ->keys()
                 ->toArray()
         );
