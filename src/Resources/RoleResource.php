@@ -91,9 +91,10 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->options(fn (): array => static::experimentalGetPageOptions())
                                     ->searchable()
                                     ->live()
-                                    ->afterStateHydrated(function (Component $component, $livewire, Model $record, Forms\Set $set) {
+                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) {
                                         static::experimentalSetPermissionStateForRecordPermissions(
                                             component: $component,
+                                            operation: $operation,
                                             permissions: static::experimentalGetPageOptions(),
                                             record: $record
                                         );
@@ -119,9 +120,10 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->options(fn (): array => static::experimentalGetWidgetOptions())
                                     ->searchable()
                                     ->live()
-                                    ->afterStateHydrated(function (Component $component, $livewire, Model $record, Forms\Set $set) {
+                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) {
                                         static::experimentalSetPermissionStateForRecordPermissions(
                                             component: $component,
+                                            operation: $operation,
                                             permissions: static::experimentalGetWidgetOptions(),
                                             record: $record
                                         );
@@ -148,9 +150,10 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->options(fn (): array => static::experimentalGetCustomPermissionOptions())
                                     ->searchable()
                                     ->live()
-                                    ->afterStateHydrated(function (Component $component, $livewire, Model $record, Forms\Set $set) {
+                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) {
                                         static::experimentalSetPermissionStateForRecordPermissions(
                                             component: $component,
+                                            operation: $operation,
                                             permissions: static::experimentalGetCustomPermissionOptions(),
                                             record: $record
                                         );
@@ -304,9 +307,10 @@ class RoleResource extends Resource implements HasShieldPermissions
                         ->hint(Utils::showModelPath($entity['fqcn']))
                         ->options(fn (): array => static::experimentalGetResourcePermissionOptions($entity))
                         ->live()
-                        ->afterStateHydrated(function (Component $component, Model $record) use ($entity) {
+                        ->afterStateHydrated(function (Component $component, string $operation, ?Model $record) use ($entity) {
                             static::experimentalSetPermissionStateForRecordPermissions(
                                 component: $component,
+                                operation: $operation,
                                 permissions: static::experimentalGetResourcePermissionOptions($entity),
                                 record: $record
                             );
@@ -340,20 +344,23 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->toArray();
     }
 
-    public static function experimentalSetPermissionStateForRecordPermissions(Component $component, array $permissions, Model $record): void
+    public static function experimentalSetPermissionStateForRecordPermissions(Component $component, string $operation, array $permissions, ?Model $record): void
     {
 
-        if (blank($record)) {
-            return;
-        }
+        if (in_array($operation, ['edit', 'view'])) {
 
-        $component->state(
-            collect($permissions)
-                /** @phpstan-ignore-next-line */
-                ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
-                ->keys()
-                ->toArray()
-        );
+            if (blank($record)) {
+                return;
+            }
+
+            $component->state(
+                collect($permissions)
+                    /** @phpstan-ignore-next-line */
+                    ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
+                    ->keys()
+                    ->toArray()
+            );
+        }
     }
 
     public static function experimentalToggleEntitiesViaSelectAll($livewire, Forms\Set $set, bool $state): void
