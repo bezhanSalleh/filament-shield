@@ -419,7 +419,6 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->toArray();
     }
 
-
     protected static function getCustomEntities(): ?Collection
     {
         $resourcePermissions = collect();
