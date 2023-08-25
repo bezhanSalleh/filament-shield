@@ -327,13 +327,14 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function experimentalSetEntityStateWhenRecordHasPermission(Component $component, Model $record, array $entity) {
 
-        if (is_null($record)) {
+        if (blank($record)) {
             return;
         }
 
         $component->state(
             collect(static::experimentalGetEntityPermissions($entity))
                 ->reduce(function ($permissions, $value, $key) use($record) {
+                    /** @phpstan-ignore-next-line */
                     if ($record->checkPermissionTo($key)) {
                         $permissions[] = $key;
                     }
@@ -388,12 +389,13 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function experimentalSetWidgetsStateWhenRecordHasPermission(Component $component, Model $record) {
 
-        if (is_null($record)) {
+        if (blank($record)) {
             return;
         }
 
         $component->state(
             collect(static::experimentalGetWidgetPermissions())
+                /** @phpstan-ignore-next-line */
                 ->filter(fn($value, $key) => $record->checkPermissionTo($key))
                 ->keys()
                 ->toArray()
@@ -411,12 +413,13 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function experimentalSetPagesStateWhenRecordHasPermission(Component $component, Model $record) {
 
-        if (is_null($record)) {
+        if (blank($record)) {
             return;
         }
 
         $component->state(
             collect(static::experimentalGetPagePermissions())
+                /** @phpstan-ignore-next-line */
                 ->filter(fn($value, $key) => $record->checkPermissionTo($key))
                 ->keys()
                 ->toArray()
@@ -434,12 +437,13 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function experimentalSetCustomPermissionsStateWhenRecordHasPermission(Component $component, Model $record)
     {
-        if (is_null($record)) {
+        if (blank($record)) {
             return;
         }
 
         $component->state(
             collect(static::experimentalGetCustomPermissions())
+                /** @phpstan-ignore-next-line */
                 ->filter(fn($value, $key) => $record->checkPermissionTo($key))
                 ->keys()
                 ->toArray()
