@@ -74,13 +74,10 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->tabs([
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
                             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
-                            // ->live(onBlur: true)
+                            // ->live()
                             ->badge(static::getResourceTabBadge())
                             ->schema([
-                                Forms\Components\Grid::make([
-                                    'sm' => 2,
-                                    'lg' => 3,
-                                ])
+                                Forms\Components\Grid::make()
                                     ->schema(static::getResourceEntitiesSchema())
                                     ->columns([
                                         'sm' => 2,
@@ -89,60 +86,77 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ]),
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
                             ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
-                            // ->live(onBlur: true)
+                            ->live()
                             ->schema([
-                                Forms\Components\Grid::make([
-                                    'sm' => 3,
-                                    'lg' => 4,
-                                ])
-                                    ->schema(static::getPageEntityPermissionsSchema())
+                                Forms\Components\CheckboxList::make('pages')
+                                    ->label('')
+                                    ->options(fn (): array => static::experimentalGetPagePermissions())
+                                    ->searchable()
+                                    ->live()
+                                    ->afterStateHydrated(function (Component $component, $livewire, Model $record,Forms\Set $set) {
+                                        static::experimentalSetPagesStateWhenRecordHasPermission($component, $record);
+                                    })
+                                    ->afterStateUpdated(
+                                        fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
+                                    )
+                                    ->dehydrated(fn($state) => blank($state) ? false : true)
+                                    ->bulkToggleable()
+                                    ->gridDirection('row')
                                     ->columns([
-                                        'sm' => 3,
-                                        'lg' => 4,
-                                    ]),
+                                        'sm' => 2,
+                                        'lg' => 4
+                                    ])
+                                    ->columnSpanFull(),
                             ]),
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
                             ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
-                            // ->live(onBlur: true)
+                            // ->live()
                             ->schema([
-                                // Forms\Components\Grid::make()
-                                //     ->schema([
-                                        Forms\Components\CheckboxList::make('widgets')
-                                        ->label('')
-                                        ->options(fn (): array => static::experimentalGetWidgetPermissions())
-                                        ->searchable()
-                                        ->live()
-                                        ->afterStateHydrated(function (Component $component, $livewire, Model $record,Forms\Set $set) {
-                                            static::experimentalSetWidgetsStateWhenRecordHasPermission($component, $record);
-                                            static::experimentalToggleSelectAllViaEntities($livewire, $set);
-                                        })
-                                        ->afterStateUpdated(
-                                            fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
-                                        )
-                                        ->dehydrated(fn($state) => blank($state) ? false : true)
-                                        ->bulkToggleable()
-                                        ->gridDirection('row')
-                                        ->columns([
-                                            'sm' => 2,
-                                            'lg' => 4
-                                        ])
-                                        ->columnSpanFull(),
-                                    // ]),
+                                Forms\Components\CheckboxList::make('widgets')
+                                    ->label('')
+                                    ->options(fn (): array => static::experimentalGetWidgetPermissions())
+                                    ->searchable()
+                                    ->live()
+                                    ->afterStateHydrated(function (Component $component, $livewire, Model $record,Forms\Set $set) {
+                                        static::experimentalSetWidgetsStateWhenRecordHasPermission($component, $record);
+                                    })
+                                    ->afterStateUpdated(
+                                        fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
+                                    )
+                                    ->dehydrated(fn($state) => blank($state) ? false : true)
+                                    ->bulkToggleable()
+                                    ->gridDirection('row')
+                                    ->columns([
+                                        'sm' => 2,
+                                        'lg' => 4
+                                    ])
+                                    ->columnSpanFull(),
                             ]),
 
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
-                            ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
-                            // ->live(onBlur: true)
+                            ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && (count(static::getCustomEntities()) > 0 ? true : false))
+                            ->live()
                             ->schema([
-                                Forms\Components\Grid::make([
-                                    'sm' => 3,
-                                    'lg' => 4,
-                                ])
-                                    ->schema(static::getCustomEntitiesPermisssionSchema())
+                                Forms\Components\CheckboxList::make('custom_permissions')
+                                    ->label('')
+                                    ->options(fn (): array => static::experimentalGetCustomPermissions())
+                                    ->searchable()
+                                    ->live()
+                                    ->afterStateHydrated(function (Component $component, $livewire, Model $record,Forms\Set $set) {
+                                        static::experimentalSetCustomPermissionsStateWhenRecordHasPermission($component, $record);
+                                        static::experimentalToggleSelectAllViaEntities($livewire, $set);
+                                    })
+                                    ->afterStateUpdated(
+                                        fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
+                                    )
+                                    ->dehydrated(fn($state) => blank($state) ? false : true)
+                                    ->bulkToggleable()
+                                    ->gridDirection('row')
                                     ->columns([
-                                        'sm' => 3,
-                                        'lg' => 4,
-                                    ]),
+                                        'sm' => 2,
+                                        'lg' => 4
+                                    ])
+                                    ->columnSpanFull(),
                             ]),
                     ])
                     ->columnSpan('full'),
@@ -272,20 +286,17 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
 
-
-            $key = 'resource_'.$entity['resource'];
-
             $entities[] = Forms\Components\Section::make()
                 ->extraAttributes(['class' => 'border-0 shadow-lg'])
                 ->schema([
-                    Forms\Components\CheckboxList::make($key)
+                    Forms\Components\CheckboxList::make($entity['resource'])
                         ->label(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
                         ->hint(Utils::showModelPath($entity['fqcn']))
                         ->options(fn():array => static::experimentalGetEntityPermissions($entity))
                         ->live()
-                        ->afterStateHydrated(
-                            fn (Component $component, Model $record) => static::experimentalSetEntityStateWhenRecordHasPermission($component, $record, $entity)
-                        )
+                        ->afterStateHydrated(function (Component $component, Model $record) use ($entity) {
+                            static::experimentalSetEntityStateWhenRecordHasPermission($component, $record, $entity);
+                        })
                         ->afterStateUpdated(
                             fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
                         )
@@ -354,7 +365,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         $entitiesStates = collect($livewire->form->getFlatComponents())
                 ->reduce(function ($counts, $component) {
                     if ($component instanceof Forms\Components\CheckboxList) {
-                        $counts[$component->getName()] = count($component->getOptions()) == count($component->getState());
+                        $counts[$component->getName()] = count(array_keys($component->getOptions())) == count($component->getState());
                     }
                     return $counts;
                 }, collect())
@@ -389,154 +400,51 @@ class RoleResource extends Resource implements HasShieldPermissions
         );
     }
 
-    protected static function refreshSelectAllStateViaEntities(Forms\Set $set, Forms\Get $get): void
+    public static function experimentalGetPagePermissions(): array
     {
-        $entitiesStates = collect(
-                collect(FilamentShield::getResources())
-                    ->map(fn($entity) => 'resource_'.$entity['resource'])
-                    ->values()->all()
-            )
-            ->when(Utils::isPageEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getPages()))
-            ->when(Utils::isWidgetEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getWidgets()))
-            ->when(Utils::isCustomPermissionEntityEnabled(), fn ($entities) => $entities->merge(static::getCustomEntities()))
-            ->map(function ($entity) use ($get) {
-                return (bool) $get($entity);
-            });
-            if (!$entitiesStates->containsStrict(false)) {
-                $set('select_all', true);
-            }else{
-                $set('select_all', false);
-            }
+        return collect(FilamentShield::getPages())
+            ->flatMap(fn ($pagePermission) => [
+                $pagePermission => FilamentShield::getLocalizedPageLabel($pagePermission)
+            ])
+        ->toArray();
     }
 
-    protected static function refreshEntitiesStatesViaSelectAll(Forms\Set $set, $state): void
-    {
-        // collect(FilamentShield::getResources())->each(function ($entity) use ($set, $state) {
-        //     $set($entity['resource'], $state);
-        //     collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->each(function ($permission) use ($entity, $set, $state) {
-        //         $set($permission . '_' . $entity['resource'], $state);
-        //     });
-        // });
+    public static function experimentalSetPagesStateWhenRecordHasPermission(Component $component, Model $record) {
 
-        collect(FilamentShield::getPages())->each(function ($page) use ($set, $state) {
-            if (Utils::isPageEntityEnabled()) {
-                $set($page, $state);
-            }
-        });
-
-        collect(FilamentShield::getWidgets())->each(function ($widget) use ($set, $state) {
-            if (Utils::isWidgetEntityEnabled()) {
-                $set($widget, $state);
-            }
-        });
-
-        static::getCustomEntities()->each(function ($custom) use ($set, $state) {
-            if (Utils::isCustomPermissionEntityEnabled()) {
-                $set($custom, $state);
-            }
-        });
-    }
-
-    protected static function refreshResourceEntityStateAfterUpdate(Forms\Set $set, Forms\Get $get, array $entity): void
-    {
-        $permissionStates = collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-            ->map(function ($permission) use ($get, $entity) {
-                return (bool) $get($permission . '_' . $entity['resource']);
-            });
-
-        if ($permissionStates->containsStrict(false) === false) {
-            $set($entity['resource'], true);
+        if (is_null($record)) {
+            return;
         }
 
-        if ($permissionStates->containsStrict(false) === true) {
-            $set($entity['resource'], false);
-        }
+        $component->state(
+            collect(static::experimentalGetPagePermissions())
+                ->filter(fn($value, $key) => $record->checkPermissionTo($key))
+                ->keys()
+                ->toArray()
+        );
     }
 
-    protected static function refreshResourceEntityStateAfterHydrated(Model $record, Forms\Set $set, array $entity): void
+    public static function experimentalGetCustomPermissions(): array
     {
-        $entities = $record->permissions->pluck('name')
-            ->reduce(function ($roles, $role) {
-                $roles[$role] = Str::afterLast($role, '_');
-                return $roles;
-            }, collect())
-            ->values()
-            ->groupBy(function ($item) {
-                return $item;
-            })->map->count()
-            ->reduce(function ($counts, $role, $key) use ($entity) {
-                $count = count(Utils::getResourcePermissionPrefixes($entity['fqcn']));
-                if ($role > 1 && $role === $count) {
-                    $counts[$key] = true;
-                } else {
-                    $counts[$key] = false;
-                }
-
-                return $counts;
-            }, []);
-
-        ray($entities);
-        if (Arr::exists($entities, $entity['resource']) && Arr::get($entities, $entity['resource'])) {
-            $set('resource_'.$entity['resource'], true);
-            $set('select_all', true);
-
-        } else {
-            $set('resource_'.$entity['resource'], false);
-            $set('select_all', false);
-        }
+        return collect(static::getCustomEntities())
+            ->flatMap(fn ($customPermission) => [
+                $customPermission => str($customPermission)->headline()->toString()
+            ])
+        ->toArray();
     }
-    /**--------------------------------*
-    | Resource Related Logic End       |
-    *----------------------------------*/
 
-    /**--------------------------------*
-    | Page Related Logic Start       |
-    *----------------------------------*/
-
-    protected static function getPageEntityPermissionsSchema(): ?array
+    public static function experimentalSetCustomPermissionsStateWhenRecordHasPermission(Component $component, Model $record)
     {
-        return collect(FilamentShield::getPages())->sortKeys()->reduce(function ($pages, $page) {
-            $pages[] = Forms\Components\Grid::make()
-                ->schema([
-                    Forms\Components\Checkbox::make($page)
-                        ->label(FilamentShield::getLocalizedPageLabel($page))
-                        ->inline()
-                        ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $record) use ($page) {
-                            if (is_null($record)) {
-                                return;
-                            }
+        if (is_null($record)) {
+            return;
+        }
 
-                            $set($page, $record->checkPermissionTo($page));
-
-                            static::refreshSelectAllStateViaEntities($set, $get);
-                        })
-                        ->live()
-                        ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
-                            if (! $state) {
-                                $set('select_all', false);
-                            }
-
-                            static::refreshSelectAllStateViaEntities($set, $get);
-                        })
-                        ->dehydrated(fn ($state): bool => $state),
-                ])
-                ->columns(1)
-                ->columnSpan(1);
-
-            return $pages;
-        }, []);
+        $component->state(
+            collect(static::experimentalGetCustomPermissions())
+                ->filter(fn($value, $key) => $record->checkPermissionTo($key))
+                ->keys()
+                ->toArray()
+        );
     }
-    /**--------------------------------*
-    | Page Related Logic End          |
-    *----------------------------------*/
-
-    /**--------------------------------*
-    | Widget Related Logic Start       |
-    *----------------------------------*/
-
-    /**--------------------------------*
-    | Widget Related Logic End          |
-    *----------------------------------*/
 
     protected static function getCustomEntities(): ?Collection
     {
@@ -553,39 +461,5 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->values();
 
         return static::$permissionsCollection->whereNotIn('name', $entitiesPermissions)->pluck('name');
-    }
-
-    protected static function getCustomEntitiesPermisssionSchema(): ?array
-    {
-        return collect(static::getCustomEntities())->reduce(function ($customEntities, $customPermission) {
-            $customEntities[] = Forms\Components\Grid::make()
-                ->schema([
-                    Forms\Components\Checkbox::make($customPermission)
-                        ->label(Str::of($customPermission)->headline())
-                        ->inline()
-                        ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $record) use ($customPermission) {
-                            if (is_null($record)) {
-                                return;
-                            }
-
-                            $set($customPermission, $record->checkPermissionTo($customPermission));
-
-                            static::refreshSelectAllStateViaEntities($set, $get);
-                        })
-                        ->live()
-                        ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
-                            if (! $state) {
-                                $set('select_all', false);
-                            }
-
-                            static::refreshSelectAllStateViaEntities($set, $get);
-                        })
-                        ->dehydrated(fn ($state): bool => $state),
-                ])
-                ->columns(1)
-                ->columnSpan(1);
-
-            return $customEntities;
-        }, []);
     }
 }

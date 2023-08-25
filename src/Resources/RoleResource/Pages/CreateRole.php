@@ -7,7 +7,6 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class CreateRole extends CreateRecord
 {
@@ -17,9 +16,12 @@ class CreateRole extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $this->permissions = collect($data)->filter(function ($permission, $key) {
-            return ! in_array($key, ['name', 'guard_name', 'select_all']) && Str::contains($key, '_');
-        })->keys();
+        $this->permissions = collect($data)
+            ->filter(function ($permission, $key) {
+                return ! in_array($key, ['name', 'guard_name', 'select_all']);
+            })
+            ->values()
+            ->flatten();
 
         return Arr::only($data, ['name', 'guard_name']);
     }
