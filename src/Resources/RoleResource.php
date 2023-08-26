@@ -506,7 +506,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         $action
             ->livewireClickHandlerEnabled(true)
-            ->action(function () use($component, $livewire, $set, $resetState) {
+            ->action(function () use ($component, $livewire, $set, $resetState) {
                 /** @phpstan-ignore-next-line */
                 $component->state($resetState ? [] : array_keys($component->getOptions()));
                 static::experimentalToggleSelectAllViaEntities($livewire, $set);
