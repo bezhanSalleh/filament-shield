@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use function Livewire\store;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -69,6 +70,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ]),
                     ]),
                 Forms\Components\Tabs::make('Permissions')
+                    ->contained()
                     ->tabs([
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
                             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
@@ -84,9 +86,8 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ]),
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
                             ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
-                            ->live()
                             ->schema([
-                                Forms\Components\CheckboxList::make('pages')
+                                Forms\Components\CheckboxList::make('pages_tab')
                                     ->label('')
                                     ->options(fn (): array => static::experimentalGetPageOptions())
                                     ->searchable()
@@ -113,24 +114,39 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ]),
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
                             ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
-                            // ->live()
+                            ->live()
                             ->schema([
-                                Forms\Components\CheckboxList::make('widgets')
+                                Forms\Components\CheckboxList::make('widgets_tab')
                                     ->label('')
                                     ->options(fn (): array => static::experimentalGetWidgetOptions())
                                     ->searchable()
                                     ->live()
-                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) {
+                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set, $state, Forms\Get $get) {
                                         static::experimentalSetPermissionStateForRecordPermissions(
                                             component: $component,
                                             operation: $operation,
                                             permissions: static::experimentalGetWidgetOptions(),
                                             record: $record
                                         );
+
+                                        static::experimentalToggleSelectAllViaEntities($livewire, $set);
                                     })
-                                    ->afterStateUpdated(
-                                        fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
-                                    )
+                                    ->selectAllAction(function($action, $component, $livewire, Forms\Set $set) {
+                                        $action
+                                            ->livewireClickHandlerEnabled(true)
+                                            ->action(function () use($component, $livewire, $set) {
+                                                $component->state(array_keys($component->getOptions()));
+                                                static::experimentalToggleSelectAllViaEntities($livewire, $set);
+                                            });
+                                    })
+                                    ->deselectAllAction(function($action, $component, $livewire, Forms\Set $set) {
+                                        $action
+                                            ->livewireClickHandlerEnabled(true)
+                                            ->action(function() use($component, $livewire, $set) {
+                                                $component->state([]);
+                                                static::experimentalToggleSelectAllViaEntities($livewire, $set);
+                                            });
+                                    })
                                     ->dehydrated(fn ($state) => blank($state) ? false : true)
                                     ->bulkToggleable()
                                     ->gridDirection('row')
@@ -157,7 +173,6 @@ class RoleResource extends Resource implements HasShieldPermissions
                                             permissions: static::experimentalGetCustomPermissionOptions(),
                                             record: $record
                                         );
-                                        static::experimentalToggleSelectAllViaEntities($livewire, $set);
                                     })
                                     ->afterStateUpdated(
                                         fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
@@ -299,12 +314,14 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
 
-            $entities[] = Forms\Components\Section::make()
+            $entities[] = Forms\Components\Section::make(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
+                ->description(Utils::showModelPath($entity['fqcn']))
+                ->compact()
                 ->extraAttributes(['class' => 'border-0 shadow-lg'])
                 ->schema([
                     Forms\Components\CheckboxList::make($entity['resource'])
-                        ->label(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
-                        ->hint(Utils::showModelPath($entity['fqcn']))
+                        ->label('')
+                        // ->hint(Utils::showModelPath($entity['fqcn']))
                         ->options(fn (): array => static::experimentalGetResourcePermissionOptions($entity))
                         ->live()
                         ->afterStateHydrated(function (Component $component, string $operation, ?Model $record) use ($entity) {
@@ -319,7 +336,12 @@ class RoleResource extends Resource implements HasShieldPermissions
                             fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
                         )
                         ->dehydrated(fn ($state) => blank($state) ? false : true)
-                        ->bulkToggleable(),
+                        ->bulkToggleable()
+                        ->gridDirection('row')
+                        ->columns([
+                            'default' => 1,
+                            'sm' => 2,
+                        ]),
                 ])
                 ->columnSpan(1);
 
@@ -352,14 +374,15 @@ class RoleResource extends Resource implements HasShieldPermissions
             if (blank($record)) {
                 return;
             }
-
-            $component->state(
-                collect($permissions)
-                    /** @phpstan-ignore-next-line */
-                    ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
-                    ->keys()
-                    ->toArray()
-            );
+            if ($component->isVisible() && count($permissions) > 0) {
+                $component->state(
+                    collect($permissions)
+                        /** @phpstan-ignore-next-line */
+                        ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
+                        ->keys()
+                        ->toArray()
+                );
+            }
         }
     }
 
@@ -381,23 +404,24 @@ class RoleResource extends Resource implements HasShieldPermissions
         }
     }
 
-    public static function experimentalToggleSelectAllViaEntities($livewire, Forms\Set $set): void
-    {
-        $entitiesStates = collect($livewire->form->getFlatComponents())
-            ->reduce(function ($counts, $component) {
-                if ($component instanceof Forms\Components\CheckboxList) {
-                    $counts[$component->getName()] = count(array_keys($component->getOptions())) == count($component->getState());
-                }
+public static function experimentalToggleSelectAllViaEntities($livewire, Forms\Set $set): void
+{
+    $entitiesStates = collect($livewire->form->getFlatComponents())
+        ->reduce(function ($counts, $component) use($livewire){
+            if ($component instanceof Forms\Components\CheckboxList) {
+                $counts[$component->getName()] = count(array_keys($component->getOptions())) == count(collect($component->getState())->values()->unique()->toArray());
+            }
 
-                return $counts;
-            }, collect())
-            ->values();
-        if ($entitiesStates->containsStrict(false)) {
-            $set('select_all', false);
-        } else {
-            $set('select_all', true);
-        }
+            return $counts;
+        }, collect())
+        ->values();
+
+    if ($entitiesStates->containsStrict(false)) {
+        $set('select_all', false);
+    } else {
+        $set('select_all', true);
     }
+}
 
     public static function experimentalGetPageOptions(): array
     {
@@ -441,5 +465,10 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->values();
 
         return static::$permissionsCollection->whereNotIn('name', $entitiesPermissions)->pluck('name');
+    }
+
+    public static function checkboxListSelectAllAction()
+    {
+        //
     }
 }
