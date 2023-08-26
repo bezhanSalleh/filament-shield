@@ -8,6 +8,7 @@ use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Forms;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -99,10 +100,22 @@ class RoleResource extends Resource implements HasShieldPermissions
                                             permissions: static::experimentalGetPageOptions(),
                                             record: $record
                                         );
+                                        static::experimentalToggleSelectAllViaEntities($livewire, $set);
                                     })
-                                    ->afterStateUpdated(
-                                        fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
-                                    )
+                                    ->afterStateUpdated(fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set))
+                                    ->selectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
+                                        action: $action,
+                                        component: $component,
+                                        livewire: $livewire,
+                                        set: $set
+                                    ))
+                                    ->deselectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
+                                        action: $action,
+                                        component: $component,
+                                        livewire: $livewire,
+                                        set: $set,
+                                        resetState: true
+                                    ))
                                     ->dehydrated(fn ($state) => blank($state) ? false : true)
                                     ->bulkToggleable()
                                     ->gridDirection('row')
@@ -121,7 +134,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->options(fn (): array => static::experimentalGetWidgetOptions())
                                     ->searchable()
                                     ->live()
-                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set, $state, Forms\Get $get) {
+                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) {
                                         static::experimentalSetPermissionStateForRecordPermissions(
                                             component: $component,
                                             operation: $operation,
@@ -131,22 +144,20 @@ class RoleResource extends Resource implements HasShieldPermissions
 
                                         static::experimentalToggleSelectAllViaEntities($livewire, $set);
                                     })
-                                    ->selectAllAction(function($action, $component, $livewire, Forms\Set $set) {
-                                        $action
-                                            ->livewireClickHandlerEnabled(true)
-                                            ->action(function () use($component, $livewire, $set) {
-                                                $component->state(array_keys($component->getOptions()));
-                                                static::experimentalToggleSelectAllViaEntities($livewire, $set);
-                                            });
-                                    })
-                                    ->deselectAllAction(function($action, $component, $livewire, Forms\Set $set) {
-                                        $action
-                                            ->livewireClickHandlerEnabled(true)
-                                            ->action(function() use($component, $livewire, $set) {
-                                                $component->state([]);
-                                                static::experimentalToggleSelectAllViaEntities($livewire, $set);
-                                            });
-                                    })
+                                    ->afterStateUpdated(fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set))
+                                    ->selectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
+                                        action: $action,
+                                        component: $component,
+                                        livewire: $livewire,
+                                        set: $set
+                                    ))
+                                    ->deselectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
+                                        action: $action,
+                                        component: $component,
+                                        livewire: $livewire,
+                                        set: $set,
+                                        resetState: true
+                                    ))
                                     ->dehydrated(fn ($state) => blank($state) ? false : true)
                                     ->bulkToggleable()
                                     ->gridDirection('row')
@@ -173,10 +184,22 @@ class RoleResource extends Resource implements HasShieldPermissions
                                             permissions: static::experimentalGetCustomPermissionOptions(),
                                             record: $record
                                         );
+                                        static::experimentalToggleSelectAllViaEntities($livewire, $set);
                                     })
-                                    ->afterStateUpdated(
-                                        fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
-                                    )
+                                    ->afterStateUpdated(fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set))
+                                    ->selectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
+                                        action: $action,
+                                        component: $component,
+                                        livewire: $livewire,
+                                        set: $set
+                                    ))
+                                    ->deselectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
+                                        action: $action,
+                                        component: $component,
+                                        livewire: $livewire,
+                                        set: $set,
+                                        resetState: true
+                                    ))
                                     ->dehydrated(fn ($state) => blank($state) ? false : true)
                                     ->bulkToggleable()
                                     ->gridDirection('row')
@@ -324,17 +347,30 @@ class RoleResource extends Resource implements HasShieldPermissions
                         // ->hint(Utils::showModelPath($entity['fqcn']))
                         ->options(fn (): array => static::experimentalGetResourcePermissionOptions($entity))
                         ->live()
-                        ->afterStateHydrated(function (Component $component, string $operation, ?Model $record) use ($entity) {
+                        ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) use ($entity) {
                             static::experimentalSetPermissionStateForRecordPermissions(
                                 component: $component,
                                 operation: $operation,
                                 permissions: static::experimentalGetResourcePermissionOptions($entity),
                                 record: $record
                             );
+
+                            static::experimentalToggleSelectAllViaEntities($livewire, $set);
                         })
-                        ->afterStateUpdated(
-                            fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
-                        )
+                        ->afterStateUpdated(fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set))
+                        ->selectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
+                            action: $action,
+                            component: $component,
+                            livewire: $livewire,
+                            set: $set
+                        ))
+                        ->deselectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
+                            action: $action,
+                            component: $component,
+                            livewire: $livewire,
+                            set: $set,
+                            resetState: true
+                        ))
                         ->dehydrated(fn ($state) => blank($state) ? false : true)
                         ->bulkToggleable()
                         ->gridDirection('row')
@@ -467,8 +503,13 @@ public static function experimentalToggleSelectAllViaEntities($livewire, Forms\S
         return static::$permissionsCollection->whereNotIn('name', $entitiesPermissions)->pluck('name');
     }
 
-    public static function checkboxListSelectAllAction()
+    public static function bulkToggleableAction(FormAction $action, Component $component, $livewire, Forms\Set $set, bool $resetState = false): void
     {
-        //
+        $action
+            ->livewireClickHandlerEnabled(true)
+            ->action(function () use($component, $livewire, $set, $resetState) {
+                $component->state($resetState ? [] : array_keys($component->getOptions()));
+                static::experimentalToggleSelectAllViaEntities($livewire, $set);
+            });
     }
 }
