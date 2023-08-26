@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use function Livewire\store;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -440,24 +439,24 @@ class RoleResource extends Resource implements HasShieldPermissions
         }
     }
 
-public static function experimentalToggleSelectAllViaEntities($livewire, Forms\Set $set): void
-{
-    $entitiesStates = collect($livewire->form->getFlatComponents())
-        ->reduce(function ($counts, $component) use($livewire){
-            if ($component instanceof Forms\Components\CheckboxList) {
-                $counts[$component->getName()] = count(array_keys($component->getOptions())) == count(collect($component->getState())->values()->unique()->toArray());
-            }
+    public static function experimentalToggleSelectAllViaEntities($livewire, Forms\Set $set): void
+    {
+        $entitiesStates = collect($livewire->form->getFlatComponents())
+            ->reduce(function ($counts, $component) {
+                if ($component instanceof Forms\Components\CheckboxList) {
+                    $counts[$component->getName()] = count(array_keys($component->getOptions())) == count(collect($component->getState())->values()->unique()->toArray());
+                }
 
-            return $counts;
-        }, collect())
-        ->values();
+                return $counts;
+            }, collect())
+            ->values();
 
-    if ($entitiesStates->containsStrict(false)) {
-        $set('select_all', false);
-    } else {
-        $set('select_all', true);
+        if ($entitiesStates->containsStrict(false)) {
+            $set('select_all', false);
+        } else {
+            $set('select_all', true);
+        }
     }
-}
 
     public static function experimentalGetPageOptions(): array
     {
