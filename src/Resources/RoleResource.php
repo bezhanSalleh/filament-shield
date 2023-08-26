@@ -7,8 +7,8 @@ use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Forms;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -506,7 +506,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         $action
             ->livewireClickHandlerEnabled(true)
-            ->action(function () use($component, $livewire, $set, $resetState) {
+            ->action(function () use ($component, $livewire, $set, $resetState) {
                 $component->state($resetState ? [] : array_keys($component->getOptions()));
                 static::experimentalToggleSelectAllViaEntities($livewire, $set);
             });
