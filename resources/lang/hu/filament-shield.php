@@ -47,6 +47,7 @@ return [
     'resources' => 'Erőforrások',
     'widgets' => 'Widgetek',
     'pages' => 'Oldalak',
+    'panels' => 'Panelek',
     'custom' => 'Egyedi jogosultságok',
 
     /*

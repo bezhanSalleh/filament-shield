@@ -45,12 +45,14 @@ return [
 
         'page' => 'page',
         'widget' => 'widget',
+        'panel' => 'panel'
     ],
 
     'entities' => [
         'pages' => true,
         'widgets' => true,
         'resources' => true,
+        'panels' => true,
         'custom_permissions' => false,
     ],
 
@@ -70,6 +72,8 @@ return [
         ],
 
         'resources' => [],
+
+        'panels' => [] // Using Panel ID
     ],
 
     'register_role_policy' => [

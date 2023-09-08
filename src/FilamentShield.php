@@ -90,7 +90,7 @@ class FilamentShield
 
     protected static function giveSuperAdminPermission(string | array | Collection $permissions): void
     {
-        if (! Utils::isSuperAdminDefinedViaGate()) {
+        if (!Utils::isSuperAdminDefinedViaGate()) {
             $superAdmin = static::createRole();
 
             $superAdmin->givePermissionTo($permissions);
@@ -118,7 +118,7 @@ class FilamentShield
             ->unique()
             ->filter(function ($resource) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(
+                    return !in_array(
                         Str::of($resource)->afterLast('\\'),
                         Utils::getExcludedResouces()
                     );
@@ -173,7 +173,7 @@ class FilamentShield
         return collect(Filament::getPages())
             ->filter(function ($page) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
+                    return !in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
                 }
 
                 return true;
@@ -200,9 +200,9 @@ class FilamentShield
         $pageObject = invade(new $object());
 
         return $pageObject->getTitle()
-                ?? $pageObject->getHeading()
-                ?? $pageObject->getNavigationLabel()
-                ?? '';
+            ?? $pageObject->getHeading()
+            ?? $pageObject->getNavigationLabel()
+            ?? '';
     }
 
     /**
@@ -215,7 +215,7 @@ class FilamentShield
         return collect(Filament::getWidgets())
             ->filter(function ($widget) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
+                    return !in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
                 }
 
                 return true;
@@ -231,6 +231,7 @@ class FilamentShield
             }, collect())
             ->toArray();
     }
+
 
     /**
      * Get localized widget label
@@ -261,6 +262,13 @@ class FilamentShield
         };
     }
 
+    public static function getLocalizedPanelLabel(string $panel)
+    {
+        return Str::of($panel)
+            ->after(Utils::getPanelPermissionPrefix() . '_')
+            ->headline();
+    }
+
     protected static function transformClassString(string $string, bool $isPageClass = true): string
     {
         return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
@@ -285,5 +293,28 @@ class FilamentShield
             ->replace('\\', '')
             ->snake()
             ->replace('_', '::');
+    }
+
+
+    public static function getPanels(): ?array
+    {
+        return collect(Filament::getPanels())
+            ->filter(function ($panel) {
+                if (Utils::isGeneralExcludeEnabled()) {
+                    return !in_array($panel->getId(), Utils::getExcludedWidgets());
+                }
+
+                return true;
+            })
+            ->reduce(function ($panels, $panel) {
+                $prepend = Str::of(Utils::getPanelPermissionPrefix())->append('_');
+                $name = Str::of($panel->getId())
+                    ->prepend($prepend);
+
+                $panels["{$name}"] = "{$name}";
+
+                return $panels;
+            }, collect())
+            ->toArray();
     }
 }

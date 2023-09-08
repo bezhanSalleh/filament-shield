@@ -113,6 +113,21 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ]),
                             ]),
 
+                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.panels'))
+                            ->visible(fn (): bool => (bool) Utils::isPanelEntityEnabled() && (count(FilamentShield::getPanels()) > 1 ? true : false) && filament()->getCurrentPanel()->getId() == "admin")
+                            ->live()
+                            ->schema([
+                                Forms\Components\Grid::make([
+                                    'sm' => 3,
+                                    'lg' => 4,
+                                ])
+                                    ->schema(static::getPanelEntityPermissionSchema())
+                                    ->columns([
+                                        'sm' => 3,
+                                        'lg' => 4,
+                                    ]),
+                            ]),
+
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
                             ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled())
                             ->live()
@@ -245,7 +260,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     /**--------------------------------*
     | Resource Related Logic Start     |
-    *----------------------------------*/
+     *----------------------------------*/
 
     public static function getResourceEntitiesSchema(): ?array
     {
@@ -268,7 +283,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                 $set($permission . '_' . $entity['resource'], $state);
                             });
 
-                            if (! $state) {
+                            if (!$state) {
                                 $set('select_all', false);
                             }
 
@@ -293,7 +308,12 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getResourceEntityPermissionsSchema($entity): ?array
     {
-        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->reduce(function ($permissions /** @phpstan ignore-line */, $permission) use ($entity) {
+        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->reduce(function (
+            $permissions
+            /** @phpstan ignore-line */
+            ,
+            $permission
+        ) use ($entity) {
             $permissions[] = Forms\Components\Checkbox::make($permission . '_' . $entity['resource'])
                 ->label(FilamentShield::getLocalizedResourcePermissionLabel($permission))
                 ->extraAttributes(['class' => 'text-primary-600'])
@@ -312,7 +332,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                 ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) use ($entity) {
                     static::refreshResourceEntityStateAfterUpdate($set, $get, $entity);
 
-                    if (! $state) {
+                    if (!$state) {
                         $set($entity['resource'], false);
                         $set('select_all', false);
                     }
@@ -426,11 +446,11 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
     /**--------------------------------*
     | Resource Related Logic End       |
-    *----------------------------------*/
+     *----------------------------------*/
 
     /**--------------------------------*
     | Page Related Logic Start       |
-    *----------------------------------*/
+     *----------------------------------*/
 
     protected static function getPageEntityPermissionsSchema(): ?array
     {
@@ -451,7 +471,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                         })
                         ->live()
                         ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
-                            if (! $state) {
+                            if (!$state) {
                                 $set('select_all', false);
                             }
 
@@ -467,11 +487,11 @@ class RoleResource extends Resource implements HasShieldPermissions
     }
     /**--------------------------------*
     | Page Related Logic End          |
-    *----------------------------------*/
+     *----------------------------------*/
 
     /**--------------------------------*
     | Widget Related Logic Start       |
-    *----------------------------------*/
+     *----------------------------------*/
 
     protected static function getWidgetEntityPermissionSchema(): ?array
     {
@@ -492,7 +512,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                         })
                         ->live()
                         ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
-                            if (! $state) {
+                            if (!$state) {
                                 $set('select_all', false);
                             }
 
@@ -506,9 +526,43 @@ class RoleResource extends Resource implements HasShieldPermissions
             return $widgets;
         }, []);
     }
+
+    protected static function getPanelEntityPermissionSchema(): ?array
+    {
+        return collect(FilamentShield::getPanels())->reduce(function ($panels, $panel) {
+            $panels[] = Forms\Components\Grid::make()
+                ->schema([
+                    Forms\Components\Checkbox::make($panel)
+                        ->label(FilamentShield::getLocalizedPanelLabel($panel))
+                        ->inline()
+                        ->afterStateHydrated(function (Forms\Set $set, Forms\Get $get, $record) use ($panel) {
+                            if (is_null($record)) {
+                                return;
+                            }
+
+                            $set($panel, $record->checkPermissionTo($panel));
+
+                            static::refreshSelectAllStateViaEntities($set, $get);
+                        })
+                        ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
+                            if (!$state) {
+                                $set('select_all', false);
+                            }
+
+                            static::refreshSelectAllStateViaEntities($set, $get);
+                        })
+                        ->dehydrated(fn ($state): bool => $state)
+                ])
+                ->columns(1)
+                ->columnSpan(1);
+
+            return $panels;
+        }, []);
+    }
+
     /**--------------------------------*
     | Widget Related Logic End          |
-    *----------------------------------*/
+     *----------------------------------*/
 
     protected static function getCustomEntities(): ?Collection
     {
@@ -546,7 +600,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                         })
                         ->live()
                         ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get, $state) {
-                            if (! $state) {
+                            if (!$state) {
                                 $set('select_all', false);
                             }
 

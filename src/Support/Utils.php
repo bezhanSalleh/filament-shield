@@ -109,6 +109,11 @@ class Utils
         return (string) config('filament-shield.permission_prefixes.widget');
     }
 
+    public static function getPanelPermissionPrefix(): string
+    {
+        return (string) config('filament-shield.permission_prefixes.panel');
+    }
+
     public static function isResourceEntityEnabled(): bool
     {
         return (bool) config('filament-shield.entities.resources', true);
@@ -125,6 +130,11 @@ class Utils
     public static function isWidgetEntityEnabled(): bool
     {
         return (bool) config('filament-shield.entities.widgets', true);
+    }
+
+    public static function isPanelEntityEnabled(): bool
+    {
+        return (bool) config('filament-shield.entities.panels', true);
     }
 
     public static function isCustomPermissionEntityEnabled(): bool
@@ -165,6 +175,11 @@ class Utils
     public static function getExcludedWidgets(): array
     {
         return config('filament-shield.exclude.widgets');
+    }
+
+    public static function getExcludedPanels(): array
+    {
+        return config('filament-shield.exclude.panels');
     }
 
     public static function isRolePolicyRegistered(): bool
