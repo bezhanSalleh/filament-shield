@@ -17,6 +17,8 @@ class PanelAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if(!auth()->user()) return $next($request);
+        
         $currentPanel = filament()->getCurrentPanel();
         $panels = filament()->getPanels();
 
