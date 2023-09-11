@@ -16,7 +16,7 @@ trait HasPanelShield {
                         $prepend = Str::of(Utils::getPanelPermissionPrefix())->append('_');
                         $name = Str::of($panel->getId())
                             ->prepend($prepend);
-                        return $this->can($name);
+                        return $this->can($name) || $this->hasRole('super_admin');
                     }
                 )
                 ->reduce(function($panels, Panel $panel) {
