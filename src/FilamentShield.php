@@ -263,13 +263,10 @@ class FilamentShield
 
     protected static function transformClassString(string $string, bool $isPageClass = true): string
     {
+        $prefix = Str::of($isPageClass ? Utils::getPagePermissionPrefix() : Utils::getWidgetPermissionPrefix())->append('_');
+
         return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
-            ->first(fn ($item) => Str::endsWith(
-                $item,
-                Str::of($string)
-                    ->after('_')
-                    ->studly()
-            ));
+            ->first(fn ($item) => class_basename($item) == Str::of($string)->after($prefix)->studly());
     }
 
     protected static function hasHeadingForShield(object|string $class): bool
