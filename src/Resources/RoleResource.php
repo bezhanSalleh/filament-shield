@@ -143,7 +143,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
                                         static::toggleSelectAllViaEntities($livewire, $set);
                                     })
-                                    ->afterStateUpdated(fn ($livewire, Forms\Set $set ) => static::toggleSelectAllViaEntities($livewire, $set))
+                                    ->afterStateUpdated(fn ($livewire, Forms\Set $set) => static::toggleSelectAllViaEntities($livewire, $set))
                                     ->selectAllAction(fn (FormAction $action, Component $component, $livewire, Forms\Set $set) => static::bulkToggleableAction(
                                         action: $action,
                                         component: $component,
