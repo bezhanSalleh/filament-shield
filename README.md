@@ -9,10 +9,10 @@
     <a href="https://packagist.org/packages/bezhansalleh/filament-shield">
         <img alt="Packagist" src="https://img.shields.io/packagist/v/bezhansalleh/filament-shield.svg?style=for-the-badge&logo=packagist">
     </a>
-    <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3Amain">
+    <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3Arun-tests+branch%3A3.x">
         <img alt="Tests Passing" src="https://img.shields.io/github/actions/workflow/status/bezhansalleh/filament-shield/run-tests.yml?style=for-the-badge&logo=github&label=tests" class="filament-hidden">
     </a>
-    <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain" class="filament-hidden">
+    <a href="https://github.com/bezhansalleh/filament-shield/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3A3.x" class="filament-hidden">
         <img alt="Code Style Passing" src="https://img.shields.io/github/actions/workflow/status/bezhansalleh/filament-shield/laravel-pint.yml?style=for-the-badge&logo=github&label=code%20style">
     </a>
 
@@ -340,7 +340,26 @@ class AuthServiceProvider extends ServiceProvider
 
     ];
 ```
+#### Users
+Shield does not come with a way to assign roles to your users out of the box, however you can easily assign roles to your users using Filament `Forms`'s `Select` or `CheckboxList` component. Inside your users `Resrouce`'s form add one of these components and configure them as you need:
+```php
+// Using Select Component
+Forms\Components\Select::make('roles')
+    ->relationship('roles', 'name')
+    ->multiple()
+    ->preload()
+    ->searchable()
+                    
+// Using CheckboxList Component
+Forms\Components\CheckboxList::make('roles')
+    ->relationship('roles', 'name')
+    ->searchable()
+```
 
+You can find out more about these components in the [Filament Docs](https://filamentphp.com/docs/3.x/forms/installation)
+
+- [Select](https://filamentphp.com/docs/3.x/forms/fields/select)
+- [CheckboxList](https://filamentphp.com/docs/3.x/forms/fields/checkbox-list)
 #### Translations 
 
 Publish the translations using:
