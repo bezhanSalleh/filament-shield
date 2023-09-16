@@ -331,7 +331,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
 
             $entities[] = Forms\Components\Section::make(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
-                ->description(fn () => new HtmlString('<span style="word-break: break-word;">'.Utils::showModelPath($entity['fqcn']).'</span>'))
+                ->description(fn () => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['fqcn']) . '</span>'))
                 ->compact()
                 ->schema([
                     Forms\Components\CheckboxList::make($entity['resource'])
@@ -368,7 +368,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                         ->columns([
                             'default' => 2,
                             'sm' => 3,
-                            'lg' => 4
+                            'lg' => 4,
                         ]),
                 ])
                 ->columnSpanFull()
