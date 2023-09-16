@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.1 - 2023-09-16
+
+**what's new**
+
+- made sections collapsible
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.0...3.0.1
+
 ## 2.4.8 - 2023-08-01
 
 ### What's Changed
@@ -240,7 +248,8 @@ All notable changes to `filament-shield` will be documented in this file.
 
 ### What's Changed
 
-- adds new features to shield by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/107
+- adds new features to shield by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/107   
+  
 - - adds the ability to define `super-admin` via gage   
   
 - 
@@ -2398,8 +2407,10 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- Improve Command Section of README by @intrepidws in https://github.com/bezhanSalleh/filament-shield/pull/102
-- Update README.md by @atmonshi in https://github.com/bezhanSalleh/filament-shield/pull/106
+- Improve Command Section of README by @intrepidws in https://github.com/bezhanSalleh/filament-shield/pull/102   
+  
+- Update README.md by @atmonshi in https://github.com/bezhanSalleh/filament-shield/pull/106   
+  
 
 **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/2.1.3...2.2.0
 
@@ -2496,7 +2507,8 @@ All notable changes to `filament-shield` will be documented in this file.
 
 ### What's Changed
 
-- 2.x by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/61
+- 2.x by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/61   
+  
 - 
 - - Follow filament plugin standards   
   
@@ -2787,13 +2799,17 @@ All notable changes to `filament-shield` will be documented in this file.
 - 
 - 
 - 
-- Italian Translation by @slamservice in https://github.com/bezhanSalleh/filament-shield/pull/50
+- Italian Translation by @slamservice in https://github.com/bezhanSalleh/filament-shield/pull/50   
+  
 - 
-- Bump dependabot/fetch-metadata from 1.3.1 to 1.3.3 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/55
+- Bump dependabot/fetch-metadata from 1.3.1 to 1.3.3 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/55   
+  
 - 
-- support Windows installation by @hadyfayed in https://github.com/bezhanSalleh/filament-shield/pull/54
+- support Windows installation by @hadyfayed in https://github.com/bezhanSalleh/filament-shield/pull/54   
+  
 - 
-- add Support for windows installation by @hadyfayed in https://github.com/bezhanSalleh/filament-shield/pull/53
+- add Support for windows installation by @hadyfayed in https://github.com/bezhanSalleh/filament-shield/pull/53   
+  
 - 
 
 ### New Contributors
