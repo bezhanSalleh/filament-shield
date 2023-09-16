@@ -193,7 +193,7 @@ class MakeShieldGenerateCommand extends Command
             ->each(function ($entity) {
                 if ($this->generatorOption === 'policies_and_permissions') {
                     $policyPath = $this->generatePolicyPath($entity);
-                    if (!$this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && !$this->fileExists($policyPath))) {
+                    if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                     FilamentShield::generateForResource($entity);
@@ -201,7 +201,7 @@ class MakeShieldGenerateCommand extends Command
 
                 if ($this->generatorOption === 'policies') {
                     $policyPath = $this->generatePolicyPath($entity);
-                    if (!$this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && !$this->fileExists($policyPath))) {
+                    if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                 }
