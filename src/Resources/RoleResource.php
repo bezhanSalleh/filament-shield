@@ -2,22 +2,21 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Livewire\Livewire;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\Component;
-use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Forms;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -107,27 +106,27 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ->schema([
                                 // Forms\Components\Grid::make()
                                 //     ->schema([
-                                        Forms\Components\CheckboxList::make('widgets')
-                                        ->label('')
-                                        ->options(fn (): array => static::experimentalGetWidgetPermissions())
-                                        ->searchable()
-                                        ->live()
-                                        ->afterStateHydrated(function (Component $component, $livewire, Model $record,Forms\Set $set) {
-                                            static::experimentalSetWidgetsStateWhenRecordHasPermission($component, $record);
-                                            static::experimentalToggleSelectAllViaEntities($livewire, $set);
-                                        })
-                                        ->afterStateUpdated(
-                                            fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
-                                        )
-                                        ->dehydrated(fn($state) => blank($state) ? false : true)
-                                        ->bulkToggleable()
-                                        ->gridDirection('row')
-                                        ->columns([
-                                            'sm' => 2,
-                                            'lg' => 4
-                                        ])
-                                        ->columnSpanFull(),
-                                    // ]),
+                                Forms\Components\CheckboxList::make('widgets')
+                                    ->label('')
+                                    ->options(fn (): array => static::experimentalGetWidgetPermissions())
+                                    ->searchable()
+                                    ->live()
+                                    ->afterStateHydrated(function (Component $component, $livewire, Model $record, Forms\Set $set) {
+                                        static::experimentalSetWidgetsStateWhenRecordHasPermission($component, $record);
+                                        static::experimentalToggleSelectAllViaEntities($livewire, $set);
+                                    })
+                                    ->afterStateUpdated(
+                                        fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
+                                    )
+                                    ->dehydrated(fn ($state) => blank($state) ? false : true)
+                                    ->bulkToggleable()
+                                    ->gridDirection('row')
+                                    ->columns([
+                                        'sm' => 2,
+                                        'lg' => 4,
+                                    ])
+                                    ->columnSpanFull(),
+                                // ]),
                             ]),
 
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
@@ -272,8 +271,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
 
-
-            $key = 'resource_'.$entity['resource'];
+            $key = 'resource_' . $entity['resource'];
 
             $entities[] = Forms\Components\Section::make()
                 ->extraAttributes(['class' => 'border-0 shadow-lg'])
@@ -281,7 +279,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     Forms\Components\CheckboxList::make($key)
                         ->label(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
                         ->hint(Utils::showModelPath($entity['fqcn']))
-                        ->options(fn():array => static::experimentalGetEntityPermissions($entity))
+                        ->options(fn (): array => static::experimentalGetEntityPermissions($entity))
                         ->live()
                         ->afterStateHydrated(
                             fn (Component $component, Model $record) => static::experimentalSetEntityStateWhenRecordHasPermission($component, $record, $entity)
@@ -289,7 +287,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                         ->afterStateUpdated(
                             fn ($livewire, Forms\Set $set) => static::experimentalToggleSelectAllViaEntities($livewire, $set)
                         )
-                        ->dehydrated(fn($state) => blank($state) ? false : true)
+                        ->dehydrated(fn ($state) => blank($state) ? false : true)
                         ->bulkToggleable(),
                 ])
                 ->columnSpan(1);
@@ -305,16 +303,18 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->map(fn ($resource) => count(static::experimentalGetEntityPermissions($resource)))
             ->sum();
     }
+
     public static function experimentalGetEntityPermissions(array $entity): array
     {
         return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
             ->flatMap(fn ($permission) => [
-                $permission.'_'.$entity['resource'] => FilamentShield::getLocalizedResourcePermissionLabel($permission)
+                $permission . '_' . $entity['resource'] => FilamentShield::getLocalizedResourcePermissionLabel($permission),
             ])
-        ->toArray();
+            ->toArray();
     }
 
-    public static function experimentalSetEntityStateWhenRecordHasPermission(Component $component, Model $record, array $entity) {
+    public static function experimentalSetEntityStateWhenRecordHasPermission(Component $component, Model $record, array $entity)
+    {
 
         if (is_null($record)) {
             return;
@@ -322,10 +322,11 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         $component->state(
             collect(static::experimentalGetEntityPermissions($entity))
-                ->reduce(function ($permissions, $value, $key) use($record) {
+                ->reduce(function ($permissions, $value, $key) use ($record) {
                     if ($record->checkPermissionTo($key)) {
                         $permissions[] = $key;
                     }
+
                     return $permissions;
                 }, collect())
                 ->toArray()
@@ -340,7 +341,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         if ($state) {
             $entitiesComponents
                 ->each(
-                    function (Forms\Components\CheckboxList $component) use($set) {
+                    function (Forms\Components\CheckboxList $component) use ($set) {
                         $set($component->getName(), array_keys($component->getOptions()));
                     }
                 );
@@ -350,15 +351,17 @@ class RoleResource extends Resource implements HasShieldPermissions
         }
     }
 
-    public static function experimentalToggleSelectAllViaEntities($livewire, $set) {
+    public static function experimentalToggleSelectAllViaEntities($livewire, $set)
+    {
         $entitiesStates = collect($livewire->form->getFlatComponents())
-                ->reduce(function ($counts, $component) {
-                    if ($component instanceof Forms\Components\CheckboxList) {
-                        $counts[$component->getName()] = count($component->getOptions()) == count($component->getState());
-                    }
-                    return $counts;
-                }, collect())
-                ->values();
+            ->reduce(function ($counts, $component) {
+                if ($component instanceof Forms\Components\CheckboxList) {
+                    $counts[$component->getName()] = count($component->getOptions()) == count($component->getState());
+                }
+
+                return $counts;
+            }, collect())
+            ->values();
         if ($entitiesStates->containsStrict(false)) {
             $set('select_all', false);
         } else {
@@ -370,12 +373,13 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         return collect(FilamentShield::getWidgets())
             ->flatMap(fn ($widgetPermission) => [
-                $widgetPermission => FilamentShield::getLocalizedWidgetLabel($widgetPermission)
+                $widgetPermission => FilamentShield::getLocalizedWidgetLabel($widgetPermission),
             ])
-        ->toArray();
+            ->toArray();
     }
 
-    public static function experimentalSetWidgetsStateWhenRecordHasPermission(Component $component, Model $record) {
+    public static function experimentalSetWidgetsStateWhenRecordHasPermission(Component $component, Model $record)
+    {
 
         if (is_null($record)) {
             return;
@@ -383,7 +387,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         $component->state(
             collect(static::experimentalGetWidgetPermissions())
-                ->filter(fn($value, $key) => $record->checkPermissionTo($key))
+                ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
                 ->keys()
                 ->toArray()
         );
@@ -392,21 +396,21 @@ class RoleResource extends Resource implements HasShieldPermissions
     protected static function refreshSelectAllStateViaEntities(Forms\Set $set, Forms\Get $get): void
     {
         $entitiesStates = collect(
-                collect(FilamentShield::getResources())
-                    ->map(fn($entity) => 'resource_'.$entity['resource'])
-                    ->values()->all()
-            )
+            collect(FilamentShield::getResources())
+                ->map(fn ($entity) => 'resource_' . $entity['resource'])
+                ->values()->all()
+        )
             ->when(Utils::isPageEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getPages()))
             ->when(Utils::isWidgetEntityEnabled(), fn ($entities) => $entities->merge(FilamentShield::getWidgets()))
             ->when(Utils::isCustomPermissionEntityEnabled(), fn ($entities) => $entities->merge(static::getCustomEntities()))
             ->map(function ($entity) use ($get) {
                 return (bool) $get($entity);
             });
-            if (!$entitiesStates->containsStrict(false)) {
-                $set('select_all', true);
-            }else{
-                $set('select_all', false);
-            }
+        if (! $entitiesStates->containsStrict(false)) {
+            $set('select_all', true);
+        } else {
+            $set('select_all', false);
+        }
     }
 
     protected static function refreshEntitiesStatesViaSelectAll(Forms\Set $set, $state): void
@@ -458,6 +462,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         $entities = $record->permissions->pluck('name')
             ->reduce(function ($roles, $role) {
                 $roles[$role] = Str::afterLast($role, '_');
+
                 return $roles;
             }, collect())
             ->values()
@@ -477,11 +482,11 @@ class RoleResource extends Resource implements HasShieldPermissions
 
         ray($entities);
         if (Arr::exists($entities, $entity['resource']) && Arr::get($entities, $entity['resource'])) {
-            $set('resource_'.$entity['resource'], true);
+            $set('resource_' . $entity['resource'], true);
             $set('select_all', true);
 
         } else {
-            $set('resource_'.$entity['resource'], false);
+            $set('resource_' . $entity['resource'], false);
             $set('select_all', false);
         }
     }
