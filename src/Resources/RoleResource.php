@@ -74,8 +74,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->tabs([
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
                             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
-                            // ->live()
-                            ->badge(static::getResourceTabBadge())
+                            ->badge(static::getResourceTabBadgeCount())
                             ->schema([
                                 Forms\Components\Grid::make()
                                     ->schema(static::getResourceEntitiesSchema())
@@ -86,6 +85,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ]),
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
                             ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
+                            ->badge(count(static::getPageOptions()))
                             ->schema([
                                 Forms\Components\CheckboxList::make('pages_tab')
                                     ->label('')
@@ -126,7 +126,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ]),
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
                             ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
-                            ->live()
+                            ->badge(count(static::getWidgetOptions()))
                             ->schema([
                                 Forms\Components\CheckboxList::make('widgets_tab')
                                     ->label('')
@@ -166,10 +166,9 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ])
                                     ->columnSpanFull(),
                             ]),
-
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
                             ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && (count(static::getCustomEntities()) > 0 ? true : false))
-                            ->live()
+                            ->badge(count(static::getCustomPermissionOptions()))
                             ->schema([
                                 Forms\Components\CheckboxList::make('custom_permissions')
                                     ->label('')
@@ -323,10 +322,6 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
     }
 
-    /**--------------------------------*
-    | Resource Related Logic Start     |
-    *----------------------------------*/
-
     public static function getResourceEntitiesSchema(): ?array
     {
         if (blank(static::$permissionsCollection)) {
@@ -342,7 +337,6 @@ class RoleResource extends Resource implements HasShieldPermissions
                 ->schema([
                     Forms\Components\CheckboxList::make($entity['resource'])
                         ->label('')
-                        // ->hint(Utils::showModelPath($entity['fqcn']))
                         ->options(fn (): array => static::getResourcePermissionOptions($entity))
                         ->live()
                         ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) use ($entity) {
@@ -384,7 +378,7 @@ class RoleResource extends Resource implements HasShieldPermissions
             ?->toArray() ?? [];
     }
 
-    public static function getResourceTabBadge(): ?int
+    public static function getResourceTabBadgeCount(): ?int
     {
         return collect(FilamentShield::getResources())
             ->map(fn ($resource) => count(static::getResourcePermissionOptions($resource)))

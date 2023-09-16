@@ -99,11 +99,11 @@ class FilamentShield
         }
     }
 
-    public static function createRole(bool $isSuperAdmin = true)
+    public static function createRole()
     {
         return Utils::getRoleModel()::firstOrCreate(
-            ['name' => $isSuperAdmin ? Utils::getSuperAdminName() : Utils::getFilamentUserRoleName()],
-            ['guard_name' => $isSuperAdmin ? Utils::getFilamentAuthGuard() : Utils::getFilamentAuthGuard()]
+            ['name' => Utils::getSuperAdminName()],
+            ['guard_name' => Utils::getFilamentAuthGuard()]
         );
     }
 
@@ -316,13 +316,10 @@ class FilamentShield
             $widgets = array_unique($widgets);
         }
 
+        $prefix = Str::of($isPageClass ? Utils::getPagePermissionPrefix() : Utils::getWidgetPermissionPrefix())->append('_');
+
         return (string) collect($isPageClass ? $pages : $widgets)
-            ->first(fn ($item) => Str::endsWith(
-                $item,
-                Str::of($string)
-                    ->after('_')
-                    ->studly()
-            ));
+            ->first(fn ($item) => class_basename($item) == Str::of($string)->after($prefix)->studly());
     }
 
     protected static function hasHeadingForShield(object | string $class): bool

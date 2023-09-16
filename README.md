@@ -31,8 +31,6 @@ The easiest and most intuitive way to add access management to your Filament Adm
 - :fire: **Widgets** 
 - :fire: **Custom Permissions**
 
-> **Warning**
-> The 3.x is still in beta but compatible for filament 3.x
 
 > **Note** 
 > For **Filament 2.x** use **[2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)** branch
@@ -44,7 +42,7 @@ The easiest and most intuitive way to add access management to your Filament Adm
 1. Install the package via composer:
 
 ```bash
-composer require bezhansalleh/filament-shield "^3.0@beta"
+composer require bezhansalleh/filament-shield
 ```
 
 2. Add the `Spatie\Permission\Traits\HasRoles` trait to your User model(s):
@@ -55,7 +53,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasRoles; //or HasFilamentShield
+    use HasRoles;
 
     // ...
 }
@@ -64,7 +62,7 @@ class User extends Authenticatable
 ```bash
 php artisan vendor:publish --tag=filament-shield-config
 ```
-4. Register the plugin for the Filament Panel
+4. Register the plugin for the Filament Panels you want
 ```php
 public function panel(Panel $panel): Panel
 {
@@ -81,7 +79,7 @@ php artisan shield:install
 Follow the prompts and enjoy!
 
 ## Filament Panels
-If you want to enable `Shield` for more than one panel then you need to register the plugin for each panel.
+If you want to enable `Shield` for more than one panel then you need to register the plugin for each panel as mentioned above.
 
 #### Resources
 Generally there are two scenarios that shield handles permissions for your `Filament` resources.
@@ -315,7 +313,7 @@ class IncomeWidget extends LineChartWidget
 
 #### Role Policy
 
-You can skip this if have set the `'register_role_policy' => true` in the config.
+You can skip this if have set the `enabled => true` in the config.
 To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AuthServiceProvider`:
 
 ```php
@@ -327,9 +325,9 @@ protected $policies = [
 ...
 ```
 
-#### Third-Party Plugins
+#### Custom folder structure for Models or Third-Party Plugins
 
-Shield also generates policies and permissions for third-party plugins and to enforce the generated policies you will need to register them in your application's `AuthServiceProvider`:
+Shield also generates policies and permissions for third-party plugins and `Models` with custom folder structure and to enforce the generated policies you will need to register them in your application's `AuthServiceProvider`:
 ```
 ...
 class AuthServiceProvider extends ServiceProvider
@@ -337,11 +335,11 @@ class AuthServiceProvider extends ServiceProvider
     ...
     protected $policies = [
         ...,
+        'App\Models\Blog\Author' => 'App\Policies\Blog\AuthorPolicy',
         'Ramnzys\FilamentEmailLog\Models\Email' => 'App\Policies\EmailPolicy'
 
     ];
 ```
-Same applies for models inside folders.
 
 #### Translations 
 
@@ -370,6 +368,7 @@ Generate Permissions and/or Policies for Filament entities. Accepts the followin
 - `--widget[=WIDGET]`        One or many widgets separated by comma (,)
 - `--exclude`                Exclude the given entities during generation
 - `--ignore-config-exclude`  Ignore config `exclude` option during generation
+- `--ignore-existing-policies`  Do not overwrite the existing policies.
 
 #### `shield:super-admin` 
 Create a user with super_admin role.

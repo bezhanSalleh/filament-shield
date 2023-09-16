@@ -60,8 +60,7 @@ class Utils
 
     public static function isAuthProviderConfigured(): bool
     {
-        return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(static::getAuthProviderFQCN()))
-        || in_array("Spatie\Permission\Traits\HasRoles", class_uses(static::getAuthProviderFQCN()));
+        return in_array("Spatie\Permission\Traits\HasRoles", class_uses(static::getAuthProviderFQCN()));
     }
 
     public static function isSuperAdminEnabled(): bool
@@ -82,16 +81,6 @@ class Utils
     public static function getSuperAdminGateInterceptionStatus(): string
     {
         return (string) config('filament-shield.super_admin.intercept_gate');
-    }
-
-    public static function isFilamentUserRoleEnabled(): bool
-    {
-        return (bool) config('filament-shield.filament_user.enabled', true);
-    }
-
-    public static function getFilamentUserRoleName(): string
-    {
-        return (string) config('filament-shield.filament_user.name');
     }
 
     public static function getGeneralResourcePermissionPrefixes(): array

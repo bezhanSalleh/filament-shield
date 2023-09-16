@@ -39,8 +39,7 @@ class MakeShieldDoctorCommand extends Command
     protected static function authProviderConfigured()
     {
         if (class_exists(Utils::getAuthProviderFQCN())) {
-            return in_array("BezhanSalleh\FilamentShield\Traits\HasFilamentShield", class_uses(Utils::getAuthProviderFQCN()))
-            || in_array("Spatie\Permission\Traits\HasRoles", class_uses(Utils::getAuthProviderFQCN()))
+            return Utils::isAuthProviderConfigured()
                 ? '<fg=green;options=bold>CONFIGURED</>'
                 : '<fg=red;options=bold>NOT CONFIGURED</>';
         }
