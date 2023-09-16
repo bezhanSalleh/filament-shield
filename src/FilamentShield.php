@@ -114,7 +114,16 @@ class FilamentShield
      */
     public function getResources(): ?array
     {
-        return collect(Filament::getResources())
+        $resources = Filament::getResources();
+        if (Utils::discoverAllResources()) {
+            $resources = [];
+            foreach (Filament::getPanels() as $panel) {
+                $resources = array_merge($resources, $panel->getResources());
+            }
+            $resources = array_unique($resources);
+        }
+
+        return collect($resources)
             ->unique()
             ->filter(function ($resource) {
                 if (Utils::isGeneralExcludeEnabled()) {
@@ -146,7 +155,15 @@ class FilamentShield
      */
     public static function getLocalizedResourceLabel(string $entity): string
     {
-        $label = collect(Filament::getResources())->filter(function ($resource) use ($entity) {
+        $resources = Filament::getResources();
+        if (Utils::discoverAllResources()) {
+            $resources = [];
+            foreach (Filament::getPanels() as $panel) {
+                $resources = array_merge($resources, $panel->getResources());
+            }
+            $resources = array_unique($resources);
+        }
+        $label = collect($resources)->filter(function ($resource) use ($entity) {
             return $resource === $entity;
         })->first()::getModelLabel();
 
@@ -170,7 +187,16 @@ class FilamentShield
      */
     public static function getPages(): ?array
     {
-        return collect(Filament::getPages())
+        $pages = Filament::getPages();
+        if (Utils::discoverAllPages()) {
+            $pages = [];
+            foreach (Filament::getPanels() as $panel) {
+                $pages = array_merge($pages, $panel->getPages());
+            }
+            $pages = array_unique($pages);
+        }
+
+        return collect($pages)
             ->filter(function ($page) {
                 if (Utils::isGeneralExcludeEnabled()) {
                     return ! in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
@@ -212,7 +238,16 @@ class FilamentShield
      */
     public static function getWidgets(): ?array
     {
-        return collect(Filament::getWidgets())
+        $widgets = Filament::getWidgets();
+        if (Utils::discoverAllWidgets()) {
+            $widgets = [];
+            foreach (Filament::getPanels() as $panel) {
+                $widgets = array_merge($widgets, $panel->getWidgets());
+            }
+            $widgets = array_unique($widgets);
+        }
+
+        return collect($widgets)
             ->filter(function ($widget) {
                 if (Utils::isGeneralExcludeEnabled()) {
                     return ! in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
@@ -263,7 +298,25 @@ class FilamentShield
 
     protected static function transformClassString(string $string, bool $isPageClass = true): string
     {
-        return (string) collect($isPageClass ? Filament::getPages() : Filament::getWidgets())
+        $pages = Filament::getPages();
+        if (Utils::discoverAllPages()) {
+            $pages = [];
+            foreach (Filament::getPanels() as $panel) {
+                $pages = array_merge($pages, $panel->getPages());
+            }
+            $pages = array_unique($pages);
+        }
+
+        $widgets = Filament::getWidgets();
+        if (Utils::discoverAllWidgets()) {
+            $widgets = [];
+            foreach (Filament::getPanels() as $panel) {
+                $widgets = array_merge($widgets, $panel->getWidgets());
+            }
+            $widgets = array_unique($widgets);
+        }
+
+        return (string) collect($isPageClass ? $pages : $widgets)
             ->first(fn ($item) => Str::endsWith(
                 $item,
                 Str::of($string)

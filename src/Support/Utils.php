@@ -200,4 +200,19 @@ class Utils
     {
         return config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission');
     }
+
+    public static function discoverAllResources(): string
+    {
+        return config('filament-shield.discovery.discover_all_resources', false);
+    }
+
+    public static function discoverAllWidgets(): string
+    {
+        return config('filament-shield.discovery.discover_all_widgets', false);
+    }
+
+    public static function discoverAllPages(): string
+    {
+        return config('filament-shield.discovery.discover_all_pages', false);
+    }
 }
