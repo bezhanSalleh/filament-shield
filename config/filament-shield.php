@@ -22,11 +22,6 @@ return [
         'intercept_gate' => 'before', // after
     ],
 
-    'filament_user' => [
-        'enabled' => true,
-        'name' => 'filament_user',
-    ],
-
     'permission_prefixes' => [
         'resource' => [
             'view',

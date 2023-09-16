@@ -16,7 +16,7 @@ class MakeShieldSuperAdminCommand extends Command
     public $signature = 'shield:super-admin
         {--user= : ID of user to be made super admin.}
         {--panel= : Panel ID to get the configuration from.}
-        ';
+    ';
 
     public $description = 'Creates Filament Super Admin';
 
@@ -36,10 +36,6 @@ class MakeShieldSuperAdminCommand extends Command
 
         if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
             FilamentShield::createRole();
-        }
-
-        if (Utils::isFilamentUserRoleEnabled() && Utils::getRoleModel()::whereName(Utils::getFilamentUserRoleName())->doesntExist()) {
-            FilamentShield::createRole(isSuperAdmin: false);
         }
 
         if ($this->option('user')) {
@@ -70,10 +66,6 @@ class MakeShieldSuperAdminCommand extends Command
             ]);
         }
         $this->superAdmin->assignRole(Utils::getSuperAdminName());
-
-        if (Utils::isFilamentUserRoleEnabled()) {
-            $this->superAdmin->assignRole(Utils::getFilamentUserRoleName());
-        }
 
         $loginUrl = Filament::getCurrentPanel()?->getLoginUrl();
 

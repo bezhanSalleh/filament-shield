@@ -4,6 +4,7 @@ namespace BezhanSalleh\FilamentShield\Traits;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
 
 trait HasPageShield
@@ -13,7 +14,11 @@ trait HasPageShield
         $this->beforeBooted();
 
         if (! static::canView()) {
-            $this->notify('warning', __('filament-shield::filament-shield.forbidden'));
+
+            Notification::make()
+                ->title(__('filament-shield::filament-shield.forbidden'))
+                ->warning()
+                ->send();
 
             $this->beforeShieldRedirects();
 
@@ -43,7 +48,7 @@ trait HasPageShield
 
     protected function getShieldRedirectPath(): string
     {
-        return config('filament.path');
+        return Filament::getUrl();
     }
 
     public static function canView(): bool
