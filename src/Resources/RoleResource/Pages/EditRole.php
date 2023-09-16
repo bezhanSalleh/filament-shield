@@ -4,11 +4,10 @@ namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class EditRole extends EditRecord
 {
@@ -25,10 +24,12 @@ class EditRole extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        dd($data);
-        $this->permissions = collect($data)->filter(function ($permission, $key) {
-            return ! in_array($key, ['name', 'guard_name', 'select_all']) && Str::contains($key, '_');
-        })->keys();
+        $this->permissions = collect($data)
+            ->filter(function ($permission, $key) {
+                return ! in_array($key, ['name', 'guard_name', 'select_all']);
+            })
+            ->values()
+            ->flatten();
 
         return Arr::only($data, ['name', 'guard_name']);
     }
