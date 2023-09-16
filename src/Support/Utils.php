@@ -215,5 +215,4 @@ class Utils
     {
         return config('filament-shield.discovery.discover_all_pages', false);
     }
-        
 }
