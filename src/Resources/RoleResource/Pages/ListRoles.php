@@ -3,7 +3,7 @@
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListRoles extends ListRecords
