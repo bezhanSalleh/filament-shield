@@ -79,8 +79,8 @@ class RoleResource extends Resource implements HasShieldPermissions
                                 Forms\Components\Grid::make()
                                     ->schema(static::getResourceEntitiesSchema())
                                     ->columns([
-                                        'sm' => 2,
-                                        'lg' => 3,
+                                        'sm' => 1,
+                                        'lg' => 1,
                                     ]),
                             ]),
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
@@ -331,9 +331,8 @@ class RoleResource extends Resource implements HasShieldPermissions
         return collect(FilamentShield::getResources())->sortKeys()->reduce(function ($entities, $entity) {
 
             $entities[] = Forms\Components\Section::make(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
-                ->description(Utils::showModelPath($entity['fqcn']))
+                ->description(fn () => new HtmlString('<span style="word-break: break-word;">'.Utils::showModelPath($entity['fqcn']).'</span>'))
                 ->compact()
-                ->extraAttributes(['class' => 'border-0 shadow-lg'])
                 ->schema([
                     Forms\Components\CheckboxList::make($entity['resource'])
                         ->label('')
@@ -367,11 +366,13 @@ class RoleResource extends Resource implements HasShieldPermissions
                         ->bulkToggleable()
                         ->gridDirection('row')
                         ->columns([
-                            'default' => 1,
-                            'sm' => 2,
+                            'default' => 2,
+                            'sm' => 3,
+                            'lg' => 4
                         ]),
                 ])
-                ->columnSpan(1);
+                ->columnSpanFull()
+                ->collapsible();
 
             return $entities;
         }, collect())
