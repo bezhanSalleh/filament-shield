@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
-
 use function Laravel\Prompts\confirm;
 
 class MakeShieldInstallCommand extends Command

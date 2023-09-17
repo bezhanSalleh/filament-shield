@@ -5,7 +5,6 @@ namespace BezhanSalleh\FilamentShield\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
-
 use function Laravel\Prompts\confirm;
 
 class MakeShieldPublishCommand extends Command
