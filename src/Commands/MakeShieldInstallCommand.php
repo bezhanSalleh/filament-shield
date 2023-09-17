@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
 
+use function Laravel\Prompts\confirm;
+
 class MakeShieldInstallCommand extends Command
 {
     public $signature = 'shield:install
@@ -20,45 +22,45 @@ class MakeShieldInstallCommand extends Command
 
     public $description = 'Setup Core Package requirements and Install Shield';
 
-    public function handle(): int
+    public function handle(): void
     {
-        if (! Utils::isAuthProviderConfigured()) {
-            $this->error('Please make sure your Auth Provider model (App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
+        if (!Utils::isAuthProviderConfigured()) {
+            $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
 
-            return self::INVALID;
+            exit(self::INVALID);
         }
 
         if ($this->option('minimal')) {
             $confirmed = true;
         } else {
-            $this->alert('Following operations will be performed:');
-            $this->info('-  Publishes core package config');
-            $this->info('-  Publishes core package migration');
-            $this->warn('   - On fresh applications database will be migrated');
-            $this->warn('   - You can also force this behavior by supplying the --fresh option');
+            $this->components->alert('Following operations will be performed:');
+            $this->components->info('- Publishes core package config');
+            $this->components->info('- Publishes core package migration');
+            $this->components->warn('- On fresh applications database will be migrated');
+            $this->components->warn('- You can also force this behavior by supplying the --fresh option');
 
-            $confirmed = $this->confirm('Do you wish to continue?', true);
+            $confirmed = confirm('Do you wish to continue?');
         }
 
-        if ($this->CheckIfAlreadyInstalled() && ! $this->option('fresh')) {
-            $this->comment('Seems you have already installed the Core package(`spatie/laravel-permission`)!');
-            $this->comment('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
+        if ($this->CheckIfAlreadyInstalled() && !$this->option('fresh')) {
+            $this->components->info('Seems you have already installed the Core package(`spatie/laravel-permission`)!');
+            $this->components->info('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
 
-            if ($this->confirm('Run `shield:install --fresh` instead?', false)) {
+            if (confirm('Run `shield:install --fresh` instead?', false)) {
                 $this->install(true);
             }
 
-            return self::INVALID;
+            exit(self::INVALID);
         }
 
         if ($confirmed) {
             $this->install($this->option('fresh'));
         } else {
-            $this->comment('`shield:install` command was cancelled.');
+            $this->components->info('`shield:install` command was cancelled.');
         }
 
-        if (! $this->option('minimal')) {
-            if ($this->confirm('Would you like to show some love by starring the repo?', true)) {
+        if (!$this->option('minimal')) {
+            if (confirm('Would you like to show some love by starring the repo?')) {
                 if (PHP_OS_FAMILY === 'Darwin') {
                     exec('open https://github.com/bezhanSalleh/filament-shield');
                 }
@@ -69,25 +71,20 @@ class MakeShieldInstallCommand extends Command
                     exec('start https://github.com/bezhanSalleh/filament-shield');
                 }
 
-                $this->line('Thank you!');
+                $this->components->info('Thank you!');
             }
         }
 
-        return self::SUCCESS;
+        exit(self::SUCCESS);
     }
 
     protected function CheckIfAlreadyInstalled(): bool
     {
         $count = $this->getTables()
-            ->filter(function ($table) {
-                return Schema::hasTable($table);
-            })
+            ->filter(fn (string $table) => Schema::hasTable($table))
             ->count();
-        if ($count !== 0) {
-            return true;
-        }
 
-        return false;
+        return $count !== 0;
     }
 
     protected function getTables(): Collection
@@ -95,13 +92,13 @@ class MakeShieldInstallCommand extends Command
         return collect(['role_has_permissions', 'model_has_roles', 'model_has_permissions', 'roles', 'permissions']);
     }
 
-    protected function install(bool $fresh = false)
+    protected function install(bool $fresh = false): void
     {
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--provider' => 'Spatie\Permission\PermissionServiceProvider',
         ]);
 
-        $this->info('Core Package config published.');
+        $this->components->info('Core Package config published.');
 
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--tag' => 'filament-shield-config',
@@ -114,28 +111,26 @@ class MakeShieldInstallCommand extends Command
                 $this->getTables()->each(fn ($table) => DB::statement('DROP TABLE IF EXISTS ' . $table));
                 Schema::enableForeignKeyConstraints();
             } catch (Throwable $e) {
-                $this->info($e);
+                $this->components->info($e);
             }
 
-            $this->info('Freshening up shield migrations.');
+            $this->components->info('Freshening up shield migrations.');
         } else {
-            $this->info('running shield migrations.');
+            $this->components->info('running shield migrations.');
         }
 
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('migrate', [
             '--force' => true,
         ]);
 
-        if (! $this->option('only')) {
-            $this->newLine();
-            $this->info('Generating permissions ...');
+        if (!$this->option('only')) {
+            $this->components->info('Generating permissions ...');
             $this->call('shield:generate', [
                 '--all' => true,
                 '--minimal' => $this->option('minimal'),
             ]);
 
-            $this->newLine();
-            $this->info('Creating a filament user with Super Admin Role...');
+            $this->components->info('Creating a filament user with Super Admin Role...');
             $this->call('shield:super-admin');
         } else {
             $this->call('shield:generate', [
@@ -144,8 +139,8 @@ class MakeShieldInstallCommand extends Command
             ]);
         }
 
-        $this->info(Artisan::output());
+        $this->components->info(Artisan::output());
 
-        $this->info('Filament Shield🛡 is now active ✅');
+        $this->components->info('Filament Shield🛡 is now active ✅');
     }
 }

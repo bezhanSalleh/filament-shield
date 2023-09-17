@@ -2,17 +2,18 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\Commands\Concerns\CanValidateInput;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
+use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
+
+use function Laravel\Prompts\{text, password};
 
 class MakeShieldSuperAdminCommand extends Command
 {
-    use CanValidateInput;
-
     public $signature = 'shield:super-admin
         {--user= : ID of user to be made super admin.}
         {--panel= : Panel ID to get the configuration from.}
@@ -20,7 +21,7 @@ class MakeShieldSuperAdminCommand extends Command
 
     public $description = 'Creates Filament Super Admin';
 
-    protected $superAdmin;
+    protected Authenticatable $superAdmin;
 
     public function handle(): int
     {
@@ -28,10 +29,8 @@ class MakeShieldSuperAdminCommand extends Command
             Filament::setCurrentPanel(Filament::getPanel($this->option('panel')));
         }
 
-        /** @var SessionGuard $auth */
         $auth = Filament::getCurrentPanel()?->auth();
 
-        /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
 
         if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
@@ -40,12 +39,12 @@ class MakeShieldSuperAdminCommand extends Command
 
         if ($this->option('user')) {
             $this->superAdmin = $userProvider->getModel()::findOrFail($this->option('user'));
-        } elseif ($userProvider->getModel()::count() === 1) {
+        } elseif ($usersCount = $userProvider->getModel()::count() === 1) {
             $this->superAdmin = $userProvider->getModel()::first();
-        } elseif ($userProvider->getModel()::count() > 1) {
+        } elseif ($usersCount > 1) {
             $this->table(
                 ['ID', 'Name', 'Email', 'Roles'],
-                $userProvider->getModel()::with('roles')->get()->map(function ($user) {
+                $userProvider->getModel()::with('roles')->get()->map(function (Authenticatable $user) {
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
@@ -55,22 +54,46 @@ class MakeShieldSuperAdminCommand extends Command
                 })
             );
 
-            $superAdminId = $this->ask('Please provide the `UserID` to be set as `super_admin`');
+            $superAdminId = text(
+                label: 'Please provide the `UserID` to be set as `super_admin`',
+                required: true
+            );
 
             $this->superAdmin = $userProvider->getModel()::findOrFail($superAdminId);
         } else {
-            $this->superAdmin = $userProvider->getModel()::create([
-                'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
-                'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $userProvider->getModel()]),
-                'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
-            ]);
+            $this->superAdmin = $this->createSuperAdmin($userProvider);
         }
+
         $this->superAdmin->assignRole(Utils::getSuperAdminName());
 
         $loginUrl = Filament::getCurrentPanel()?->getLoginUrl();
 
-        $this->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
+        $this->components->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
 
-        return self::SUCCESS;
+        exit(self::SUCCESS);
+    }
+
+    protected function createSuperAdmin(EloquentUserProvider $provider): Authenticatable
+    {
+        return $provider->getModel()::create([
+            'name' => text(label: 'Name', required: true),
+            'email' => text(
+                label: 'Email address',
+                required: true,
+                validate: fn (string $email): ?string => match (true) {
+                    !filter_var($email, FILTER_VALIDATE_EMAIL) => 'The email address must be valid.',
+                    $provider->getModel()::where('email', $email)->exists() => 'A user with this email address already exists',
+                    default => null,
+                },
+            ),
+            'password' => Hash::make(password(
+                label: 'Password',
+                required: true,
+                validate: fn (string $value) => match (true) {
+                    strlen($value) < 8 => 'The password must be at least 8 characters.',
+                    default => null
+                }
+            )),
+        ]);
     }
 }

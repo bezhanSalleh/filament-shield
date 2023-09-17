@@ -6,6 +6,7 @@ use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -17,38 +18,32 @@ class MakeShieldGenerateCommand extends Command
 
     /**
      * The resources to generate permissions or policies for, or should be exclude.
-     *
-     * @var array
      */
-    protected $resources = [];
+    protected array $resources = [];
 
     /**
      * The pages to generate permissions for, or should be excluded.
-     *
-     * @var array
      */
-    protected $pages = [];
+    protected array $pages = [];
 
     /**
      * The widgets to generate permissions for, or should be excluded.
-     *
-     * @var array
      */
-    protected $widgets = [];
+    protected array $widgets = [];
 
-    protected $generatorOption;
+    protected string $generatorOption;
 
-    protected $excludeResources = false;
+    protected bool $excludeResources = false;
 
-    protected $excludePages = false;
+    protected bool $excludePages = false;
 
-    protected $excludeWidgets = false;
+    protected bool $excludeWidgets = false;
 
-    protected $onlyResources = false;
+    protected bool $onlyResources = false;
 
-    protected $onlyPages = false;
+    protected bool $onlyPages = false;
 
-    protected $onlyWidgets = false;
+    protected bool $onlyWidgets = false;
 
     /**
      * The console command signature.
@@ -76,15 +71,15 @@ class MakeShieldGenerateCommand extends Command
      */
     public $description = 'Generate Permissions and/or Policies for Filament entities.';
 
-    public function handle(): int
+    public function handle(): void
     {
         $this->determinGeneratorOptionAndEntities();
 
         if ($this->option('exclude') && blank($this->option('resource')) && blank($this->option('page')) && blank($this->option('widget'))) {
-            $this->comment('<fg=red;>No entites provided for the generators ...</>');
-            $this->comment('<fg=yellow;options=bold>... generation SKIPPED</>');
+            $this->components->error('No entites provided for the generators ...');
+            $this->components->alert('Generation skipped');
 
-            return self::INVALID;
+            exit(self::INVALID);
         }
 
         if (filled($this->option('resource')) || $this->option('all')) {
@@ -102,15 +97,15 @@ class MakeShieldGenerateCommand extends Command
             $this->widgetInfo($widgets->toArray());
         }
 
-        $this->comment('Permission & Policies are generated according to your config or passed options.');
-        $this->info('Enjoy!');
+        $this->components->info('Permission & Policies are generated according to your config or passed options.');
+        $this->components->info('Enjoy!');
 
-        if (cache()->has('shield_general_exclude')) {
+        if (Cache::has('shield_general_exclude')) {
             Utils::enableGeneralExclude();
-            cache()->forget('shield_general_exclude');
+            Cache::forget('shield_general_exclude');
         }
 
-        return self::SUCCESS;
+        exit(self::SUCCESS);
     }
 
     protected function determinGeneratorOptionAndEntities(): void
@@ -118,13 +113,13 @@ class MakeShieldGenerateCommand extends Command
         $this->generatorOption = $this->option('option') ?? Utils::getGeneratorOption();
 
         if ($this->option('ignore-config-exclude') && Utils::isGeneralExcludeEnabled()) {
-            cache()->add('shield_general_exclude', true, 3600);
+            Cache::add('shield_general_exclude', true, 3600);
             Utils::disableGeneralExclude();
         }
 
-        $this->resources = (array) explode(',', $this->option('resource'));
-        $this->pages = (array) explode(',', $this->option('page'));
-        $this->widgets = (array) explode(',', $this->option('widget'));
+        $this->resources = explode(',', $this->option('resource'));
+        $this->pages = explode(',', $this->option('page'));
+        $this->widgets = explode(',', $this->option('widget'));
 
         $this->excludeResources = $this->option('exclude') && filled($this->option('resource'));
         $this->excludePages = $this->option('exclude') && filled($this->option('page'));
@@ -218,41 +213,37 @@ class MakeShieldGenerateCommand extends Command
     {
         return collect($pages)
             ->values()
-            ->each(function ($page) {
-                FilamentShield::generateForPage($page);
-            });
+            ->each(fn (string $page) => FilamentShield::generateForPage($page));
     }
 
     protected function generateForWidgets(array $widgets): Collection
     {
         return collect($widgets)
             ->values()
-            ->each(function ($widget) {
-                FilamentShield::generateForWidget($widget);
-            });
+            ->each(fn (string $widget) => FilamentShield::generateForWidget($widget));
     }
 
     protected function resourceInfo(array $resources): void
     {
         if ($this->option('minimal')) {
-            $this->info('Successfully generated Permissions & Policies.');
+            $this->components->info('Successfully generated Permissions & Policies.');
         } else {
-            $this->info('Successfully generated Permissions & Policies for:');
+            $this->components->info('Successfully generated Permissions & Policies for:');
             $this->table(
                 ['#', 'Resource', 'Policy', 'Permissions'],
                 collect($resources)->map(function ($resource, $key) {
                     return [
                         '#' => $key + 1,
                         'Resource' => $resource['model'],
-                        'Policy' => "{$resource['model']}Policy.php" . ($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
+                        'Policy' => "{$resource['model']}Policy.php".($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
                         'Permissions' => implode(
-                            ',' . PHP_EOL,
+                            ','.PHP_EOL,
                             collect(
                                 Utils::getResourcePermissionPrefixes($resource['fqcn'])
-                            )->map(function ($permission, $key) use ($resource) {
-                                return $permission . '_' . $resource['resource'];
+                            )->map(function ($permission) use ($resource) {
+                                return $permission.'_'.$resource['resource'];
                             })->toArray()
-                        ) . ($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
+                        ).($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
                     ];
                 })
             );
@@ -262,15 +253,15 @@ class MakeShieldGenerateCommand extends Command
     protected function pageInfo(array $pages): void
     {
         if ($this->option('minimal')) {
-            $this->info('Successfully generated Page Permissions.');
+            $this->components->info('Successfully generated Page Permissions.');
         } else {
-            $this->info('Successfully generated Page Permissions for:');
+            $this->components->info('Successfully generated Page Permissions for:');
             $this->table(
                 ['#', 'Page', 'Permission'],
                 collect($pages)->map(function ($page, $key) {
                     return [
                         '#' => $key + 1,
-                        'Page' => Str::replace(config('filament-shield.permission_prefixes.page') . '_', '', $page),
+                        'Page' => Str::replace(config('filament-shield.permission_prefixes.page').'_', '', $page),
                         'Permission' => $page,
                     ];
                 })
@@ -281,15 +272,15 @@ class MakeShieldGenerateCommand extends Command
     protected function widgetInfo(array $widgets): void
     {
         if ($this->option('minimal')) {
-            $this->info('Successfully generated Widget Permissions.');
+            $this->components->info('Successfully generated Widget Permissions.');
         } else {
-            $this->info('Successfully generated Widget Permissions for:');
+            $this->components->info('Successfully generated Widget Permissions for:');
             $this->table(
                 ['#', 'Widget', 'Permission'],
                 collect($widgets)->map(function ($widget, $key) {
                     return [
                         '#' => $key + 1,
-                        'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget') . '_', '', $widget),
+                        'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget').'_', '', $widget),
                         'Permission' => $widget,
                     ];
                 })
@@ -300,9 +291,9 @@ class MakeShieldGenerateCommand extends Command
     protected static function getPolicyStub(string $model): string
     {
         if (Str::is(Str::of(Utils::getAuthProviderFQCN())->afterLast('\\'), $model)) {
-            return (string) 'UserPolicy';
+            return 'UserPolicy';
         }
 
-        return (string) 'DefaultPolicy';
+        return 'DefaultPolicy';
     }
 }

@@ -36,7 +36,7 @@ class MakeShieldDoctorCommand extends Command
         return self::SUCCESS;
     }
 
-    protected static function authProviderConfigured()
+    protected static function authProviderConfigured(): string
     {
         if (class_exists(Utils::getAuthProviderFQCN())) {
             return Utils::isAuthProviderConfigured()

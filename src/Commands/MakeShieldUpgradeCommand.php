@@ -14,12 +14,12 @@ class MakeShieldUpgradeCommand extends Command
 
     public $description = 'Upgrade shield';
 
-    public function handle(): int
+    public function handle(): void
     {
         try {
             $path = glob(database_path('migrations/*_filament_shield_settings_table.php'));
 
-            if (! blank($path) && File::exists($path[0])) {
+            if (!blank($path) && File::exists($path[0])) {
                 File::delete($path);
             }
 
@@ -35,11 +35,13 @@ class MakeShieldUpgradeCommand extends Command
 
             Schema::enableForeignKeyConstraints();
         } catch (Throwable $e) {
-            $this->info($e);
+            $this->components->info($e);
+
+            exit(self::FAILURE);
         }
 
-        $this->info('shield upgraded.');
+        $this->components->info('Filament Shield upgraded.');
 
-        return self::SUCCESS;
+        exit(self::SUCCESS);
     }
 }
