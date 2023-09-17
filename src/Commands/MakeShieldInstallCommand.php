@@ -42,7 +42,7 @@ class MakeShieldInstallCommand extends Command
             $confirmed = confirm('Do you wish to continue?');
         }
 
-        if ($this->CheckIfAlreadyInstalled() && !$this->option('fresh')) {
+        if ($this->CheckIfAlreadyInstalled() && ! $this->option('fresh')) {
             $this->components->info('Seems you have already installed the Core package(`spatie/laravel-permission`)!');
             $this->components->info('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
 
@@ -59,7 +59,7 @@ class MakeShieldInstallCommand extends Command
             $this->components->info('`shield:install` command was cancelled.');
         }
 
-        if (!$this->option('minimal')) {
+        if (! $this->option('minimal')) {
             if (confirm('Would you like to show some love by starring the repo?')) {
                 if (PHP_OS_FAMILY === 'Darwin') {
                     exec('open https://github.com/bezhanSalleh/filament-shield');
@@ -123,7 +123,7 @@ class MakeShieldInstallCommand extends Command
             '--force' => true,
         ]);
 
-        if (!$this->option('only')) {
+        if (! $this->option('only')) {
             $this->components->info('Generating permissions ...');
             $this->call('shield:generate', [
                 '--all' => true,

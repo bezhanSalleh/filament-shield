@@ -9,7 +9,6 @@ use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
-
 use function Laravel\Prompts\{text, password};
 
 class MakeShieldSuperAdminCommand extends Command

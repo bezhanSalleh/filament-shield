@@ -125,9 +125,9 @@ class MakeShieldGenerateCommand extends Command
         $this->excludePages = $this->option('exclude') && filled($this->option('page'));
         $this->excludeWidgets = $this->option('exclude') && filled($this->option('widget'));
 
-        $this->onlyResources = !$this->option('exclude') && filled($this->option('resource'));
-        $this->onlyPages = !$this->option('exclude') && filled($this->option('page'));
-        $this->onlyWidgets = !$this->option('exclude') && filled($this->option('widget'));
+        $this->onlyResources = ! $this->option('exclude') && filled($this->option('resource'));
+        $this->onlyPages = ! $this->option('exclude') && filled($this->option('page'));
+        $this->onlyWidgets = ! $this->option('exclude') && filled($this->option('widget'));
     }
 
     protected function generatableResources(): ?array
@@ -135,7 +135,7 @@ class MakeShieldGenerateCommand extends Command
         return collect(FilamentShield::getResources())
             ->filter(function ($resource) {
                 if ($this->excludeResources) {
-                    return !in_array(Str::of($resource['fqcn'])->afterLast('\\'), $this->resources);
+                    return ! in_array(Str::of($resource['fqcn'])->afterLast('\\'), $this->resources);
                 }
 
                 if ($this->onlyResources) {
@@ -152,7 +152,7 @@ class MakeShieldGenerateCommand extends Command
         return collect(FilamentShield::getPages())
             ->filter(function ($page) {
                 if ($this->excludePages) {
-                    return !in_array($page, $this->pages);
+                    return ! in_array($page, $this->pages);
                 }
 
                 if ($this->onlyPages) {
@@ -169,7 +169,7 @@ class MakeShieldGenerateCommand extends Command
         return collect(FilamentShield::getWidgets())
             ->filter(function ($widget) {
                 if ($this->excludeWidgets) {
-                    return !in_array($widget, $this->widgets);
+                    return ! in_array($widget, $this->widgets);
                 }
 
                 if ($this->onlyWidgets) {
@@ -189,7 +189,7 @@ class MakeShieldGenerateCommand extends Command
                 if ($this->generatorOption === 'policies_and_permissions') {
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
-                    if (!$this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && !$this->fileExists($policyPath))) {
+                    if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                     FilamentShield::generateForResource($entity);
@@ -198,7 +198,7 @@ class MakeShieldGenerateCommand extends Command
                 if ($this->generatorOption === 'policies') {
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
-                    if (!$this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && !$this->fileExists($policyPath))) {
+                    if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                 }

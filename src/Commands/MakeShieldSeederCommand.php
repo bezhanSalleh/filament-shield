@@ -32,7 +32,7 @@ class MakeShieldSeederCommand extends Command
     {
         $path = database_path('seeders/ShieldSeeder.php');
 
-        if (!$this->option('force') && $this->checkForCollision(paths: [$path])) {
+        if (! $this->option('force') && $this->checkForCollision(paths: [$path])) {
             exit(self::INVALID);
         }
 
@@ -71,7 +71,7 @@ class MakeShieldSeederCommand extends Command
 
         if (Utils::getPermissionModel()::exists()) {
             $directPermissions = collect(Utils::getPermissionModel()::get())
-                ->filter(fn ($permission) => !in_array($permission->name, $directPermissionNames->unique()->flatten()->all()))
+                ->filter(fn ($permission) => ! in_array($permission->name, $directPermissionNames->unique()->flatten()->all()))
                 ->map(fn ($permission) => [
                     'name' => $permission->name,
                     'guard_name' => $permission->guard_name,

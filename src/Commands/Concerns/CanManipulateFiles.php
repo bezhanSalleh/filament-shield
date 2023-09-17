@@ -24,7 +24,7 @@ trait CanManipulateFiles
     {
         $filesystem = new Filesystem();
 
-        if (!$this->fileExists($stubPath = base_path("stubs/filament/{$stub}.stub"))) {
+        if (! $this->fileExists($stubPath = base_path("stubs/filament/{$stub}.stub"))) {
             $stubPath = __DIR__ . "/../../../stubs/{$stub}.stub";
         }
 
@@ -34,7 +34,7 @@ trait CanManipulateFiles
             $stub = $stub->replace("{{ {$key} }}", is_array($replacement) ? json_encode($replacement) : $replacement);
         }
 
-        $stub = (string)$stub;
+        $stub = (string) $stub;
 
         $this->writeFile($targetPath, $stub);
     }
@@ -51,7 +51,7 @@ trait CanManipulateFiles
         $filesystem = new Filesystem();
 
         $filesystem->ensureDirectoryExists(
-            (string)Str::of($path)
+            (string) Str::of($path)
                 ->beforeLast(DIRECTORY_SEPARATOR),
         );
 

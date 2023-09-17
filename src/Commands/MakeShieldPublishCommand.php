@@ -23,7 +23,7 @@ class MakeShieldPublishCommand extends Command
 
         if ($this->checkForCollision([$roleResourcePath])) {
             $confirmed = confirm('Shield Resource already exists. Overwrite?');
-            if (!$confirmed) {
+            if (! $confirmed) {
                 exit(self::INVALID);
             }
         }

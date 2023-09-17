@@ -19,7 +19,7 @@ class MakeShieldUpgradeCommand extends Command
         try {
             $path = glob(database_path('migrations/*_filament_shield_settings_table.php'));
 
-            if (!blank($path) && File::exists($path[0])) {
+            if (! blank($path) && File::exists($path[0])) {
                 File::delete($path);
             }
 
