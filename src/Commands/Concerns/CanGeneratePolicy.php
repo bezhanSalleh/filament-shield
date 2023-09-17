@@ -45,7 +45,7 @@ trait CanGeneratePolicy
     {
         $stubVariables = collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
             ->reduce(function ($gates, $permission) use ($entity) {
-                $gates[Str::studly($permission)] = $permission.'_'.$entity['resource'];
+                $gates[Str::studly($permission)] = $permission . '_' . $entity['resource'];
 
                 return $gates;
             }, collect())->toArray();
@@ -60,9 +60,10 @@ trait CanGeneratePolicy
 
         $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
             ? 'App\Policies'
-            : Str::of($namespace)->replace('Models', 'Policies'); /** @phpstan-ignore-line */
+            : Str::of($namespace)->replace('Models', 'Policies');
+        /** @phpstan-ignore-line */
         $stubVariables['model_name'] = $entity['model'];
-        $stubVariables['model_fqcn'] = $namespace.'\\'.$entity['model'];
+        $stubVariables['model_fqcn'] = $namespace . '\\' . $entity['model'];
         $stubVariables['model_variable'] = Str::of($entity['model'])->camel();
         $stubVariables['modelPolicy'] = "{$entity['model']}Policy";
 
