@@ -35,8 +35,8 @@ The easiest and most intuitive way to add access management to your Filament Adm
 > **Note** 
 > For **Filament 2.x** use **[2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)** branch
 
-
 <hr style="background-color: #ebb304">
+
 ## Installation
 
 1. Install the package via composer:
