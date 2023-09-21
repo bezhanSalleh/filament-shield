@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.2 - 2023-09-21
+
+### What's Changed
+
+- Introduce new fresh look for Artisan command by @datlechin in https://github.com/bezhanSalleh/filament-shield/pull/233
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.1...3.0.2
+
 ## 3.0.1 - 2023-09-16
 
 **what's new**
