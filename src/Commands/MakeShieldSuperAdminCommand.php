@@ -2,18 +2,18 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Filament\Facades\Filament;
-use Illuminate\Console\Command;
-use function Laravel\Prompts\text;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Support\Facades\Hash;
-use function Laravel\Prompts\password;
-use Illuminate\Auth\EloquentUserProvider;
-
-use Illuminate\Contracts\Auth\UserProvider;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Illuminate\Contracts\Auth\Authenticatable;
 use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Facades\Filament;
+use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Console\Command;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Support\Facades\Hash;
+
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
 
 class MakeShieldSuperAdminCommand extends Command
 {
