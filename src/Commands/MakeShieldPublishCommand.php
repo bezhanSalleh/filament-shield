@@ -5,6 +5,7 @@ namespace BezhanSalleh\FilamentShield\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\confirm;
 
 class MakeShieldPublishCommand extends Command
@@ -17,8 +18,8 @@ class MakeShieldPublishCommand extends Command
 
     public function handle(Filesystem $filesystem): void
     {
-        $baseResourcePath = app_path((string)Str::of('Filament\\Resources\\Shield')->replace('\\', '/'));
-        $roleResourcePath = app_path((string)Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
+        $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'));
+        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
 
         if ($this->checkForCollision([$roleResourcePath])) {
             $confirmed = confirm('Shield Resource already exists. Overwrite?');

@@ -9,7 +9,9 @@ use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
-use function Laravel\Prompts\{text, password};
+
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
 
 class MakeShieldSuperAdminCommand extends Command
 {
@@ -80,7 +82,7 @@ class MakeShieldSuperAdminCommand extends Command
                 label: 'Email address',
                 required: true,
                 validate: fn (string $email): ?string => match (true) {
-                    !filter_var($email, FILTER_VALIDATE_EMAIL) => 'The email address must be valid.',
+                    ! filter_var($email, FILTER_VALIDATE_EMAIL) => 'The email address must be valid.',
                     $provider->getModel()::where('email', $email)->exists() => 'A user with this email address already exists',
                     default => null,
                 },

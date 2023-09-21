@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
+
 use function Laravel\Prompts\confirm;
 
 class MakeShieldInstallCommand extends Command
@@ -23,7 +24,7 @@ class MakeShieldInstallCommand extends Command
 
     public function handle(): void
     {
-        if (!Utils::isAuthProviderConfigured()) {
+        if (! Utils::isAuthProviderConfigured()) {
             $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
 
             exit(self::INVALID);

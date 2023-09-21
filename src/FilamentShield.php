@@ -109,8 +109,6 @@ class FilamentShield
 
     /**
      * Transform filament resources to key value pair for shield
-     *
-     * @return array
      */
     public function getResources(): ?array
     {
@@ -182,8 +180,6 @@ class FilamentShield
 
     /**
      * Transform filament pages to key value pair for shield
-     *
-     * @return array
      */
     public static function getPages(): ?array
     {
@@ -233,8 +229,6 @@ class FilamentShield
 
     /**
      * Transform filament widgets to key value pair for shield
-     *
-     * @return array
      */
     public static function getWidgets(): ?array
     {
