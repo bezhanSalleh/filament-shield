@@ -2,16 +2,18 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\FilamentShield;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
-use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Facades\Hash;
-
-use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Hash;
+use function Laravel\Prompts\password;
+use Illuminate\Auth\EloquentUserProvider;
+
+use Illuminate\Contracts\Auth\UserProvider;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Contracts\Auth\Authenticatable;
+use BezhanSalleh\FilamentShield\FilamentShield;
 
 class MakeShieldSuperAdminCommand extends Command
 {
@@ -24,32 +26,49 @@ class MakeShieldSuperAdminCommand extends Command
 
     protected Authenticatable $superAdmin;
 
-    public function handle(): int
+    protected function getAuthGuard(): Guard
     {
         if ($this->option('panel')) {
             Filament::setCurrentPanel(Filament::getPanel($this->option('panel')));
         }
 
-        $auth = Filament::getCurrentPanel()?->auth();
+        return Filament::getCurrentPanel()?->auth();
+    }
 
-        $userProvider = $auth->getProvider();
+    protected function getUserProvider(): UserProvider
+    {
+        return $this->getAuthGuard()->getProvider();
+    }
+
+    protected function getUserModel(): string
+    {
+        /** @var EloquentUserProvider $provider */
+        $provider = $this->getUserProvider();
+
+        return $provider->getModel();
+    }
+
+    public function handle(): int
+    {
+        $usersCount = static::getUserModel()::count();
 
         if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
             FilamentShield::createRole();
         }
 
         if ($this->option('user')) {
-            $this->superAdmin = $userProvider->getModel()::findOrFail($this->option('user'));
-        } elseif ($usersCount = $userProvider->getModel()::count() === 1) {
-            $this->superAdmin = $userProvider->getModel()::first();
+            $this->superAdmin = static::getUserModel()::findOrFail($this->option('user'));
+        } elseif ($usersCount === 1) {
+            $this->superAdmin = static::getUserModel()::first();
         } elseif ($usersCount > 1) {
             $this->table(
                 ['ID', 'Name', 'Email', 'Roles'],
-                $userProvider->getModel()::with('roles')->get()->map(function (Authenticatable $user) {
+                static::getUserModel()::with('roles')->get()->map(function (Authenticatable $user) {
                     return [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
+                        'id' => $user->getAttribute('id'),
+                        'name' => $user->getAttribute('name'),
+                        'email' => $user->getAttribute('email'),
+                        /** @phpstan-ignore-next-line */
                         'roles' => implode(',', $user->roles->pluck('name')->toArray()),
                     ];
                 })
@@ -60,9 +79,9 @@ class MakeShieldSuperAdminCommand extends Command
                 required: true
             );
 
-            $this->superAdmin = $userProvider->getModel()::findOrFail($superAdminId);
+            $this->superAdmin = static::getUserModel()::findOrFail($superAdminId);
         } else {
-            $this->superAdmin = $this->createSuperAdmin($userProvider);
+            $this->superAdmin = $this->createSuperAdmin();
         }
 
         $this->superAdmin->assignRole(Utils::getSuperAdminName());
@@ -74,16 +93,16 @@ class MakeShieldSuperAdminCommand extends Command
         exit(self::SUCCESS);
     }
 
-    protected function createSuperAdmin(EloquentUserProvider $provider): Authenticatable
+    protected function createSuperAdmin(): Authenticatable
     {
-        return $provider->getModel()::create([
+        return static::getUserModel()::create([
             'name' => text(label: 'Name', required: true),
             'email' => text(
                 label: 'Email address',
                 required: true,
                 validate: fn (string $email): ?string => match (true) {
                     ! filter_var($email, FILTER_VALIDATE_EMAIL) => 'The email address must be valid.',
-                    $provider->getModel()::where('email', $email)->exists() => 'A user with this email address already exists',
+                    static::getUserModel()::where('email', $email)->exists() => 'A user with this email address already exists',
                     default => null,
                 },
             ),
