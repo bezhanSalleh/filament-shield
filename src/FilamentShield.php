@@ -219,7 +219,7 @@ class FilamentShield
     {
         $object = static::transformClassString($page);
 
-        $pageObject = invade(new $object());
+        $pageObject = new $object();
 
         return $pageObject->getTitle()
                 ?? $pageObject->getHeading()
