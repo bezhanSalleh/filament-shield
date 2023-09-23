@@ -13,7 +13,7 @@ class MakeShieldDoctorCommand extends Command
 
     public $description = 'Show useful info about Filament Shield';
 
-    public function handle(): void
+    public function handle(): int
     {
         AboutCommand::add('Filament Shield', [
             'Auth Provider' => Utils::getAuthProviderFQCN() . '|' . static::authProviderConfigured(),
@@ -31,7 +31,7 @@ class MakeShieldDoctorCommand extends Command
             '--only' => 'filament_shield',
         ]);
 
-        exit(self::SUCCESS);
+        return self::SUCCESS;
     }
 
     protected static function authProviderConfigured(): string

@@ -90,7 +90,7 @@ class MakeShieldSuperAdminCommand extends Command
 
         $this->components->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
 
-        exit(self::SUCCESS);
+        return self::SUCCESS;
     }
 
     protected function createSuperAdmin(): Authenticatable

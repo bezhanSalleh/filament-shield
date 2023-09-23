@@ -14,7 +14,7 @@ class MakeShieldUpgradeCommand extends Command
 
     public $description = 'Upgrade shield';
 
-    public function handle(): void
+    public function handle(): int
     {
         try {
             $path = glob(database_path('migrations/*_filament_shield_settings_table.php'));
@@ -37,11 +37,11 @@ class MakeShieldUpgradeCommand extends Command
         } catch (Throwable $e) {
             $this->components->info($e);
 
-            exit(self::FAILURE);
+            return self::FAILURE;
         }
 
         $this->components->info('Filament Shield upgraded.');
 
-        exit(self::SUCCESS);
+        return self::SUCCESS;
     }
 }
