@@ -2,6 +2,19 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.3 - 2023-09-23
+
+### What's Changed
+
+- php exit function replace to return by @mahavishnup in https://github.com/bezhanSalleh/filament-shield/pull/234
+- Feature/panel user by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/236
+
+### New Contributors
+
+- @mahavishnup made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/234
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.2...3.0.3
+
 ## 3.0.2 - 2023-09-21
 
 ### What's Changed
