@@ -3,6 +3,7 @@
 namespace BezhanSalleh\FilamentShield\Support;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -81,6 +82,23 @@ class Utils
     public static function getSuperAdminGateInterceptionStatus(): string
     {
         return (string) config('filament-shield.super_admin.intercept_gate');
+    }
+
+    public static function isPanelUserRoleEnabled(): bool
+    {
+        return (bool) config('filament-shield.panel_user.enabled', false);
+    }
+
+    public static function getPanelUserRoleName(): string
+    {
+        return (string) config('filament-shield.panel_user.name', 'panel_user');
+    }
+
+    public static function createPanelUserRole(): void
+    {
+        if (static::isPanelUserRoleEnabled()) {
+            FilamentShield::createRole(name: Utils::getPanelUserRoleName());
+        }
     }
 
     public static function getGeneralResourcePermissionPrefixes(): array
