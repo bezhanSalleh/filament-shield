@@ -2,7 +2,7 @@
 <img style="width: 100%; max-width: 100%;" alt="filament-shield-art" src="https://user-images.githubusercontent.com/10007504/148662315-35d4bd74-fc1c-4f8c-8c02-689309b414b0.png" >
 </a>
 
-<p align="center" class="flex justify-center items-center">
+<p align="center" class="flex items-center justify-center">
     <a href="https://filamentadmin.com/docs/2.x/admin/installation">
         <img alt="FILAMENT 8.x" src="https://img.shields.io/badge/FILAMENT-3.x-EBB304?style=for-the-badge">
     </a>
@@ -81,6 +81,24 @@ Follow the prompts and enjoy!
 ## Filament Panels
 If you want to enable `Shield` for more than one panel then you need to register the plugin for each panel as mentioned above.
 
+### Panel Access
+Shield comes with the `HasPanelShield` trait which provides an easy way to integrate Shield's conventions with the Filament's panel access system.
+
+The `HasPanelShield` trait provides an implementation for the `canAccessPanel` method, determining access based on whether the user possesses the `super_admin` role or the `panel_user` role. It also assigns the `panel_user` role to the user upon creation and removes it upon deletion. Ofcourse the role names can be changed from the plugin's configuration file.
+
+```php
+use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable implements FilamentUser
+{
+    use HasRoles;
+    use HasPanelShield;
+    // ...
+}
+```
 #### Resources
 Generally there are two scenarios that shield handles permissions for your `Filament` resources.
 
