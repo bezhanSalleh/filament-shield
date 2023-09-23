@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
-use Filament\Panel;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Panel;
 
 trait HasPanelShield
 {
