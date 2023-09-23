@@ -71,7 +71,7 @@ class MakeShieldGenerateCommand extends Command
      */
     public $description = 'Generate Permissions and/or Policies for Filament entities.';
 
-    public function handle(): void
+    public function handle(): int
     {
         $this->determinGeneratorOptionAndEntities();
 
@@ -79,7 +79,7 @@ class MakeShieldGenerateCommand extends Command
             $this->components->error('No entites provided for the generators ...');
             $this->components->alert('Generation skipped');
 
-            exit(self::INVALID);
+            return self::INVALID;
         }
 
         if (filled($this->option('resource')) || $this->option('all')) {
@@ -105,7 +105,7 @@ class MakeShieldGenerateCommand extends Command
             Cache::forget('shield_general_exclude');
         }
 
-        exit(self::SUCCESS);
+        return self::SUCCESS;
     }
 
     protected function determinGeneratorOptionAndEntities(): void

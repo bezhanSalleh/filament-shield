@@ -22,12 +22,12 @@ class MakeShieldInstallCommand extends Command
 
     public $description = 'Setup Core Package requirements and Install Shield';
 
-    public function handle(): void
+    public function handle(): int
     {
         if (! Utils::isAuthProviderConfigured()) {
             $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
 
-            exit(self::INVALID);
+            return self::INVALID;
         }
 
         if ($this->option('minimal')) {
@@ -50,7 +50,7 @@ class MakeShieldInstallCommand extends Command
                 $this->install(true);
             }
 
-            exit(self::INVALID);
+            return self::INVALID;
         }
 
         if ($confirmed) {
@@ -75,7 +75,7 @@ class MakeShieldInstallCommand extends Command
             }
         }
 
-        exit(self::SUCCESS);
+        return self::SUCCESS;
     }
 
     protected function CheckIfAlreadyInstalled(): bool

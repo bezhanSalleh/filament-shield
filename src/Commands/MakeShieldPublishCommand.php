@@ -16,7 +16,7 @@ class MakeShieldPublishCommand extends Command
 
     public $description = "Publish filament shield's Resource.";
 
-    public function handle(Filesystem $filesystem): void
+    public function handle(Filesystem $filesystem): int
     {
         $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield')->replace('\\', '/'));
         $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
@@ -24,7 +24,7 @@ class MakeShieldPublishCommand extends Command
         if ($this->checkForCollision([$roleResourcePath])) {
             $confirmed = confirm('Shield Resource already exists. Overwrite?');
             if (! $confirmed) {
-                exit(self::INVALID);
+                return self::INVALID;
             }
         }
 
@@ -42,6 +42,6 @@ class MakeShieldPublishCommand extends Command
 
         $this->components->info("Shield's Resource have been published successfully!");
 
-        exit(self::SUCCESS);
+        return self::SUCCESS;
     }
 }

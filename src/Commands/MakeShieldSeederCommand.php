@@ -28,12 +28,12 @@ class MakeShieldSeederCommand extends Command
      */
     public $description = 'Create a seeder file from existing/configured roles and permission, that could be used within your deploy script.';
 
-    public function handle(): void
+    public function handle(): int
     {
         $path = database_path('seeders/ShieldSeeder.php');
 
         if (! $this->option('force') && $this->checkForCollision(paths: [$path])) {
-            exit(self::INVALID);
+            return self::INVALID;
         }
 
         if ($this->option('generate')) {
@@ -45,7 +45,7 @@ class MakeShieldSeederCommand extends Command
         if (Utils::getRoleModel()::doesntExist() && Utils::getPermissionModel()::doesntExist()) {
             $this->components->warn('There are no roles or permissions to create the seeder. Please first run `shield:generate --all`');
 
-            exit(self::INVALID);
+            return self::INVALID;
         }
 
         $directPermissionNames = collect();
@@ -90,6 +90,6 @@ class MakeShieldSeederCommand extends Command
         $this->components->info('ShieldSeeder generated successfully.');
         $this->components->info('Now you can use it in your deploy script. i.e: <fg=yellow>php artisan db:seed --class=ShieldSeeder</>');
 
-        exit(self::SUCCESS);
+        return self::SUCCESS;
     }
 }
