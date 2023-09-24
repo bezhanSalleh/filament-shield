@@ -6,9 +6,7 @@ namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Contracts\Plugin;
-use Filament\FilamentManager;
 use Filament\Panel;
-use Illuminate\Foundation\Mix;
 
 class FilamentShieldPlugin implements Plugin
 {
