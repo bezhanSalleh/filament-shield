@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Contracts\Plugin;
-use Filament\FilamentManager;
 use Filament\Panel;
+use Filament\FilamentManager;
+use Filament\Contracts\Plugin;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Concerns;
 
 class FilamentShieldPlugin implements Plugin
 {
+    use Concerns\CanCustomizeColumns;
+
     public static function make(): static
     {
         return app(static::class);
