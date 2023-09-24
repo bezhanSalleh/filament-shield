@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use Filament\Panel;
-use Filament\FilamentManager;
-use Filament\Contracts\Plugin;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Concerns;
+use Filament\Contracts\Plugin;
+use Filament\FilamentManager;
+use Filament\Panel;
 
 class FilamentShieldPlugin implements Plugin
 {

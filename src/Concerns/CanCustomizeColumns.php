@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Concerns;
 
-
 trait CanCustomizeColumns
 {
     protected int | string | array $checkboxListColumnSpan = 'full';

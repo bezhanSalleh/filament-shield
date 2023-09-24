@@ -2,22 +2,22 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Forms;
-use Filament\Tables;
+use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\Component;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
-use Filament\Forms\Components\Actions\Action as FormAction;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Support\Str;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
