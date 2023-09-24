@@ -226,23 +226,6 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->filters([
                 //
             ])
-            ->headerActions([
-                Tables\Actions\Action::make('new_permission')
-                    ->label('New Permission')
-                    ->form([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->unique('permissions', 'name'),
-                        Forms\Components\TextInput::make('guard_name')
-                            ->default(Utils::getFilamentAuthGuard()),
-                    ])
-                    ->modalHeading('Delete post')
-                    ->action(function (array $data): void {
-                        Utils::getPermissionModel()::create($data);
-                    })
-                    ->modalWidth('2xl')
-                    ->slideOver(),
-            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
