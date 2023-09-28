@@ -31,7 +31,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'nav.group' => 'Filament Shield',
+    'nav.group' => 'Rendszer',
     'nav.role.label' => 'Jogosultságok',
     'nav.role.icon' => 'heroicon-o-shield-check',
     'resource.label.role' => 'Jogosultság',
@@ -65,16 +65,16 @@ return [
 
     'resource_permission_prefixes_labels' => [
         'view' => 'Megtekintés',
-        'view_any' => 'Mind megtekintése',
+        'view_any' => 'Összes megtekintése',
         'create' => 'Létrehozás',
         'update' => 'Módosítás',
         'delete' => 'Törlés',
-        'delete_any' => 'Mind törlése',
+        'delete_any' => 'Összes törlése',
         'force_delete' => 'Végleges törlés',
-        'force_delete_any' => 'Mind végeles törlése',
+        'force_delete_any' => 'Összes végeles törlése',
         'restore' => 'Helyreállítás',
         'reorder' => 'Sorbarendezés',
-        'restore_any' => 'Mind helyreállítása',
+        'restore_any' => 'Összes helyreállítása',
         'replicate' => 'Másolás',
     ],
 ];
