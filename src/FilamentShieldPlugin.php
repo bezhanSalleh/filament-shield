@@ -6,11 +6,12 @@ namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Contracts\Plugin;
-use Filament\FilamentManager;
 use Filament\Panel;
 
 class FilamentShieldPlugin implements Plugin
 {
+    use Concerns\CanCustomizeColumns;
+
     public static function make(): static
     {
         return app(static::class);
@@ -35,12 +36,11 @@ class FilamentShieldPlugin implements Plugin
         //
     }
 
-    /**
-     * Class MyClass overrides inline block form.
-     *
-     * @phpstan-ignore-next-line */
-    public static function get(): Plugin | FilamentManager
+    public static function get(): static
     {
-        return filament(app(static::class)->getId());
+        /** @var static $plugin */
+        $plugin = filament(app(static::class)->getId());
+
+        return $plugin;
     }
 }
