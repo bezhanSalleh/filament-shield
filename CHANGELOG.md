@@ -2,6 +2,19 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.4 - 2023-10-02
+
+### What's Changed
+
+- Feature/column grid customizations by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/238
+- Update Hungarian translate by @gergo85 in https://github.com/bezhanSalleh/filament-shield/pull/239
+
+### New Contributors
+
+- @gergo85 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/239
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.3...3.0.4
+
 ## 3.0.3 - 2023-09-23
 
 ### What's Changed
