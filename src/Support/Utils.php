@@ -6,6 +6,7 @@ use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class Utils
@@ -96,9 +97,14 @@ class Utils
 
     public static function createPanelUserRole(): void
     {
-        if (static::isPanelUserRoleEnabled()) {
+        if (static::isPanelUserRoleEnabled() && Schema::hasTable(static::getRoleTable())) {
             FilamentShield::createRole(name: Utils::getPanelUserRoleName());
         }
+    }
+
+    public static function getRoleTable(): string
+    {
+        return config('permission.table_names.roles', 'roles');
     }
 
     public static function getGeneralResourcePermissionPrefixes(): array
