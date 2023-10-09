@@ -231,7 +231,7 @@ to
 ```php
 'nav.group' => 'User Management',
 ```
-apply this to each lanugage you have groups in.
+apply this to each language you have groups in.
 
 #### Pages
 
