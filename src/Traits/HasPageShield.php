@@ -66,6 +66,6 @@ trait HasPageShield
 
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
-        return parent::shouldRegisterNavigation();
+        return static::canView() && parent::shouldRegisterNavigation();
     }
 }
