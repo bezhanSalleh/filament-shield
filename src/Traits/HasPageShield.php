@@ -53,15 +53,21 @@ trait HasPageShield
 
     public static function canView(): bool
     {
+        dd(static::getPermissionName());
+
         return Filament::auth()->user()->can(static::getPermissionName()) || Filament::auth()->user()->hasRole(Utils::getSuperAdminName());
     }
 
     protected static function getPermissionName(): string
     {
-        $prepend = Str::of(Utils::getPagePermissionPrefix())->append('_');
-
         return Str::of(class_basename(static::class))
-            ->prepend($prepend);
+            ->prepend(
+                Str::of(Utils::getPagePermissionPrefix())
+                    ->append('_')
+                    ->toString()
+            )
+            ->lower()
+            ->toString();
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

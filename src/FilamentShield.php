@@ -68,7 +68,7 @@ class FilamentShield
     {
         if (Utils::isPageEntityEnabled()) {
             $permission = Utils::getPermissionModel()::firstOrCreate(
-                ['name' => $page],
+                ['name' => str($page)->lower()->toString()],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
 
@@ -80,7 +80,7 @@ class FilamentShield
     {
         if (Utils::isWidgetEntityEnabled()) {
             $permission = Utils::getPermissionModel()::firstOrCreate(
-                ['name' => $widget],
+                ['name' => str($widget)->lower()->toString()],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
 
