@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.6 - 2023-10-27
+
+### What's Changed
+
+- Fix/permission name by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/261
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.5...3.0.6
+
 ## 3.0.5 - 2023-10-27
 
 ### What's Changed
