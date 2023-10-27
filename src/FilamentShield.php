@@ -223,7 +223,7 @@ class FilamentShield
     public static function getLocalizedPageLabel(string $page): string
     {
         $object = static::transformClassString($page);
-        
+
         $pageObject = new $object();
 
         return $pageObject->getTitle()
