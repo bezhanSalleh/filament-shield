@@ -205,8 +205,8 @@ class FilamentShield
                 $name = Str::of(class_basename($page))
                     ->prepend(
                         Str::of(Utils::getPagePermissionPrefix())
-                        ->append('_')
-                        ->toString()
+                            ->append('_')
+                            ->toString()
                     )
                     ->lower()
                     ->toString();
@@ -260,8 +260,8 @@ class FilamentShield
                 $name = Str::of(class_basename($widget))
                     ->prepend(
                         Str::of(Utils::getWidgetPermissionPrefix())
-                        ->append('_')
-                        ->toString()
+                            ->append('_')
+                            ->toString()
                     )
                     ->lower()
                     ->toString();
