@@ -21,7 +21,6 @@ trait HasWidgetShield
                     ->append('_')
                     ->toString()
             )
-            ->lower()
             ->toString();
     }
 }

@@ -68,7 +68,7 @@ class FilamentShield
     {
         if (Utils::isPageEntityEnabled()) {
             $permission = Utils::getPermissionModel()::firstOrCreate(
-                ['name' => str($page)->lower()->toString()],
+                ['name' => $page],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
 
@@ -80,7 +80,7 @@ class FilamentShield
     {
         if (Utils::isWidgetEntityEnabled()) {
             $permission = Utils::getPermissionModel()::firstOrCreate(
-                ['name' => str($widget)->lower()->toString()],
+                ['name' => $widget],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             )->name;
 
@@ -208,7 +208,6 @@ class FilamentShield
                             ->append('_')
                             ->toString()
                     )
-                    ->lower()
                     ->toString();
 
                 $pages["{$name}"] = "{$name}";
@@ -224,7 +223,7 @@ class FilamentShield
     public static function getLocalizedPageLabel(string $page): string
     {
         $object = static::transformClassString($page);
-
+        
         $pageObject = new $object();
 
         return $pageObject->getTitle()
@@ -263,7 +262,6 @@ class FilamentShield
                             ->append('_')
                             ->toString()
                     )
-                    ->lower()
                     ->toString();
 
                 $widgets["{$name}"] = "{$name}";

@@ -262,7 +262,7 @@ class MakeShieldGenerateCommand extends Command
                     return [
                         '#' => $key + 1,
                         'Page' => Str::replace(config('filament-shield.permission_prefixes.page') . '_', '', $page),
-                        'Permission' => str($page)->lower()->toString(),
+                        'Permission' => $page,
                     ];
                 })
             );
@@ -281,7 +281,7 @@ class MakeShieldGenerateCommand extends Command
                     return [
                         '#' => $key + 1,
                         'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget') . '_', '', $widget),
-                        'Permission' => str($widget)->lower()->toString(),
+                        'Permission' => $widget,
                     ];
                 })
             );

@@ -64,7 +64,6 @@ trait HasPageShield
                     ->append('_')
                     ->toString()
             )
-            ->lower()
             ->toString();
     }
 
