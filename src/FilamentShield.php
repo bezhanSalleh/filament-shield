@@ -201,9 +201,15 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($pages, $page) {
-                $prepend = Str::of(Utils::getPagePermissionPrefix())->append('_');
+
                 $name = Str::of(class_basename($page))
-                    ->prepend($prepend);
+                    ->prepend(
+                        Str::of(Utils::getPagePermissionPrefix())
+                            ->append('_')
+                            ->toString()
+                    )
+                    ->lower()
+                    ->toString();
 
                 $pages["{$name}"] = "{$name}";
 
@@ -250,9 +256,15 @@ class FilamentShield
                 return true;
             })
             ->reduce(function ($widgets, $widget) {
-                $prepend = Str::of(Utils::getWidgetPermissionPrefix())->append('_');
+
                 $name = Str::of(class_basename($widget))
-                    ->prepend($prepend);
+                    ->prepend(
+                        Str::of(Utils::getWidgetPermissionPrefix())
+                            ->append('_')
+                            ->toString()
+                    )
+                    ->lower()
+                    ->toString();
 
                 $widgets["{$name}"] = "{$name}";
 
