@@ -2,6 +2,24 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.5 - 2023-10-27
+
+### What's Changed
+
+- Fix widget and permission name case by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/259
+- Add Armenian translation by @ArtMin96 in https://github.com/bezhanSalleh/filament-shield/pull/256
+- add $parameters to shouldRegisterNavigation by @rupadana in https://github.com/bezhanSalleh/filament-shield/pull/249
+- Update README.md by @fetova in https://github.com/bezhanSalleh/filament-shield/pull/242
+- Bump stefanzweifel/git-auto-commit-action from 4 to 5 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/245
+
+### New Contributors
+
+- @fetova made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/242
+- @rupadana made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/249
+- @ArtMin96 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/256
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.4...3.0.5
+
 ## 3.0.4 - 2023-10-02
 
 ### What's Changed
