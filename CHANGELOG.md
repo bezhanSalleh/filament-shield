@@ -2,6 +2,13 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.9 - 2023-10-27
+
+**What's new in 3.0.9?**
+
+- Revert to 3.0.4 to fix permission generation for pages and widgets. The issue is user related not package.   
+  **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.8...3.0.9
+
 ## 3.0.8 - 2023-10-27
 
 **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.7...3.0.8
