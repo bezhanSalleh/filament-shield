@@ -358,7 +358,7 @@ class AuthServiceProvider extends ServiceProvider
 
     ];
 ```
-#### Users
+#### Users (Assigning Roles to Users)
 Shield does not come with a way to assign roles to your users out of the box, however you can easily assign roles to your users using Filament `Forms`'s `Select` or `CheckboxList` component. Inside your users `Resrouce`'s form add one of these components and configure them as you need:
 ```php
 // Using Select Component
@@ -378,6 +378,39 @@ You can find out more about these components in the [Filament Docs](https://fila
 
 - [Select](https://filamentphp.com/docs/3.x/forms/fields/select)
 - [CheckboxList](https://filamentphp.com/docs/3.x/forms/fields/checkbox-list)
+
+#### Layout Customization
+You can easily customize the `Grid`, `Section` and `CheckboxList`'s `columns()` and `columnSpan()` without publishing the resource.
+```php
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+
+public function panel(Panel $panel): Panel
+{
+        return $panel
+            ...
+            ...
+            ->plugins([
+                FilamentShieldPlugin::make()
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 4,
+                    ])
+                    ->resourceCheckboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ]),
+            ]);
+}
+```
+<img width="1161" alt="Screenshot 2023-09-24 at 10 34 31 PM" src="https://github.com/bezhanSalleh/filament-shield/assets/10007504/be42bab2-72d1-4db0-8de4-8b8fba2d4e68">
+
 #### Translations 
 
 Publish the translations using:
