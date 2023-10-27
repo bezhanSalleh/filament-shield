@@ -54,6 +54,7 @@ trait HasPageShield
     public static function canView(): bool
     {
         dd(static::getPermissionName());
+
         return Filament::auth()->user()->can(static::getPermissionName()) || Filament::auth()->user()->hasRole(Utils::getSuperAdminName());
     }
 
