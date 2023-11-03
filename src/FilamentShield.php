@@ -6,6 +6,8 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Support\Concerns\EvaluatesClosures;
+use Filament\Widgets\TableWidget;
+use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
@@ -273,30 +275,20 @@ class FilamentShield
 
     /**
      * Get localized widget label
-     *
-     * @param  string  $page
-     * @return string|bool
      */
     public static function getLocalizedWidgetLabel(string $widget): string
     {
         $class = static::transformClassString($widget, false);
-        $parent = get_parent_class($class);
-        $grandpa = get_parent_class($parent);
 
-        $heading = Str::of($widget)
-            ->after(Utils::getPagePermissionPrefix() . '_')
-            ->headline();
+        $widgetInstance = app()->make($class);
 
-        if ($grandpa === "Filament\Widgets\ChartWidget") {
-            return (string) (invade(new $class())->getHeading() ?? $heading);
-        }
-
-        return match ($parent) {
-            "Filament\Widgets\TableWidget" => (string) invade(new $class())->makeTable()->getHeading(),
-            "Filament\Widgets\StatsOverviewWidget" => (string) static::hasHeadingForShield($class)
-                ? (new $class())->getHeadingForShield()
-                : $heading,
-            default => $heading
+        return match (true) {
+            $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
+            ! ($widgetInstance instanceof TableWidget) && $widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading') => (string) $widgetInstance->getHeading(),
+            default => Str::of($widget)
+                ->after(Utils::getWidgetPermissionPrefix() . '_')
+                ->headline()
+                ->toString(),
         };
     }
 
