@@ -359,7 +359,7 @@ class AuthServiceProvider extends ServiceProvider
     ];
 ```
 #### Users (Assigning Roles to Users)
-Shield does not come with a way to assign roles to your users out of the box, however you can easily assign roles to your users using Filament `Forms`'s `Select` or `CheckboxList` component. Inside your users `Resrouce`'s form add one of these components and configure them as you need:
+Shield does not come with a way to assign roles to your users out of the box, however you can easily assign roles to your users using Filament `Forms`'s `Select` or `CheckboxList` component. Inside your users `Resource`'s form add one of these components and configure them as you need:
 ```php
 // Using Select Component
 Forms\Components\Select::make('roles')
