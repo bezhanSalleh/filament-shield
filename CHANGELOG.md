@@ -2,6 +2,23 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.10 - 2023-11-03
+
+### What's Changed
+
+- Fixed role name uniqueness by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/271
+- Fixed widgets localized labels by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/270
+- Enhance Arabic Translations in filament-shield.php by @majdghithan in https://github.com/bezhanSalleh/filament-shield/pull/268
+- typo in README.md by @majdghithan in https://github.com/bezhanSalleh/filament-shield/pull/267
+- Add czech translations by @tomas-doudera in https://github.com/bezhanSalleh/filament-shield/pull/265
+
+### New Contributors
+
+- @tomas-doudera made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/265
+- @majdghithan made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/267
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.9...3.0.10
+
 ## 3.0.9 - 2023-10-27
 
 **What's new in 3.0.9?**
