@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.11 - 2023-11-03
+
+**What's new in 3.0.11?**
+
+- Support for `spatie/laravel-permission` version 6.0
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.10...3.0.11
+
 ## 3.0.10 - 2023-11-03
 
 ### What's Changed
