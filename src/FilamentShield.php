@@ -2,16 +2,16 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Illuminate\Support\Str;
-use Filament\Widgets\Widget;
 use Filament\Facades\Filament;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\TableWidget;
+use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShield
 {
@@ -275,9 +275,6 @@ class FilamentShield
 
     /**
      * Get localized widget label
-     *
-     * @param  string  $widget
-     * @return string
      */
     public static function getLocalizedWidgetLabel(string $widget): string
     {
@@ -287,7 +284,7 @@ class FilamentShield
 
         return match (true) {
             $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
-            !($widgetInstance instanceof TableWidget) && $widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading') => (string) $widgetInstance->getHeading(),
+            ! ($widgetInstance instanceof TableWidget) && $widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading') => (string) $widgetInstance->getHeading(),
             default => Str::of($widget)
                 ->after(Utils::getWidgetPermissionPrefix() . '_')
                 ->headline()
