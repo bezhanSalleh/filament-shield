@@ -44,6 +44,11 @@ class Utils
         return config('filament-shield.shield_resource.navigation_badge', true);
     }
 
+    public static function isScopedToTenant(): bool
+    {
+        return config('filament-shield.shield_resource.is_scoped_to_tenant');
+    }
+
     public static function isResourceNavigationGroupEnabled(): bool
     {
         return config('filament-shield.shield_resource.navigation_group', true);
