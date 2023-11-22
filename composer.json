@@ -26,7 +26,7 @@
         "php": "^8.1",
         "filament/filament": "^3.0",
         "spatie/laravel-package-tools": "^1.9",
-        "spatie/laravel-permission": "^5.0"
+        "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
