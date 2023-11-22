@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.0.13 - 2023-11-22
+
+### What's Changed
+
+- drop support for spatie permission 6.0 by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/279
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.0.12...3.0.13
+
 ## 3.0.12 - 2023-11-22
 
 ### What's Changed
