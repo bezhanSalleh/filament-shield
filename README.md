@@ -36,7 +36,7 @@ The easiest and most intuitive way to add access management to your Filament Adm
 > For **Filament 2.x** use **[2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)** branch
 
 > [!IMPORTANT]
-> - Prior to v3.1.0 Shield supported (spatie/laravel-permission)[https://packagist.org/packages/spatie/laravel-permission]:^5.0 which has some breaking changes around migrations. If you are upgrading from a version prior to v3.1.0 please make sure to remove the old migration file and republish the new one.
+> - Prior to v3.1.0 Shield supported (spatie/laravel-permission)[https://packagist.org/packages/spatie/laravel-permission]:^5.0 and now it support version 6.0. Which has some breaking changes around migrations. If you are upgrading from a version prior to v3.1.0 please make sure to remove the old migration file and republish the new one.
 
 <hr style="background-color: #ebb304">
 
