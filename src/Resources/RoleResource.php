@@ -307,6 +307,11 @@ class RoleResource extends Resource implements HasShieldPermissions
             : null;
     }
 
+    public static function isScopedToTenant(): bool
+    {
+        return Utils::isScopedToTenant();
+    }
+
     public static function canGloballySearch(): bool
     {
         return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
