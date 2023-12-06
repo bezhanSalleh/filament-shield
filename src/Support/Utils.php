@@ -66,7 +66,7 @@ class Utils
 
     public static function isAuthProviderConfigured(): bool
     {
-        return in_array("Spatie\Permission\Traits\HasRoles", class_uses(static::getAuthProviderFQCN()));
+        return in_array("Spatie\Permission\Traits\HasRoles", class_uses_recursive(static::getAuthProviderFQCN()));
     }
 
     public static function isSuperAdminEnabled(): bool
