@@ -101,7 +101,7 @@ class FilamentShield
         }
     }
 
-    public static function createRole(string $name = null)
+    public static function createRole(?string $name = null)
     {
         return Utils::getRoleModel()::firstOrCreate(
             ['name' => $name ?? Utils::getSuperAdminName()],
