@@ -284,7 +284,7 @@ class FilamentShield
 
         return match (true) {
             $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
-            ! ($widgetInstance instanceof TableWidget) && $widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading') => (string) $widgetInstance->getHeading(),
+            ! ($widgetInstance instanceof TableWidget) && $widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading') => (string) invade($widgetInstance)->getHeading(),
             default => Str::of($widget)
                 ->after(Utils::getWidgetPermissionPrefix() . '_')
                 ->headline()
