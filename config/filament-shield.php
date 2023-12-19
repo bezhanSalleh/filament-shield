@@ -57,6 +57,7 @@ return [
 
     'generator' => [
         'option' => 'policies_and_permissions',
+        'policy_path_prefix' => 'Policies',
     ],
 
     'exclude' => [
