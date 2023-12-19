@@ -328,9 +328,9 @@ class IncomeWidget extends LineChartWidget
 }
 ```
 
-#### Role Policy
+### Policies
 
-You can skip this if have set the `enabled => true` in the config.
+#### Role Policy
 To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AuthServiceProvider`:
 
 ```php
@@ -339,6 +339,30 @@ To ensure `RoleResource` access via `RolePolicy` you would need to add the follo
 protected $policies = [
     'Spatie\Permission\Models\Role' => 'App\Policies\RolePolicy',
 ];
+...
+```
+
+**You can skip it if you have enabled it from the `config`:**
+
+```php
+// config/filament-shield.php
+...
+
+'register_role_policy' => [
+    'enabled' => true,
+],
+...
+```
+
+#### Policy Path
+If your policies are not in the default `Policies` directory in the `app_path()` you can change the directory name in the config file:
+
+```php
+...
+'generator' => [
+    'option' => 'policies_and_permissions',
+    'policy_directory' => 'Policies',
+],
 ...
 ```
 
