@@ -2,6 +2,22 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.1.2 - 2023-12-19
+
+### What's Changed
+
+* [fix] Third-party `Widget` plugins issue by @nicko170 in https://github.com/bezhanSalleh/filament-shield/pull/284
+* [fix] Updating `ShieldSeeder` stub by @torosegon in https://github.com/bezhanSalleh/filament-shield/pull/290
+* [feature] Make policy directory configurable by @lhilton in https://github.com/bezhanSalleh/filament-shield/pull/291
+* [fix] `App\Policies\Role` doesn't exists by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/293
+
+### New Contributors
+
+* @nicko170 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/284
+* @lhilton made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/291
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.1.1...3.1.2
+
 ## 3.1.1 - 2023-12-06
 
 ### What's Changed
