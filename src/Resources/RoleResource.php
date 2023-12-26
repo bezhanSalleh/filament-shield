@@ -303,7 +303,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function getNavigationBadge(): ?string
     {
         return Utils::isResourceNavigationBadgeEnabled()
-            ? static::getModel()::count()
+            ? static::getEloquentQuery()->count()
             : null;
     }
 
