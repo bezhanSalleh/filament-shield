@@ -19,8 +19,8 @@ return [
     |------------------------------------------------- -------------------------
     */
 
-    'field.name' => 'Ім\'я',
-    'field.guard_name' => 'Ім\'я гварда',
+    'field.name' => 'Назва',
+    'field.guard_name' => 'Назва гварда',
     'field.permissions' => 'Дозволи',
     'field.select_all.name' => 'Вибрати все',
     'field.select_all.message' => 'Включити всі дозволи, які <span class="text-primary font-medium">Доступні</span> для цієї ролі',
@@ -65,16 +65,16 @@ return [
 
     'resource_permission_prefixes_labels' => [
         'view' => 'Перегляд',
-        'view_any' => 'Може дивитися будь-яке',
-        'create' => 'Створення',
-        'update' => 'Оновлення',
-        'delete' => 'Видалення',
-        'delete_any' => 'Може видалити будь-який',
-        'force_delete' => 'Примусово видалити',
-        'force_delete_any' => 'Може примусово видалити будь-який',
-        'restore' => 'Відновлення',
-        'reorder' => 'Зміна порядку',
-        'restore_any' => 'Може відновити будь-який',
+        'view_any' => 'Перегляд будь-якого',
+        'create' => 'Створити',
+        'update' => 'Оновити',
+        'delete' => 'Видалити',
+        'delete_any' => 'Видалити будь-яке',
+        'force_delete' => 'Примусове видалення',
+        'force_delete_any' => 'Примусово видалити будь-яке',
+        'restore' => 'Відновити',
+        'reorder' => 'Змінити порядок',
+        'restore_any' => 'Відновити будь-яке',
         'replicate' => 'Копіювати',
     ],
 ];
