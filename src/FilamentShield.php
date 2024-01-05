@@ -279,17 +279,22 @@ class FilamentShield
     public static function getLocalizedWidgetLabel(string $widget): string
     {
         $class = static::transformClassString($widget, false);
-
         $widgetInstance = app()->make($class);
 
-        return match (true) {
-            $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
-            ! ($widgetInstance instanceof TableWidget) && $widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading') => (string) invade($widgetInstance)->getHeading(),
-            default => Str::of($widget)
-                ->after(Utils::getWidgetPermissionPrefix() . '_')
-                ->headline()
-                ->toString(),
-        };
+        if ($widgetInstance instanceof TableWidget) {
+            $invadedInstance = invade($widgetInstance);
+            $table = $invadedInstance->table($invadedInstance->makeTable());
+            return (string) $table->getHeading();
+        }
+
+        if ($widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading')) {
+            return (string) $widgetInstance->getHeading();
+        }
+
+        return Str::of($widget)
+            ->after(Utils::getWidgetPermissionPrefix() . '_')
+            ->headline()
+            ->toString();
     }
 
     protected static function transformClassString(string $string, bool $isPageClass = true): string
