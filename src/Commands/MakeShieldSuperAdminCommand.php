@@ -84,7 +84,14 @@ class MakeShieldSuperAdminCommand extends Command
             $this->superAdmin = $this->createSuperAdmin();
         }
 
-        $this->superAdmin->assignRole(Utils::getSuperAdminName());
+        if (config('permission.teams')) {
+            foreach ($this->superAdmin->teams as $team) {
+                setPermissionsTeamId($team->id);
+                $this->superAdmin->assignRole(Utils::getSuperAdminName());
+            }
+        } else {
+            $this->superAdmin->assignRole(Utils::getSuperAdminName());
+        }
 
         $loginUrl = Filament::getCurrentPanel()?->getLoginUrl();
 
