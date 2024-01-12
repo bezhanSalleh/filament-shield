@@ -125,28 +125,24 @@ class FilamentShield
         }
 
         return collect($resources)
-            ->unique()
-            ->filter(function ($resource) {
+            ->reject(function ($resource) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(
+                    return in_array(
                         Str::of($resource)->afterLast('\\'),
                         Utils::getExcludedResouces()
                     );
                 }
-
-                return true;
             })
-            ->reduce(function ($resources, $resource) {
+            ->mapWithKeys(function($resource) {
                 $name = $this->getPermissionIdentifier($resource);
-
-                $resources["{$name}"] = [
-                    'resource' => "{$name}",
-                    'model' => Str::of($resource::getModel())->afterLast('\\'),
-                    'fqcn' => $resource,
+                return [
+                    $name => [
+                        'resource' => "{$name}",
+                        'model' => Str::of($resource::getModel())->afterLast('\\'),
+                        'fqcn' => $resource,
+                    ]
                 ];
-
-                return $resources;
-            }, collect())
+            })
             ->sortKeys()
             ->toArray();
     }
@@ -196,27 +192,26 @@ class FilamentShield
         }
 
         return collect($pages)
-            ->filter(function ($page) {
+            ->reject(function ($page) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return ! in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
+                    return in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
                 }
-
-                return true;
             })
-            ->reduce(function ($pages, $page) {
-
-                $name = Str::of(class_basename($page))
+            ->mapWithKeys(function ($page) {
+                $permission = Str::of(class_basename($page))
                     ->prepend(
                         Str::of(Utils::getPagePermissionPrefix())
                             ->append('_')
                             ->toString()
                     )
                     ->toString();
-
-                $pages["{$name}"] = "{$name}";
-
-                return $pages;
-            }, collect())
+                return [
+                    $permission => [
+                        'class' => $page,
+                        'permission' => $permission
+                    ]
+                ];
+            })
             ->toArray();
     }
 
@@ -225,13 +220,11 @@ class FilamentShield
      */
     public static function getLocalizedPageLabel(string $page): string
     {
-        $object = static::transformClassString($page);
+        $pageInstance = app()->make($page);
 
-        $pageObject = new $object();
-
-        return $pageObject->getTitle()
-                ?? $pageObject->getHeading()
-                ?? $pageObject->getNavigationLabel()
+        return $pageInstance->getTitle()
+                ?? $pageInstance->getHeading()
+                ?? $pageInstance->getNavigationLabel()
                 ?? '';
     }
 
@@ -250,43 +243,34 @@ class FilamentShield
         }
 
         return collect($widgets)
-            ->filter(function ($widget) {
+            ->reject(function ($widget) {
                 if (Utils::isGeneralExcludeEnabled()) {
-                    if ($widget instanceof WidgetConfiguration) {
-                        $widget = $widget->widget;
-                    }
-                    return ! in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
+                    return in_array(
+                        needle: str(
+                                static::getWidgetInstanceFromWidgetConfiguration($widget)
+                            )
+                            ->afterLast('\\')
+                            ->toString(),
+                        haystack: Utils::getExcludedWidgets()
+                    );
                 }
-
-                return true;
             })
-            ->map(function($widget) {
-                $permission = Str::of(class_basename($widget))
+            ->mapWithKeys(function($widget) {
+                $permission = Str::of(class_basename(static::getWidgetInstanceFromWidgetConfiguration($widget)))
                     ->prepend(
                         Str::of(Utils::getWidgetPermissionPrefix())
                             ->append('_')
                             ->toString()
                     )
                     ->toString();
+
                 return [
-                    'class' => $widget,
-                    'permission' => $permission
+                    $permission => [
+                        'class' => static::getWidgetInstanceFromWidgetConfiguration($widget),
+                        'permission' => $permission
+                    ]
                 ];
             })
-            // ->reduce(function ($widgets, $widget) {
-
-            //     $name = Str::of(class_basename($widget))
-            //         ->prepend(
-            //             Str::of(Utils::getWidgetPermissionPrefix())
-            //                 ->append('_')
-            //                 ->toString()
-            //         )
-            //         ->toString();
-
-            //     $widgets["{$name}"] = "{$name}";
-
-            //     return $widgets;
-            // }, collect())
             ->toArray();
     }
 
@@ -295,55 +279,16 @@ class FilamentShield
      */
     public static function getLocalizedWidgetLabel(string $widget): string
     {
-        $classString = str($widget)
-            ->after(
-                str(Utils::getWidgetPermissionPrefix())
-                    ->append('_')
-            )
-            ->studly()
-            ->toString();
-        $class = class_basename($classString);
-
-        $widgetInstance = app()->make($class);
-
-        if ($widgetInstance instanceof WidgetConfiguration) {
-            $widgetInstance = $widgetInstance->widget;
-        }
+        $widgetInstance = app()->make($widget);
 
         return match (true) {
             $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
             ! ($widgetInstance instanceof TableWidget) && $widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading') => (string) invade($widgetInstance)->getHeading(),
-            default => Str::of($widget)
-                ->after(Utils::getWidgetPermissionPrefix() . '_')
+            default => str($widget)
+                ->afterLast('\\')
                 ->headline()
                 ->toString(),
         };
-    }
-
-    protected static function transformClassString(string $string, bool $isPageClass = true): string
-    {
-        $pages = Filament::getPages();
-        if (Utils::discoverAllPages()) {
-            $pages = [];
-            foreach (Filament::getPanels() as $panel) {
-                $pages = array_merge($pages, $panel->getPages());
-            }
-            $pages = array_unique($pages);
-        }
-
-        $widgets = Filament::getWidgets();
-        if (Utils::discoverAllWidgets()) {
-            $widgets = [];
-            foreach (Filament::getPanels() as $panel) {
-                $widgets = array_merge($widgets, $panel->getWidgets());
-            }
-            $widgets = array_unique($widgets);
-        }
-
-        $prefix = Str::of($isPageClass ? Utils::getPagePermissionPrefix() : Utils::getWidgetPermissionPrefix())->append('_');
-
-        return (string) collect($isPageClass ? $pages : $widgets)
-            ->first(fn ($item) => class_basename($item) == Str::of($string)->after($prefix)->studly());
     }
 
     protected function getDefaultPermissionIdentifier(string $resource): string
@@ -354,5 +299,12 @@ class FilamentShield
             ->replace('\\', '')
             ->snake()
             ->replace('_', '::');
+    }
+
+    protected static function getWidgetInstanceFromWidgetConfiguration(string|WidgetConfiguration $widget):string
+    {
+        return $widget instanceof WidgetConfiguration
+            ? $widget->widget
+            : $widget;
     }
 }
