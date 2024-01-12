@@ -152,11 +152,11 @@ class MakeShieldGenerateCommand extends Command
         return collect(FilamentShield::getPages())
             ->filter(function ($page) {
                 if ($this->excludePages) {
-                    return ! in_array($page, $this->pages);
+                    return ! in_array($page['class'], $this->pages);
                 }
 
                 if ($this->onlyPages) {
-                    return in_array($page, $this->pages);
+                    return in_array($page['class'], $this->pages);
                 }
 
                 return true;
@@ -169,11 +169,11 @@ class MakeShieldGenerateCommand extends Command
         return collect(FilamentShield::getWidgets())
             ->filter(function ($widget) {
                 if ($this->excludeWidgets) {
-                    return ! in_array($widget, $this->widgets);
+                    return ! in_array($widget['class'], $this->widgets);
                 }
 
                 if ($this->onlyWidgets) {
-                    return in_array($widget, $this->widgets);
+                    return in_array($widget['class'], $this->widgets);
                 }
 
                 return true;
@@ -213,14 +213,14 @@ class MakeShieldGenerateCommand extends Command
     {
         return collect($pages)
             ->values()
-            ->each(fn (string $page) => FilamentShield::generateForPage($page));
+            ->each(fn (array $page) => FilamentShield::generateForPage($page['permission']));
     }
 
     protected function generateForWidgets(array $widgets): Collection
     {
         return collect($widgets)
             ->values()
-            ->each(fn (string $widget) => FilamentShield::generateForWidget($widget));
+            ->each(fn (array $widget) => FilamentShield::generateForWidget($widget['permission']));
     }
 
     protected function resourceInfo(array $resources): void
@@ -261,8 +261,8 @@ class MakeShieldGenerateCommand extends Command
                 collect($pages)->map(function ($page, $key) {
                     return [
                         '#' => $key + 1,
-                        'Page' => Str::replace(config('filament-shield.permission_prefixes.page') . '_', '', $page),
-                        'Permission' => $page,
+                        'Page' => $page['class'],
+                        'Permission' => $page['permission'],
                     ];
                 })
             );
@@ -280,8 +280,8 @@ class MakeShieldGenerateCommand extends Command
                 collect($widgets)->map(function ($widget, $key) {
                     return [
                         '#' => $key + 1,
-                        'Widget' => Str::replace(config('filament-shield.permission_prefixes.widget') . '_', '', $widget),
-                        'Permission' => $widget,
+                        'Widget' => $widget['class'],
+                        'Permission' => $widget['permission'],
                     ];
                 })
             );
