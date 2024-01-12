@@ -2,6 +2,20 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.1.3 - 2024-01-12
+
+### What's Changed
+
+* Proper handling of `WidgetConfiguration` and some improvments by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/310
+* Bump aglipanci/laravel-pint-action from 2.3.0 to 2.3.1 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/303
+* Renamed folder name to match Filaments i18n structure by @Corvisier in https://github.com/bezhanSalleh/filament-shield/pull/300
+
+### New Contributors
+
+* @Corvisier made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/300
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.1.2...3.1.3
+
 ## 3.1.2 - 2023-12-19
 
 ### What's Changed
