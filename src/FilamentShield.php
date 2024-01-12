@@ -2,16 +2,17 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Filament\Facades\Filament;
-use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Widgets\TableWidget;
+use Illuminate\Support\Str;
 use Filament\Widgets\Widget;
+use Filament\Facades\Filament;
+use Filament\Widgets\TableWidget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Str;
+use Filament\Widgets\WidgetConfiguration;
 use Spatie\Permission\PermissionRegistrar;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShield
 {
@@ -251,25 +252,41 @@ class FilamentShield
         return collect($widgets)
             ->filter(function ($widget) {
                 if (Utils::isGeneralExcludeEnabled()) {
+                    if ($widget instanceof WidgetConfiguration) {
+                        $widget = $widget->widget;
+                    }
                     return ! in_array(Str::afterLast($widget, '\\'), Utils::getExcludedWidgets());
                 }
 
                 return true;
             })
-            ->reduce(function ($widgets, $widget) {
-
-                $name = Str::of(class_basename($widget))
+            ->map(function($widget) {
+                $permission = Str::of(class_basename($widget))
                     ->prepend(
                         Str::of(Utils::getWidgetPermissionPrefix())
                             ->append('_')
                             ->toString()
                     )
                     ->toString();
+                return [
+                    'class' => $widget,
+                    'permission' => $permission
+                ];
+            })
+            // ->reduce(function ($widgets, $widget) {
 
-                $widgets["{$name}"] = "{$name}";
+            //     $name = Str::of(class_basename($widget))
+            //         ->prepend(
+            //             Str::of(Utils::getWidgetPermissionPrefix())
+            //                 ->append('_')
+            //                 ->toString()
+            //         )
+            //         ->toString();
 
-                return $widgets;
-            }, collect())
+            //     $widgets["{$name}"] = "{$name}";
+
+            //     return $widgets;
+            // }, collect())
             ->toArray();
     }
 
@@ -278,9 +295,20 @@ class FilamentShield
      */
     public static function getLocalizedWidgetLabel(string $widget): string
     {
-        $class = static::transformClassString($widget, false);
+        $classString = str($widget)
+            ->after(
+                str(Utils::getWidgetPermissionPrefix())
+                    ->append('_')
+            )
+            ->studly()
+            ->toString();
+        $class = class_basename($classString);
 
         $widgetInstance = app()->make($class);
+
+        if ($widgetInstance instanceof WidgetConfiguration) {
+            $widgetInstance = $widgetInstance->widget;
+        }
 
         return match (true) {
             $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
@@ -316,11 +344,6 @@ class FilamentShield
 
         return (string) collect($isPageClass ? $pages : $widgets)
             ->first(fn ($item) => class_basename($item) == Str::of($string)->after($prefix)->studly());
-    }
-
-    protected static function hasHeadingForShield(object | string $class): bool
-    {
-        return method_exists($class, 'getHeadingForShield');
     }
 
     protected function getDefaultPermissionIdentifier(string $resource): string
