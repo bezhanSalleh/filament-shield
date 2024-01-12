@@ -2,17 +2,17 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Illuminate\Support\Str;
-use Filament\Widgets\Widget;
 use Filament\Facades\Filament;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\TableWidget;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Lang;
-use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShield
 {
@@ -133,14 +133,15 @@ class FilamentShield
                     );
                 }
             })
-            ->mapWithKeys(function($resource) {
+            ->mapWithKeys(function ($resource) {
                 $name = $this->getPermissionIdentifier($resource);
+
                 return [
                     $name => [
                         'resource' => "{$name}",
                         'model' => Str::of($resource::getModel())->afterLast('\\'),
                         'fqcn' => $resource,
-                    ]
+                    ],
                 ];
             })
             ->sortKeys()
@@ -205,11 +206,12 @@ class FilamentShield
                             ->toString()
                     )
                     ->toString();
+
                 return [
                     $permission => [
                         'class' => $page,
-                        'permission' => $permission
-                    ]
+                        'permission' => $permission,
+                    ],
                 ];
             })
             ->toArray();
@@ -247,15 +249,15 @@ class FilamentShield
                 if (Utils::isGeneralExcludeEnabled()) {
                     return in_array(
                         needle: str(
-                                static::getWidgetInstanceFromWidgetConfiguration($widget)
-                            )
+                            static::getWidgetInstanceFromWidgetConfiguration($widget)
+                        )
                             ->afterLast('\\')
                             ->toString(),
                         haystack: Utils::getExcludedWidgets()
                     );
                 }
             })
-            ->mapWithKeys(function($widget) {
+            ->mapWithKeys(function ($widget) {
                 $permission = Str::of(class_basename(static::getWidgetInstanceFromWidgetConfiguration($widget)))
                     ->prepend(
                         Str::of(Utils::getWidgetPermissionPrefix())
@@ -267,8 +269,8 @@ class FilamentShield
                 return [
                     $permission => [
                         'class' => static::getWidgetInstanceFromWidgetConfiguration($widget),
-                        'permission' => $permission
-                    ]
+                        'permission' => $permission,
+                    ],
                 ];
             })
             ->toArray();
@@ -301,7 +303,7 @@ class FilamentShield
             ->replace('_', '::');
     }
 
-    protected static function getWidgetInstanceFromWidgetConfiguration(string|WidgetConfiguration $widget):string
+    protected static function getWidgetInstanceFromWidgetConfiguration(string | WidgetConfiguration $widget): string
     {
         return $widget instanceof WidgetConfiguration
             ? $widget->widget
