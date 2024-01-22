@@ -24,14 +24,14 @@
     ],
     "require": {
         "php": "^8.1",
-        "filament/filament": "^3.0",
+        "filament/filament": "^3.2",
         "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^7.0",
-        "nunomaduro/larastan": "^2.1",
+        "larastan/larastan": "^2.0",
         "orchestra/testbench": "^8.0",
         "pestphp/pest": "^2.10",
         "phpstan/extension-installer": "^1.3",
