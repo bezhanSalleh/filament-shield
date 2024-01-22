@@ -8,7 +8,6 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Forms;
-use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -95,7 +94,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                             record: $record
                                         );
                                     })
-                                    ->dehydrated(fn ($state) => !blank($state))
+                                    ->dehydrated(fn ($state) => ! blank($state))
                                     ->bulkToggleable()
                                     ->gridDirection('row')
                                     ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
@@ -117,7 +116,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                             record: $record
                                         );
                                     })
-                                    ->dehydrated(fn ($state) => !blank($state))
+                                    ->dehydrated(fn ($state) => ! blank($state))
                                     ->bulkToggleable()
                                     ->gridDirection('row')
                                     ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
@@ -139,7 +138,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                             record: $record
                                         );
                                     })
-                                    ->dehydrated(fn ($state) => !blank($state))
+                                    ->dehydrated(fn ($state) => ! blank($state))
                                     ->bulkToggleable()
                                     ->gridDirection('row')
                                     ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
@@ -278,7 +277,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->schema([
                         static::getCheckBoxListComponentForResource($entity)
                             ->extraAttributes([
-                                'name' => 'yellow'
+                                'name' => 'yellow',
                             ]),
                     ])
                     ->columnSpan(FilamentShieldPlugin::get()->getSectionColumnSpan())
