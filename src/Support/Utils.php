@@ -191,6 +191,24 @@ class Utils
 
     public static function showModelPath(string $resourceFQCN): string
     {
+        $reflectionClass = new \ReflectionClass($resourceFQCN);
+        try {
+            $reflectionClass->getProperty('model');
+            if (!$reflectionClass->getStaticPropertyValue('model')) {
+                throw new \ErrorException();
+            }
+        } catch (\Exception $e) {
+            try {
+                $reflectionClass->getMethod('getModel');
+                $resourceFQCN = $resourceFQCN::getModel();
+            } catch (\Exception $e) {
+                try {
+                    $reflectionClass->getMethod('setModel');
+                    $resourceFQCN = $resourceFQCN::setModel();
+                } catch (\Exception $e) {
+                }
+            }
+        }
         return config('filament-shield.shield_resource.show_model_path', true)
             ? get_class(new ($resourceFQCN::getModel())())
             : '';
