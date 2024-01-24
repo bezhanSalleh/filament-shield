@@ -80,7 +80,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ]),
                         static::getTabFormComponentForPage(),
                         static::getTabFormComponentForWidget(),
-                        static::getTabFormComponentForCustomPermissions()
+                        static::getTabFormComponentForCustomPermissions(),
                     ])
                     ->columnSpan('full'),
             ]);
@@ -352,15 +352,15 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->label('')
             ->options(fn (): array => $options)
             ->searchable()
-            ->afterStateHydrated(fn (Component $component, string $operation, ?Model $record) =>
-                static::setPermissionStateForRecordPermissions(
+            ->afterStateHydrated(
+                fn (Component $component, string $operation, ?Model $record) => static::setPermissionStateForRecordPermissions(
                     component: $component,
                     operation: $operation,
                     permissions: $options,
                     record: $record
                 )
             )
-            ->dehydrated(fn ($state) => !blank($state))
+            ->dehydrated(fn ($state) => ! blank($state))
             ->bulkToggleable()
             ->gridDirection('row')
             ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
