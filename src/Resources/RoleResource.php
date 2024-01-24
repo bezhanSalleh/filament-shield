@@ -79,72 +79,9 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->schema(static::getResourceEntitiesSchema())
                                     ->columns(FilamentShieldPlugin::get()->getGridColumns()),
                             ]),
-                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-                            ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && (count(FilamentShield::getPages()) > 0 ? true : false))
-                            ->badge(count(static::getPageOptions()))
-                            ->schema([
-                                Forms\Components\CheckboxList::make('pages_tab')
-                                    ->label('')
-                                    ->options(fn (): array => static::getPageOptions())
-                                    ->searchable()
-                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) {
-                                        static::setPermissionStateForRecordPermissions(
-                                            component: $component,
-                                            operation: $operation,
-                                            permissions: static::getPageOptions(),
-                                            record: $record
-                                        );
-                                    })
-                                    ->dehydrated(fn ($state) => !blank($state))
-                                    ->bulkToggleable()
-                                    ->gridDirection('row')
-                                    ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
-                                    ->columnSpan(FilamentShieldPlugin::get()->getCheckboxListColumnSpan()),
-                            ]),
-                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-                            ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && (count(FilamentShield::getWidgets()) > 0 ? true : false))
-                            ->badge(count(static::getWidgetOptions()))
-                            ->schema([
-                                Forms\Components\CheckboxList::make('widgets_tab')
-                                    ->label('')
-                                    ->options(fn (): array => static::getWidgetOptions())
-                                    ->searchable()
-                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) {
-                                        static::setPermissionStateForRecordPermissions(
-                                            component: $component,
-                                            operation: $operation,
-                                            permissions: static::getWidgetOptions(),
-                                            record: $record
-                                        );
-                                    })
-                                    ->dehydrated(fn ($state) => !blank($state))
-                                    ->bulkToggleable()
-                                    ->gridDirection('row')
-                                    ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
-                                    ->columnSpan(FilamentShieldPlugin::get()->getCheckboxListColumnSpan()),
-                            ]),
-                        Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
-                            ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && (count(static::getCustomEntities()) > 0 ? true : false))
-                            ->badge(count(static::getCustomPermissionOptions()))
-                            ->schema([
-                                Forms\Components\CheckboxList::make('custom_permissions')
-                                    ->label('')
-                                    ->options(fn (): array => static::getCustomPermissionOptions())
-                                    ->searchable()
-                                    ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) {
-                                        static::setPermissionStateForRecordPermissions(
-                                            component: $component,
-                                            operation: $operation,
-                                            permissions: static::getCustomPermissionOptions(),
-                                            record: $record
-                                        );
-                                    })
-                                    ->dehydrated(fn ($state) => !blank($state))
-                                    ->bulkToggleable()
-                                    ->gridDirection('row')
-                                    ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
-                                    ->columnSpan(FilamentShieldPlugin::get()->getCheckboxListColumnSpan()),
-                            ]),
+                        static::getTabFormComponentForPage(),
+                        static::getTabFormComponentForWidget(),
+                        static::getTabFormComponentForCustomPermissions()
                     ])
                     ->columnSpan('full'),
             ]);
@@ -276,10 +213,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->description(fn () => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['fqcn']) . '</span>'))
                     ->compact()
                     ->schema([
-                        static::getCheckBoxListComponentForResource($entity)
-                            ->extraAttributes([
-                                'name' => 'yellow'
-                            ]),
+                        static::getCheckBoxListComponentForResource($entity),
                     ])
                     ->columnSpan(FilamentShieldPlugin::get()->getSectionColumnSpan())
                     ->collapsible();
@@ -371,20 +305,66 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         $permissionsArray = static::getResourcePermissionOptions($entity);
 
-        return Forms\Components\CheckboxList::make($entity['resource'])
+        return static::getCheckboxListFormComponent($entity['resource'], $permissionsArray);
+    }
+
+    public static function getTabFormComponentForPage(): Component
+    {
+        $options = static::getPageOptions();
+        $count = count($options);
+
+        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
+            ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && $count > 0)
+            ->badge($count)
+            ->schema([
+                static::getCheckboxListFormComponent('pages_tab', $options),
+            ]);
+    }
+
+    public static function getTabFormComponentForWidget(): Component
+    {
+        $options = static::getWidgetOptions();
+        $count = count($options);
+
+        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
+            ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && $count > 0)
+            ->badge($count)
+            ->schema([
+                static::getCheckboxListFormComponent('widgets_tab', $options),
+            ]);
+    }
+
+    public static function getTabFormComponentForCustomPermissions(): Component
+    {
+        $options = static::getCustomPermissionOptions();
+        $count = count($options);
+
+        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
+            ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && $count > 0)
+            ->badge($count)
+            ->schema([
+                static::getCheckboxListFormComponent('custom_permissions', $options),
+            ]);
+    }
+
+    public static function getCheckboxListFormComponent(string $name, array $options): Component
+    {
+        return Forms\Components\CheckboxList::make($name)
             ->label('')
-            ->options(fn (): array => $permissionsArray)
-            ->afterStateHydrated(function (Component $component, $livewire, string $operation, ?Model $record, Forms\Set $set) use ($permissionsArray) {
+            ->options(fn (): array => $options)
+            ->searchable()
+            ->afterStateHydrated(fn (Component $component, string $operation, ?Model $record) =>
                 static::setPermissionStateForRecordPermissions(
                     component: $component,
                     operation: $operation,
-                    permissions: $permissionsArray,
+                    permissions: $options,
                     record: $record
-                );
-            })
-            ->dehydrated(fn ($state) => ! blank($state))
+                )
+            )
+            ->dehydrated(fn ($state) => !blank($state))
             ->bulkToggleable()
             ->gridDirection('row')
-            ->columns(FilamentShieldPlugin::get()->getResourceCheckboxListColumns());
+            ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
+            ->columnSpan(FilamentShieldPlugin::get()->getCheckboxListColumnSpan());
     }
 }

@@ -38,6 +38,9 @@
                             this.updateStateBasedOnCheckboxes();
                         });
                     });
+                    $nextTick(() => {
+                        this.updateStateBasedOnCheckboxes();
+                    });
                 }
             }"
             x-init="init()"
