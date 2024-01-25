@@ -21,7 +21,8 @@ class CreateRole extends CreateRecord
                 return ! in_array($key, ['name', 'guard_name', 'select_all']);
             })
             ->values()
-            ->flatten();
+            ->flatten()
+            ->unique();
 
         return Arr::only($data, ['name', 'guard_name']);
     }
