@@ -309,4 +309,35 @@ class FilamentShield
             ? $widget->widget
             : $widget;
     }
+
+    public function getAllResourcePermissions(): array
+    {
+        return collect(FilamentShield::getResources())
+            ->map(function ($resourceEntity) {
+                return collect(
+                    Utils::getResourcePermissionPrefixes($resourceEntity["fqcn"])
+                )
+                    ->flatMap(
+                        fn($permission) => [
+                            $permission .
+                            "_" .
+                            $resourceEntity[
+                                "resource"
+                            ] => str(FilamentShield::getLocalizedResourcePermissionLabel($permission))
+                                ->append(
+                                    str($resourceEntity["fqcn"]::getPluralModelLabel())
+                                        ->plural()
+                                        ->title()
+                                        ->prepend(" - ")
+                                        ->toString()
+                                )
+                                ->toString()
+                        ]
+                    )
+                    ->toArray();
+            })
+            ->sortKeys()
+            ->collapse()
+            ->toArray();
+    }
 }
