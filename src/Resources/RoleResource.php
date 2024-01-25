@@ -317,7 +317,7 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent('pages_tab', $options)
-                    ->searchable()
+                    ->searchable(),
             ]);
     }
 
@@ -331,7 +331,7 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent('widgets_tab', $options)
-                    ->searchable()
+                    ->searchable(),
             ]);
     }
 
@@ -345,7 +345,7 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent('custom_permissions', $options)
-                    ->searchable()
+                    ->searchable(),
             ]);
     }
 
