@@ -316,7 +316,8 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
-                static::getCheckboxListFormComponent('pages_tab', $options),
+                static::getCheckboxListFormComponent('pages_tab', $options)
+                    ->searchable()
             ]);
     }
 
@@ -329,7 +330,8 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
-                static::getCheckboxListFormComponent('widgets_tab', $options),
+                static::getCheckboxListFormComponent('widgets_tab', $options)
+                    ->searchable()
             ]);
     }
 
@@ -342,7 +344,8 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
-                static::getCheckboxListFormComponent('custom_permissions', $options),
+                static::getCheckboxListFormComponent('custom_permissions', $options)
+                    ->searchable()
             ]);
     }
 
@@ -351,7 +354,6 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Forms\Components\CheckboxList::make($name)
             ->label('')
             ->options(fn (): array => $options)
-            ->searchable()
             ->afterStateHydrated(
                 fn (Component $component, string $operation, ?Model $record) => static::setPermissionStateForRecordPermissions(
                     component: $component,
