@@ -16,14 +16,19 @@
                 state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                 checkboxes: [],
                 checkboxLists: [],
-                toggleAllCheckboxes: function () {
+                toggleAll: function () {
+                    this.state = ! this.state;
+                    this.checkboxLists.forEach(checkboxList => {
+                        Alpine.$data(checkboxList.parentNode).areAllCheckboxesChecked = false;
+                        Alpine.$data(checkboxList.parentNode).checkIfAllCheckboxesAreChecked()
+                        Alpine.$data(checkboxList.parentNode).updateVisibleCheckboxListOptions();
+                        Alpine.$data(checkboxList.parentNode).toggleAllCheckboxes();
+                    })
+
                     this.checkboxes.forEach(checkbox => {
                         checkbox.checked = this.state;
                     });
                     this.updateStateBasedOnCheckboxes();
-                    this.checkboxLists.forEach(checkboxList => {
-                        Alpine.$data(checkboxList.parentNode).checkIfAllCheckboxesAreChecked();
-                    })
                 },
 
                 updateStateBasedOnCheckboxes: function () {
@@ -33,18 +38,28 @@
                 init: function() {
                     this.checkboxLists = Array.from(document.querySelectorAll('.fi-fo-checkbox-list'))
                     this.checkboxes = Array.from(document.querySelectorAll('.fi-fo-checkbox-list-option-label input[type=\'checkbox\']'));
+
+
                     this.checkboxes.forEach((checkbox) => {
                         checkbox.addEventListener('change', () => {
                             this.updateStateBasedOnCheckboxes();
                         });
                     });
+
                     $nextTick(() => {
                         this.updateStateBasedOnCheckboxes();
+                    });
+
+                    $watch('state', (value, old) => {
+                        console.log('new',value,' - old',old)
+                        if (value === old) {
+                            this.toggleAll();
+                        }
                     });
                 }
             }"
             x-init="init()"
-            x-on:click="state = !state; toggleAllCheckboxes();"
+            x-on:click="toggleAll();"
             x-bind:class="
                 state
                     ? '{{
@@ -157,4 +172,3 @@
         {{ $content() }}
     @endif
 </x-dynamic-component>
-
