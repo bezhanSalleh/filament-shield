@@ -2,16 +2,23 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.2.1 - 2024-01-25
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.2.0...3.2.1
+
 ## 3.2.0 - 2024-01-24
 
 ### What's Changed
 
 * Feature/performance boost by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/319
+  
   > Filament `v3.2`
   Republish `RoleResource`
   
 * Update filament-shield.php by @noxoua in https://github.com/bezhanSalleh/filament-shield/pull/312
+  
 * Add traditional chinese translation by @cssf998811 in https://github.com/bezhanSalleh/filament-shield/pull/321
+  
 
 ### New Contributors
 
