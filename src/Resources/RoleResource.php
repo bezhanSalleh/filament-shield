@@ -54,12 +54,13 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->default(Utils::getFilamentAuthGuard())
                                     ->nullable()
                                     ->maxLength(255),
-                                \BezhanSalleh\FilamentShield\Forms\ShieldSelectAllToggle::make('select_all')
-                                    ->onIcon('heroicon-s-shield-check')
-                                    ->offIcon('heroicon-s-shield-exclamation')
-                                    ->label(__('filament-shield::filament-shield.field.select_all.name'))
-                                    ->helperText(fn (): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
-                                    ->dehydrated(fn ($state): bool => $state),
+                                // \BezhanSalleh\FilamentShield\Forms\ShieldSelectAllToggle::make('select_all')
+                                //     ->onIcon('heroicon-s-shield-check')
+                                //     ->offIcon('heroicon-s-shield-exclamation')
+                                //     ->label(__('filament-shield::filament-shield.field.select_all.name'))
+                                //     ->helperText(fn (): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
+                                //     ->dehydrated(fn ($state): bool => $state),
+                                \App\Forms\Components\GlobalToggle::make('select_all')
 
                             ])
                             ->columns([
