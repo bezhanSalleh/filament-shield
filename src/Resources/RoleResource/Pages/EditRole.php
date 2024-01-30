@@ -31,7 +31,7 @@ class EditRole extends EditRecord
             ->values()
             ->flatten()
             ->unique();
-        
+            
         return Arr::only($data, ['name', 'guard_name']);
     }
 

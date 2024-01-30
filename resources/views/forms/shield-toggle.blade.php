@@ -17,7 +17,7 @@
                 checkboxes: [],
                 checkboxLists: [],
                 toggleAll: function () {
-                    this.state = ! this.state; 
+                    this.state = ! this.state;
                     this.checkboxLists.forEach(checkboxList => {
                         Alpine.$data(checkboxList.parentNode).areAllCheckboxesChecked = false;
                         Alpine.$data(checkboxList.parentNode).checkIfAllCheckboxesAreChecked()
@@ -172,4 +172,3 @@
         {{ $content() }}
     @endif
 </x-dynamic-component>
-
