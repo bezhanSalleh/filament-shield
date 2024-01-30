@@ -20,6 +20,8 @@ class FilamentShield
 
     protected ?Closure $configurePermissionIdentifierUsing = null;
 
+    public ?Collection $customPermissions = null;
+
     public function configurePermissionIdentifierUsing(Closure $callback): static
     {
         $this->configurePermissionIdentifierUsing = $callback;
@@ -339,5 +341,19 @@ class FilamentShield
             ->sortKeys()
             ->collapse()
             ->toArray();
+    }
+
+    public function getCustomPermissions(): ?Collection
+    {
+        if (blank($this->customPermissions)) {
+             $entitiesPermissions = collect($this->getAllResourcePermissions())->keys()
+                ->merge(collect($this->getPages())->map(fn ($page) => $page['permission'])->values())
+                ->merge(collect($this->getWidgets())->map(fn ($widget) => $widget['permission'])->values())
+                ->values();
+
+            $this->customPermissions = Utils::getPermissionModel()::whereNotIn('name', $entitiesPermissions)->pluck('name');
+        }
+
+        return $this->customPermissions;
     }
 }

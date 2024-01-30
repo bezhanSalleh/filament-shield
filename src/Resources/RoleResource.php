@@ -106,7 +106,9 @@ class RoleResource extends Resource implements HasShieldPermissions
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    // ->beforeFormFilled(FilamentShield::getCustompermissions(...))
+                    ,
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -268,7 +270,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getCustomPermissionOptions(): array
     {
-        return collect(static::getCustomEntities())
+        return FilamentShield::getCustomPermissions()
             ->flatMap(fn ($customPermission) => [
                 $customPermission => str($customPermission)->headline()->toString(),
             ])
@@ -277,6 +279,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static function getCustomEntities(): ?Collection
     {
+        return FilamentShield::getCustomPermissions();
         $entitiesPermissions = collect(FilamentShield::getAllResourcePermissions())->keys()
             ->merge(collect(FilamentShield::getPages())->map(fn ($page) => $page['permission'])->values())
             ->merge(collect(FilamentShield::getWidgets())->map(fn ($widget) => $widget['permission'])->values())
