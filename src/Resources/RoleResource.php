@@ -58,8 +58,8 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->onIcon('heroicon-s-shield-check')
                                     ->offIcon('heroicon-s-shield-exclamation')
                                     ->label(__('filament-shield::filament-shield.field.select_all.name'))
-                                    ->helperText(fn (): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
-                                    ->dehydrated(fn ($state): bool => $state),
+                                    ->helperText(fn(): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
+                                    ->dehydrated(fn($state): bool => $state),
 
                             ])
                             ->columns([
@@ -71,7 +71,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->contained()
                     ->tabs([
                         Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.resources'))
-                            ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
+                            ->visible(fn(): bool => (bool)Utils::isResourceEntityEnabled())
                             ->badge(static::getResourceTabBadgeCount())
                             ->schema([
                                 Forms\Components\Grid::make()
@@ -86,6 +86,188 @@ class RoleResource extends Resource implements HasShieldPermissions
             ]);
     }
 
+    public static function getResourceTabBadgeCount(): ?int
+    {
+        return collect(FilamentShield::getResources())
+            ->map(fn($resource) => count(static::getResourcePermissionOptions($resource)))
+            ->sum();
+    }
+
+    public static function getResourcePermissionOptions(array $entity): array
+    {
+        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
+            ->flatMap(fn($permission) => [
+                $permission . '_' . $entity['resource'] => FilamentShield::getLocalizedResourcePermissionLabel($permission),
+            ])
+            ->toArray();
+    }
+
+    public static function getResourceEntitiesSchema(): ?array
+    {
+        static::$permissionsCollection = static::$permissionsCollection ?: Utils::getPermissionModel()::all();
+
+        return collect(FilamentShield::getResources())
+            ->map(function ($entity) {
+                return [
+                    'section' => Forms\Components\Section::make(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
+                        ->description(fn() => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['fqcn']) . '</span>'))
+                        ->compact()
+                        ->schema([
+                            static::getCheckBoxListComponentForResource($entity),
+                        ])
+                        ->collapsible()
+                        ->collapsed(),
+                    'heading' => FilamentShield::getLocalizedResourceLabel($entity['fqcn']),
+                ];
+            })
+            ->sortBy('heading')
+            ->map(function ($item) {
+                return $item['section'];
+            })
+            ->toArray();
+    }
+
+    public static function getCheckBoxListComponentForResource(array $entity): Component
+    {
+        $permissionsArray = static::getResourcePermissionOptions($entity);
+
+        return static::getCheckboxListFormComponent($entity['resource'], $permissionsArray, false);
+    }
+
+    public static function getCheckboxListFormComponent(string $name, array $options, bool $searchable = true): Component
+    {
+        return Forms\Components\CheckboxList::make($name)
+            ->label('')
+            ->options(fn(): array => $options)
+            ->searchable($searchable)
+            ->afterStateHydrated(
+                fn(Component $component, string $operation, ?Model $record) => static::setPermissionStateForRecordPermissions(
+                    component: $component,
+                    operation: $operation,
+                    permissions: $options,
+                    record: $record
+                )
+            )
+            ->dehydrated(fn($state) => !blank($state))
+            ->bulkToggleable()
+            ->gridDirection('row')
+            ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
+            ->columnSpan(FilamentShieldPlugin::get()->getCheckboxListColumnSpan());
+    }
+
+    public static function setPermissionStateForRecordPermissions(Component $component, string $operation, array $permissions, ?Model $record): void
+    {
+
+        if (in_array($operation, ['edit', 'view'])) {
+
+            if (blank($record)) {
+                return;
+            }
+            if ($component->isVisible() && count($permissions) > 0) {
+                $component->state(
+                    collect($permissions)
+                        /** @phpstan-ignore-next-line */
+                        ->filter(fn($value, $key) => $record->checkPermissionTo($key))
+                        ->keys()
+                        ->toArray()
+                );
+            }
+        }
+    }
+
+    public static function getTabFormComponentForPage(): Component
+    {
+        $options = static::getPageOptions();
+        $count = count($options);
+
+        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
+            ->visible(fn(): bool => (bool)Utils::isPageEntityEnabled() && $count > 0)
+            ->badge($count)
+            ->schema([
+                static::getCheckboxListFormComponent('pages_tab', $options),
+            ]);
+    }
+
+    public static function getPageOptions(): array
+    {
+        return collect(FilamentShield::getPages())
+            ->flatMap(fn($page) => [
+                $page['permission'] => FilamentShield::getLocalizedPageLabel($page['class']),
+            ])
+            ->toArray();
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListRoles::route('/'),
+            'create' => Pages\CreateRole::route('/create'),
+            'view' => Pages\ViewRole::route('/{record}'),
+            'edit' => Pages\EditRole::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getTabFormComponentForWidget(): Component
+    {
+        $options = static::getWidgetOptions();
+        $count = count($options);
+
+        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
+            ->visible(fn(): bool => (bool)Utils::isWidgetEntityEnabled() && $count > 0)
+            ->badge($count)
+            ->schema([
+                static::getCheckboxListFormComponent('widgets_tab', $options),
+            ]);
+    }
+
+    public static function getWidgetOptions(): array
+    {
+        return collect(FilamentShield::getWidgets())
+            ->flatMap(fn($widget) => [
+                $widget['permission'] => FilamentShield::getLocalizedWidgetLabel($widget['class']),
+            ])
+            ->toArray();
+    }
+
+    public static function getTabFormComponentForCustomPermissions(): Component
+    {
+        $options = static::getCustomPermissionOptions();
+        $count = count($options);
+
+        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
+            ->visible(fn(): bool => (bool)Utils::isCustomPermissionEntityEnabled() && $count > 0)
+            ->badge($count)
+            ->schema([
+                static::getCheckboxListFormComponent('custom_permissions', $options),
+            ]);
+    }
+
+    public static function getCustomPermissionOptions(): array
+    {
+        return collect(static::getCustomEntities())
+            ->flatMap(fn($customPermission) => [
+                $customPermission => str($customPermission)->headline()->toString(),
+            ])
+            ->toArray();
+    }
+
+    protected static function getCustomEntities(): ?Collection
+    {
+        $resourcePermissions = collect();
+        collect(FilamentShield::getResources())->each(function ($entity) use ($resourcePermissions) {
+            collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->map(function ($permission) use ($resourcePermissions, $entity) {
+                $resourcePermissions->push((string)Str::of($permission . '_' . $entity['resource']));
+            });
+        });
+
+        $entitiesPermissions = $resourcePermissions
+            ->merge(collect(FilamentShield::getPages())->map(fn($page) => $page['permission'])->values())
+            ->merge(collect(FilamentShield::getWidgets())->map(fn($widget) => $widget['permission'])->values())
+            ->values();
+
+        return static::$permissionsCollection->whereNotIn('name', $entitiesPermissions)->pluck('name');
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -93,7 +275,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('name')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.name'))
-                    ->formatStateUsing(fn ($state): string => Str::headline($state))
+                    ->formatStateUsing(fn($state): string => Str::headline($state))
                     ->colors(['primary'])
                     ->searchable(),
                 Tables\Columns\TextColumn::make('guard_name')
@@ -125,21 +307,6 @@ class RoleResource extends Resource implements HasShieldPermissions
         return [
             //
         ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListRoles::route('/'),
-            'create' => Pages\CreateRole::route('/create'),
-            'view' => Pages\ViewRole::route('/{record}'),
-            'edit' => Pages\EditRole::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getModel(): string
-    {
-        return Utils::getRoleModel();
     }
 
     public static function getModelLabel(): string
@@ -191,6 +358,11 @@ class RoleResource extends Resource implements HasShieldPermissions
             : null;
     }
 
+    public static function getModel(): string
+    {
+        return Utils::getRoleModel();
+    }
+
     public static function isScopedToTenant(): bool
     {
         return Utils::isScopedToTenant();
@@ -199,171 +371,5 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function canGloballySearch(): bool
     {
         return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
-    }
-
-    public static function getResourceEntitiesSchema(): ?array
-    {
-        static::$permissionsCollection = static::$permissionsCollection ?: Utils::getPermissionModel()::all();
-
-        return collect(FilamentShield::getResources())
-            ->sortKeys()
-            ->map(function ($entity) {
-                return Forms\Components\Section::make(FilamentShield::getLocalizedResourceLabel($entity['fqcn']))
-                    ->description(fn () => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['fqcn']) . '</span>'))
-                    ->compact()
-                    ->schema([
-                        static::getCheckBoxListComponentForResource($entity),
-                    ])
-                    ->columnSpan(FilamentShieldPlugin::get()->getSectionColumnSpan())
-                    ->collapsible();
-            })
-            ->toArray();
-    }
-
-    public static function getResourceTabBadgeCount(): ?int
-    {
-        return collect(FilamentShield::getResources())
-            ->map(fn ($resource) => count(static::getResourcePermissionOptions($resource)))
-            ->sum();
-    }
-
-    public static function getResourcePermissionOptions(array $entity): array
-    {
-        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-            ->flatMap(fn ($permission) => [
-                $permission . '_' . $entity['resource'] => FilamentShield::getLocalizedResourcePermissionLabel($permission),
-            ])
-            ->toArray();
-    }
-
-    public static function setPermissionStateForRecordPermissions(Component $component, string $operation, array $permissions, ?Model $record): void
-    {
-
-        if (in_array($operation, ['edit', 'view'])) {
-
-            if (blank($record)) {
-                return;
-            }
-            if ($component->isVisible() && count($permissions) > 0) {
-                $component->state(
-                    collect($permissions)
-                        /** @phpstan-ignore-next-line */
-                        ->filter(fn ($value, $key) => $record->checkPermissionTo($key))
-                        ->keys()
-                        ->toArray()
-                );
-            }
-        }
-    }
-
-    public static function getPageOptions(): array
-    {
-        return collect(FilamentShield::getPages())
-            ->flatMap(fn ($page) => [
-                $page['permission'] => FilamentShield::getLocalizedPageLabel($page['class']),
-            ])
-            ->toArray();
-    }
-
-    public static function getWidgetOptions(): array
-    {
-        return collect(FilamentShield::getWidgets())
-            ->flatMap(fn ($widget) => [
-                $widget['permission'] => FilamentShield::getLocalizedWidgetLabel($widget['class']),
-            ])
-            ->toArray();
-    }
-
-    public static function getCustomPermissionOptions(): array
-    {
-        return collect(static::getCustomEntities())
-            ->flatMap(fn ($customPermission) => [
-                $customPermission => str($customPermission)->headline()->toString(),
-            ])
-            ->toArray();
-    }
-
-    protected static function getCustomEntities(): ?Collection
-    {
-        $resourcePermissions = collect();
-        collect(FilamentShield::getResources())->each(function ($entity) use ($resourcePermissions) {
-            collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))->map(function ($permission) use ($resourcePermissions, $entity) {
-                $resourcePermissions->push((string) Str::of($permission . '_' . $entity['resource']));
-            });
-        });
-
-        $entitiesPermissions = $resourcePermissions
-            ->merge(collect(FilamentShield::getPages())->map(fn ($page) => $page['permission'])->values())
-            ->merge(collect(FilamentShield::getWidgets())->map(fn ($widget) => $widget['permission'])->values())
-            ->values();
-
-        return static::$permissionsCollection->whereNotIn('name', $entitiesPermissions)->pluck('name');
-    }
-
-    public static function getCheckBoxListComponentForResource(array $entity): Component
-    {
-        $permissionsArray = static::getResourcePermissionOptions($entity);
-
-        return static::getCheckboxListFormComponent($entity['resource'], $permissionsArray, false);
-    }
-
-    public static function getTabFormComponentForPage(): Component
-    {
-        $options = static::getPageOptions();
-        $count = count($options);
-
-        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.pages'))
-            ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && $count > 0)
-            ->badge($count)
-            ->schema([
-                static::getCheckboxListFormComponent('pages_tab', $options),
-            ]);
-    }
-
-    public static function getTabFormComponentForWidget(): Component
-    {
-        $options = static::getWidgetOptions();
-        $count = count($options);
-
-        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.widgets'))
-            ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && $count > 0)
-            ->badge($count)
-            ->schema([
-                static::getCheckboxListFormComponent('widgets_tab', $options),
-            ]);
-    }
-
-    public static function getTabFormComponentForCustomPermissions(): Component
-    {
-        $options = static::getCustomPermissionOptions();
-        $count = count($options);
-
-        return Forms\Components\Tabs\Tab::make(__('filament-shield::filament-shield.custom'))
-            ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && $count > 0)
-            ->badge($count)
-            ->schema([
-                static::getCheckboxListFormComponent('custom_permissions', $options),
-            ]);
-    }
-
-    public static function getCheckboxListFormComponent(string $name, array $options, bool $searchable = true): Component
-    {
-        return Forms\Components\CheckboxList::make($name)
-            ->label('')
-            ->options(fn (): array => $options)
-            ->searchable($searchable)
-            ->afterStateHydrated(
-                fn (Component $component, string $operation, ?Model $record) => static::setPermissionStateForRecordPermissions(
-                    component: $component,
-                    operation: $operation,
-                    permissions: $options,
-                    record: $record
-                )
-            )
-            ->dehydrated(fn ($state) => ! blank($state))
-            ->bulkToggleable()
-            ->gridDirection('row')
-            ->columns(FilamentShieldPlugin::get()->getCheckboxListColumns())
-            ->columnSpan(FilamentShieldPlugin::get()->getCheckboxListColumnSpan());
     }
 }
