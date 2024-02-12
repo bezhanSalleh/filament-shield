@@ -80,8 +80,6 @@ return [
         'discover_all_pages' => false,
     ],
 
-    'register_role_policy' => [
-        'enabled' => false,
-    ],
+    'register_role_policy' => false,
 
 ];
