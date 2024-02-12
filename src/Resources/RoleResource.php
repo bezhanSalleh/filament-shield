@@ -231,7 +231,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
             ->flatMap(fn ($permission) => [
-                $permission . '_' . $entity['resource'] => FilamentShield::getLocalizedResourcePermissionLabel($permission),
+                $permission . '_' . $entity['resource'] => FilamentShieldPlugin::get()->isPrettyResourcePermissionsLabel() ? FilamentShield::getLocalizedResourcePermissionLabel($permission) : $permission,
             ])
             ->toArray();
     }
@@ -260,7 +260,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         return collect(FilamentShield::getPages())
             ->flatMap(fn ($page) => [
-                $page['permission'] => FilamentShield::getLocalizedPageLabel($page['class']),
+                $page['permission'] => FilamentShieldPlugin::get()->isPrettyPagePermissionsLabel() ? FilamentShield::getLocalizedPageLabel($page['class']) : $page['permission'],
             ])
             ->toArray();
     }
@@ -269,7 +269,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         return collect(FilamentShield::getWidgets())
             ->flatMap(fn ($widget) => [
-                $widget['permission'] => FilamentShield::getLocalizedWidgetLabel($widget['class']),
+                $widget['permission'] => FilamentShieldPlugin::get()->isPrettyWidgetPermissionsLabel() ? FilamentShield::getLocalizedWidgetLabel($widget['class']) : $widget['permission'],
             ])
             ->toArray();
     }
@@ -278,7 +278,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     {
         return collect(static::getCustomEntities())
             ->flatMap(fn ($customPermission) => [
-                $customPermission => str($customPermission)->headline()->toString(),
+                $customPermission => FilamentShieldPlugin::get()->isPrettyCustomPermissionsLabel() ? str($customPermission)->headline()->toString() : $customPermission,
             ])
             ->toArray();
     }

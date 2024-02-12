@@ -11,6 +11,7 @@ use Filament\Panel;
 class FilamentShieldPlugin implements Plugin
 {
     use Concerns\CanCustomizeColumns;
+    use Concerns\CanCustomizeLabels;
 
     public static function make(): static
     {
