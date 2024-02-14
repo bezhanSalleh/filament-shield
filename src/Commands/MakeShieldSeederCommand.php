@@ -18,6 +18,7 @@ class MakeShieldSeederCommand extends Command
      */
     public $signature = 'shield:seeder
         {--generate : Generates permissions for all entities as configured }
+        {--option= : Generate only permissions via roles or direct permissions (<fg=green;options=bold>permissions_via_roles,direct_permissions</>)}
         {--F|force : Override if the seeder already exists }
     ';
 
@@ -52,7 +53,9 @@ class MakeShieldSeederCommand extends Command
         $permissionsViaRoles = collect();
         $directPermissions = collect();
 
-        if (Utils::getRoleModel()::exists()) {
+        $option = $this->option('option');
+
+        if ((Utils::getRoleModel()::exists() && is_null($option)) || $option === 'permissions_via_roles') {
             $permissionsViaRoles = collect(Utils::getRoleModel()::with('permissions')->get())
                 ->map(function ($role) use ($directPermissionNames) {
                     $rolePermissions = $role->permissions
@@ -69,7 +72,7 @@ class MakeShieldSeederCommand extends Command
                 });
         }
 
-        if (Utils::getPermissionModel()::exists()) {
+        if ((Utils::getPermissionModel()::exists() && is_null($option)) || $option === 'direct_permissions') {
             $directPermissions = collect(Utils::getPermissionModel()::get())
                 ->filter(fn ($permission) => ! in_array($permission->name, $directPermissionNames->unique()->flatten()->all()))
                 ->map(fn ($permission) => [
