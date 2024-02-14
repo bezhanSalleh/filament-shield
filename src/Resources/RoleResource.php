@@ -2,22 +2,21 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\Component;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Forms\ShieldSelectAllToggle;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Forms;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -205,7 +204,8 @@ class RoleResource extends Resource implements HasShieldPermissions
         return collect(FilamentShield::getResources())
             ->sortKeys()
             ->map(function ($entity) {
-                $sectionLabel = strval(static::shield()->hasLocalizedPermissionLabels()
+                $sectionLabel = strval(
+                    static::shield()->hasLocalizedPermissionLabels()
                     ? FilamentShield::getLocalizedResourceLabel($entity['fqcn'])
                     : $entity['model']
                 );
@@ -232,11 +232,12 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function getResourcePermissionOptions(array $entity): array
     {
         return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-            ->flatMap(function ($permission) use($entity) {
+            ->flatMap(function ($permission) use ($entity) {
                 $name = $permission . '_' . $entity['resource'];
                 $label = static::shield()->hasLocalizedPermissionLabels()
                     ? FilamentShield::getLocalizedResourcePermissionLabel($permission)
                     : $name;
+
                 return [
                     $name => $label,
                 ];
@@ -308,6 +309,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                         ->columns(static::shield()->getGridColumns()),
                 ]);
     }
+
     public static function getCheckBoxListComponentForResource(array $entity): Component
     {
         $permissionsArray = static::getResourcePermissionOptions($entity);

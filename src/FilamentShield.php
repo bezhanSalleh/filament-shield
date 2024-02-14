@@ -2,19 +2,18 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Illuminate\Support\Str;
-use Filament\Widgets\Widget;
 use Filament\Facades\Filament;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\TableWidget;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
-use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
-use function Filament\Support\generate_search_column_expression;
 
 class FilamentShield
 {
@@ -319,23 +318,23 @@ class FilamentShield
         return collect(FilamentShield::getResources())
             ->map(function ($resourceEntity) {
                 return collect(
-                    Utils::getResourcePermissionPrefixes($resourceEntity["fqcn"])
+                    Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
                 )
                     ->flatMap(
-                        fn($permission) => [
+                        fn ($permission) => [
                             $permission .
-                            "_" .
+                            '_' .
                             $resourceEntity[
-                                "resource"
+                                'resource'
                             ] => str(FilamentShield::getLocalizedResourcePermissionLabel($permission))
                                 ->append(
-                                    str($resourceEntity["fqcn"]::getPluralModelLabel())
+                                    str($resourceEntity['fqcn']::getPluralModelLabel())
                                         ->plural()
                                         ->title()
-                                        ->prepend(" - ")
+                                        ->prepend(' - ')
                                         ->toString()
                                 )
-                                ->toString()
+                                ->toString(),
                         ]
                     )
                     ->toArray();
@@ -347,7 +346,7 @@ class FilamentShield
 
     public function getCustomPermissions(): ?Collection
     {
-        
+
         if (blank($this->customPermissions)) {
             $query = Utils::getPermissionModel()::query();
             $this->customPermissions = $query
@@ -364,7 +363,7 @@ class FilamentShield
         return collect($this->getAllResourcePermissions())->keys()
             ->merge(collect($this->getPages())->map->permission->keys())
             ->merge(collect($this->getWidgets())->map->permission->keys())
-            ->map(fn($permission) => str($permission)->lower()->toString())
+            ->map(fn ($permission) => str($permission)->lower()->toString())
             ->values()
             ->unique()
             ->toArray();

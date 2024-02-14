@@ -64,7 +64,6 @@ trait CanGeneratePolicy
         $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
             ? 'App\\' . Utils::getPolicyNamespace()
             : Str::of($namespace)->replace('Models', Utils::getPolicyNamespace()); /** @phpstan-ignore-line */
-
         $stubVariables['model_name'] = $entity['model'];
         $stubVariables['model_fqcn'] = $namespace . '\\' . $entity['model'];
         $stubVariables['model_variable'] = Str::of($entity['model'])->camel();
