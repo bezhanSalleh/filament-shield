@@ -207,7 +207,7 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->map(function ($entity) {
                 $sectionLabel = strval(static::shield()->hasLocalizedPermissionLabels()
                     ? FilamentShield::getLocalizedResourceLabel($entity['fqcn'])
-                    : FilamentShield::getPermissionIdentifier($entity['fqcn'])
+                    : $entity['model']
                 );
 
                 return Forms\Components\Section::make($sectionLabel)

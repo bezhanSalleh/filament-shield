@@ -143,7 +143,7 @@ class FilamentShield
                 return [
                     $name => [
                         'resource' => "{$name}",
-                        'model' => Str::of($resource::getModel())->afterLast('\\'),
+                        'model' => str($resource::getModel())->afterLast('\\')->toString(),
                         'fqcn' => $resource,
                     ],
                 ];
