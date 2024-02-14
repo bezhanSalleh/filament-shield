@@ -106,9 +106,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    // ->beforeFormFilled(FilamentShield::getCustompermissions(...))
-                    ,
+                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -163,11 +161,6 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Utils::isResourceNavigationGroupEnabled()
             ? __('filament-shield::filament-shield.nav.group')
             : '';
-    }
-
-    public static function getCluster(): ?string
-    {
-        return config('filament-shield.shield_resource.cluster');
     }
 
     public static function getNavigationLabel(): string
