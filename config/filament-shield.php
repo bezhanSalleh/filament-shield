@@ -58,6 +58,8 @@ return [
     'generator' => [
         'option' => 'policies_and_permissions',
         'policy_directory' => 'Policies',
+        // The namespace of the generated policy file will be App\Policies
+        'namespace' => 'Policies',
     ],
 
     'exclude' => [
