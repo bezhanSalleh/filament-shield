@@ -149,7 +149,6 @@ class Utils
         return (string) config('filament-shield.generator.option', 'policies_and_permissions');
     }
 
-
     public static function getGeneratorNamespace(): string
     {
         return (string) config('filament-shield.generator.namespace', 'Policies');
