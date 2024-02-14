@@ -2,17 +2,19 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Filament\Facades\Filament;
-use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Widgets\TableWidget;
-use Filament\Widgets\Widget;
-use Filament\Widgets\WidgetConfiguration;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
+use Filament\Widgets\Widget;
+use Filament\Facades\Filament;
+use Filament\Widgets\TableWidget;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Lang;
+use Filament\Widgets\WidgetConfiguration;
 use Spatie\Permission\PermissionRegistrar;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Support\Concerns\EvaluatesClosures;
+use function Filament\Support\generate_search_column_expression;
 
 class FilamentShield
 {
@@ -167,7 +169,7 @@ class FilamentShield
             return $resource === $entity;
         })->first()::getModelLabel();
 
-        return Str::of($label)->headline();
+        return str($label)->headline()->toString();
     }
 
     /**
@@ -345,15 +347,26 @@ class FilamentShield
 
     public function getCustomPermissions(): ?Collection
     {
+        
         if (blank($this->customPermissions)) {
-             $entitiesPermissions = collect($this->getAllResourcePermissions())->keys()
-                ->merge(collect($this->getPages())->map(fn ($page) => $page['permission'])->values())
-                ->merge(collect($this->getWidgets())->map(fn ($widget) => $widget['permission'])->values())
-                ->values();
-
-            $this->customPermissions = Utils::getPermissionModel()::whereNotIn('name', $entitiesPermissions)->pluck('name');
+            $query = Utils::getPermissionModel()::query();
+            $this->customPermissions = $query
+                ->select('name')
+                ->whereNotIn(DB::raw('lower(name)'), $this->getEntitiesPermissions())
+                ->pluck('name');
         }
 
         return $this->customPermissions;
+    }
+
+    protected function getEntitiesPermissions(): ?array
+    {
+        return collect($this->getAllResourcePermissions())->keys()
+            ->merge(collect($this->getPages())->map->permission->keys())
+            ->merge(collect($this->getWidgets())->map->permission->keys())
+            ->map(fn($permission) => str($permission)->lower()->toString())
+            ->values()
+            ->unique()
+            ->toArray();
     }
 }
