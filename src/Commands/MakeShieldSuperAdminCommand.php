@@ -65,7 +65,7 @@ class MakeShieldSuperAdminCommand extends Command
                 ['ID', 'Name', 'Email', 'Roles'],
                 static::getUserModel()::with('roles')->get()->map(function (Authenticatable $user) {
                     return [
-                        'id' => $user->getAttribute('id'),
+                        'id' => $user->getKey(),
                         'name' => $user->getAttribute('name'),
                         'email' => $user->getAttribute('email'),
                         /** @phpstan-ignore-next-line */
