@@ -71,4 +71,9 @@ trait HasPageShield
     {
         return static::canView() && parent::shouldRegisterNavigation();
     }
+
+    public static function canAccess(): bool
+    {
+        return static::canView();
+    }
 }
