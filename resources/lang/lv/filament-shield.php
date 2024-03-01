@@ -71,7 +71,7 @@ return [
         'delete' => 'Dzēst',
         'delete_any' => 'Dzēst visu',
         'force_delete' => 'Piespiedu dzēšana',
-        'force_delete_any' => 'Piespiedu dzēšāna visam',
+        'force_delete_any' => 'Piespiedu dzēšana visam',
         'restore' => 'Atjaunot',
         'reorder' => 'Pārkārtot',
         'restore_any' => 'Atjaunot visu',
