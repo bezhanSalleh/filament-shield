@@ -186,7 +186,7 @@ class Utils
 
     public static function isRolePolicyRegistered(): bool
     {
-        return (bool) config('filament-shield.register_role_policy', true);
+        return (bool) config('filament-shield.register_role_policy.enabled', true);
     }
 
     public static function doesResourceHaveCustomPermissions(string $resourceClass): bool
