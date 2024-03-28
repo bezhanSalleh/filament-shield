@@ -2,18 +2,19 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Filament\Facades\Filament;
-use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Widgets\TableWidget;
+use Illuminate\Support\Str;
 use Filament\Widgets\Widget;
-use Filament\Widgets\WidgetConfiguration;
+use Filament\Facades\Filament;
+use Filament\Widgets\TableWidget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Str;
+use Filament\Widgets\WidgetConfiguration;
 use Spatie\Permission\PermissionRegistrar;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Support\Concerns\EvaluatesClosures;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 
 class FilamentShield
 {
@@ -315,28 +316,32 @@ class FilamentShield
 
     public function getAllResourcePermissions(): array
     {
-        return collect(FilamentShield::getResources())
+        return collect($this->getResources())
             ->map(function ($resourceEntity) {
                 return collect(
                     Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
                 )
-                    ->flatMap(
-                        fn ($permission) => [
-                            $permission .
-                            '_' .
-                            $resourceEntity[
-                                'resource'
-                            ] => str(FilamentShield::getLocalizedResourcePermissionLabel($permission))
-                                ->append(
+                    ->flatMap( function($permission) use ($resourceEntity) {
+                        $name = $permission . '_' . $resourceEntity['resource'];
+                        $permissionLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
+                            ? str(static::getLocalizedResourcePermissionLabel($permission))
+                                ->prepend(
                                     str($resourceEntity['fqcn']::getPluralModelLabel())
                                         ->plural()
                                         ->title()
-                                        ->prepend(' - ')
+                                        ->append(' - ')
                                         ->toString()
                                 )
-                                ->toString(),
-                        ]
-                    )
+                                ->toString()
+                            : $name;
+                        $resourceLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
+                            ? static::getLocalizedResourceLabel($resourceEntity['fqcn'])
+                            : $resourceEntity['model'];
+
+                        return [
+                            $name => $permissionLabel,
+                        ];
+                    })
                     ->toArray();
             })
             ->sortKeys()
