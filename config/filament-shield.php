@@ -10,7 +10,7 @@ return [
         'is_globally_searchable' => false,
         'show_model_path' => true,
         'is_scoped_to_tenant' => true,
-        'cluster' => env('FILAMENT_SHIELD_CLUSTER', null),
+        'cluster' => null,
     ],
 
     'auth_provider_model' => [
@@ -59,8 +59,7 @@ return [
     'generator' => [
         'option' => 'policies_and_permissions',
         'policy_directory' => 'Policies',
-        // The namespace of the generated policy file will be App\Policies
-        'namespace' => 'Policies',
+        'policy_namespace' => 'Policies',
     ],
 
     'exclude' => [

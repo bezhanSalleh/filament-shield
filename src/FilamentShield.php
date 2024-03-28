@@ -10,6 +10,7 @@ use Filament\Widgets\TableWidget;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
@@ -19,6 +20,8 @@ class FilamentShield
     use EvaluatesClosures;
 
     protected ?Closure $configurePermissionIdentifierUsing = null;
+
+    public ?Collection $customPermissions = null;
 
     public function configurePermissionIdentifierUsing(Closure $callback): static
     {
@@ -139,7 +142,7 @@ class FilamentShield
                 return [
                     $name => [
                         'resource' => "{$name}",
-                        'model' => Str::of($resource::getModel())->afterLast('\\'),
+                        'model' => str($resource::getModel())->afterLast('\\')->toString(),
                         'fqcn' => $resource,
                     ],
                 ];
@@ -165,7 +168,7 @@ class FilamentShield
             return $resource === $entity;
         })->first()::getModelLabel();
 
-        return Str::of($label)->headline();
+        return str($label)->headline()->toString();
     }
 
     /**
@@ -308,5 +311,65 @@ class FilamentShield
         return $widget instanceof WidgetConfiguration
             ? $widget->widget
             : $widget;
+    }
+
+    public function getAllResourcePermissions(): array
+    {
+        return collect($this->getResources())
+            ->map(function ($resourceEntity) {
+                return collect(
+                    Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
+                )
+                    ->flatMap(function ($permission) use ($resourceEntity) {
+                        $name = $permission . '_' . $resourceEntity['resource'];
+                        $permissionLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
+                            ? str(static::getLocalizedResourcePermissionLabel($permission))
+                                ->prepend(
+                                    str($resourceEntity['fqcn']::getPluralModelLabel())
+                                        ->plural()
+                                        ->title()
+                                        ->append(' - ')
+                                        ->toString()
+                                )
+                                ->toString()
+                            : $name;
+                        $resourceLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
+                            ? static::getLocalizedResourceLabel($resourceEntity['fqcn'])
+                            : $resourceEntity['model'];
+
+                        return [
+                            $name => $permissionLabel,
+                        ];
+                    })
+                    ->toArray();
+            })
+            ->sortKeys()
+            ->collapse()
+            ->toArray();
+    }
+
+    public function getCustomPermissions(): ?Collection
+    {
+
+        if (blank($this->customPermissions)) {
+            $query = Utils::getPermissionModel()::query();
+            $this->customPermissions = $query
+                ->select('name')
+                ->whereNotIn(DB::raw('lower(name)'), $this->getEntitiesPermissions())
+                ->pluck('name');
+        }
+
+        return $this->customPermissions;
+    }
+
+    protected function getEntitiesPermissions(): ?array
+    {
+        return collect($this->getAllResourcePermissions())->keys()
+            ->merge(collect($this->getPages())->map->permission->keys())
+            ->merge(collect($this->getWidgets())->map->permission->keys())
+            ->map(fn ($permission) => str($permission)->lower()->toString())
+            ->values()
+            ->unique()
+            ->toArray();
     }
 }
