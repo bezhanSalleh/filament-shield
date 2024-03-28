@@ -2,6 +2,45 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.2.4 - 2024-03-28
+
+### What's Changed
+
+* `Create/Edit` performance boost
+* Simple view for Resource Permissions
+* `cluster` config
+* View permissions as is or by label using the `localizePermissionLabels(condition: false)` method
+
+> [!IMPORTANT]
+If you've previously published `RoleResource`, please republish it using `shield:publish` and when prompted; select `yes`.
+**Note:** Custom modifications to `RoleResource` may be overwritten. Ensure to manually handle any customizations after republishing by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/336
+
+* Configure the namespace of the policy file by @igwen6w in https://github.com/bezhanSalleh/filament-shield/pull/313
+* Make cluster configurable on resource by @pelmered in https://github.com/bezhanSalleh/filament-shield/pull/328
+* Add option to shield:seeder command to only generate direct permissions by @Jacobtims in https://github.com/bezhanSalleh/filament-shield/pull/329
+* Remove unnecessary PHPDoc by @iRaziul in https://github.com/bezhanSalleh/filament-shield/pull/335
+* Don't use hardcoded primary key name by @danswiser in https://github.com/bezhanSalleh/filament-shield/pull/338
+* Add translation for LV by @webmasterlv in https://github.com/bezhanSalleh/filament-shield/pull/340
+* Overide canAccess that will point to canView by @sbc640964 in https://github.com/bezhanSalleh/filament-shield/pull/341
+* Bump ramsey/composer-install from 2 to 3 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/343
+* Fix French translations by @invaders-xx in https://github.com/bezhanSalleh/filament-shield/pull/348
+* Korean translations add by @corean in https://github.com/bezhanSalleh/filament-shield/pull/352
+* Bump dependabot/fetch-metadata from 1.6.0 to 2.0.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/353
+
+### New Contributors
+
+* @igwen6w made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/313
+* @pelmered made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/328
+* @Jacobtims made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/329
+* @iRaziul made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/335
+* @danswiser made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/338
+* @webmasterlv made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/340
+* @sbc640964 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/341
+* @invaders-xx made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/348
+* @corean made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/352
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.2.3...3.2.4
+
 ## 3.2.1 - 2024-01-25
 
 **Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.2.0...3.2.1
