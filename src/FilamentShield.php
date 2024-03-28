@@ -2,19 +2,18 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Illuminate\Support\Str;
-use Filament\Widgets\Widget;
 use Filament\Facades\Filament;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\TableWidget;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
-use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 
 class FilamentShield
 {
@@ -321,7 +320,7 @@ class FilamentShield
                 return collect(
                     Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
                 )
-                    ->flatMap( function($permission) use ($resourceEntity) {
+                    ->flatMap(function ($permission) use ($resourceEntity) {
                         $name = $permission . '_' . $resourceEntity['resource'];
                         $permissionLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
                             ? str(static::getLocalizedResourcePermissionLabel($permission))
