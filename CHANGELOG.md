@@ -2,6 +2,24 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.2.5 - 2024-05-14
+
+### What's Changed
+
+* [Fix] Not generate `super_admin` role when disabled by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/381
+* [Fix] Cluster Page by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/380
+* feat: add Polish translation by @AngryDragonite in https://github.com/bezhanSalleh/filament-shield/pull/374
+* Fixed Tab bug in chinese language by @curder in https://github.com/bezhanSalleh/filament-shield/pull/362
+* 🌐 km translations by @valpuia in https://github.com/bezhanSalleh/filament-shield/pull/356
+
+### New Contributors
+
+* @valpuia made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/356
+* @curder made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/362
+* @AngryDragonite made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/374
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.2.4...3.2.5
+
 ## 3.2.4 - 2024-03-28
 
 ### What's Changed
