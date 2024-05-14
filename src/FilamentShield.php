@@ -187,6 +187,7 @@ class FilamentShield
     public static function getPages(): ?array
     {
         $pages = Filament::getPages();
+
         if (Utils::discoverAllPages()) {
             $pages = [];
             foreach (Filament::getPanels() as $panel) {
@@ -195,8 +196,19 @@ class FilamentShield
             $pages = array_unique($pages);
         }
 
+        $clusters = collect($pages)
+            ->map(fn($page) => $page::getCluster())
+            ->reject(fn($cluster) => is_null($cluster))
+            ->unique()
+            ->values()
+            ->toArray();
+
         return collect($pages)
-            ->reject(function ($page) {
+            ->reject(function ($page) use($clusters) {
+                if (in_array($page, $clusters)) {
+                    return true;
+                }
+
                 if (Utils::isGeneralExcludeEnabled()) {
                     return in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
                 }

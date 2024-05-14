@@ -13,7 +13,7 @@ trait HasPageShield
     {
         $this->beforeBooted();
 
-        if (! static::canView()) {
+        if (! static::canAccess()) {
 
             Notification::make()
                 ->title(__('filament-shield::filament-shield.forbidden'))
@@ -51,11 +51,6 @@ trait HasPageShield
         return Filament::getUrl();
     }
 
-    public static function canView(): bool
-    {
-        return Filament::auth()->user()->can(static::getPermissionName()) || Filament::auth()->user()->hasRole(Utils::getSuperAdminName());
-    }
-
     protected static function getPermissionName(): string
     {
         return Str::of(class_basename(static::class))
@@ -67,13 +62,13 @@ trait HasPageShield
             ->toString();
     }
 
-    public static function shouldRegisterNavigation(array $parameters = []): bool
+    public static function shouldRegisterNavigation(): bool
     {
-        return static::canView() && parent::shouldRegisterNavigation();
+        return static::canAccess() && parent::shouldRegisterNavigation();
     }
 
     public static function canAccess(): bool
     {
-        return static::canView();
+        return Filament::auth()->user()->can(static::getPermissionName());
     }
 }
