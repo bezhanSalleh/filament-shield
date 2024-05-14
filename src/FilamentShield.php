@@ -96,7 +96,7 @@ class FilamentShield
 
     protected static function giveSuperAdminPermission(string | array | Collection $permissions): void
     {
-        if (! Utils::isSuperAdminDefinedViaGate()) {
+        if (! Utils::isSuperAdminDefinedViaGate() && Utils::isSuperAdminEnabled()) {
             $superAdmin = static::createRole();
 
             $superAdmin->givePermissionTo($permissions);
