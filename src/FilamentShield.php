@@ -197,14 +197,14 @@ class FilamentShield
         }
 
         $clusters = collect($pages)
-            ->map(fn($page) => $page::getCluster())
-            ->reject(fn($cluster) => is_null($cluster))
+            ->map(fn ($page) => $page::getCluster())
+            ->reject(fn ($cluster) => is_null($cluster))
             ->unique()
             ->values()
             ->toArray();
 
         return collect($pages)
-            ->reject(function ($page) use($clusters) {
+            ->reject(function ($page) use ($clusters) {
                 if (in_array($page, $clusters)) {
                     return true;
                 }
