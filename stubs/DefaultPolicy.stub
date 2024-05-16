@@ -21,7 +21,7 @@ class {{ modelPolicy }}
     /**
      * Determine whether the {{ auth_model_variable }} can view the model.
      */
-    public function view({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
+    public function view({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ View }}');
     }
@@ -37,7 +37,7 @@ class {{ modelPolicy }}
     /**
      * Determine whether the {{ auth_model_variable }} can update the model.
      */
-    public function update({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
+    public function update({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Update }}');
     }
@@ -45,7 +45,7 @@ class {{ modelPolicy }}
     /**
      * Determine whether the {{ auth_model_variable }} can delete the model.
      */
-    public function delete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
+    public function delete({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Delete }}');
     }
@@ -61,7 +61,7 @@ class {{ modelPolicy }}
     /**
      * Determine whether the {{ auth_model_variable }} can permanently delete.
      */
-    public function forceDelete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
+    public function forceDelete({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class {{ modelPolicy }}
     /**
      * Determine whether the {{ auth_model_variable }} can restore.
      */
-    public function restore({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
+    public function restore({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class {{ modelPolicy }}
     /**
      * Determine whether the {{ auth_model_variable }} can replicate.
      */
-    public function replicate({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
+    public function replicate({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Replicate }}');
     }
