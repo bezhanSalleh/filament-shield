@@ -331,6 +331,7 @@ class IncomeWidget extends LineChartWidget
 ### Policies
 
 #### Role Policy
+##### Using Laravel 10
 To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AuthServiceProvider`:
 
 ```php
@@ -341,8 +342,23 @@ protected $policies = [
 ];
 ...
 ```
+##### Using Laravel 11
 
-**You can skip it if you have enabled it from the `config`:**
+To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AppServiceProvider`:
+
+```php
+//AppServiceProvider.php
+use Illuminate\Support\Facades\Gate;
+...
+public function boot(): void
+    {
+        ...
+        Gate::policy(\Spatie\Permission\Models\Role::class, \App\Policies\RolePolicy::class);
+    }
+...
+```
+
+**whatever your version of Laravel, you can skip it if you have enabled it from the `config`:**
 
 ```php
 // config/filament-shield.php
@@ -368,8 +384,10 @@ If your policies are not in the default `Policies` directory in the `app_path()`
 
 #### Custom folder structure for Models or Third-Party Plugins
 
-Shield also generates policies and permissions for third-party plugins and `Models` with custom folder structure and to enforce the generated policies you will need to register them in your application's `AuthServiceProvider`:
-```
+Shield also generates policies and permissions for third-party plugins and `Models` with custom folder structure and to enforce the generated policies you will need to register them.
+##### Using Laravel 10
+```php
+//AuthServiceProvider.php
 ...
 class AuthServiceProvider extends ServiceProvider
 {
@@ -380,6 +398,21 @@ class AuthServiceProvider extends ServiceProvider
         'Ramnzys\FilamentEmailLog\Models\Email' => 'App\Policies\EmailPolicy'
 
     ];
+```
+##### Using Laravel 11
+```php
+//AppServiceProvider.php
+use Illuminate\Support\Facades\Gate;
+...
+class AppServiceProvider extends ServiceProvider
+{
+    ...
+   public function boot(): void
+    {
+        ...
+        Gate::policy(\App\Models\Blog\Author::class, \App\Policies\Blog\AuthorPolicy::class);
+        Gate::policy(\Ramnzys\FilamentEmailLog\Models\Email::class, \App\Policies\EmailPolicy::class);
+    }
 ```
 #### Users (Assigning Roles to Users)
 Shield does not come with a way to assign roles to your users out of the box, however you can easily assign roles to your users using Filament `Forms`'s `Select` or `CheckboxList` component. Inside your users `Resource`'s form add one of these components and configure them as you need:
