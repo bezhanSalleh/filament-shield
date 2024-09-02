@@ -450,7 +450,8 @@ class IncomeWidget extends LineChartWidget
 
 #### Role Policy
 
-You can skip this if have set the `'register_role_policy' => true` in the config.
+##### Using Laravel 10
+
 To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AuthServiceProvider`:
 
 ```php
@@ -461,6 +462,24 @@ protected $policies = [
 ];
 ...
 ```
+
+##### Using Laravel 11
+
+To ensure `RoleResource` access via `RolePolicy` you would need to add the following to your `AppServiceProvider`:
+
+```php
+//AppServiceProvider.php
+use Illuminate\Support\Facades\Gate;
+...
+public function boot(): void
+    {
+        ...
+        Gate::policy(\Spatie\Permission\Models\Role::class, \App\Policies\RolePolicy::class);
+    }
+...
+```
+
+**For both Laravel 10 and 11, you can skip this if have set the `'register_role_policy' => true` in the config.**
 
 #### Third-Party Plugins
 
