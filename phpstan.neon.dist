@@ -38,9 +38,9 @@ parameters:
         -
             message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]#'
             path: src/Commands/MakeShieldSeederCommand.php
+        -
+            message: '#Missing typehint for iterable value#'
 
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
-    checkMissingIterableValueType: false
-
