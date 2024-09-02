@@ -191,7 +191,7 @@ class Utils
 
     public static function isRolePolicyRegistered(): bool
     {
-        return (bool) config('filament-shield.register_role_policy.enabled', true);
+        return static::isRolePolicyGenerated() && config('filament-shield.register_role_policy.enabled', false);
     }
 
     public static function doesResourceHaveCustomPermissions(string $resourceClass): bool
@@ -241,5 +241,19 @@ class Utils
     public static function discoverAllPages(): bool
     {
         return config('filament-shield.discovery.discover_all_pages', false);
+    }
+
+    public static function getPolicyPath(): string
+    {
+        return Str::of(config('filament-shield.generator.policy_directory', 'Policies'))
+            ->replace('\\', DIRECTORY_SEPARATOR)
+            ->toString();
+    }
+
+    protected static function isRolePolicyGenerated(): bool
+    {
+        $filesystem = new Filesystem;
+
+        return (bool) $filesystem->exists(app_path(static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php'));
     }
 }
