@@ -24,7 +24,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         parent::packageRegistered();
 
         $this->app->scoped('filament-shield', function (): FilamentShield {
-            return new FilamentShield();
+            return new FilamentShield;
         });
     }
 

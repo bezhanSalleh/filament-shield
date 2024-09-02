@@ -19,7 +19,7 @@ class Utils
     {
         $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
 
-        $filesystem = new Filesystem();
+        $filesystem = new Filesystem;
 
         return (bool) $filesystem->exists($roleResourcePath);
     }
