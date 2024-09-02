@@ -22,13 +22,10 @@ trait CanGeneratePolicy
     {
         $path = (new \ReflectionClass($entity['fqcn']::getModel()))->getFileName();
 
-        $policyPath = Str::of(config('filament-shield.generator.policy_directory', 'Policies'))
-            ->replace('\\', DIRECTORY_SEPARATOR);
-
         if (Str::of($path)->contains(['vendor', 'src'])) {
             $basePolicyPath = app_path(
                 (string) Str::of($entity['model'])
-                    ->prepend($policyPath->append('\\'))
+                    ->prepend(str(Utils::getPolicyPath())->append('\\'))
                     ->replace('\\', DIRECTORY_SEPARATOR),
             );
 
@@ -37,7 +34,7 @@ trait CanGeneratePolicy
 
         /** @phpstan-ignore-next-line */
         $basePath = Str::of($path)
-            ->replace('Models', $policyPath)
+            ->replace('Models', Utils::getPolicyPath())
             ->replaceLast('.php', 'Policy.php')
             ->replace('\\', DIRECTORY_SEPARATOR);
 
