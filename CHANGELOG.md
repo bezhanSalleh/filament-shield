@@ -2,6 +2,28 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.2.6 - 2024-09-02
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.1.0 to 2.2.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/405
+* Slovak translation by @hamrak in https://github.com/bezhanSalleh/filament-shield/pull/384
+* Update Doc for Laravel 11 (Role Policy and Custom folder structure) by @paulhenry46 in https://github.com/bezhanSalleh/filament-shield/pull/387
+* Added (sq) Albanian language by @dajanvulaj in https://github.com/bezhanSalleh/filament-shield/pull/389
+* Update README.md by @bilogic in https://github.com/bezhanSalleh/filament-shield/pull/391
+* Add CKB & KU translation by @RawanD201 in https://github.com/bezhanSalleh/filament-shield/pull/404
+* handles role policy auto registration and resolves #407 by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/411
+
+### New Contributors
+
+* @hamrak made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/384
+* @paulhenry46 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/387
+* @dajanvulaj made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/389
+* @bilogic made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/391
+* @RawanD201 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/404
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.2.5...3.2.6
+
 ## 3.2.5 - 2024-05-14
 
 ### What's Changed
