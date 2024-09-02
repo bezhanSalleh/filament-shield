@@ -29,17 +29,11 @@ trait HasPageShield
         $this->afterBooted();
     }
 
-    protected function beforeBooted(): void
-    {
-    }
+    protected function beforeBooted(): void {}
 
-    protected function afterBooted(): void
-    {
-    }
+    protected function afterBooted(): void {}
 
-    protected function beforeShieldRedirects(): void
-    {
-    }
+    protected function beforeShieldRedirects(): void {}
 
     protected function getShieldRedirectPath(): string
     {

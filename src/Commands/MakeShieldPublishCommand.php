@@ -26,8 +26,8 @@ class MakeShieldPublishCommand extends Command
             }
         }
 
-        (new Filesystem())->ensureDirectoryExists($baseResourcePath);
-        (new Filesystem())->copyDirectory(__DIR__.'/../Resources', $baseResourcePath);
+        (new Filesystem)->ensureDirectoryExists($baseResourcePath);
+        (new Filesystem)->copyDirectory(__DIR__.'/../Resources', $baseResourcePath);
 
         $currentNamespace = 'BezhanSalleh\\FilamentShield\\Resources';
         $newNamespace = 'App\\Filament\\Resources\\Shield';

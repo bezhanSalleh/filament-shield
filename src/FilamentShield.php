@@ -110,8 +110,6 @@ class FilamentShield
 
     /**
      * Transform filament resources to key value pair for shield
-     *
-     * @return array
      */
     public function getResources(): ?array
     {
@@ -166,8 +164,6 @@ class FilamentShield
 
     /**
      * Transform filament pages to key value pair for shield
-     *
-     * @return array
      */
     public static function getPages(): ?array
     {
@@ -198,17 +194,15 @@ class FilamentShield
     {
         $object = static::transformClassString($page);
 
-        if (Str::of($pageTitle = invade(new $object())->getTitle())->isNotEmpty()) {
+        if (Str::of($pageTitle = invade(new $object)->getTitle())->isNotEmpty()) {
             return $pageTitle;
         }
 
-        return invade(new $object())->getNavigationLabel();
+        return invade(new $object)->getNavigationLabel();
     }
 
     /**
      * Transform filament widgets to key value pair for shield
-     *
-     * @return array
      */
     public static function getWidgets(): ?array
     {
@@ -249,13 +243,13 @@ class FilamentShield
             ->headline();
 
         if ($grandpa === "Filament\Widgets\ChartWidget") {
-            return (string) invade(new $class())->getHeading() ?? $heading;
+            return (string) invade(new $class)->getHeading() ?? $heading;
         }
 
         return match ($parent) {
-            "Filament\Widgets\TableWidget" => (string) invade(new $class())->getTableHeading(),
+            "Filament\Widgets\TableWidget" => (string) invade(new $class)->getTableHeading(),
             "Filament\Widgets\StatsOverviewWidget" => (string) static::hasHeadingForShield($class)
-                ? (new $class())->getHeadingForShield()
+                ? (new $class)->getHeadingForShield()
                 : $heading,
             default => $heading
         };

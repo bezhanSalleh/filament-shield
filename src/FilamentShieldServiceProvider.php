@@ -43,7 +43,7 @@ class FilamentShieldServiceProvider extends PluginServiceProvider
         parent::packageRegistered();
 
         $this->app->scoped('filament-shield', function (): FilamentShield {
-            return new FilamentShield();
+            return new FilamentShield;
         });
     }
 
