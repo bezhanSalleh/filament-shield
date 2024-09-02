@@ -48,7 +48,7 @@ trait CanGeneratePolicy
                 $gates[Str::studly($permission)] = $permission . '_' . $entity['resource'];
 
                 return $gates;
-            }, collect())->toArray();
+            }, []);
 
         $stubVariables['auth_model_fqcn'] = Utils::getAuthProviderFQCN();
         $stubVariables['auth_model_name'] = Str::of($stubVariables['auth_model_fqcn'])->afterLast('\\');
