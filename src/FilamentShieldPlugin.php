@@ -28,7 +28,7 @@ class FilamentShieldPlugin implements Plugin
     {
         if (! Utils::isResourcePublished()) {
             $panel->resources([
-                Resources\RoleResource::class,
+                config('filament-shield.shield_resource.role_resource'),
             ]);
         }
     }

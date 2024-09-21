@@ -11,6 +11,7 @@ return [
         'show_model_path' => true,
         'is_scoped_to_tenant' => true,
         'cluster' => null,
+        'role_resource' => 'BezhanSalleh\FilamentShield\Resources\RoleResource',
     ],
 
     'auth_provider_model' => [
