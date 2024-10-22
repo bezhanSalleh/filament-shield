@@ -63,18 +63,18 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    // 'resource_permission_prefixes_labels' => [
-    //     'view' => 'View',
-    //     'view_any' => 'View Any',
-    //     'create' => 'Create',
-    //     'update' => 'Update',
-    //     'delete' => 'Delete',
-    //     'delete_any' => 'Delete Any',
-    //     'force_delete' => 'Force Delete',
-    //     'force_delete_any' => 'Force Delete Any',
-    //     'restore' => 'Restore',
-    //     'reorder' => 'Reorder',
-    //     'restore_any' => 'Restore Any',
-    //     'replicate' => 'Replicate',
-    // ],
+     'resource_permission_prefixes_labels' => [
+         'view' => 'Görüntüle',
+         'view_any' => 'Herhangi birini görüntüle',
+         'create' => 'Oluştur',
+         'update' => 'Güncelleme',
+         'delete' => 'Silme',
+         'delete_any' => 'Herhangi Birini Sil',
+         'force_delete' => 'Kalıcı Sil',
+         'force_delete_any' => 'Herhangi Birini Kalıcı Sil',
+         'restore' => 'Geri Yükle',
+         'reorder' => 'Yeniden Sırala',
+         'restore_any' => 'Herhangi Birini Geri Yükle',
+         'replicate' => 'Kopyala/Çoğalt',
+     ],
 ];
