@@ -60,43 +60,78 @@ class ShieldInitCommand extends Command
             $this->components->warn('Shield is already installed!');
         }
 
-        if (! $stringer->contains($shieldNeedle) && $stringer->contains($pluginsNeedle)) {
-            $stringer->when(
-                value: $this->option('central'),
-                callback: fn (Stringer $stringer) => $stringer
-                    ->indent(4)
-                    ->append($pluginsNeedle,$shieldNeedle)
-                    ->indent(4)
-                    ->append($shieldNeedle, "->centralApp(" . static::getTenantModelClass() . "),"),
-                default: fn (Stringer $stringer) => $stringer
-                    ->indent(4)
-                    ->append($pluginsNeedle, $shieldNeedle.",")
-            );
-        }
+        $stringer->when(
+            value: (! $stringer->contains($shieldNeedle) && $stringer->contains($pluginsNeedle)),
+            callback: fn (Stringer $stringer): Stringer => $stringer
+                ->when(
+                    value: $this->option('central'),
+                    callback: fn (Stringer $stringer) => $stringer
+                        ->indent(4)
+                        ->append($pluginsNeedle,$shieldNeedle)
+                        ->append($shieldNeedle, "->centralApp(" . static::getTenantModelClass() . "),"),
+                    default: fn (Stringer $stringer) => $stringer
+                        ->indent(4)
+                        ->append($pluginsNeedle, $shieldNeedle.",")
+                ),
+        )
+        ->when(
+            value: (! $stringer->contains($shieldNeedle) && ! $stringer->contains($pluginsNeedle)),
+            callback: fn (Stringer $stringer): Stringer => $stringer
+                ->when(
+                    value: $this->option('central'),
+                    callback: fn (Stringer $stringer) => $stringer
+                        ->replaceLast(");", "])Marker")
+                        ->append("Marker", $pluginsNeedle)
+                        ->append($pluginsNeedle, "]);")
+                        ->indent(4)
+                        ->prepend("]);", $shieldNeedle)
+                        ->indent(4)
+                        ->prepend("]);", "->centralApp(" . static::getTenantModelClass() . "),")
+                        ->replace("Marker", "])"),
+                    default: fn (Stringer $stringer) => $stringer
+                        ->replaceLast(");", "])Marker")
+                        ->append("Marker", $pluginsNeedle)
+                        ->append($pluginsNeedle, "]);")
+                        ->indent(4)
+                        ->prepend("]);", $shieldNeedle . ",")
+                        ->replace("Marker", "])")
+                )
+        );
+        // if (! $stringer->contains($shieldNeedle) && $stringer->contains($pluginsNeedle)) {
+        //     $stringer->when(
+        //         value: $this->option('central'),
+        //         callback: fn (Stringer $stringer) => $stringer
+        //             ->indent(4)
+        //             ->append($pluginsNeedle,$shieldNeedle)
+        //             ->indent(4)
+        //             ->append($shieldNeedle, "->centralApp(" . static::getTenantModelClass() . "),"),
+        //         default: fn (Stringer $stringer) => $stringer
+        //             ->indent(4)
+        //             ->append($pluginsNeedle, $shieldNeedle.",")
+        //     );
+        // }
 
-        if (! $stringer->contains($shieldNeedle) && ! $stringer->contains($pluginsNeedle)) {
-            ray('here second');
-
-            $stringer->when(
-                value: $this->option('central'),
-                callback: fn (Stringer $stringer) => $stringer
-                    ->replaceLast(");", "])Marker")
-                    ->append("Marker", $pluginsNeedle)
-                    ->append($pluginsNeedle, "]);")
-                    ->indent(4)
-                    ->prepend("]);", $shieldNeedle)
-                    ->indent(4)
-                    ->prepend("]);", "->centralApp(" . static::getTenantModelClass() . "),")
-                    ->replace("Marker", "])"),
-                default: fn (Stringer $stringer) => $stringer
-                    ->replaceLast(");", "])Marker")
-                    ->append("Marker", $pluginsNeedle)
-                    ->append($pluginsNeedle, "]);")
-                    ->indent(4)
-                    ->prepend("]);", $shieldNeedle . ",")
-                    ->replace("Marker", "])")
-            );
-        }
+        // if (! $stringer->contains($shieldNeedle) && ! $stringer->contains($pluginsNeedle)) {
+        //     $stringer->when(
+        //         value: $this->option('central'),
+        //         callback: fn (Stringer $stringer) => $stringer
+        //             ->replaceLast(");", "])Marker")
+        //             ->append("Marker", $pluginsNeedle)
+        //             ->append($pluginsNeedle, "]);")
+        //             ->indent(4)
+        //             ->prepend("]);", $shieldNeedle)
+        //             ->indent(4)
+        //             ->prepend("]);", "->centralApp(" . static::getTenantModelClass() . "),")
+        //             ->replace("Marker", "])"),
+        //         default: fn (Stringer $stringer) => $stringer
+        //             ->replaceLast(");", "])Marker")
+        //             ->append("Marker", $pluginsNeedle)
+        //             ->append($pluginsNeedle, "]);")
+        //             ->indent(4)
+        //             ->prepend("]);", $shieldNeedle . ",")
+        //             ->replace("Marker", "])")
+        //     );
+        // }
         $stringer->save();
         ray($stringer)->die();
         // $stringer->when(
