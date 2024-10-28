@@ -2,21 +2,23 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
+use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\Component;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Forms\ShieldSelectAllToggle;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Forms;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Illuminate\Contracts\Support\Arrayable;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -54,6 +56,14 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->nullable()
                                     ->maxLength(255),
 
+                                Forms\Components\Select::make('team_id')
+                                    ->label(__('filament-shield::filament-shield.field.team'))
+                                    ->placeholder(__('filament-shield::filament-shield.field.team.placeholder'))
+                                    ->default([Filament::getTenant()?->id])
+                                    ->options(fn (): Arrayable => static::shield()->getTenantModel()::pluck('name', 'id'))
+                                    ->hidden(fn (): bool => ! static::shield()->isCentralApp())
+                                    ->dehydratedWhenHidden(),
+
                                 ShieldSelectAllToggle::make('select_all')
                                     ->onIcon('heroicon-s-shield-check')
                                     ->offIcon('heroicon-s-shield-exclamation')
@@ -84,14 +94,23 @@ class RoleResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->badge()
+                    // ->badge()
+                    ->weight('font-medium')
                     ->label(__('filament-shield::filament-shield.column.name'))
                     ->formatStateUsing(fn ($state): string => Str::headline($state))
-                    ->colors(['primary'])
+                    // ->color('primary')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('guard_name')
                     ->badge()
+                    ->color('warning')
                     ->label(__('filament-shield::filament-shield.column.guard_name')),
+                Tables\Columns\TextColumn::make('team.name')
+                    ->default('Global')
+                    ->badge()
+                    ->color(fn(mixed $state): string => str($state)->contains('Global') ? 'gray' : 'primary')
+                    ->label(__('filament-shield::filament-shield.column.team'))
+                    ->searchable()
+                    ->hidden(fn (): bool => Filament::hasTenancy() && ! static::shield()->isCentralApp()),
                 Tables\Columns\TextColumn::make('permissions_count')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))

@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Contracts\Plugin;
+use Closure;
 use Filament\Panel;
+use Filament\Contracts\Plugin;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShieldPlugin implements Plugin
 {
+    use EvaluatesClosures;
+    use Concerns\CanBeCentralApp;
     use Concerns\CanCustomizeColumns;
     use Concerns\CanLocalizePermissionLabels;
     use Concerns\HasSimpleResourcePermissionView;

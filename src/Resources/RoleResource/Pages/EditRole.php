@@ -2,12 +2,13 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
+use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
+use Filament\Resources\Pages\EditRecord;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
 
 class EditRole extends EditRecord
 {
@@ -26,11 +27,15 @@ class EditRole extends EditRecord
     {
         $this->permissions = collect($data)
             ->filter(function ($permission, $key) {
-                return ! in_array($key, ['name', 'guard_name', 'select_all']);
+                return ! in_array($key, ['name', 'guard_name', 'select_all', 'team_id']);
             })
             ->values()
             ->flatten()
             ->unique();
+
+        if (Arr::has($data, 'team_id')) {
+            return Arr::only($data, ['name', 'guard_name', 'team_id']);
+        }
 
         return Arr::only($data, ['name', 'guard_name']);
     }
