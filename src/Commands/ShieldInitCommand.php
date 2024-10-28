@@ -82,19 +82,18 @@ class ShieldInitCommand extends Command
                 callback: fn (Stringer $stringer) => $stringer
                     ->replaceLast(");", "])Marker")
                     ->append("Marker", $pluginsNeedle)
+                    ->append($pluginsNeedle, "]);")
                     ->indent(4)
-                    ->append($pluginsNeedle, $shieldNeedle)
-                    ->append($shieldNeedle, "->centralApp(" . static::getTenantModelClass() . "),")
-                    ->append("->centralApp(" . static::getTenantModelClass() . "),","]);")
-                    ->deindent("]);", 12)
+                    ->prepend("]);", $shieldNeedle)
+                    ->indent(4)
+                    ->prepend("]);", "->centralApp(" . static::getTenantModelClass() . "),")
                     ->replace("Marker", "])"),
                 default: fn (Stringer $stringer) => $stringer
                     ->replaceLast(");", "])Marker")
                     ->append("Marker", $pluginsNeedle)
+                    ->append($pluginsNeedle, "]);")
                     ->indent(4)
-                    ->append($pluginsNeedle, $shieldNeedle . ",")
-                    ->append($shieldNeedle, "]);")
-                    ->deindent("]);", 8)
+                    ->prepend("]);", $shieldNeedle . ",")
                     ->replace("Marker", "])")
             );
         }

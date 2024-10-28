@@ -14,8 +14,9 @@ class Stringer
 
     protected string $content;
     protected string $filePath;
-    protected int $indentLevel = 0; // Track the current indentation level
-    protected int $deindentLevel = 0; // Track the current deindentation level
+    protected int $baseIndentLevel = 0; // Track the base indentation level
+    protected int $currentIndentLevel = 0; // Track the current indentation level
+    protected bool $addNewLine = false; // Track whether to add a new line
 
     public static function for(string $filePath): self
     {
@@ -54,9 +55,14 @@ class Stringer
     {
         if ($lineInfo = $this->findLine($needle)) {
             // Prepend the content with proper indentation
+            $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToPrepend);
+            if ($this->addNewLine) {
+                $newContent .= PHP_EOL;
+                $this->addNewLine = false; // Reset the flag
+            }
             $this->content = substr_replace(
                 $this->content,
-                $lineInfo['indentation'] . $this->getIndentation() . trim($contentToPrepend),
+                $newContent,
                 $lineInfo['start'],
                 0
             );
@@ -68,10 +74,15 @@ class Stringer
     public function append(string $needle, string $contentToAppend): self
     {
         if ($lineInfo = $this->findLine($needle)) {
-            $this->deindent($needle, $this->deindentLevel); // Deindent the needle line
+            // Append the content with proper indentation
+            $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToAppend);
+            if ($this->addNewLine) {
+                $newContent = PHP_EOL . $newContent;
+                $this->addNewLine = false; // Reset the flag
+            }
             $this->content = substr_replace(
                 $this->content,
-                $lineInfo['indentation'] . $this->getIndentation() . trim($contentToAppend),
+                $newContent,
                 $lineInfo['end'],
                 0
             );
@@ -97,47 +108,25 @@ class Stringer
 
     public function newLine(): self
     {
-        $this->content .= PHP_EOL; // Add a new line at the end
+        $this->addNewLine = true; // Set the flag to add a new line
         return $this;
     }
 
     public function indent(int $level): self
     {
-        $this->indentLevel = $level;
+        $this->currentIndentLevel += $level;
         return $this;
     }
 
-    public function deindent(string $needle, int $spacesToRemove): self
+    public function deindent(int $level): self
     {
-        $this->deindentLevel = $spacesToRemove;
-        if ($lineInfo = $this->findLine($needle)) {
-            // Get the current line
-            $currentLine = substr($this->content, $lineInfo['start'], $lineInfo['end'] - $lineInfo['start']);
-
-            // Get the current indentation
-            $indentation = preg_replace('/\S.*/', '', $currentLine);
-
-            // Calculate how many spaces we can actually remove
-            $actualSpacesToRemove = min($spacesToRemove, strlen($indentation));
-
-            // Remove the spaces from the beginning of the line
-            $newLine = Str::replaceFirst(str_repeat(' ', $actualSpacesToRemove), '', $currentLine);
-
-            // Replace the old line with the new deindented line
-            $this->content = substr_replace(
-                $this->content,
-                $newLine,
-                $lineInfo['start'],
-                strlen($currentLine)
-            );
-        }
-
+        $this->currentIndentLevel = max(0, $this->currentIndentLevel - $level);
         return $this;
     }
 
     public function getIndentation(): string
     {
-        return str_repeat(' ', $this->indentLevel);
+        return str_repeat(' ', $this->baseIndentLevel + $this->currentIndentLevel);
     }
 
     public function replaceFirst(string $needle, string $replacement): self
