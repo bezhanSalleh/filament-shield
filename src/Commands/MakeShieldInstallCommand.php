@@ -2,7 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Stringer;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Support\Commands\Concerns;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
@@ -14,16 +16,20 @@ use function Laravel\Prompts\confirm;
 
 class MakeShieldInstallCommand extends Command
 {
+    use Concerns\CanManipulateFiles;
+
     public $signature = 'shield:install
         {--F|fresh : re-run the migrations}
         {--O|only : Only setups shield without generating permissions and creating super-admin}
         {--minimal : Output minimal amount of info to console}
+        {--tenancy : Setup shield for tenancy}
     ';
 
     public $description = 'Setup Core Package requirements and Install Shield';
 
     public function handle(): int
     {
+
         if (! Utils::isAuthProviderConfigured()) {
             $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
 
@@ -94,8 +100,22 @@ class MakeShieldInstallCommand extends Command
 
     protected function install(bool $fresh = false): void
     {
+        if ($this->option('tenancy')) {
+            if (! $this->fileExists(config_path('permission.php'))) {
+                $this->call('vendor:publish', [
+                    '--tag' => 'permission-config',
+                ]);
+            }
+
+            Stringer::for(config_path('permission.php'))
+                ->replace("'teams' => false,", "'teams' => true,")
+                ->save();
+
+            config()->set('permission.teams', true);
+        }
+
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
-            '--provider' => 'Spatie\Permission\PermissionServiceProvider',
+            '--tag' => 'permission-migrations',
         ]);
 
         $this->components->info('Core Package config published.');

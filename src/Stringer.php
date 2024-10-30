@@ -54,44 +54,152 @@ class Stringer
         ];
     }
 
-    public function prepend(string $needle, string $contentToPrepend): self
+    public function prepend(string $needle, string $contentToPrepend, bool $beforeBlock = false): self
     {
-        if ($lineInfo = $this->findLine($needle)) {
-            // Prepend the content with proper indentation
-            $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToPrepend);
-            if ($this->addNewLine) {
-                $newContent .= PHP_EOL;
-                $this->addNewLine = false; // Reset the flag
+        if (! $this->contains($needle)) {
+            return $this; // Needle not found
+        }
+
+        if ($beforeBlock) {
+            // Find the starting position of the method
+            $startPos = strpos($this->content, $needle);
+            if ($startPos === false) {
+                return $this; // Needle not found
             }
-            $this->content = substr_replace(
-                $this->content,
-                $newContent,
-                $lineInfo['start'],
-                0
-            );
+
+            // Find the opening parenthesis position
+            $openingParenPos = strpos($this->content, '(', $startPos);
+            if ($openingParenPos === false) {
+                return $this; // No opening parenthesis found
+            }
+
+            // Find the closing parenthesis
+            $closingParenPos = $this->findClosingParen($openingParenPos);
+            if ($closingParenPos === false) {
+                return $this; // No closing parenthesis found
+            }
+
+            // Get the line indentation
+            $lineInfo = $this->findLine($needle);
+            $indentation = $lineInfo['indentation'] . $this->getIndentation();
+
+            // Format the new content based on the newLine flag
+            $formattedReplacement = $this->addNewLine
+                ? PHP_EOL . $indentation . trim($contentToPrepend)
+                : $indentation . trim($contentToPrepend);
+
+            $this->addNewLine = false; // Reset flag
+
+            // Insert the formatted replacement before the opening parenthesis
+            $this->content = substr_replace($this->content, $formattedReplacement, $openingParenPos, 0);
+        } else {
+            // Normal prepend logic
+            if ($lineInfo = $this->findLine($needle)) {
+                // Prepend the content with proper indentation
+                $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToPrepend);
+                if ($this->addNewLine) {
+                    $newContent = PHP_EOL . $newContent;
+                    $this->addNewLine = false; // Reset the flag
+                }
+                $this->content = substr_replace(
+                    $this->content,
+                    $newContent,
+                    $lineInfo['start'],
+                    0
+                );
+            }
         }
 
         return $this;
     }
 
-    public function append(string $needle, string $contentToAppend): self
+    public function append(string $needle, string $contentToAppend, bool $afterBlock = false): self
     {
-        if ($lineInfo = $this->findLine($needle)) {
-            // Append the content with proper indentation
-            $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToAppend);
-            if ($this->addNewLine) {
-                $newContent = PHP_EOL . $newContent;
-                $this->addNewLine = false; // Reset the flag
+        if (! $this->contains($needle)) {
+            return $this; // Needle not found
+        }
+
+        if ($afterBlock) {
+            // Find the starting position of the method
+            $startPos = strpos($this->content, $needle);
+            if ($startPos === false) {
+                return $this; // Needle not found
             }
-            $this->content = substr_replace(
-                $this->content,
-                $newContent,
-                $lineInfo['end'],
-                0
-            );
+
+            // Find the opening parenthesis position
+            $openingParenPos = strpos($this->content, '(', $startPos);
+            if ($openingParenPos === false) {
+                return $this; // No opening parenthesis found
+            }
+
+            // Find the closing parenthesis
+            $closingParenPos = $this->findClosingParen($openingParenPos);
+            if ($closingParenPos === false) {
+                return $this; // No closing parenthesis found
+            }
+
+            // Get the line indentation
+            $lineInfo = $this->findLine($needle);
+            $indentation = $lineInfo['indentation'] . $this->getIndentation();
+
+            // Format the new content based on the newLine flag
+            $formattedReplacement = $this->addNewLine
+                ? PHP_EOL . $indentation . trim($contentToAppend)
+                : $indentation . trim($contentToAppend);
+
+            $this->addNewLine = false; // Reset flag
+
+            // If the closing parenthesis has a semicolon, move it to a new line with indentation
+            if ($this->content[$closingParenPos + 1] === ';') {
+                $this->content = substr_replace(
+                    $this->content,
+                    PHP_EOL . $indentation . ';',
+                    $closingParenPos + 1,
+                    0
+                );
+                $closingParenPos += strlen(PHP_EOL . $indentation . ';'); // Adjust closing position
+            }
+
+            // Insert the formatted replacement after the closing parenthesis
+            $this->content = substr_replace($this->content, $formattedReplacement, $closingParenPos + 1, 0);
+        } else {
+            // Normal append logic
+            if ($lineInfo = $this->findLine($needle)) {
+                // Append the content with proper indentation
+                $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToAppend);
+                if ($this->addNewLine) {
+                    $newContent = PHP_EOL . $newContent;
+                    $this->addNewLine = false; // Reset the flag
+                }
+                $this->content = substr_replace(
+                    $this->content,
+                    $newContent,
+                    $lineInfo['end'],
+                    0
+                );
+            }
         }
 
         return $this;
+    }
+
+    protected function findClosingParen(int $openingParenPos): ?int
+    {
+        $stack = 0;
+        $length = strlen($this->content);
+
+        for ($i = $openingParenPos; $i < $length; $i++) {
+            if ($this->content[$i] === '(') {
+                $stack++;
+            } elseif ($this->content[$i] === ')') {
+                $stack--;
+                if ($stack === 0) {
+                    return $i; // Found the closing parenthesis
+                }
+            }
+        }
+
+        return null; // Closing parenthesis not found
     }
 
     public function replace(string $needle, string $replacement): self
@@ -177,7 +285,18 @@ class Stringer
 
     public function contains(string $needle): bool
     {
-        return strpos($this->content, $needle) !== false;
+        // Check if the needle has a wildcard for partial matching
+        $isPartialMatch = str_starts_with($needle, '*') || str_ends_with($needle, '*');
+
+        if ($isPartialMatch) {
+            // Strip the `*` characters for partial matching
+            $needle = trim($needle, '*');
+
+            return (bool) preg_match('/' . preg_quote($needle, '/') . '/', $this->content);
+        } else {
+            // Perform an exact search
+            return strpos($this->content, $needle) !== false;
+        }
     }
 
     public function save(): bool

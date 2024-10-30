@@ -14,7 +14,8 @@ trait CanRegisterPlugin
 
         $shieldPluginImportStatement = 'use BezhanSalleh\FilamentShield\FilamentShieldPlugin;';
         $shieldPlugin = 'FilamentShieldPlugin::make()';
-        $pluginsArrayMarker = "->plugins([\n";
+        $pluginsArray = "->plugins([\n";
+        $pluginsTarget = '->middleware([';
 
         if ($stringer->contains($shieldPlugin)) {
             $this->components->warn('Shield plugin is already registered! skipping...');
@@ -27,35 +28,35 @@ trait CanRegisterPlugin
                         ->append('use', $shieldPluginImportStatement)
                 )
                 ->when( /** @phpstan-ignore-next-line */
-                    value: $stringer->contains($pluginsArrayMarker) && (! $stringer->contains($shieldPlugin)),
+                    value: $stringer->contains($pluginsArray) && (! $stringer->contains($shieldPlugin)),
                     callback: fn (Stringer $stringer): Stringer => $stringer
                         ->when(
                             value: $centralApp,
                             callback: fn (Stringer $stringer) => $stringer
                                 ->indent(4)
-                                ->append($pluginsArrayMarker, $shieldPlugin)
+                                ->append($pluginsArray, $shieldPlugin)
                                 ->append($shieldPlugin, '->centralApp(' . $modelOfPanelWithTenancy . '),'),
                             default: fn (Stringer $stringer) => $stringer
                                 ->indent(4)
-                                ->append($pluginsArrayMarker, $shieldPlugin . ',')
+                                ->append($pluginsArray, $shieldPlugin . ',')
                         ),
                 )
                 ->when(/** @phpstan-ignore-next-line */
-                    value: (! $stringer->contains($shieldPlugin) && ! $stringer->contains($pluginsArrayMarker)),
+                    value: (! $stringer->contains($shieldPlugin) && ! $stringer->contains($pluginsArray)),
                     callback: fn (Stringer $stringer): Stringer => $stringer
                         ->when(
                             value: $centralApp,
                             callback: fn (Stringer $stringer) => $stringer
-                                ->prependBeforeLast('->', $pluginsArrayMarker)
-                                ->append($pluginsArrayMarker, '])')
+                                ->append($pluginsTarget, $pluginsArray, true)
+                                ->append($pluginsArray, '])')
                                 ->indent(4)
-                                ->append($pluginsArrayMarker, $shieldPlugin)
+                                ->append($pluginsArray, $shieldPlugin)
                                 ->append($shieldPlugin, '->centralApp(' . $modelOfPanelWithTenancy . '),'),
                             default: fn (Stringer $stringer) => $stringer
-                                ->prependBeforeLast('->', $pluginsArrayMarker)
-                                ->append($pluginsArrayMarker, '])')
+                                ->append($pluginsTarget, $pluginsArray, true)
+                                ->append($pluginsArray, '])')
                                 ->indent(4)
-                                ->append($pluginsArrayMarker, $shieldPlugin . ',')
+                                ->append($pluginsArray, $shieldPlugin . ',')
                         )
                 )
                 ->save();
