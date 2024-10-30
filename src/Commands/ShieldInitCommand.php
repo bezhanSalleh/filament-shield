@@ -27,7 +27,7 @@ class ShieldInitCommand extends Command implements PromptsForMissingInput
 
     public function handle(): int
     {
-        $shouldSetPanelAsCentralApp = $this->option('central');
+        $shouldSetPanelAsCentralApp = $this->option('central') ?? false;
 
         $panel = Filament::getPanel($this->argument('panel') ?? null);
 
@@ -72,7 +72,7 @@ class ShieldInitCommand extends Command implements PromptsForMissingInput
         // Handle Shield plugin registration
         $this->registerPlugin(
             panelPath: $panelPath,
-            centralApp: $shouldSetPanelAsCentralApp,
+            centralApp: $shouldSetPanelAsCentralApp && ! $panel->hasTenancy(),
             tenantModelClass: $tenantModelClass
         );
 

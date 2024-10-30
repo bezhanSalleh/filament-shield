@@ -85,7 +85,6 @@ trait CanGenerateRelationshipsForTenancy
                         ))
                         ->save();
                 }
-                ray($resourceModelStringer, $tenantModelstringer);
             })
             ->toArray();
 

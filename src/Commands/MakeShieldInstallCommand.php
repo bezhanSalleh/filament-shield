@@ -2,22 +2,21 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\Stringer;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Commands\Concerns;
+use Throwable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Throwable;
-
 use function Laravel\Prompts\confirm;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Artisan;
+
+use BezhanSalleh\FilamentShield\Stringer;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Commands\Concerns;
 
 class MakeShieldInstallCommand extends Command
 {
     use Concerns\CanManipulateFiles;
-
     public $signature = 'shield:install
         {--F|fresh : re-run the migrations}
         {--O|only : Only setups shield without generating permissions and creating super-admin}
@@ -112,8 +111,38 @@ class MakeShieldInstallCommand extends Command
                 ->save();
 
             config()->set('permission.teams', true);
+
+            $source = __DIR__ . '/../Support/';
+            $destination = app_path('Models');
+
+            $this->copy($source . '/Role.php', $destination . '/Role.php');
+            $this->copy($source . '/Permission.php', $destination . '/Permission.php');
+
+            $appServiceProvider = Stringer::for(app_path('Providers/AppServiceProvider.php'));
+                if (
+                   ! $appServiceProvider->containsChainedBlock('app(\Spatie\Permission\PermissionRegistrar::class)
+                        ->setPermissionClass(Permission::class)
+                        ->setRoleClass(Role::class)')
+                ) {
+                    if (! $appServiceProvider->contains('use App\Models\Role;')) {
+                        $appServiceProvider->append('use', 'use App\Models\Role;');
+                    }
+
+                    if (! $appServiceProvider->contains('use App\Models\Permission;')) {
+                        $appServiceProvider->append('use', 'use App\Models\Permission;');
+                    }
+
+                    $appServiceProvider
+                        ->appendBlock("public function boot()", "
+                            app(\Spatie\Permission\PermissionRegistrar::class)
+                                ->setPermissionClass(Permission::class)
+                                ->setRoleClass(Role::class);
+                        ", true)
+                        ->save();
+                }
         }
 
+        dd('here');
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--tag' => 'permission-migrations',
         ]);
@@ -162,5 +191,10 @@ class MakeShieldInstallCommand extends Command
         $this->components->info(Artisan::output());
 
         $this->components->info('Filament Shield🛡 is now active ✅');
+    }
+
+    protected function configureAuthModel(string $model): void
+    {
+
     }
 }
