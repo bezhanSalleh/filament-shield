@@ -8,7 +8,7 @@ use BezhanSalleh\FilamentShield\Stringer;
 
 trait CanRegisterPlugin
 {
-    protected function registerPlugin(string $panelPath, bool $centralApp, string $modelOfPanelWithTenancy): void
+    protected function registerPlugin(string $panelPath, bool $centralApp, string $tenantModelClass): void
     {
         $stringer = Stringer::for($panelPath);
 
@@ -35,7 +35,7 @@ trait CanRegisterPlugin
                             callback: fn (Stringer $stringer) => $stringer
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin)
-                                ->append($shieldPlugin, '->centralApp(' . $modelOfPanelWithTenancy . '),'),
+                                ->append($shieldPlugin, '->centralApp(' . $tenantModelClass . '),'),
                             default: fn (Stringer $stringer) => $stringer
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin . ',')
@@ -51,7 +51,7 @@ trait CanRegisterPlugin
                                 ->append($pluginsArray, '])')
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin)
-                                ->append($shieldPlugin, '->centralApp(' . $modelOfPanelWithTenancy . '),'),
+                                ->append($shieldPlugin, '->centralApp(' . $tenantModelClass . '),'),
                             default: fn (Stringer $stringer) => $stringer
                                 ->append($pluginsTarget, $pluginsArray, true)
                                 ->append($pluginsArray, '])')

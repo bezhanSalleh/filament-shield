@@ -60,6 +60,7 @@ trait CanGenerateRelationshipsForTenancy
                     }
                     $resourceModelStringer
                         ->newLine()
+                        ->indent(4)
                         ->prependBeforeLast('}', $this->methodStubGenerator(
                             $modifiedResource['resource_model_method']['name'],
                             $modifiedResource['resource_model_method']['relationshipName'],
@@ -76,6 +77,7 @@ trait CanGenerateRelationshipsForTenancy
 
                     $tenantModelstringer
                         ->newLine()
+                        ->indent(4)
                         ->prependBeforeLast('}', $this->methodStubGenerator(
                             $modifiedResource['tenant_model_method']['name'],
                             $modifiedResource['tenant_model_method']['relationshipName'],
@@ -83,6 +85,7 @@ trait CanGenerateRelationshipsForTenancy
                         ))
                         ->save();
                 }
+                ray($resourceModelStringer, $tenantModelstringer);
             })
             ->toArray();
 
@@ -143,10 +146,10 @@ trait CanGenerateRelationshipsForTenancy
     {
         $returnType = str($related)->beforeLast('::')->toString();
         $stubs = [
-            'belongsTo' => "    /** @return BelongsTo<{$returnType}, self> */\n    public function {$name}(): BelongsTo\n    {\n        return \$this->belongsTo({$related});\n    }",
-            'morphTo' => "    /** @return MorphTo<{$returnType}, self> */\n    public function {$name}(): MorphTo\n    {\n        return \$this->morphTo();\n    }",
-            'hasMany' => "    /** @return HasMany<{$returnType}, self> */\n    public function {$name}(): HasMany\n    {\n        return \$this->hasMany({$related});\n    }",
-            'morphMany' => "    /** @return MorphMany<{$returnType}, self> */\n    public function {$name}(): MorphMany\n    {\n        return \$this->morphMany({$related});\n    }",
+            'belongsTo' => "        /** @return BelongsTo<{$returnType}, self> */\n    public function {$name}(): BelongsTo\n    {\n        return \$this->belongsTo({$related});\n    }",
+            'morphTo' => "        /** @return MorphTo<{$returnType}, self> */\n    public function {$name}(): MorphTo\n    {\n        return \$this->morphTo();\n    }",
+            'hasMany' => "        /** @return HasMany<{$returnType}, self> */\n    public function {$name}(): HasMany\n    {\n        return \$this->hasMany({$related});\n    }",
+            'morphMany' => "        /** @return MorphMany<{$returnType}, self> */\n    public function {$name}(): MorphMany\n    {\n        return \$this->morphMany({$related});\n    }",
         ];
 
         return $stubs[$relationshipName] ?? "// No relationship defined for the given name: {$relationshipName}\n";

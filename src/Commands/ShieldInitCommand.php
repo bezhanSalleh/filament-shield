@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Facades\Filament;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Illuminate\Contracts\Console\PromptsForMissingInput;
 
 #[AsCommand(name: 'shield:init', description: 'Setup core package requirements and initialize Shield')]
-class ShieldInitCommand extends Command
+class ShieldInitCommand extends Command implements PromptsForMissingInput
 {
     use Concerns\CanGenerateRelationshipsForTenancy;
     use Concerns\CanMakePanelTenantable;
@@ -18,7 +20,7 @@ class ShieldInitCommand extends Command
     use Concerns\CanRegisterPlugin;
 
     /** @var string */
-    protected $signature = 'shield:init {--panel=} {--central} {--tenant=} {--generate}';
+    protected $signature = 'shield:init {panel} {--central} {--tenant=} {--generate}';
 
     /** @var string */
     protected $description = 'Setup core package requirements and initialize Shield';
@@ -27,19 +29,9 @@ class ShieldInitCommand extends Command
     {
         $shouldSetPanelAsCentralApp = $this->option('central');
 
-        $panel = Filament::getPanel($this->option('panel') ?? null);
+        $panel = Filament::getPanel($this->argument('panel') ?? null);
 
-        if ($panel->hasTenancy() && $shouldSetPanelAsCentralApp) {
-            $this->components->warn('Cannot install Shield as `Central` on a tenant panel!');
-
-            return static::FAILURE;
-        }
-
-        if (! $panel->hasTenancy() && $shouldSetPanelAsCentralApp && blank(static::getPanelWithTenancySupport())) {
-            $this->components->warn('Cannot install Shield as `Central` without, at-least a panel with tenancy support!');
-
-            return static::INVALID;
-        }
+        $tenantModel = $this->option('tenant') ?? null;
 
         $panelPath = app_path(
             (string) str($panel->getId())
@@ -56,18 +48,39 @@ class ShieldInitCommand extends Command
             return static::FAILURE;
         }
 
+        $tenantModelClass = str($tenantModel)->contains('\\')
+            ? $tenantModel
+            : str($tenantModel)->prepend('App\\Models\\')
+                ->toString();
+
+        if (filled($tenantModel) && ! class_exists($tenantModelClass) && ! $tenantModelClass instanceof Model) {
+            $this->components->error("Tenant model not found: {$tenantModel}");
+
+            return Command::FAILURE;
+        }
+
+        if ($panel->hasTenancy() && $shouldSetPanelAsCentralApp) {
+            $this->components->warn('Cannot install Shield as `Central App` on a tenant panel!');
+            return static::FAILURE;
+        }
+
+        if (! $panel->hasTenancy() && $shouldSetPanelAsCentralApp && blank($tenantModelClass)) {
+            $this->components->warn('Please provide a valid tenant `Model`!');
+            return static::INVALID;
+        }
+
         // Handle Shield plugin registration
         $this->registerPlugin(
             panelPath: $panelPath,
             centralApp: $shouldSetPanelAsCentralApp,
-            modelOfPanelWithTenancy: static::getTenantModelClass()
+            tenantModelClass: $tenantModelClass
         );
 
         // Handle Shield tenancy configuration
         $this->makePanelTenantable(
             panel: $panel,
             panelPath: $panelPath,
-            tenantModel: $this->option('tenant') ?? null
+            tenantModel: $tenantModel
         );
 
         // Handle Relationships generation for tenant and resources' models
@@ -78,19 +91,5 @@ class ShieldInitCommand extends Command
         $this->components->info('Shield has been successfully configured & registered!');
 
         return static::SUCCESS;
-    }
-
-    protected static function getPanelWithTenancySupport(): ?Panel
-    {
-        return collect(Filament::getPanels())
-            ->first(fn (Panel $panel): bool => $panel->hasTenancy());
-    }
-
-    protected static function getTenantModelClass(): string
-    {
-        return str(static::getPanelWithTenancySupport()?->getTenantModel())
-            ->prepend('\\')
-            ->append('::class')
-            ->toString();
     }
 }

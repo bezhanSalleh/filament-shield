@@ -353,7 +353,7 @@ class Stringer
             preg_match('/^\s*/', $line, $matches);
             $originalIndentation = $matches[0] ?? '';
 
-            $formattedReplacement = trim($replacement);
+            $formattedReplacement = $this->getIndentation() . trim($replacement);
             if ($this->addNewLine) {
                 $formattedReplacement = PHP_EOL . $formattedReplacement . PHP_EOL;
             }

@@ -6,44 +6,26 @@ namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
 use BezhanSalleh\FilamentShield\Stringer;
 use Filament\Panel;
-use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
 
 trait CanMakePanelTenantable
 {
-    protected function makePanelTenantable(Panel $panel, string $panelPath, ?string $tenantModel): int
+    protected function makePanelTenantable(Panel $panel, string $panelPath, ?string $tenantModel): void
     {
-        $tenantModelClass = str($tenantModel)->contains('\\')
-            ? $tenantModel
-            : str($tenantModel)->prepend('App\\Models\\')
-                ->toString();
-
-        if (filled($tenantModel) && ! class_exists($tenantModelClass) && ! $tenantModelClass instanceof Model) {
-            $this->components->error("Tenant model not found: {$tenantModel}");
-
-            return Command::FAILURE;
-        }
-
         if (filled($tenantModel) && ! $panel->hasTenancy()) {
 
-            dump('filled no tenancy');
             Stringer::for($panelPath)
                 ->prepend('->discoverResources', '->tenant(\\' . $tenantModel . '::class)')
                 ->save();
-
             $this->activateTenancy($panelPath);
 
             $this->components->info("Panel `{$panel->getId()}` is now tenantable.");
         }
 
         if ($panel->hasTenancy()) {
-            dump('tenancy check');
-
             $this->activateTenancy($panelPath);
+
             $this->components->info("Panel `{$panel->getId()}` is now tenantable.");
         }
-
-        return Command::SUCCESS;
     }
 
     private function activateTenancy(string $panelPath): void
