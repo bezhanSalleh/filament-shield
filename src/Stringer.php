@@ -75,7 +75,7 @@ class Stringer
 
             // Find the closing parenthesis
             $closingParenPos = $this->findClosingParen($openingParenPos);
-            if ($closingParenPos === false) {
+            if (is_null($closingParenPos)) {
                 return $this; // No closing parenthesis found
             }
 
@@ -134,7 +134,7 @@ class Stringer
 
             // Find the closing parenthesis
             $closingParenPos = $this->findClosingParen($openingParenPos);
-            if ($closingParenPos === false) {
+            if (is_null($closingParenPos)) {
                 return $this; // No closing parenthesis found
             }
 

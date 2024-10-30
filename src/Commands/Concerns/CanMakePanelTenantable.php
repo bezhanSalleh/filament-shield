@@ -65,15 +65,15 @@ trait CanMakePanelTenantable
                 ->indent(4)
                 ->append('->tenantMiddleware([', $shieldMiddleware)
                 ->save()
-        )
-            ->when(
-                value: (! $stringer->contains($shieldMiddleware) && ! $stringer->contains($tenantMiddlewareMarker)),
-                callback: fn (Stringer $stringer): bool => $stringer
-                    ->append($target, $tenantMiddlewareMarker, true)
-                    ->append($tenantMiddlewareMarker, '], isPersistent: true)')
-                    ->indent(4)
-                    ->prepend('], isPersistent: true)', $shieldMiddleware)
-                    ->save()
-            );
+        );
+        $stringer->when(
+            value: (! $stringer->contains($shieldMiddleware) && ! $stringer->contains($tenantMiddlewareMarker)),
+            callback: fn (Stringer $stringer): bool => $stringer
+                ->append($target, $tenantMiddlewareMarker, true)
+                ->append($tenantMiddlewareMarker, '], isPersistent: true)')
+                ->indent(4)
+                ->prepend('], isPersistent: true)', $shieldMiddleware)
+                ->save()
+        );
     }
 }
