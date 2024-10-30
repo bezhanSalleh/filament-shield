@@ -2,12 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use Illuminate\Support\Arr;
-use Filament\Facades\Filament;
-use Illuminate\Support\Collection;
-use Filament\Resources\Pages\CreateRecord;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class CreateRole extends CreateRecord
 {

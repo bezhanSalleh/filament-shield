@@ -6,14 +6,13 @@ namespace BezhanSalleh\FilamentShield\Concerns;
 
 use Closure;
 
-
 trait CanBeCentralApp
 {
     protected bool | Closure $isCentralApp = false;
 
     protected Closure | string | null $tenantModel = null;
 
-    public function centralApp(string $model,  bool | Closure $condition = true): static
+    public function centralApp(string $model, bool | Closure $condition = true): static
     {
         $this->tenantModel = $model;
 
@@ -27,7 +26,7 @@ trait CanBeCentralApp
         return (bool) $this->evaluate($this->isCentralApp);
     }
 
-    public function getTenantModel(): string | null
+    public function getTenantModel(): ?string
     {
         return $this->evaluate($this->tenantModel);
     }

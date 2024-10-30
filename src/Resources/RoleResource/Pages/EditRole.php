@@ -2,13 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
 
-use Filament\Actions;
-use Illuminate\Support\Arr;
-use Filament\Facades\Filament;
-use Illuminate\Support\Collection;
-use Filament\Resources\Pages\EditRecord;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class EditRole extends EditRecord
 {

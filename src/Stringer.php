@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace BezhanSalleh\FilamentShield;
 
 use Closure;
-use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 
 class Stringer
@@ -13,9 +12,13 @@ class Stringer
     use Conditionable;
 
     protected string $content;
+
     protected string $filePath;
+
     protected int $baseIndentLevel = 0; // Track the base indentation level
+
     protected int $currentIndentLevel = 0; // Track the current indentation level
+
     protected bool $addNewLine = false; // Track whether to add a new line
 
     public static function for(string $filePath): self
@@ -109,18 +112,21 @@ class Stringer
     public function newLine(): self
     {
         $this->addNewLine = true; // Set the flag to add a new line
+
         return $this;
     }
 
     public function indent(int $level): self
     {
         $this->currentIndentLevel += $level;
+
         return $this;
     }
 
     public function deindent(int $level): self
     {
         $this->currentIndentLevel = max(0, $this->currentIndentLevel - $level);
+
         return $this;
     }
 
@@ -188,6 +194,56 @@ class Stringer
     public function execute(Closure $closure): self
     {
         $closure($this); // Call the closure, allowing operations to be performed
+
+        return $this;
+    }
+
+    public function appendAfterLast(string $needle, string $replacement): self
+    {
+        $lastPos = strrpos($this->content, $needle);
+
+        if ($lastPos !== false) {
+            $insertPos = $lastPos + strlen($needle);
+
+            $nextLinePos = strpos($this->content, PHP_EOL, $insertPos) ?: strlen($this->content);
+            $followingLine = substr($this->content, $insertPos, $nextLinePos - $insertPos);
+            preg_match('/^\s*/', $followingLine, $matches);
+            $followingIndentation = $matches[0] ?? '';
+
+            $formattedReplacement = trim($replacement);
+            if ($this->addNewLine) {
+                $formattedReplacement = PHP_EOL . $formattedReplacement . PHP_EOL;
+            }
+
+            $this->addNewLine = false;
+
+            $this->content = substr_replace($this->content, $followingIndentation . $formattedReplacement, $insertPos, 0);
+        }
+
+        return $this;
+    }
+
+    public function prependBeforeLast(string $needle, string $replacement): self
+    {
+        $lastPos = strrpos($this->content, $needle);
+
+        if ($lastPos !== false) {
+            $lineStartPos = strrpos(substr($this->content, 0, $lastPos), PHP_EOL) ?: 0;
+            $line = substr($this->content, $lineStartPos, $lastPos - $lineStartPos);
+
+            preg_match('/^\s*/', $line, $matches);
+            $originalIndentation = $matches[0] ?? '';
+
+            $formattedReplacement = trim($replacement);
+            if ($this->addNewLine) {
+                $formattedReplacement = PHP_EOL . $formattedReplacement . PHP_EOL;
+            }
+
+            $this->addNewLine = false;
+
+            $this->content = substr_replace($this->content, $originalIndentation . $formattedReplacement, $lineStartPos, 0);
+        }
+
         return $this;
     }
 }
