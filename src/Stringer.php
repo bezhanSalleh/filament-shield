@@ -1,10 +1,9 @@
-<?php
+<?php /** @noinspection PhpSuspiciousNameCombinationInspection */
 
 declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use Closure;
 use Illuminate\Support\Traits\Conditionable;
 
 class Stringer
@@ -21,9 +20,9 @@ class Stringer
 
     protected bool $addNewLine = false; // Track whether to add a new line
 
-    public static function for(string $filePath): self
+    public static function for(string $filePath): static
     {
-        return new self($filePath);
+        return new static($filePath);
     }
 
     public function __construct(string $filePath)
@@ -54,7 +53,7 @@ class Stringer
         ];
     }
 
-    public function prepend(string $needle, string $contentToPrepend, bool $beforeBlock = false): self
+    public function prepend(string $needle, string $contentToPrepend, bool $beforeBlock = false): static
     {
         if (! $this->contains($needle)) {
             return $this; // Needle not found
@@ -113,7 +112,7 @@ class Stringer
         return $this;
     }
 
-    public function append(string $needle, string $contentToAppend, bool $afterBlock = false): self
+    public function append(string $needle, string $contentToAppend, bool $afterBlock = false): static
     {
         if (! $this->contains($needle)) {
             return $this; // Needle not found
@@ -202,7 +201,7 @@ class Stringer
         return null; // Closing parenthesis not found
     }
 
-    public function replace(string $needle, string $replacement): self
+    public function replace(string $needle, string $replacement): static
     {
         if ($lineInfo = $this->findLine($needle)) {
             // Replace the entire line containing the needle
@@ -217,23 +216,16 @@ class Stringer
         return $this;
     }
 
-    public function newLine(): self
+    public function newLine(): static
     {
         $this->addNewLine = true; // Set the flag to add a new line
 
         return $this;
     }
 
-    public function indent(int $level): self
+    public function indent(int $level): static
     {
         $this->currentIndentLevel += $level;
-
-        return $this;
-    }
-
-    public function deindent(int $level): self
-    {
-        $this->currentIndentLevel = max(0, $this->currentIndentLevel - $level);
 
         return $this;
     }
@@ -241,46 +233,6 @@ class Stringer
     public function getIndentation(): string
     {
         return str_repeat(' ', $this->baseIndentLevel + $this->currentIndentLevel);
-    }
-
-    public function replaceFirst(string $needle, string $replacement): self
-    {
-        if ($lineInfo = $this->findLine($needle)) {
-            $indentedReplacement = $lineInfo['indentation'] . trim($replacement);
-
-            // Replace the first occurrence line using `start` and `end` positions
-            $this->content = substr_replace(
-                $this->content,
-                $indentedReplacement,
-                $lineInfo['start'],
-                $lineInfo['end'] - $lineInfo['start']
-            );
-        }
-
-        return $this;
-    }
-
-    public function replaceLast(string $needle, string $replacement): self
-    {
-        $lastPos = strrpos($this->content, $needle);
-        if ($lastPos !== false) {
-            // Use findLine based on the last occurrence's position
-            $lineInfo = $this->findLine($needle);
-
-            if ($lineInfo) {
-                $indentedReplacement = $lineInfo['indentation'] . trim($replacement);
-
-                // Replace the last occurrence with proper indentation
-                $this->content = substr_replace(
-                    $this->content,
-                    $indentedReplacement,
-                    $lineInfo['start'],
-                    $lineInfo['end'] - $lineInfo['start']
-                );
-            }
-        }
-
-        return $this;
     }
 
     public function contains(string $needle): bool
@@ -295,7 +247,7 @@ class Stringer
             return (bool) preg_match('/' . preg_quote($needle, '/') . '/', $this->content);
         } else {
             // Perform an exact search
-            return strpos($this->content, $needle) !== false;
+            return str_contains($this->content, $needle);
         }
     }
 
@@ -309,40 +261,7 @@ class Stringer
         return $this->content;
     }
 
-    // New chaining method that allows for indentations while performing operations
-    public function execute(Closure $closure): self
-    {
-        $closure($this); // Call the closure, allowing operations to be performed
-
-        return $this;
-    }
-
-    public function appendAfterLast(string $needle, string $replacement): self
-    {
-        $lastPos = strrpos($this->content, $needle);
-
-        if ($lastPos !== false) {
-            $insertPos = $lastPos + strlen($needle);
-
-            $nextLinePos = strpos($this->content, PHP_EOL, $insertPos) ?: strlen($this->content);
-            $followingLine = substr($this->content, $insertPos, $nextLinePos - $insertPos);
-            preg_match('/^\s*/', $followingLine, $matches);
-            $followingIndentation = $matches[0] ?? '';
-
-            $formattedReplacement = trim($replacement);
-            if ($this->addNewLine) {
-                $formattedReplacement = PHP_EOL . $formattedReplacement . PHP_EOL;
-            }
-
-            $this->addNewLine = false;
-
-            $this->content = substr_replace($this->content, $followingIndentation . $formattedReplacement, $insertPos, 0);
-        }
-
-        return $this;
-    }
-
-    public function prependBeforeLast(string $needle, string $replacement): self
+    public function prependBeforeLast(string $needle, string $replacement): static
     {
         $lastPos = strrpos($this->content, $needle);
 
@@ -490,53 +409,7 @@ class Stringer
         return $this->findChainedBlock($block) !== null;
     }
 
-    public function prependBlock(string $needle, string $contentToPrepend, bool $beforeBlock = false): self
-    {
-        if (!$this->contains($needle)) {
-            return $this;
-        }
-
-        // Use findMethodDeclaration instead of findLine for better method handling
-        $lineInfo = $this->findMethodDeclaration($needle);
-
-        if (!$lineInfo) {
-            return $this;
-        }
-
-        if ($beforeBlock && isset($lineInfo['is_method']) && $lineInfo['is_method']) {
-            // For method declarations, insert after the method signature but before the opening brace
-            $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToPrepend);
-            if ($this->addNewLine) {
-                $newContent = PHP_EOL . $newContent;
-                $this->addNewLine = false;
-            }
-
-            $this->content = substr_replace(
-                $this->content,
-                $newContent,
-                $lineInfo['method_end'],
-                0
-            );
-        } else {
-            // Original prepend logic
-            $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToPrepend);
-            if ($this->addNewLine) {
-                $newContent = PHP_EOL . $newContent;
-                $this->addNewLine = false;
-            }
-
-            $this->content = substr_replace(
-                $this->content,
-                $newContent,
-                $lineInfo['start'],
-                0
-            );
-        }
-
-        return $this;
-    }
-
-    public function appendBlock(string $needle, string $contentToAppend, bool $afterBlock = false): self
+    public function appendBlock(string $needle, string $contentToAppend, bool $afterBlock = false): static
     {
         if (!$this->contains($needle)) {
             return $this;
