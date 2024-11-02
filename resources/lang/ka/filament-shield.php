@@ -7,11 +7,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'column.name' => 'Name',
-    'column.guard_name' => 'Guard Name',
-    'column.roles' => 'Roles',
-    'column.permissions' => 'Permissions',
-    'column.updated_at' => 'Updated At',
+    'column.name' => 'სახელი',
+    'column.guard_name' => 'გუარდის სახელი',
+    'column.roles' => 'როლები',
+    'column.permissions' => 'ნებართვები',
+    'column.updated_at' => 'განახლების თარიღი',
 
     /*
     |--------------------------------------------------------------------------
@@ -19,11 +19,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'field.name' => 'Name',
-    'field.guard_name' => 'Guard Name',
-    'field.permissions' => 'Permissions',
-    'field.select_all.name' => 'Select All',
-    'field.select_all.message' => 'Enable all Permissions currently <span class="text-primary font-medium">Enabled</span> for this role',
+    'field.name' => 'სახელი',
+    'field.guard_name' => 'გუარდის სახელი',
+    'field.permissions' => 'ნებართვები',
+    'field.select_all.name' => 'ყველას მონიშვნა',
+    'field.select_all.message' => 'ჩართეთ ყველა ნებართვა, რომელიც ამჟამად <span class="text-primary font-medium">ჩართულია</span> ამ როლისთვის',
 
     /*
     |--------------------------------------------------------------------------
@@ -32,10 +32,10 @@ return [
     */
 
     'nav.group' => 'Filament Shield',
-    'nav.role.label' => 'Roles',
+    'nav.role.label' => 'როლები',
     'nav.role.icon' => 'heroicon-o-shield-check',
-    'resource.label.role' => 'Role',
-    'resource.label.roles' => 'Roles',
+    'resource.label.role' => 'როლი',
+    'resource.label.roles' => 'როლები',
 
     /*
     |--------------------------------------------------------------------------
@@ -43,11 +43,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'section' => 'Entities',
-    'resources' => 'Resources',
-    'widgets' => 'Widgets',
-    'pages' => 'Pages',
-    'custom' => 'Custom Permissions',
+    'section' => 'ერთეულები',
+    'resources' => 'რესურსები',
+    'widgets' => 'ვიდჯეტები',
+    'pages' => 'გვერდები',
+    'custom' => 'მომხმარებლის ნებართვები',
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'forbidden' => 'You do not have permission to access',
+    'forbidden' => 'თქვენ არ გაქვთ წვდომის ნებართვა',
 
     /*
     |--------------------------------------------------------------------------
@@ -64,17 +64,17 @@ return [
     */
 
     'resource_permission_prefixes_labels' => [
-        'view' => 'View',
-        'view_any' => 'View Any',
-        'create' => 'Create',
-        'update' => 'Update',
-        'delete' => 'Delete',
-        'delete_any' => 'Delete Any',
-        'force_delete' => 'Force Delete',
-        'force_delete_any' => 'Force Delete Any',
-        'restore' => 'Restore',
-        'reorder' => 'Reorder',
-        'restore_any' => 'Restore Any',
-        'replicate' => 'Replicate',
+        'view' => 'ნახვა',
+        'view_any' => 'ნებისმიერის ნახვა',
+        'create' => 'შექმნა',
+        'update' => 'განახლება',
+        'delete' => 'წაშლა',
+        'delete_any' => 'ნებისმიერის წაშლა',
+        'force_delete' => 'იძულებითი წაშლა',
+        'force_delete_any' => 'ნებისმიერის იძულებითი წაშლა',
+        'restore' => 'აღდგენა',
+        'reorder' => 'გადალაგება',
+        'restore_any' => 'ნებისმიერის აღდგენა',
+        'replicate' => 'დუბლირება',
     ],
 ];
