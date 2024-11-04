@@ -82,6 +82,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultGroup(config('filament-shield.shield_resource.table_group_by_guard_name') ? 'guard_name' : null)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->badge()
