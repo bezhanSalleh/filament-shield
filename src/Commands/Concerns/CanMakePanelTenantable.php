@@ -9,12 +9,12 @@ use Filament\Panel;
 
 trait CanMakePanelTenantable
 {
-    protected function makePanelTenantable(Panel $panel, string $panelPath, ?string $tenantModel): void
+    protected function makePanelTenantable(Panel $panel, string $panelPath, ?string $tenantModelClass): void
     {
-        if (filled($tenantModel) && ! $panel->hasTenancy()) {
+        if (filled($tenantModelClass) && ! $panel->hasTenancy()) {
 
             Stringer::for($panelPath)
-                ->prepend('->discoverResources', '->tenant(\\' . $tenantModel . '::class)')
+                ->prepend('->discoverResources', '->tenant(' . $tenantModelClass . ')')
                 ->save();
             $this->activateTenancy($panelPath);
 

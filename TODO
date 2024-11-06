@@ -8,3 +8,4 @@ Todo:
     ☐ checking for tables also check if team was enabled or should be enabled if already installed and the tenant flag provided
     ☐ Remove/replace doctor command with about command
     ☐ Move tenant relationship generation to the generate command
+    ☐ should handle if already installed for a panel but central flag. for now central is always false

@@ -70,8 +70,8 @@ trait CanGenerateRelationshipsForTenancy
                 }
                 if (! $tenantModelstringer->contains($modifiedResource['tenant_model_method']['name'])) {
                     if (filled($importStatement = $this->addModelReturnTypeImportStatement($modifiedResource['tenant_model_method']['relationshipName']))) {
-                        if (! $resourceModelStringer->contains($importStatement)) {
-                            $resourceModelStringer->append('use', $importStatement);
+                        if (! $tenantModelstringer->contains($importStatement)) {
+                            $tenantModelstringer->append('use', $importStatement);
                         }
                     }
 

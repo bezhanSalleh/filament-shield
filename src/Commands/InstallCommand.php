@@ -18,18 +18,23 @@ class InstallCommand extends Command implements PromptsForMissingInput
     use Concerns\CanRegisterPlugin;
 
     /** @var string */
-    protected $signature = 'shield:install {panel} {--central} {--tenant} {--generate}';
+    protected $signature = 'shield:install {panel} {--tenant} {--generate}';
 
     /** @var string */
     protected $description = 'Install and configure shield for the given Filament Panel';
 
     public function handle(): int
     {
-        $shouldSetPanelAsCentralApp = $this->option('central') ?? false;
+        $shouldSetPanelAsCentralApp = false;
 
         $panel = Filament::getPanel($this->argument('panel') ?? null);
 
         $tenant = $this->option('tenant') ? config()->get('filament-shield.tenant_model') : null;
+
+        $tenantModelClass = str($tenant)
+            ->prepend('\\')
+            ->append('::class')
+            ->toString();
 
         $panelPath = app_path(
             (string) str($panel->getId())
@@ -46,31 +51,31 @@ class InstallCommand extends Command implements PromptsForMissingInput
             return static::FAILURE;
         }
 
-        if ($panel->hasTenancy() && $shouldSetPanelAsCentralApp) {
-            $this->components->warn('Cannot install Shield as `Central App` on a tenant panel!');
-            return static::FAILURE;
-        }
+        // if ($panel->hasTenancy() && $shouldSetPanelAsCentralApp) {
+        //     $this->components->warn('Cannot install Shield as `Central App` on a tenant panel!');
+        //     return static::FAILURE;
+        // }
 
-        if (! $panel->hasTenancy() && $shouldSetPanelAsCentralApp && blank($tenant)) {
-            $this->components->warn('Make sure you have at least a panel with tenancy setup first!');
-            return static::INVALID;
-        }
+        // if (! $panel->hasTenancy() && $shouldSetPanelAsCentralApp && blank($tenant)) {
+        //     $this->components->warn('Make sure you have at least a panel with tenancy setup first!');
+        //     return static::INVALID;
+        // }
 
         $this->registerPlugin(
             panelPath: $panelPath,
             centralApp: $shouldSetPanelAsCentralApp && ! $panel->hasTenancy(),
-            tenantModelClass: $tenant
+            tenantModelClass: $tenantModelClass
         );
 
-        if (filled($tenant)) {
+        if (filled($tenant) && ! $shouldSetPanelAsCentralApp) {
             $this->makePanelTenantable(
                 panel: $panel,
                 panelPath: $panelPath,
-                tenantModel: $tenant
+                tenantModelClass: $tenantModelClass
             );
         }
 
-        if ($this->option('generate')) {
+        if (filled($tenant) && $this->option('generate')) {
             $this->generateRelationships($panel);
         }
 
