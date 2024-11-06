@@ -143,7 +143,7 @@ class Stringer
 
             // Format the new content based on the newLine flag
             $formattedReplacement = $this->addNewLine
-                ? PHP_EOL . $indentation . trim($contentToAppend)
+                ? $indentation . trim($contentToAppend) . PHP_EOL
                 : $indentation . trim($contentToAppend);
 
             $this->addNewLine = false; // Reset flag
@@ -167,7 +167,7 @@ class Stringer
                 // Append the content with proper indentation
                 $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToAppend);
                 if ($this->addNewLine) {
-                    $newContent = PHP_EOL . $newContent;
+                    $newContent = $newContent . PHP_EOL;
                     $this->addNewLine = false; // Reset the flag
                 }
                 $this->content = substr_replace(
@@ -472,6 +472,20 @@ class Stringer
                 $newContent,
                 $lineInfo['end'],
                 0
+            );
+        }
+
+        return $this;
+    }
+
+    public function deleteLine(string $needle): static
+    {
+        if ($lineInfo = $this->findLine($needle)) {
+            $this->content = substr_replace(
+                $this->content,
+                '',
+                $lineInfo['start'],
+                $lineInfo['end'] - $lineInfo['start']
             );
         }
 

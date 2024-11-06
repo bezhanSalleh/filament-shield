@@ -6,29 +6,30 @@ use Throwable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use function Laravel\Prompts\confirm;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Artisan;
-
+use Illuminate\Database\Eloquent\Model;
 use BezhanSalleh\FilamentShield\Stringer;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Commands\Concerns;
+use Symfony\Component\Console\Attribute\AsCommand;
 
-class MakeShieldInstallCommand extends Command
+use function Laravel\Prompts\confirm;
+
+#[AsCommand(name: 'shield:setup', description: 'Setup and install core requirements for Shield')]
+class SetupCommand extends Command
 {
     use Concerns\CanManipulateFiles;
-    public $signature = 'shield:install
+    public $signature = 'shield:setup
         {--F|fresh : re-run the migrations}
-        {--O|only : Only setups shield without generating permissions and creating super-admin}
         {--minimal : Output minimal amount of info to console}
-        {--tenancy : Setup shield for tenancy}
+        {--tenant= : Tenant model}
+        {--force}
     ';
 
-    public $description = 'Setup Core Package requirements and Install Shield';
+    public $description = 'Setup and install core requirements for Shield';
 
     public function handle(): int
     {
-
         if (! Utils::isAuthProviderConfigured()) {
             $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
 
@@ -99,7 +100,29 @@ class MakeShieldInstallCommand extends Command
 
     protected function install(bool $fresh = false): void
     {
-        if ($this->option('tenancy')) {
+        $tenant = $this->option('tenant');
+
+        if (filled($tenantModel = $this->getModel($tenant))) {
+
+            if (! $this->fileExists(config_path('filament-shield.php'))) {
+                $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
+                    '--tag' => 'filament-shield-config',
+                    '--force' => $this->option('force'),
+                ]);
+            }
+
+            $shieldConfig = Stringer::for(config_path('filament-shield.php'));
+
+            if (is_null(config()->get("filament-shield.tenant_model", null))) {
+                $shieldConfig->prepend('auth_provider_model', "'tenant_model' => null,")
+                    ->newLine();
+            }
+
+            $shieldConfig
+                ->append('tenant_model', "'tenant_model' => '" . get_class($tenantModel) . "',")
+                ->deleteLine("tenant_model")
+                ->save();
+
             if (! $this->fileExists(config_path('permission.php'))) {
                 $this->call('vendor:publish', [
                     '--tag' => 'permission-config',
@@ -150,6 +173,7 @@ class MakeShieldInstallCommand extends Command
 
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--tag' => 'filament-shield-config',
+            '--force' => $this->option('force'),
         ]);
 
         if ($fresh) {
@@ -171,29 +195,27 @@ class MakeShieldInstallCommand extends Command
             '--force' => true,
         ]);
 
-        if (! $this->option('only')) {
-            $this->components->info('Generating permissions ...');
-            $this->call('shield:generate', [
-                '--all' => true,
-                '--minimal' => $this->option('minimal'),
-            ]);
-
-            $this->components->info('Creating a filament user with Super Admin Role...');
-            $this->call('shield:super-admin');
-        } else {
-            $this->call('shield:generate', [
-                '--resource' => 'RoleResource',
-                '--minimal' => $this->option('minimal'),
-            ]);
-        }
-
-        $this->components->info(Artisan::output());
+        $this->call('shield:generate', [
+            '--resource' => 'RoleResource',
+            '--minimal' => $this->option('minimal'),
+        ]);
 
         $this->components->info('Filament Shield🛡 is now active ✅');
     }
 
-    protected function configureAuthModel(string $model): void
+    protected function getModel(string $model): ?Model
     {
+        $model = str($model)->contains('\\')
+            ? $model
+            : str($model)->prepend('App\\Models\\')
+                ->toString();
 
+        if (! class_exists($model) || ! (app($model) instanceof Model)) {
+            $this->components->error("Model not found: {$model}");
+            exit();
+            return null;
+        }
+
+        return app($model);
     }
 }
