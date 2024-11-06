@@ -27,7 +27,7 @@ class MakeShieldSuperAdminCommand extends Command
 
     protected Authenticatable $superAdmin;
 
-    protected null | string $superAdminRole = null;
+    protected ?string $superAdminRole = null;
 
     protected function getAuthGuard(): Guard
     {
@@ -59,6 +59,7 @@ class MakeShieldSuperAdminCommand extends Command
         if (Utils::isTeamFeatureEnabled()) {
             if (blank($teamId)) {
                 $this->components->error('Please provide the team id via `--team` option to assign the super admin to a team.');
+
                 return self::FAILURE;
             }
             if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->whereTeamId($teamId)->doesntExist()) {

@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpSuspiciousNameCombinationInspection */
+<?php
+
+/** @noinspection PhpSuspiciousNameCombinationInspection */
 
 declare(strict_types=1);
 
@@ -311,11 +313,14 @@ class Stringer
                 $braceLevel = 0;
                 $methodEndLine = $i + 1;
                 for ($j = $i + 1; $j < count($lines); $j++) {
-                    if (str_contains($lines[$j], '{')) $braceLevel++;
+                    if (str_contains($lines[$j], '{')) {
+                        $braceLevel++;
+                    }
                     if (str_contains($lines[$j], '}')) {
                         $braceLevel--;
                         if ($braceLevel === 0) {
                             $methodEndLine = $j;
+
                             break;
                         }
                     }
@@ -333,7 +338,7 @@ class Stringer
                     'indentation' => $indentation,
                     'is_method' => true,
                     'opening_brace_line' => $i + 1,
-                    'closing_brace_line' => $methodEndLine
+                    'closing_brace_line' => $methodEndLine,
                 ];
             }
         }
@@ -368,9 +373,10 @@ class Stringer
                 if (str_contains($normalizedLine, trim($methodCalls[$currentMethodIndex]))) {
                     $currentMethodIndex++;
                     $endLine++;
-                } elseif (!empty($currentLine)) {
+                } elseif (! empty($currentLine)) {
                     // If we find a non-empty line that doesn't match, break
                     $matchFound = false;
+
                     break;
                 } else {
                     // Skip empty lines
@@ -396,7 +402,7 @@ class Stringer
                     'start' => $startPos,
                     'end' => $endPos,
                     'indentation' => $indentation,
-                    'is_block' => true
+                    'is_block' => true,
                 ];
             }
         }
@@ -411,14 +417,14 @@ class Stringer
 
     public function appendBlock(string $needle, string $contentToAppend, bool $afterBlock = false): static
     {
-        if (!$this->contains($needle)) {
+        if (! $this->contains($needle)) {
             return $this;
         }
 
         // Use findMethodDeclaration for better method handling
         $lineInfo = $this->findMethodDeclaration($needle);
 
-        if (!$lineInfo) {
+        if (! $lineInfo) {
             return $this;
         }
 
@@ -435,9 +441,11 @@ class Stringer
             $formattedContent = '';
             foreach ($contentLines as $index => $line) {
                 $trimmedLine = trim($line);
-                if (empty($trimmedLine)) continue;
+                if (empty($trimmedLine)) {
+                    continue;
+                }
 
-                $formattedContent .= ($index > 0 ? PHP_EOL . $methodIndent  : '' ) . $contentIndent . $trimmedLine;
+                $formattedContent .= ($index > 0 ? PHP_EOL . $methodIndent : '') . $contentIndent . $trimmedLine;
             }
 
             // Add new line if flag is set
