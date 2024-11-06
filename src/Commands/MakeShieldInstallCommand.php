@@ -142,7 +142,6 @@ class MakeShieldInstallCommand extends Command
                 }
         }
 
-        dd('here');
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--tag' => 'permission-migrations',
         ]);

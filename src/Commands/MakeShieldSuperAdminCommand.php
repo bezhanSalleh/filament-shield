@@ -20,11 +20,14 @@ class MakeShieldSuperAdminCommand extends Command
     public $signature = 'shield:super-admin
         {--user= : ID of user to be made super admin.}
         {--panel= : Panel ID to get the configuration from.}
+        {--team= : Team/Tenant ID to assign role to user.}
     ';
 
     public $description = 'Creates Filament Super Admin';
 
     protected Authenticatable $superAdmin;
+
+    protected null | string $superAdminRole = null;
 
     protected function getAuthGuard(): Guard
     {
@@ -51,9 +54,21 @@ class MakeShieldSuperAdminCommand extends Command
     public function handle(): int
     {
         $usersCount = static::getUserModel()::count();
+        $teamId = $this->option('team');
 
-        if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
-            FilamentShield::createRole();
+        if (Utils::isTeamFeatureEnabled()) {
+            if (blank($teamId)) {
+                $this->components->error('Please provide the team id via `--team` option to assign the super admin to a team.');
+                return self::FAILURE;
+            }
+            if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->whereTeamId($teamId)->doesntExist()) {
+                $this->superAdminRole = FilamentShield::createRole(team_id: $teamId);
+            }
+
+        } else {
+            if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
+                $this->superAdminRole = FilamentShield::createRole();
+            }
         }
 
         if ($this->option('user')) {
@@ -84,7 +99,7 @@ class MakeShieldSuperAdminCommand extends Command
             $this->superAdmin = $this->createSuperAdmin();
         }
 
-        $this->superAdmin->assignRole(Utils::getSuperAdminName());
+        $this->superAdmin->assignRole($this->superAdminRole);
 
         $loginUrl = Filament::getCurrentPanel()?->getLoginUrl();
 

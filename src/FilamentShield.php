@@ -2,18 +2,19 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Filament\Facades\Filament;
-use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Widgets\TableWidget;
+use Illuminate\Support\Str;
 use Filament\Widgets\Widget;
-use Filament\Widgets\WidgetConfiguration;
+use Filament\Facades\Filament;
+use Filament\Widgets\TableWidget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Str;
+use Filament\Widgets\WidgetConfiguration;
 use Spatie\Permission\PermissionRegistrar;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShield
 {
@@ -105,8 +106,18 @@ class FilamentShield
         }
     }
 
-    public static function createRole(?string $name = null)
+    public static function createRole(?string $name = null, ?int $team_id= null): Role
     {
+        if (Utils::isTeamFeatureEnabled()) {
+            return Utils::getRoleModel()::firstOrCreate(
+                [
+                    'name' => $name ?? Utils::getSuperAdminName(),
+                    'team_id' => $team_id
+                ],
+                ['guard_name' => Utils::getFilamentAuthGuard()]
+            );
+        }
+
         return Utils::getRoleModel()::firstOrCreate(
             ['name' => $name ?? Utils::getSuperAdminName()],
             ['guard_name' => Utils::getFilamentAuthGuard()]

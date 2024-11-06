@@ -7,7 +7,7 @@ use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SynShieldTenant
+class SyncShieldTenant
 {
     /**
      * Handle an incoming request.
