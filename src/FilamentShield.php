@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use BezhanSalleh\FilamentShield\Commands;
+use Spatie\Permission\Models\Role;
 use Filament\Widgets\WidgetConfiguration;
 use Spatie\Permission\PermissionRegistrar;
 use BezhanSalleh\FilamentShield\Support\Utils;
