@@ -26,7 +26,6 @@ trait CanBeProhibitable
     /**
      * Determine if the command is prohibited from running and display a warning if so.
      *
-     * @param  bool  $quiet
      * @return bool
      */
     protected function isProhibited(bool $quiet = false)

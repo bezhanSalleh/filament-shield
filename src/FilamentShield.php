@@ -2,20 +2,19 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\TableWidget;
 use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
-use BezhanSalleh\FilamentShield\Commands;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
-use Filament\Widgets\WidgetConfiguration;
 use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShield
 {
@@ -397,13 +396,11 @@ class FilamentShield
             ->toArray();
     }
 
-
     /**
      * Indicate if destructive Shield commands should be prohibited.
      *
      * Prohibits: shield:setup, shield:install, and shield:generate
      *
-     * @param  bool  $prohibit
      * @return void
      */
     public static function prohibitDestructiveCommands(bool $prohibit = true)

@@ -18,7 +18,6 @@ class InstallCommand extends Command implements PromptsForMissingInput
     use Concerns\CanManipulateFiles;
     use Concerns\CanRegisterPlugin;
 
-
     /** @var string */
     protected $signature = 'shield:install {panel} {--tenant} {--generate}';
 

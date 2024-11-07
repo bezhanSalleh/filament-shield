@@ -2,14 +2,14 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 
 use function Laravel\Prompts\Select;
 
@@ -19,6 +19,7 @@ class GenerateCommand extends Command
     use Concerns\CanBeProhibitable;
     use Concerns\CanGeneratePolicy;
     use Concerns\CanManipulateFiles;
+
     /**
      * The resources to generate permissions or policies for, or should be exclude.
      */
@@ -62,7 +63,7 @@ class GenerateCommand extends Command
         {--panel= : Panel ID to get the components(resources, pages, widgets)}
     ';
 
-    /**  @var string */
+    /** @var string */
     public $description = 'Generate Permissions and/or Policies for Filament entities.';
 
     public function handle(): int
