@@ -2,16 +2,15 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Throwable;
+use BezhanSalleh\FilamentShield\Stringer;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
-use BezhanSalleh\FilamentShield\Stringer;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Commands\Concerns;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Throwable;
 
 use function Laravel\Prompts\confirm;
 
@@ -115,14 +114,14 @@ class SetupCommand extends Command
 
             $shieldConfig = Stringer::for(config_path('filament-shield.php'));
 
-            if (is_null(config()->get("filament-shield.tenant_model", null))) {
+            if (is_null(config()->get('filament-shield.tenant_model', null))) {
                 $shieldConfig->prepend('auth_provider_model', "'tenant_model' => null,")
                     ->newLine();
             }
 
             $shieldConfig
                 ->append('tenant_model', "'tenant_model' => '" . get_class($tenantModel) . "',")
-                ->deleteLine("tenant_model")
+                ->deleteLine('tenant_model')
                 ->save();
 
             if (! $this->fileExists(config_path('permission.php'))) {
@@ -144,27 +143,27 @@ class SetupCommand extends Command
             $this->copy($source . '/Permission.php', $destination . '/Permission.php');
 
             $appServiceProvider = Stringer::for(app_path('Providers/AppServiceProvider.php'));
-                if (
-                   ! $appServiceProvider->containsChainedBlock('app(\Spatie\Permission\PermissionRegistrar::class)
+            if (
+                ! $appServiceProvider->containsChainedBlock('app(\Spatie\Permission\PermissionRegistrar::class)
                         ->setPermissionClass(Permission::class)
                         ->setRoleClass(Role::class)')
-                ) {
-                    if (! $appServiceProvider->contains('use App\Models\Role;')) {
-                        $appServiceProvider->append('use', 'use App\Models\Role;');
-                    }
+            ) {
+                if (! $appServiceProvider->contains('use App\Models\Role;')) {
+                    $appServiceProvider->append('use', 'use App\Models\Role;');
+                }
 
-                    if (! $appServiceProvider->contains('use App\Models\Permission;')) {
-                        $appServiceProvider->append('use', 'use App\Models\Permission;');
-                    }
+                if (! $appServiceProvider->contains('use App\Models\Permission;')) {
+                    $appServiceProvider->append('use', 'use App\Models\Permission;');
+                }
 
-                    $appServiceProvider
-                        ->appendBlock("public function boot()", "
+                $appServiceProvider
+                    ->appendBlock('public function boot()', "
                             app(\Spatie\Permission\PermissionRegistrar::class)
                                 ->setPermissionClass(Permission::class)
                                 ->setRoleClass(Role::class);
                         ", true)
-                        ->save();
-                }
+                    ->save();
+            }
         }
 
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
@@ -215,6 +214,7 @@ class SetupCommand extends Command
         if (! class_exists($model) || ! (app($model) instanceof Model)) {
             $this->components->error("Model not found: {$model}");
             exit();
+
             return null;
         }
 

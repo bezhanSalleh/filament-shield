@@ -73,10 +73,12 @@ trait CanManipulateFiles
         if (! $this->fileExists($destination)) {
             $filesystem->copy($source, $destination);
             $this->components->info("$destination file published!");
+
             return true;
         }
 
         $this->components->warn("$destination already exists, skipping ...");
+
         return false;
     }
 }

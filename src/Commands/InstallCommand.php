@@ -6,8 +6,8 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'shield:install')]
 class InstallCommand extends Command implements PromptsForMissingInput
