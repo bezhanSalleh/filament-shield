@@ -64,10 +64,12 @@ class InstallCommand extends Command implements PromptsForMissingInput
 
         $this->registerPlugin(
             panelPath: $panelPath,
+            /** @phpstan-ignore-next-line */
             centralApp: $shouldSetPanelAsCentralApp && ! $panel->hasTenancy(),
             tenantModelClass: $tenantModelClass
         );
 
+        /** @phpstan-ignore-next-line */
         if (filled($tenant) && ! $shouldSetPanelAsCentralApp) {
             $this->makePanelTenantable(
                 panel: $panel,

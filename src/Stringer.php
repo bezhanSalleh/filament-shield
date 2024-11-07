@@ -24,7 +24,7 @@ class Stringer
 
     public static function for(string $filePath): static
     {
-        return new static($filePath);
+        return app(static::class, ['filePath' => $filePath]);
     }
 
     public function __construct(string $filePath)
