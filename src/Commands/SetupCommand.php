@@ -18,7 +18,9 @@ use function Laravel\Prompts\confirm;
 #[AsCommand(name: 'shield:setup', description: 'Setup and install core requirements for Shield')]
 class SetupCommand extends Command
 {
+    use Concerns\CanBeProhibitable;
     use Concerns\CanManipulateFiles;
+
     public $signature = 'shield:setup
         {--F|fresh : re-run the migrations}
         {--minimal : Output minimal amount of info to console}

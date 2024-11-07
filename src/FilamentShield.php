@@ -2,6 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Commands;
 use Closure;
 use Illuminate\Support\Str;
 use Filament\Widgets\Widget;
@@ -394,5 +395,21 @@ class FilamentShield
             ->values()
             ->unique()
             ->toArray();
+    }
+
+
+    /**
+     * Indicate if destructive Shield commands should be prohibited.
+     *
+     * Prohibits: shield:setup, shield:install, and shield:generate
+     *
+     * @param  bool  $prohibit
+     * @return void
+     */
+    public static function prohibitDestructiveCommands(bool $prohibit = true)
+    {
+        Commands\SetupCommand::prohibit($prohibit);
+        Commands\InstallCommand::prohibit($prohibit);
+        Commands\GenerateCommand::prohibit($prohibit);
     }
 }

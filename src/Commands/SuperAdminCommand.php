@@ -15,12 +15,12 @@ use Illuminate\Support\Facades\Hash;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
-class MakeShieldSuperAdminCommand extends Command
+class SuperAdminCommand extends Command
 {
     public $signature = 'shield:super-admin
         {--user= : ID of user to be made super admin.}
         {--panel= : Panel ID to get the configuration from.}
-        {--team= : Team/Tenant ID to assign role to user.}
+        {--tenant= : Team/Tenant ID to assign role to user.}
     ';
 
     public $description = 'Creates Filament Super Admin';
@@ -54,15 +54,15 @@ class MakeShieldSuperAdminCommand extends Command
     public function handle(): int
     {
         $usersCount = static::getUserModel()::count();
-        $teamId = $this->option('team');
+        $tenantId = $this->option('tenant');
 
         if (Utils::isTeamFeatureEnabled()) {
-            if (blank($teamId)) {
+            if (blank($tenantId)) {
                 $this->components->error('Please provide the team id via `--team` option to assign the super admin to a team.');
                 return self::FAILURE;
             }
-            if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->whereTeamId($teamId)->doesntExist()) {
-                $this->superAdminRole = FilamentShield::createRole(team_id: $teamId);
+            if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->whereTeamId($tenantId)->doesntExist()) {
+                $this->superAdminRole = FilamentShield::createRole(team_id: $tenantId);
             }
 
         } else {

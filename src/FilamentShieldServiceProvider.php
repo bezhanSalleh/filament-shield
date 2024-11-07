@@ -9,6 +9,8 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FilamentShieldServiceProvider extends PackageServiceProvider
 {
+    use Concerns\HasAboutCommand;
+
     public function configurePackage(Package $package): void
     {
         $package
@@ -32,6 +34,8 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
     {
         parent::packageBooted();
 
+        $this->initAboutCommand();
+
         if (Utils::isSuperAdminDefinedViaGate()) {
             Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
                 return match (Utils::getSuperAdminGateInterceptionStatus()) {
@@ -50,14 +54,12 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            Commands\MakeShieldDoctorCommand::class,
-            Commands\MakeShieldGenerateCommand::class,
+            Commands\GenerateCommand::class,
             Commands\InstallCommand::class,
             Commands\SetupCommand::class,
+            Commands\SuperAdminCommand::class,
             Commands\MakeShieldPublishCommand::class,
             Commands\MakeShieldSeederCommand::class,
-            Commands\MakeShieldSuperAdminCommand::class,
-            Commands\MakeShieldUpgradeCommand::class,
         ];
     }
 }

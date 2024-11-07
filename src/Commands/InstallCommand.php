@@ -12,10 +12,12 @@ use Illuminate\Contracts\Console\PromptsForMissingInput;
 #[AsCommand(name: 'shield:install')]
 class InstallCommand extends Command implements PromptsForMissingInput
 {
+    use Concerns\CanBeProhibitable;
     use Concerns\CanGenerateRelationshipsForTenancy;
     use Concerns\CanMakePanelTenantable;
     use Concerns\CanManipulateFiles;
     use Concerns\CanRegisterPlugin;
+
 
     /** @var string */
     protected $signature = 'shield:install {panel} {--tenant} {--generate}';
