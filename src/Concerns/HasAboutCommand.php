@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Concerns;
 
-use Filament\Facades\Filament;
-use Composer\InstalledVersions;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Composer\InstalledVersions;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Console\AboutCommand;
 
 trait HasAboutCommand

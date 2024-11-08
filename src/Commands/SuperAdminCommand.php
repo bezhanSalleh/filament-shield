@@ -27,7 +27,7 @@ class SuperAdminCommand extends Command
 
     protected Authenticatable $superAdmin;
 
-    /** @var Spatie\Permission\Models\Role */
+    /** @var ?\Illuminate\Database\Eloquent\Model */
     protected $superAdminRole = null;
 
     protected function getAuthGuard(): Guard

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShieldPlugin implements Plugin
