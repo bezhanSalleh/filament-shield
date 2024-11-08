@@ -101,9 +101,6 @@ class GenerateCommand extends Command
             $this->widgetInfo($widgets->toArray());
         }
 
-        $this->components->info('Permission & Policies are generated according to your config or passed options.');
-        $this->components->info('Enjoy!');
-
         if (Cache::has('shield_general_exclude')) {
             Utils::enableGeneralExclude();
             Cache::forget('shield_general_exclude');
