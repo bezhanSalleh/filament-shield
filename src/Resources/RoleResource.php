@@ -100,7 +100,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->color(fn (mixed $state): string => str($state)->contains('Global') ? 'gray' : 'primary')
                     ->label(__('filament-shield::filament-shield.column.team'))
                     ->searchable()
-                    ->hidden(fn (): bool => Filament::hasTenancy() && ! static::shield()->isCentralApp()),
+                    ->visible(fn (): bool => static::shield()->isCentralApp() && ! Filament::hasTenancy()),
                 Tables\Columns\TextColumn::make('permissions_count')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))

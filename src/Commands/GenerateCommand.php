@@ -52,7 +52,7 @@ class GenerateCommand extends Command
     /** @var string */
     public $signature = 'shield:generate
         {--all : Generate permissions/policies for all entities }
-        {--option= : Override the config generator option(<fg=green;options=bold>policies_and_permissions,policies,permissions</>)}
+        {--option= : Override the config generator option(<fg=green;options=bold>policies_and_permissions,policies,permissions and tenant_relationships</>)}
         {--resource= : One or many resources separated by comma (,) }
         {--page= : One or many pages separated by comma (,) }
         {--widget= : One or many widgets separated by comma (,) }

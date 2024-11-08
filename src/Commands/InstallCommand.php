@@ -19,7 +19,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
     use Concerns\CanRegisterPlugin;
 
     /** @var string */
-    protected $signature = 'shield:install {panel} {--tenant} {--generate}';
+    protected $signature = 'shield:install {panel} {--tenant} {--generate-relationships}';
 
     /** @var string */
     protected $description = 'Install and configure shield for the given Filament Panel';
@@ -78,9 +78,14 @@ class InstallCommand extends Command implements PromptsForMissingInput
             );
         }
 
-        if (filled($tenant) && $this->option('generate')) {
+        if (filled($tenant) && $this->option('generate-relationships')) {
             $this->generateRelationships($panel);
         }
+
+        $this->call('shield:generate', [
+            '--resource' => 'RoleResource',
+            '--panel' => $panel->getId(),
+        ]);
 
         $this->components->info('Shield has been successfully configured & installed!');
 

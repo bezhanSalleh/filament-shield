@@ -6,6 +6,7 @@ use Filament\Panel;
 use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Filesystem\Filesystem;
+use Spatie\Permission\PermissionRegistrar;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
@@ -222,12 +223,14 @@ class Utils
 
     public static function getRoleModel(): string
     {
-        return config('permission.models.role', 'Spatie\\Permission\\Models\\Role');
+        return app(PermissionRegistrar::class)
+            ->getRoleClass();
     }
 
     public static function getPermissionModel(): string
     {
-        return config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission');
+        return app(PermissionRegistrar::class)
+            ->getPermissionClass();
     }
 
     public static function discoverAllResources(): bool

@@ -101,10 +101,8 @@ class SetupCommand extends Command
 
     protected function install(bool $fresh = false): void
     {
-        $tenant = $this->option('tenant');
-
-        if (filled($tenantModel = $this->getModel($tenant))) {
-
+        if (filled($tenant = $this->option('tenant'))) {
+            $tenantModel = $this->getModel($tenant);
             if (! $this->fileExists(config_path('filament-shield.php'))) {
                 $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
                     '--tag' => 'filament-shield-config',
@@ -124,9 +122,10 @@ class SetupCommand extends Command
                 ->deleteLine('tenant_model')
                 ->save();
 
-            if (! $this->fileExists(config_path('permission.php'))) {
+            if (! $this->fileExists(config_path('permission.php')) || $fresh) {
                 $this->call('vendor:publish', [
                     '--tag' => 'permission-config',
+                    '--force' => true,
                 ]);
             }
 
@@ -164,17 +163,23 @@ class SetupCommand extends Command
                         ", true)
                     ->save();
             }
+        } else {
+            $this->call('vendor:publish', [
+                '--tag' => 'permission-config',
+                '--force' => $this->option('force') || $fresh,
+            ]);
         }
 
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--tag' => 'permission-migrations',
+            '--force' => $this->option('force') || $fresh,
         ]);
 
         $this->components->info('Core Package config published.');
 
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
             '--tag' => 'filament-shield-config',
-            '--force' => $this->option('force'),
+            '--force' => $this->option('force') || $fresh,
         ]);
 
         if ($fresh) {
@@ -193,12 +198,7 @@ class SetupCommand extends Command
         }
 
         $this->{$this->option('minimal') ? 'callSilent' : 'call'}('migrate', [
-            '--force' => true,
-        ]);
-
-        $this->call('shield:generate', [
-            '--resource' => 'RoleResource',
-            '--minimal' => $this->option('minimal'),
+            '--force' => $fresh,
         ]);
 
         $this->components->info('Filament Shield🛡 is now active ✅');
