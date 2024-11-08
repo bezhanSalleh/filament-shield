@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Filament\Contracts\Plugin;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShieldPlugin implements Plugin
@@ -29,7 +29,8 @@ class FilamentShieldPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        if (! Utils::isResourcePublished()) {
+
+        if (! Utils::isResourcePublished($panel)) {
             $panel->resources([
                 Resources\RoleResource::class,
             ]);

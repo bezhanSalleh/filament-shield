@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Concerns;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Facades\Filament;
 use Composer\InstalledVersions;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Foundation\Console\AboutCommand;
 
 trait HasAboutCommand
@@ -14,11 +15,11 @@ trait HasAboutCommand
     {
         AboutCommand::add('Shield', [
             'Auth Provider' => Utils::getAuthProviderFQCN() . '|' . static::authProviderConfigured(),
-            'Resource' => Utils::isResourcePublished() ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
-            'Resource Slug' => Utils::getResourceSlug(),
-            'Resource Sort' => Utils::getResourceNavigationSort(),
-            'Resource Badge' => Utils::isResourceNavigationBadgeEnabled() ? '<fg=green;options=bold>ENABLED</>' : '<fg=red;options=bold>DISABLED</>',
-            'Resource Group' => Utils::isResourceNavigationGroupEnabled() ? '<fg=green;options=bold>ENABLED</>' : '<fg=red;options=bold>DISABLED</>',
+            // 'Resource' => Utils::isResourcePublished(Filament::getCurrentPanel()) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
+            // 'Resource Slug' => Utils::getResourceSlug(),
+            // 'Resource Sort' => Utils::getResourceNavigationSort(),
+            // 'Resource Badge' => Utils::isResourceNavigationBadgeEnabled() ? '<fg=green;options=bold>ENABLED</>' : '<fg=red;options=bold>DISABLED</>',
+            // 'Resource Group' => Utils::isResourceNavigationGroupEnabled() ? '<fg=green;options=bold>ENABLED</>' : '<fg=red;options=bold>DISABLED</>',
             'Tenancy' => Utils::isTeamFeatureEnabled() ? '<fg=green;options=bold>ENABLED</>' : '<fg=gray;options=bold>DISABLED</>',
             'Tenant Model' => Utils::isTeamFeatureEnabled() && filled($model = config()->get('filament-shield.tenant_model')) ? $model : null,
             'Translations' => is_dir(resource_path('resource/lang/vendor/filament-shield')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',

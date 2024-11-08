@@ -2,11 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\FilamentShield;
+use Filament\Panel;
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 class Utils
 {
@@ -15,13 +16,14 @@ class Utils
         return Filament::getCurrentPanel()?->getAuthGuard() ?? '';
     }
 
-    public static function isResourcePublished(): bool
+    public static function isResourcePublished(Panel $panel): bool
     {
-        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
-
-        $filesystem = new Filesystem;
-
-        return (bool) $filesystem->exists($roleResourcePath);
+        return str(
+               string: collect(value: $panel->getResources())
+                    ->values()
+                    ->join(',')
+            )
+            ->contains('RoleResource');
     }
 
     public static function getResourceSlug(): string

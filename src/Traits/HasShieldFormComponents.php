@@ -12,20 +12,8 @@ use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
-trait HasResourceShield
+trait HasShieldFormComponents
 {
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
-            'delete_any',
-        ];
-    }
-
     public static function getShieldFormComponents(): Component
     {
         return Forms\Components\Tabs::make('Permissions')
