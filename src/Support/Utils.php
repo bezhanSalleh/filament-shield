@@ -2,13 +2,13 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use Filament\Panel;
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
-use Illuminate\Filesystem\Filesystem;
-use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\FilamentShield;
+use Filament\Facades\Filament;
+use Filament\Panel;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
+use Spatie\Permission\PermissionRegistrar;
 
 class Utils
 {
@@ -20,10 +20,10 @@ class Utils
     public static function isResourcePublished(Panel $panel): bool
     {
         return str(
-               string: collect(value: $panel->getResources())
-                    ->values()
-                    ->join(',')
-            )
+            string: collect(value: $panel->getResources())
+                ->values()
+                ->join(',')
+        )
             ->contains('RoleResource');
     }
 
