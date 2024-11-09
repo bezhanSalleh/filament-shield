@@ -48,7 +48,8 @@ The easiest and most intuitive way to add access management to your Filament Pan
 > [!NOTE] 
 > For **Filament 2.x** use **[2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)** branch
 
-## Table of Contents
+<div class="filament-hidden">
+<b>Table of Contents</b>
 
 - [Installation](#installation)
   - [1. Install Package](#1-install-package)
@@ -82,6 +83,7 @@ The easiest and most intuitive way to add access management to your Filament Pan
 - [Security Vulnerabilities](#security-vulnerabilities)
 - [Credits](#credits)
 - [License](#license)
+</div>
 
 ## Installation
 
