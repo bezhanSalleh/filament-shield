@@ -2,6 +2,19 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.1 - 2024-11-09
+
+**What's new in 3.3.1?**
+
+* Added the ability to make destructive commands(listed below) `prohibitable`
+  - Setup
+  - Install
+  - Generate
+  - Publish
+  
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.0...3.3.1
+
 ## 3.3.0 - 2024-11-09
 
 ### What's Changed
