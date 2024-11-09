@@ -395,20 +395,40 @@ class AppServiceProvider extends ServiceProvider
 ```
 #### Users (Assigning Roles to Users)
 Shield does not come with a way to assign roles to your users out of the box, however you can easily assign roles to your users using Filament `Forms`'s `Select` or `CheckboxList` component. Inside your users `Resource`'s form add one of these components and configure them as you need:
+1. **Without Tenancy**
 ```php
 // Using Select Component
 Forms\Components\Select::make('roles')
     ->relationship('roles', 'name')
     ->multiple()
     ->preload()
-    ->searchable()
+    ->searchable(),
                     
 // Using CheckboxList Component
 Forms\Components\CheckboxList::make('roles')
     ->relationship('roles', 'name')
-    ->searchable()
+    ->searchable(),
 ```
+2. **With Tenancy**
+```php
+// Using Select Component
+Forms\Components\Select::make('roles')
+      ->relationship('roles', 'name')
+      ->saveRelationshipsUsing(function (Model $record, $state) {
+           $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => getPermissionsTeamId()]);
+      })
+     ->multiple()
+     ->preload()
+     ->searchable(),
 
+// Using CheckboxList Component
+Forms\Components\CheckboxList::make('roles')
+      ->relationship(name: 'roles', titleAttribute: 'name')
+      ->saveRelationshipsUsing(function (Model $record, $state) {
+           $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => getPermissionsTeamId()]);
+      })
+     ->searchable(),
+```
 You can find out more about these components in the [Filament Docs](https://filamentphp.com/docs/3.x/forms/installation)
 
 - [Select](https://filamentphp.com/docs/3.x/forms/fields/select)
