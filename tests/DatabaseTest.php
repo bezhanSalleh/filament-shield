@@ -1,6 +1,5 @@
 <?php
 
-use Spatie\Permission\PermissionRegistrar;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\RoleResource;
 
