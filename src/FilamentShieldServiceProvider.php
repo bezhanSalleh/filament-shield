@@ -57,9 +57,9 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
             Commands\GenerateCommand::class,
             Commands\InstallCommand::class,
             Commands\PublishCommand::class,
+            Commands\SeederCommand::class,
             Commands\SetupCommand::class,
             Commands\SuperAdminCommand::class,
-            Commands\MakeShieldSeederCommand::class,
         ];
     }
 }

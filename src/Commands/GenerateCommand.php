@@ -68,6 +68,10 @@ class GenerateCommand extends Command
 
     public function handle(): int
     {
+        if ($this->isProhibited()) {
+            return Command::FAILURE;
+        }
+
         $panel = $this->option('panel')
             ? $this->option('panel')
             : Select(
@@ -83,7 +87,7 @@ class GenerateCommand extends Command
             $this->components->error('No entites provided for the generators ...');
             $this->components->alert('Generation skipped');
 
-            return self::INVALID;
+            return Command::INVALID;
         }
 
         if (filled($this->option('resource')) || $this->option('all')) {
@@ -106,7 +110,7 @@ class GenerateCommand extends Command
             Cache::forget('shield_general_exclude');
         }
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 
     protected function determinGeneratorOptionAndEntities(): void

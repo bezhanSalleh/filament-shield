@@ -14,12 +14,17 @@ use function Laravel\Prompts\select;
 #[AsCommand(name: 'shield:publish', description: "Publish Shield's Resource.")]
 class PublishCommand extends Command
 {
+    use Concerns\CanBeProhibitable;
     use Concerns\CanManipulateFiles;
 
     protected $signature = 'shield:publish {panel}';
 
     public function handle(Filesystem $filesystem): int
     {
+        if ($this->isProhibited()) {
+            return Command::FAILURE;
+        }
+
         Filament::setCurrentPanel(Filament::getPanel($this->argument('panel')));
 
         $panel = Filament::getCurrentPanel();
@@ -46,7 +51,7 @@ class PublishCommand extends Command
         if ($this->checkForCollision([$roleResourcePath])) {
             $confirmed = confirm('Shield Resource already exists. Overwrite?');
             if (! $confirmed) {
-                return self::INVALID;
+                return Command::INVALID;
             }
         }
 
@@ -63,6 +68,6 @@ class PublishCommand extends Command
 
         $this->components->info("Shield's Resource have been published successfully!");
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 }

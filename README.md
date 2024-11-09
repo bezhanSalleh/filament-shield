@@ -447,7 +447,22 @@ public function panel(Panel $panel): Panel
 <img width="1161" alt="Screenshot 2023-09-24 at 10 34 31 PM" src="https://github.com/bezhanSalleh/filament-shield/assets/10007504/be42bab2-72d1-4db0-8de4-8b8fba2d4e68">
 
 ## Available Commands
-
+### Prohibited Commands
+Since almost all shield commands are destructive and can cause data loss, they can be prohibited by calling the prohibit method of the command as following in a service provider's `boot()` method:
+```php
+use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Commands;
+    public function boot(): void
+    {
+        // individually prohibit commands
+        Commands\SetupCommand::prohibit($this->app->isProduction());
+        Commands\InstallCommand::prohibit($this->app->isProduction());
+        Commands\GenerateCommand::prohibit($this->app->isProduction());
+        Commands\PublishCommand::prohibit($this->app->isProduction());
+        // or prohibit the above commands all at once
+        FilamentShield::prohibitDestructiveCommands($this->app->isProduction())
+    }
+```
 ### Core Commands
 ```bash
 # Setup Shield

@@ -26,6 +26,10 @@ class InstallCommand extends Command implements PromptsForMissingInput
 
     public function handle(): int
     {
+        if ($this->isProhibited()) {
+            return Command::FAILURE;
+        }
+
         $shouldSetPanelAsCentralApp = false;
 
         $panel = Filament::getPanel($this->argument('panel') ?? null);
@@ -49,17 +53,17 @@ class InstallCommand extends Command implements PromptsForMissingInput
         if (! $this->fileExists($panelPath)) {
             $this->error("Panel not found: {$panelPath}");
 
-            return static::FAILURE;
+            return Command::FAILURE;
         }
 
         // if ($panel->hasTenancy() && $shouldSetPanelAsCentralApp) {
         //     $this->components->warn('Cannot install Shield as `Central App` on a tenant panel!');
-        //     return static::FAILURE;
+        //     return Command::FAILURE;
         // }
 
         // if (! $panel->hasTenancy() && $shouldSetPanelAsCentralApp && blank($tenant)) {
         //     $this->components->warn('Make sure you have at least a panel with tenancy setup first!');
-        //     return static::INVALID;
+        //     return Command::INVALID;
         // }
 
         $this->registerPlugin(
@@ -89,6 +93,6 @@ class InstallCommand extends Command implements PromptsForMissingInput
 
         $this->components->info('Shield has been successfully configured & installed!');
 
-        return static::SUCCESS;
+        return Command::SUCCESS;
     }
 }

@@ -405,8 +405,9 @@ class FilamentShield
      */
     public static function prohibitDestructiveCommands(bool $prohibit = true)
     {
-        Commands\SetupCommand::prohibit($prohibit);
-        Commands\InstallCommand::prohibit($prohibit);
         Commands\GenerateCommand::prohibit($prohibit);
+        Commands\InstallCommand::prohibit($prohibit);
+        Commands\PublishCommand::prohibit($prohibit);
+        Commands\SetupCommand::prohibit($prohibit);
     }
 }

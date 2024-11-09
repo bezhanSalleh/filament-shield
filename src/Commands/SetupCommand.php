@@ -31,10 +31,14 @@ class SetupCommand extends Command
 
     public function handle(): int
     {
+        if ($this->isProhibited()) {
+            return Command::FAILURE;
+        }
+
         if (! Utils::isAuthProviderConfigured()) {
             $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
 
-            return self::INVALID;
+            return Command::INVALID;
         }
 
         if ($this->option('minimal')) {
@@ -57,7 +61,7 @@ class SetupCommand extends Command
                 $this->install(true);
             }
 
-            return self::INVALID;
+            return Command::INVALID;
         }
 
         if ($confirmed) {
@@ -82,7 +86,7 @@ class SetupCommand extends Command
             }
         }
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 
     protected function CheckIfAlreadyInstalled(): bool
