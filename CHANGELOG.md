@@ -2,6 +2,31 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.0 - 2024-11-09
+
+### What's Changed
+
+* Feature/tenancy by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/441
+* Update HasPageShield.php by @naingwin in https://github.com/bezhanSalleh/filament-shield/pull/440
+* add Georgian Translations by @kirkita in https://github.com/bezhanSalleh/filament-shield/pull/436
+* Rename filament_shield.php to filament-shield.php by @SebastianRajca in https://github.com/bezhanSalleh/filament-shield/pull/432
+* Turkish Language update by @enessvg in https://github.com/bezhanSalleh/filament-shield/pull/431
+* Updated language ID (Indonesia) by @adereksisusanto in https://github.com/bezhanSalleh/filament-shield/pull/429
+* removes console.log() on toggle in form by @Adysone in https://github.com/bezhanSalleh/filament-shield/pull/417
+* fix: remove blank row by @giacomomasseron in https://github.com/bezhanSalleh/filament-shield/pull/420
+
+### New Contributors
+
+* @giacomomasseron made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/420
+* @Adysone made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/417
+* @adereksisusanto made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/429
+* @enessvg made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/431
+* @SebastianRajca made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/432
+* @kirkita made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/436
+* @naingwin made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/440
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.2.6...3.3.0
+
 ## 3.2.6 - 2024-09-02
 
 ### What's Changed
