@@ -15,16 +15,20 @@ use Illuminate\Support\Facades\Hash;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
-class MakeShieldSuperAdminCommand extends Command
+class SuperAdminCommand extends Command
 {
     public $signature = 'shield:super-admin
         {--user= : ID of user to be made super admin.}
         {--panel= : Panel ID to get the configuration from.}
+        {--tenant= : Team/Tenant ID to assign role to user.}
     ';
 
     public $description = 'Creates Filament Super Admin';
 
     protected Authenticatable $superAdmin;
+
+    /** @var ?\Illuminate\Database\Eloquent\Model */
+    protected $superAdminRole = null;
 
     protected function getAuthGuard(): Guard
     {
@@ -51,10 +55,7 @@ class MakeShieldSuperAdminCommand extends Command
     public function handle(): int
     {
         $usersCount = static::getUserModel()::count();
-
-        if (Utils::getRoleModel()::whereName(Utils::getSuperAdminName())->doesntExist()) {
-            FilamentShield::createRole();
-        }
+        $tenantId = $this->option('tenant');
 
         if ($this->option('user')) {
             $this->superAdmin = static::getUserModel()::findOrFail($this->option('user'));
@@ -84,7 +85,26 @@ class MakeShieldSuperAdminCommand extends Command
             $this->superAdmin = $this->createSuperAdmin();
         }
 
-        $this->superAdmin->assignRole(Utils::getSuperAdminName());
+        if (Utils::isTeamFeatureEnabled()) {
+            if (blank($tenantId)) {
+                $this->components->error('Please provide the team/tenant id via `--tenant` option to assign the super admin to a team/tenant.');
+
+                return self::FAILURE;
+            }
+            setPermissionsTeamId($tenantId);
+            $this->superAdminRole = FilamentShield::createRole(team_id: $tenantId);
+            $this->superAdminRole->syncPermissions(Utils::getPermissionModel()::pluck('id'));
+
+        } else {
+            $this->superAdminRole = FilamentShield::createRole();
+        }
+
+        $this->superAdmin
+            ->unsetRelation('roles')
+            ->unsetRelation('permissions');
+
+        $this->superAdmin
+            ->assignRole($this->superAdminRole);
 
         $loginUrl = Filament::getCurrentPanel()?->getLoginUrl();
 

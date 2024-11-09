@@ -7,12 +7,15 @@ namespace BezhanSalleh\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShieldPlugin implements Plugin
 {
+    use Concerns\CanBeCentralApp;
     use Concerns\CanCustomizeColumns;
     use Concerns\CanLocalizePermissionLabels;
     use Concerns\HasSimpleResourcePermissionView;
+    use EvaluatesClosures;
 
     public static function make(): static
     {
@@ -26,7 +29,8 @@ class FilamentShieldPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        if (! Utils::isResourcePublished()) {
+
+        if (! Utils::isResourcePublished($panel)) {
             $panel->resources([
                 Resources\RoleResource::class,
             ]);

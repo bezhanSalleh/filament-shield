@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
@@ -105,8 +106,18 @@ class FilamentShield
         }
     }
 
-    public static function createRole(?string $name = null)
+    public static function createRole(?string $name = null, ?int $team_id = null): Role
     {
+        if (Utils::isTeamFeatureEnabled()) {
+            return Utils::getRoleModel()::firstOrCreate(
+                [
+                    'name' => $name ?? Utils::getSuperAdminName(),
+                    'team_id' => $team_id,
+                ],
+                ['guard_name' => Utils::getFilamentAuthGuard()]
+            );
+        }
+
         return Utils::getRoleModel()::firstOrCreate(
             ['name' => $name ?? Utils::getSuperAdminName()],
             ['guard_name' => Utils::getFilamentAuthGuard()]
@@ -383,5 +394,19 @@ class FilamentShield
             ->values()
             ->unique()
             ->toArray();
+    }
+
+    /**
+     * Indicate if destructive Shield commands should be prohibited.
+     *
+     * Prohibits: shield:setup, shield:install, and shield:generate
+     *
+     * @return void
+     */
+    public static function prohibitDestructiveCommands(bool $prohibit = true)
+    {
+        Commands\SetupCommand::prohibit($prohibit);
+        Commands\InstallCommand::prohibit($prohibit);
+        Commands\GenerateCommand::prohibit($prohibit);
     }
 }

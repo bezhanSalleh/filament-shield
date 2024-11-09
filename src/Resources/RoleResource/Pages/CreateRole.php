@@ -18,11 +18,15 @@ class CreateRole extends CreateRecord
     {
         $this->permissions = collect($data)
             ->filter(function ($permission, $key) {
-                return ! in_array($key, ['name', 'guard_name', 'select_all']);
+                return ! in_array($key, ['name', 'guard_name', 'select_all', 'team_id']);
             })
             ->values()
             ->flatten()
             ->unique();
+
+        if (Arr::has($data, 'team_id')) {
+            return Arr::only($data, ['name', 'guard_name', 'team_id']);
+        }
 
         return Arr::only($data, ['name', 'guard_name']);
     }

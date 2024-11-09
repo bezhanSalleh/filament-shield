@@ -5,8 +5,10 @@ namespace BezhanSalleh\FilamentShield\Support;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
+use Filament\Panel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use Spatie\Permission\PermissionRegistrar;
 
 class Utils
 {
@@ -15,13 +17,14 @@ class Utils
         return Filament::getCurrentPanel()?->getAuthGuard() ?? '';
     }
 
-    public static function isResourcePublished(): bool
+    public static function isResourcePublished(Panel $panel): bool
     {
-        $roleResourcePath = app_path((string) Str::of('Filament\\Resources\\Shield\\RoleResource.php')->replace('\\', '/'));
-
-        $filesystem = new Filesystem;
-
-        return (bool) $filesystem->exists($roleResourcePath);
+        return str(
+            string: collect(value: $panel->getResources())
+                ->values()
+                ->join(',')
+        )
+            ->contains('RoleResource');
     }
 
     public static function getResourceSlug(): string
@@ -220,12 +223,14 @@ class Utils
 
     public static function getRoleModel(): string
     {
-        return config('permission.models.role', 'Spatie\\Permission\\Models\\Role');
+        return app(PermissionRegistrar::class)
+            ->getRoleClass();
     }
 
     public static function getPermissionModel(): string
     {
-        return config('permission.models.permission', 'Spatie\\Permission\\Models\\Permission');
+        return app(PermissionRegistrar::class)
+            ->getPermissionClass();
     }
 
     public static function discoverAllResources(): bool
@@ -255,5 +260,10 @@ class Utils
         $filesystem = new Filesystem;
 
         return (bool) $filesystem->exists(app_path(static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php'));
+    }
+
+    public static function isTeamFeatureEnabled(): bool
+    {
+        return (bool) config()->get('permission.teams', false);
     }
 }

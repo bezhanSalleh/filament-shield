@@ -4,15 +4,19 @@ namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 
+use function Laravel\Prompts\Select;
+
 #[AsCommand(name: 'shield:generate')]
-class MakeShieldGenerateCommand extends Command
+class GenerateCommand extends Command
 {
+    use Concerns\CanBeProhibitable;
     use Concerns\CanGeneratePolicy;
     use Concerns\CanManipulateFiles;
 
@@ -45,14 +49,10 @@ class MakeShieldGenerateCommand extends Command
 
     protected bool $onlyWidgets = false;
 
-    /**
-     * The console command signature.
-     *
-     * @var string
-     */
+    /** @var string */
     public $signature = 'shield:generate
         {--all : Generate permissions/policies for all entities }
-        {--option= : Override the config generator option(<fg=green;options=bold>policies_and_permissions,policies,permissions</>)}
+        {--option= : Override the config generator option(<fg=green;options=bold>policies_and_permissions,policies,permissions and tenant_relationships</>)}
         {--resource= : One or many resources separated by comma (,) }
         {--page= : One or many pages separated by comma (,) }
         {--widget= : One or many widgets separated by comma (,) }
@@ -60,19 +60,23 @@ class MakeShieldGenerateCommand extends Command
         {--ignore-config-exclude : Ignore config `<fg=yellow;options=bold>exclude</>` option during generation }
         {--minimal : Output minimal amount of info to console}
         {--ignore-existing-policies : Ignore generating policies that already exist }
+        {--panel= : Panel ID to get the components(resources, pages, widgets)}
     ';
-    // {--seeder : Exclude the given entities during generation }
-    // the idea is to generate a seeder that can be used on production deployment
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    /** @var string */
     public $description = 'Generate Permissions and/or Policies for Filament entities.';
 
     public function handle(): int
     {
+        $panel = $this->option('panel')
+            ? $this->option('panel')
+            : Select(
+                label: 'Which panel do you want to generate permissions/policies for?',
+                options: collect(Filament::getPanels())->keys()->toArray()
+            );
+
+        Filament::setCurrentPanel(Filament::getPanel($panel));
+
         $this->determinGeneratorOptionAndEntities();
 
         if ($this->option('exclude') && blank($this->option('resource')) && blank($this->option('page')) && blank($this->option('widget'))) {
@@ -96,9 +100,6 @@ class MakeShieldGenerateCommand extends Command
             $widgets = $this->generateForWidgets($this->generatableWidgets());
             $this->widgetInfo($widgets->toArray());
         }
-
-        $this->components->info('Permission & Policies are generated according to your config or passed options.');
-        $this->components->info('Enjoy!');
 
         if (Cache::has('shield_general_exclude')) {
             Utils::enableGeneralExclude();

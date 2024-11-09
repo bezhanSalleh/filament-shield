@@ -1,0 +1,11 @@
+
+Todo:
+    ☐ Accept auth model the same way as the tenant model and set it up
+    ☐ Remove extra info from commands
+    ✔ Given all shield commands are destructive, add the ability to disable them in production @done(24-11-07 23:59)
+    ☐ Make shield middleware publishable and handle if it is published
+    ☐ Make use of the custom team foreign key
+    ☐ checking for tables also check if team was enabled or should be enabled if already installed and the tenant flag provided
+    ✔ Remove/replace doctor command with about command @done(24-11-08 00:00)
+    ☐ Move tenant relationship generation to the generate command
+    ☐ should handle if already installed for a panel but central flag. for now central is always false
