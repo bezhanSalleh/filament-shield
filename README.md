@@ -48,6 +48,41 @@ The easiest and most intuitive way to add access management to your Filament Pan
 > [!NOTE] 
 > For **Filament 2.x** use **[2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)** branch
 
+## Table of Contents
+
+- [Installation](#installation)
+  - [1. Install Package](#1-install-package)
+  - [2. Configure Auth Provider](#2-configure-auth-provider)
+  - [3. Setup Shield](#3-setup-shield)
+  - [4. Install for Panel](#4-install-for-panel)
+- [Usage](#usage)
+  - [Configuration](#configuration)
+  - [Resources](#resources)
+    - [Default](#default)
+    - [Custom Permissions](#custom-permissions)
+    - [Configure Permission Identifier](#configure-permission-identifier)
+    - [Custom Navigation Group](#custom-navigation-group)
+  - [Pages](#pages)
+    - [Pages Hooks](#pages-hooks)
+    - [Pages Redirect Path](#pages-redirect-path)
+  - [Widgets](#widgets)
+- [Policies](#policies)
+  - [Path](#path)
+  - [Custom folder structure for Models or Third-Party Plugins](#custom-folder-structure-for-models-or-third-party-plugins)
+- [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
+- [Layout Customization](#layout-customization)
+- [Available Commands](#available-commands)
+  - [Prohibited Commands](#prohibited-commands)
+  - [Core Commands](#core-commands)
+  - [Generate Command Options](#generate-command-options)
+- [Translations](#translations)
+- [Testing](#testing)
+- [Changelog](#changelog)
+- [Contributing](#contributing)
+- [Security Vulnerabilities](#security-vulnerabilities)
+- [Credits](#credits)
+- [License](#license)
+
 ## Installation
 
 ### 1. Install Package
