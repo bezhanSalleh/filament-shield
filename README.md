@@ -348,7 +348,6 @@ class IncomeWidget extends LineChartWidget
 
 ### Policies
 
-
 #### Path
 If your policies are not in the default `Policies` directory in the `app_path()` you can change the directory name in the config file:
 
@@ -378,6 +377,7 @@ class AuthServiceProvider extends ServiceProvider
 
     ];
 ```
+
 ##### Using Laravel 11
 ```php
 //AppServiceProvider.php
