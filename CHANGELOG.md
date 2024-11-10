@@ -2,6 +2,15 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.2 - 2024-11-10
+
+### What's Changed
+
+* added the ability to use the config defined foreign key for teams feature when enabled.
+* fixed the issue when creating/updating a role when tenancy is not enabled.
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.1...3.3.2
+
 ## 3.3.1 - 2024-11-09
 
 **What's new in 3.3.1?**
