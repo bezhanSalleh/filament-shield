@@ -55,14 +55,14 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->nullable()
                                     ->maxLength(255),
 
-                                Forms\Components\Select::make('team_id')
+                                Forms\Components\Select::make(config('permission.column_names.team_foreign_key'))
                                     ->label(__('filament-shield::filament-shield.field.team'))
                                     ->placeholder(__('filament-shield::filament-shield.field.team.placeholder'))
                                     /** @phpstan-ignore-next-line */
                                     ->default([Filament::getTenant()?->id])
-                                    ->options(fn (): Arrayable => static::shield()->getTenantModel()::pluck('name', 'id'))
-                                    ->hidden(fn (): bool => ! static::shield()->isCentralApp())
-                                    ->dehydratedWhenHidden(),
+                                    ->options(fn (): Arrayable => Utils::getTenantModel()::pluck('name', 'id'))
+                                    ->hidden(fn (): bool => ! static::shield()->isCentralApp() && Filament::hasTenancy())
+                                    ->dehydrated(fn (): bool => ! static::shield()->isCentralApp() && Filament::hasTenancy()),
 
                                 ShieldSelectAllToggle::make('select_all')
                                     ->onIcon('heroicon-s-shield-check')

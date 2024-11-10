@@ -266,4 +266,9 @@ class Utils
     {
         return (bool) config()->get('permission.teams', false);
     }
+
+    public static function getTenantModel(): ?string
+    {
+        return config()->get('filament-shield.tenant_model', null);
+    }
 }

@@ -112,7 +112,7 @@ class FilamentShield
             return Utils::getRoleModel()::firstOrCreate(
                 [
                     'name' => $name ?? Utils::getSuperAdminName(),
-                    'team_id' => $team_id,
+                    config('permission.column_names.team_foreign_key') => $team_id,
                 ],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             );

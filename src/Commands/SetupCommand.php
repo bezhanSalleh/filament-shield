@@ -57,7 +57,7 @@ class SetupCommand extends Command
             $this->components->info('Seems you have already installed the Core package(`spatie/laravel-permission`)!');
             $this->components->info('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
 
-            if (confirm('Run `shield:install --fresh` instead?', false)) {
+            if (confirm('Run `shield:setup --fresh` instead?', false)) {
                 $this->install(true);
             }
 
@@ -67,7 +67,7 @@ class SetupCommand extends Command
         if ($confirmed) {
             $this->install($this->option('fresh'));
         } else {
-            $this->components->info('`shield:install` command was cancelled.');
+            $this->components->info('`shield:setup` command was cancelled.');
         }
 
         if (! $this->option('minimal')) {
@@ -105,14 +105,13 @@ class SetupCommand extends Command
 
     protected function install(bool $fresh = false): void
     {
+        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
+            '--tag' => 'filament-shield-config',
+            '--force' => $this->option('force') || $fresh,
+        ]);
+
         if (filled($tenant = $this->option('tenant'))) {
             $tenantModel = $this->getModel($tenant);
-            if (! $this->fileExists(config_path('filament-shield.php'))) {
-                $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
-                    '--tag' => 'filament-shield-config',
-                    '--force' => $this->option('force'),
-                ]);
-            }
 
             $shieldConfig = Stringer::for(config_path('filament-shield.php'));
 
@@ -124,6 +123,7 @@ class SetupCommand extends Command
             $shieldConfig
                 ->append('tenant_model', "'tenant_model' => '" . get_class($tenantModel) . "',")
                 ->deleteLine('tenant_model')
+                ->deleteLine("'tenant_model' => null,")
                 ->save();
 
             if (! $this->fileExists(config_path('permission.php')) || $fresh) {
@@ -180,11 +180,6 @@ class SetupCommand extends Command
         ]);
 
         $this->components->info('Core Package config published.');
-
-        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
-            '--tag' => 'filament-shield-config',
-            '--force' => $this->option('force') || $fresh,
-        ]);
 
         if ($fresh) {
             try {
