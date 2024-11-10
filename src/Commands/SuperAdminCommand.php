@@ -92,7 +92,7 @@ class SuperAdminCommand extends Command
                 return self::FAILURE;
             }
             setPermissionsTeamId($tenantId);
-            $this->superAdminRole = FilamentShield::createRole(team_id: $tenantId);
+            $this->superAdminRole = FilamentShield::createRole(tenantId: $tenantId);
             $this->superAdminRole->syncPermissions(Utils::getPermissionModel()::pluck('id'));
 
         } else {

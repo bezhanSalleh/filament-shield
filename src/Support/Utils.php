@@ -271,4 +271,9 @@ class Utils
     {
         return config()->get('filament-shield.tenant_model', null);
     }
+
+    public static function getTenantModelForeignKey(): string
+    {
+        return config()->get('permission.column_names.team_foreign_key', 'team_id');
+    }
 }

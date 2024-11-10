@@ -26,14 +26,14 @@ class EditRole extends EditRecord
     {
         $this->permissions = collect($data)
             ->filter(function ($permission, $key) {
-                return ! in_array($key, ['name', 'guard_name', 'select_all', 'team_id']);
+                return ! in_array($key, ['name', 'guard_name', 'select_all', Utils::getTenantModelForeignKey()]);
             })
             ->values()
             ->flatten()
             ->unique();
 
-        if (Arr::has($data, 'team_id')) {
-            return Arr::only($data, ['name', 'guard_name', 'team_id']);
+        if (Arr::has($data, Utils::getTenantModelForeignKey())) {
+            return Arr::only($data, ['name', 'guard_name', Utils::getTenantModelForeignKey()]);
         }
 
         return Arr::only($data, ['name', 'guard_name']);

@@ -106,13 +106,13 @@ class FilamentShield
         }
     }
 
-    public static function createRole(?string $name = null, ?int $team_id = null): Role
+    public static function createRole(?string $name = null, ?int $tenantId = null): Role
     {
         if (Utils::isTeamFeatureEnabled()) {
             return Utils::getRoleModel()::firstOrCreate(
                 [
                     'name' => $name ?? Utils::getSuperAdminName(),
-                    config('permission.column_names.team_foreign_key') => $team_id,
+                    Utils::getTenantModelForeignKey() => $tenantId,
                 ],
                 ['guard_name' => Utils::getFilamentAuthGuard()]
             );
