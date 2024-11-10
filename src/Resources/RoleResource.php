@@ -60,7 +60,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->placeholder(__('filament-shield::filament-shield.field.team.placeholder'))
                                     /** @phpstan-ignore-next-line */
                                     ->default([Filament::getTenant()?->id])
-                                    ->options(fn (): Arrayable => Utils::getTenantModel()::pluck('name', 'id'))
+                                    ->options(fn (): Arrayable => Utils::getTenantModel() ? Utils::getTenantModel()::pluck('name', 'id') : collect())
                                     ->hidden(fn (): bool => ! static::shield()->isCentralApp() && Filament::hasTenancy())
                                     ->dehydrated(fn (): bool => ! static::shield()->isCentralApp() && Filament::hasTenancy()),
 
