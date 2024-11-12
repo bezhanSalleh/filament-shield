@@ -51,38 +51,43 @@ The easiest and most intuitive way to add access management to your Filament Pan
 <div class="filament-hidden">
 <b>Table of Contents</b>
 
-- [Installation](#installation)
-  - [1. Install Package](#1-install-package)
-  - [2. Configure Auth Provider](#2-configure-auth-provider)
-  - [3. Setup Shield](#3-setup-shield)
-  - [4. Install for Panel](#4-install-for-panel)
-- [Usage](#usage)
-  - [Configuration](#configuration)
-  - [Resources](#resources)
-    - [Default](#default)
-    - [Custom Permissions](#custom-permissions)
-    - [Configure Permission Identifier](#configure-permission-identifier)
-    - [Custom Navigation Group](#custom-navigation-group)
-  - [Pages](#pages)
-    - [Pages Hooks](#pages-hooks)
-    - [Pages Redirect Path](#pages-redirect-path)
-  - [Widgets](#widgets)
-- [Policies](#policies)
-  - [Path](#path)
-  - [Custom folder structure for Models or Third-Party Plugins](#custom-folder-structure-for-models-or-third-party-plugins)
-- [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
-- [Layout Customization](#layout-customization)
-- [Available Commands](#available-commands)
-  - [Prohibited Commands](#prohibited-commands)
-  - [Core Commands](#core-commands)
-  - [Generate Command Options](#generate-command-options)
-- [Translations](#translations)
-- [Testing](#testing)
-- [Changelog](#changelog)
-- [Contributing](#contributing)
-- [Security Vulnerabilities](#security-vulnerabilities)
-- [Credits](#credits)
-- [License](#license)
+- [Shield](#shield)
+  - [Features](#features)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [1. Install Package](#1-install-package)
+    - [2. Configure Auth Provider](#2-configure-auth-provider)
+    - [3. Setup Shield](#3-setup-shield)
+    - [4. Install for Panel](#4-install-for-panel)
+  - [Usage](#usage)
+      - [Configuration](#configuration)
+      - [Resources](#resources)
+        - [Default](#default)
+        - [Custom Permissions](#custom-permissions)
+        - [Configure Permission Identifier](#configure-permission-identifier)
+        - [Custom Navigation Group](#custom-navigation-group)
+      - [Pages](#pages)
+          - [Pages Hooks](#pages-hooks)
+          - [Pages Redirect Path](#pages-redirect-path)
+      - [Widgets](#widgets)
+    - [Policies](#policies)
+      - [Path](#path)
+      - [Custom folder structure for Models or Third-Party Plugins](#custom-folder-structure-for-models-or-third-party-plugins)
+        - [Using Laravel 10](#using-laravel-10)
+        - [Using Laravel 11](#using-laravel-11)
+      - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
+      - [Layout Customization](#layout-customization)
+  - [Available Commands](#available-commands)
+    - [Prohibited Commands](#prohibited-commands)
+    - [Core Commands](#core-commands)
+    - [Generate Command Options](#generate-command-options)
+      - [Translations](#translations)
+  - [Testing](#testing)
+  - [Changelog](#changelog)
+  - [Contributing](#contributing)
+  - [Security Vulnerabilities](#security-vulnerabilities)
+  - [Credits](#credits)
+  - [License](#license)
 </div>
 
 ## Installation
@@ -130,13 +135,27 @@ The install command will register the plugin for your panel automatically. Choos
 php artisan shield:install admin
 # Replace 'admin' with your panel ID
 ```
-
+Or instead of the above command you can register the plugin manually in your `xPanelProvider`:
+```php
+    ->plugins([
+        \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+    ])
+```
 4.2 **With Tenancy:**
 ```bash
 php artisan shield:install admin --tenant --generate-relationships
 # Replace 'admin' with your panel ID
 ```
-
+Or instead of the above command you can register the plugin and enable tenancy manually in your `xPanelProvider`:
+```php
+    ->tenant(YourTenantModel::class)
+    ->tenantMiddleware([
+        \BezhanSalleh\FilamentShield\Middleware\SyncShieldTenant::class,
+    ], isPersistent: true)
+    ->plugins([
+        \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+    ])
+```
 This command will:
 - Register Shield plugin for your panel
 - If `--tenant` flag is provided:
