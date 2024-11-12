@@ -2,6 +2,18 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.3 - 2024-11-10
+
+### What's Changed
+
+* fix: Add error handling for team options when teams are not used by @wout-o in https://github.com/bezhanSalleh/filament-shield/pull/444
+
+### New Contributors
+
+* @wout-o made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/444
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.2...3.3.3
+
 ## 3.3.2 - 2024-11-10
 
 ### What's Changed
