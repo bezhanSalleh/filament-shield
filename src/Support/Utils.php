@@ -262,7 +262,7 @@ class Utils
         return (bool) $filesystem->exists(app_path(static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php'));
     }
 
-    public static function isTeamFeatureEnabled(): bool
+    public static function isTenancyEnabled(): bool
     {
         return (bool) config()->get('permission.teams', false);
     }
