@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.4 - 2024-11-14
+
+### What's Changed
+
+* [Fix] Tenant selection visibility by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/446
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.3...3.3.4
+
 ## 3.3.3 - 2024-11-10
 
 ### What's Changed
