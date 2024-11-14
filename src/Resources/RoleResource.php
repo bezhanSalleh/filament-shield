@@ -61,9 +61,8 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     /** @phpstan-ignore-next-line */
                                     ->default([Filament::getTenant()?->id])
                                     ->options(fn (): Arrayable => Utils::getTenantModel() ? Utils::getTenantModel()::pluck('name', 'id') : collect())
-                                    ->hidden(fn (): bool => ! static::shield()->isCentralApp() && Filament::hasTenancy())
-                                    ->dehydrated(fn (): bool => ! static::shield()->isCentralApp() && Filament::hasTenancy()),
-
+                                    ->hidden(fn (): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled()))
+                                    ->dehydrated(fn (): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled())),
                                 ShieldSelectAllToggle::make('select_all')
                                     ->onIcon('heroicon-s-shield-check')
                                     ->offIcon('heroicon-s-shield-exclamation')
@@ -100,7 +99,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->color(fn (mixed $state): string => str($state)->contains('Global') ? 'gray' : 'primary')
                     ->label(__('filament-shield::filament-shield.column.team'))
                     ->searchable()
-                    ->visible(fn (): bool => static::shield()->isCentralApp() && ! Filament::hasTenancy()),
+                    ->visible(fn (): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled()),
                 Tables\Columns\TextColumn::make('permissions_count')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))

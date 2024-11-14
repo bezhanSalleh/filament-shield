@@ -85,7 +85,7 @@ class SuperAdminCommand extends Command
             $this->superAdmin = $this->createSuperAdmin();
         }
 
-        if (Utils::isTeamFeatureEnabled()) {
+        if (Utils::isTenancyEnabled()) {
             if (blank($tenantId)) {
                 $this->components->error('Please provide the team/tenant id via `--tenant` option to assign the super admin to a team/tenant.');
 
