@@ -98,7 +98,19 @@ composer require bezhansalleh/filament-shield
 ```
 
 ### 2. Configure Auth Provider
-Add the `HasRoles` trait to your User model:
+#### 2.1. Publish the config and setup your auth provider model.
+```bash
+php artisan vendor:publish --tag="filament-shield-config"
+```
+```php
+//config/filament-shield.php
+...
+    'auth_provider_model' => [
+        'fqcn' => 'App\\Models\\User',
+    ],
+...
+```
+#### 2.2 Add the `HasRoles` trait to your auth provider model:
 ```php
 use Spatie\Permission\Traits\HasRoles;
 
