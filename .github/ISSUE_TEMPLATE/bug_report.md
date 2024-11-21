@@ -10,6 +10,15 @@ assignees: bezhanSalleh
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+> [!NOTE]  
+> 🚨 Before creating a new issue, please make sure to: 
+> 1️⃣ **Search closed issues** to check if your question or issue has already been addressed.  
+> 2️⃣ **Read the documentation** to see if your question is answered there.  
+   The docs often cover common questions and problems.  
+
+If your issue is new and not covered elsewhere, please provide all relevant details below:
+
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
