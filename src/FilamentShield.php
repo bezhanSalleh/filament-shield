@@ -189,7 +189,7 @@ class FilamentShield
     {
         return Lang::has("filament-shield::filament-shield.resource_permission_prefixes_labels.$permission", app()->getLocale())
             ? __("filament-shield::filament-shield.resource_permission_prefixes_labels.$permission")
-            : Str::of($permission)->headline();
+            : __(Str::of($permission)->headline()->toString());
     }
 
     /**
