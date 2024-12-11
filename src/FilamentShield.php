@@ -349,7 +349,6 @@ class FilamentShield
                             ? str(static::getLocalizedResourcePermissionLabel($permission))
                                 ->prepend(
                                     str($resourceEntity['fqcn']::getPluralModelLabel())
-                                        ->plural()
                                         ->title()
                                         ->append(' - ')
                                         ->toString()
