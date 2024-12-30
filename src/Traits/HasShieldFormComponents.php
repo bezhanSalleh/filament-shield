@@ -142,7 +142,7 @@ trait HasShieldFormComponents
     {
         $permissionsArray = static::getResourcePermissionOptions($entity);
 
-        return static::getCheckboxListFormComponent($entity['resource'], $permissionsArray, false);
+        return static::getCheckboxListFormComponentForResource($entity['resource'], $permissionsArray, false);
     }
 
     public static function getTabFormComponentForPage(): Component
@@ -220,6 +220,27 @@ trait HasShieldFormComponents
             ->gridDirection('row')
             ->columns(static::shield()->getCheckboxListColumns())
             ->columnSpan(static::shield()->getCheckboxListColumnSpan());
+    }
+
+    public static function getCheckboxListFormComponentForResources(string $name, array $options, bool $searchable = true): Component
+    {
+        return Forms\Components\CheckboxList::make($name)
+            ->label('')
+            ->options(fn (): array => $options)
+            ->searchable($searchable)
+            ->afterStateHydrated(
+                fn (Component $component, string $operation, ?Model $record) => static::setPermissionStateForRecordPermissions(
+                    component: $component,
+                    operation: $operation,
+                    permissions: $options,
+                    record: $record
+                )
+            )
+            ->dehydrated(fn ($state) => ! blank($state))
+            ->bulkToggleable()
+            ->gridDirection('row')
+            ->columns(static::shield()->getResourceCheckboxListColumns())
+            ->columnSpan(static::shield()->getResourceCheckboxListColumnSpan());
     }
 
     public static function shield(): FilamentShieldPlugin
