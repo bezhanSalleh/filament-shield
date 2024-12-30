@@ -222,7 +222,7 @@ trait HasShieldFormComponents
             ->columnSpan(static::shield()->getCheckboxListColumnSpan());
     }
 
-    public static function getCheckboxListFormComponentForResources(string $name, array $options, bool $searchable = true): Component
+    public static function getCheckboxListFormComponentForResource(string $name, array $options, bool $searchable = true): Component
     {
         return Forms\Components\CheckboxList::make($name)
             ->label('')
