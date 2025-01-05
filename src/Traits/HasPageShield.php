@@ -63,6 +63,6 @@ trait HasPageShield
 
     public static function canAccess(array $parameters = []): bool
     {
-        return Filament::auth()->user()->can(static::getPermissionName());
+        return Filament::auth()->user()?->can(static::getPermissionName());
     }
 }
