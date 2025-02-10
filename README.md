@@ -429,9 +429,17 @@ If your policies are not in the default `Policies` directory in the `app_path()`
 ```
 
 #### Policy Discovery 
+
 Got a ton of policies inside subdirectories? Have to manually register them! right?
+
 Well, you can or you could instruct Laravel to automatically detect and register policies—even in subdirectories for you.
-Just add this to the boot() method:
+
+Just add this to the `boot()` method:
+
+📌 Laravel 10 → `AuthServiceProvider`
+
+📌 Laravel 11+ → `xxServiceProvider`.
+
 ```
 public function boot(): void
 {
@@ -440,8 +448,6 @@ public function boot(): void
     });
 }
 ```
-📌 Laravel 10 → Add this to AuthServiceProvider.
-📌 Laravel 11+ → Add this to any xxServiceProvider.
 
 #### Third-Party Plugins Policies
 
