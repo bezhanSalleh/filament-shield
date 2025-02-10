@@ -72,7 +72,8 @@ The easiest and most intuitive way to add access management to your Filament Pan
       - [Widgets](#widgets)
     - [Policies](#policies)
       - [Path](#path)
-      - [Custom folder structure for Models or Third-Party Plugins](#custom-folder-structure-for-models-or-third-party-plugins)
+      - [Policy Auto Discovery](#policy-discovery)
+        - [Policy Auto Discovery](#)
         - [Using Laravel 10](#using-laravel-10)
         - [Using Laravel 11](#using-laravel-11)
       - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
@@ -428,9 +429,24 @@ If your policies are not in the default `Policies` directory in the `app_path()`
 ...
 ```
 
-#### Custom folder structure for Models or Third-Party Plugins
+#### Policy Discovery 
+Got a ton of policies inside subdirectories? Have to manually register them! right?
+Well, you can or you could instruct Laravel to automatically detect and register policies—even in subdirectories for you.
+Just add this to the boot() method:
+```
+public function boot(): void
+{
+    Gate::guessPolicyNamesUsing(function (string $modelClass) {
+        return str_replace('Models', 'Policies', $modelClass) . 'Policy';
+    });
+}
+```
+📌 Laravel 10 → Add this to AuthServiceProvider.
+📌 Laravel 11+ → Add this to any xxServiceProvider.
 
-Shield also generates policies and permissions for third-party plugins and `Models` with custom folder structure and to enforce the generated policies you will need to register them.
+#### Third-Party Plugins Policies
+
+Shield also generates policies and permissions for third-party plugins. To enforce the generated policies you will need to register them.
 ##### Using Laravel 10
 ```php
 //AuthServiceProvider.php
@@ -461,6 +477,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(\Ramnzys\FilamentEmailLog\Models\Email::class, \App\Policies\EmailPolicy::class);
     }
 ```
+
 #### Users (Assigning Roles to Users)
 Shield does not come with a way to assign roles to your users out of the box, however you can easily assign roles to your users using Filament `Forms`'s `Select` or `CheckboxList` component. Inside your users `Resource`'s form add one of these components and configure them as you need:
 1. **Without Tenancy**
