@@ -142,7 +142,13 @@ trait HasShieldFormComponents
     {
         $permissionsArray = static::getResourcePermissionOptions($entity);
 
-        return static::getCheckboxListFormComponent($entity['resource'], $permissionsArray, false);
+        return static::getCheckboxListFormComponent(
+            name: $entity['resource'],
+            options: $permissionsArray,
+            columns: static::shield()->getResourceCheckboxListColumns(),
+            columnSpan: static::shield()->getResourceCheckboxListColumnSpan(),
+            searchable: false
+        );
     }
 
     public static function getTabFormComponentForPage(): Component
@@ -155,7 +161,10 @@ trait HasShieldFormComponents
             ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
-                static::getCheckboxListFormComponent('pages_tab', $options),
+                static::getCheckboxListFormComponent(
+                    name: 'pages_tab',
+                    options: $options,
+                ),
             ]);
     }
 
@@ -169,7 +178,10 @@ trait HasShieldFormComponents
             ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
-                static::getCheckboxListFormComponent('widgets_tab', $options),
+                static::getCheckboxListFormComponent(
+                    name: 'widgets_tab',
+                    options: $options,
+                ),
             ]);
     }
 
@@ -183,7 +195,10 @@ trait HasShieldFormComponents
             ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
-                static::getCheckboxListFormComponent('custom_permissions', $options),
+                static::getCheckboxListFormComponent(
+                    name: 'custom_permissions',
+                    options: $options,
+                ),
             ]);
     }
 
@@ -197,11 +212,14 @@ trait HasShieldFormComponents
             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
-                static::getCheckboxListFormComponent('resources_tab', $options),
+                static::getCheckboxListFormComponent(
+                    name: 'resources_tab',
+                    options: $options,
+                ),
             ]);
     }
 
-    public static function getCheckboxListFormComponent(string $name, array $options, bool $searchable = true): Component
+    public static function getCheckboxListFormComponent(string $name, array $options, bool $searchable = true, array | int | string | null $columns = null, array | int | string | null $columnSpan = null): Component
     {
         return Forms\Components\CheckboxList::make($name)
             ->label('')
@@ -218,8 +236,8 @@ trait HasShieldFormComponents
             ->dehydrated(fn ($state) => ! blank($state))
             ->bulkToggleable()
             ->gridDirection('row')
-            ->columns(static::shield()->getCheckboxListColumns())
-            ->columnSpan(static::shield()->getCheckboxListColumnSpan());
+            ->columns($columns ?? static::shield()->getCheckboxListColumns())
+            ->columnSpan($columnSpan ?? static::shield()->getCheckboxListColumnSpan());
     }
 
     public static function shield(): FilamentShieldPlugin
