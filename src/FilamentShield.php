@@ -106,7 +106,7 @@ class FilamentShield
         }
     }
 
-    public static function createRole(?string $name = null, ?int $tenantId = null): Role
+    public static function createRole(?string $name = null, int | string | null $tenantId = null): Role
     {
         if (Utils::isTenancyEnabled()) {
             return Utils::getRoleModel()::firstOrCreate(
