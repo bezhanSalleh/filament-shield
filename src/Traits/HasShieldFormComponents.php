@@ -12,8 +12,6 @@ use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
-use function Laravel\Prompts\search;
-
 trait HasShieldFormComponents
 {
     public static function getShieldFormComponents(): Component
@@ -183,7 +181,7 @@ trait HasShieldFormComponents
                 static::getCheckboxListFormComponent(
                     name: 'widgets_tab',
                     options: $options,
-                )
+                ),
             ]);
     }
 
@@ -200,7 +198,7 @@ trait HasShieldFormComponents
                 static::getCheckboxListFormComponent(
                     name: 'custom_permissions',
                     options: $options,
-                )
+                ),
             ]);
     }
 
@@ -217,11 +215,11 @@ trait HasShieldFormComponents
                 static::getCheckboxListFormComponent(
                     name: 'resources_tab',
                     options: $options,
-                )
+                ),
             ]);
     }
 
-    public static function getCheckboxListFormComponent(string $name, array $options, bool $searchable = true, array|int|string|null $columns = null, array|int|string|null $columnSpan = null): Component
+    public static function getCheckboxListFormComponent(string $name, array $options, bool $searchable = true, array | int | string | null $columns = null, array | int | string | null $columnSpan = null): Component
     {
         return Forms\Components\CheckboxList::make($name)
             ->label('')
