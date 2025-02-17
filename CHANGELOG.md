@@ -2,6 +2,24 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.5 - 2025-02-17
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.2.0 to 2.3.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/497
+* Bump aglipanci/laravel-pint-action from 2.4 to 2.5 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/498
+* [Fix] Handles Widget Permission Labels through `$heading` by @mahdimirhendi in https://github.com/bezhanSalleh/filament-shield/pull/473
+* [Fix] Remove double-pluralization from `getAllResourcePermissions` by @dissto in https://github.com/bezhanSalleh/filament-shield/pull/465
+* wire up checkbox column and column span config for resource by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/507
+* [Fix] tenant id type by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/508
+
+### New Contributors
+
+* @mahdimirhendi made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/473
+* @dissto made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/465
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.4...3.3.5
+
 ## 3.3.4 - 2024-11-14
 
 ### What's Changed
