@@ -323,7 +323,7 @@ class FilamentShield
     {
         return $widgetInstance instanceof Widget
             && method_exists($widgetInstance, 'getHeading')
-            && $widgetInstance->getHeading() !== null;
+            && filled(invade($widgetInstance)->getHeading());
     }
 
     protected function getDefaultPermissionIdentifier(string $resource): string
