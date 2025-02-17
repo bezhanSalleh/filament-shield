@@ -318,12 +318,14 @@ class FilamentShield
                 ->toString(),
         };
     }
+
     private static function hasValidHeading($widgetInstance): bool
     {
-        return $widgetInstance instanceof Widget 
-            && method_exists($widgetInstance, 'getHeading') 
+        return $widgetInstance instanceof Widget
+            && method_exists($widgetInstance, 'getHeading')
             && $widgetInstance->getHeading() !== null;
     }
+
     protected function getDefaultPermissionIdentifier(string $resource): string
     {
         return Str::of($resource)
