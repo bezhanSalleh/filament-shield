@@ -311,14 +311,19 @@ class FilamentShield
 
         return match (true) {
             $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
-            ! ($widgetInstance instanceof TableWidget) && $widgetInstance instanceof Widget && method_exists($widgetInstance, 'getHeading') => (string) invade($widgetInstance)->getHeading(),
+            self::hasValidHeading($widgetInstance) => (string) invade($widgetInstance)->getHeading(),
             default => str($widget)
                 ->afterLast('\\')
                 ->headline()
                 ->toString(),
         };
     }
-
+    private static function hasValidHeading($widgetInstance): bool
+    {
+        return $widgetInstance instanceof Widget 
+            && method_exists($widgetInstance, 'getHeading') 
+            && $widgetInstance->getHeading() !== null;
+    }
     protected function getDefaultPermissionIdentifier(string $resource): string
     {
         return Str::of($resource)
