@@ -64,7 +64,28 @@ class Utils
 
     public static function getAuthProviderFQCN()
     {
-        return config('filament-shield.auth_provider_model.fqcn');
+        // Get the configuration value
+        $config = config('filament-shield.auth_provider_model.fqcn');
+
+        // Check if the configuration is an array
+        if (is_array($config)) {
+            // Get the ID from filament()
+            $id = filament()->getId();
+
+            // Check if the key exists in the array
+            if (isset($config[$id])) {
+                $model = $config[$id];
+            } else {
+                // If the key does not exist, return the first element of the array
+                $model = reset($config);
+            }
+        } else {
+            // If the configuration is not an array, use it as the model
+            $model = $config;
+        }
+
+        // Return the model class name (or you can return the count if needed)
+        return $model;
     }
 
     public static function isAuthProviderConfigured(): bool
