@@ -9,8 +9,10 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Forms;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
+use Spatie\Permission\Models\Role;
 
 trait HasShieldFormComponents
 {
@@ -243,5 +245,60 @@ trait HasShieldFormComponents
     public static function shield(): FilamentShieldPlugin
     {
         return FilamentShieldPlugin::get();
+    }
+
+    public static function getCopyRoleSelectComponent()
+    {
+        return Forms\Components\Select::make('copy_another_role')
+            ->label(__('Copy From Another Role'))
+            ->options(fn (?Model $record) => Role::where('name', '!=', $record?->name)->get()->pluck('name', 'id')->toArray())
+            ->placeholder('Choose role')
+            ->live()
+            ->afterStateUpdated(function (Set $set, $state) {
+                static::setPermissionsByStateCopyRole($set, $state);
+            })
+            ->searchable();
+    }
+
+    public static function setPermissionsByStateCopyRole(Set $set, $state)
+    {
+        if (! $state) return;
+        foreach(FilamentShield::getResources() as $name => $resource) {
+            $set($name, []);
+        }
+        $set('widgets_tab', []);
+        $set('pages_tab', []);
+
+        $role = Role::find($state);
+        $permissionsGroup = $role->permissions->groupBy(function($item) {
+            if (str_starts_with($item->name, Utils::getWidgetPermissionPrefix())) {
+                return Utils::getWidgetPermissionPrefix();
+            }
+            if (str_starts_with($item->name, Utils::getPagePermissionPrefix())) {
+                return Utils::getPagePermissionPrefix();
+            }
+            $val = explode('_', $item->name);
+            $resourceName = array_pop($val);
+            return $resourceName;
+        });
+        
+        foreach($permissionsGroup as $group => $permissions) {
+            switch($group) {
+                case Utils::getWidgetPermissionPrefix(): 
+                    foreach($permissions as $permission) {
+                        $widgets[] = $permission->name;
+                    }
+                    $set('widgets_tab', $widgets ?? []);
+                    break;
+                case Utils::getPagePermissionPrefix():
+                    foreach($permissions as $permission) {
+                        $pages[] = $permission->name;
+                    }
+                    $set('pages_tab', $pages ?? []);
+                    break;
+                default:
+                    $set($group, $permissions->pluck('name'));
+            }
+        }
     }
 }
