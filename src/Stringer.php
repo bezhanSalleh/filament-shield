@@ -32,9 +32,9 @@ class Stringer
     {
         // Normalize file path for cross-OS compatibility
         $filePath = static::normalizePath($filePath);
+
         return app(static::class, ['filePath' => $filePath]);
     }
-
 
     /**
      * Normalize file path for cross-OS compatibility
