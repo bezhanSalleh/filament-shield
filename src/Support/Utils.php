@@ -32,6 +32,11 @@ class Utils
         return (string) config('filament-shield.shield_resource.slug');
     }
 
+    public static function getSubNavigationPosition(): ?SubNavigationPosition
+    {
+        return config('filament-shield.shield_resource.sub_navigation_position');
+    }
+    
     public static function isResourceNavigationRegistered(): bool
     {
         return config('filament-shield.shield_resource.should_register_navigation', true);
