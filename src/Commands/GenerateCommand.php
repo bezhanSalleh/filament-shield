@@ -122,9 +122,9 @@ class GenerateCommand extends Command
             Utils::disableGeneralExclude();
         }
 
-        $this->resources = explode(',', $this->option('resource'));
-        $this->pages = explode(',', $this->option('page'));
-        $this->widgets = explode(',', $this->option('widget'));
+        $this->resources = explode(',', $this->option('resource') ?? '');
+        $this->pages = explode(',', $this->option('page') ?? '');
+        $this->widgets = explode(',', $this->option('widget') ?? '');
 
         $this->excludeResources = $this->option('exclude') && filled($this->option('resource'));
         $this->excludePages = $this->option('exclude') && filled($this->option('page'));
