@@ -118,7 +118,9 @@ trait HasShieldFormComponents
     {
         return FilamentShield::getCustomPermissions()
             ->mapWithKeys(fn ($customPermission) => [
-                $customPermission => static::shield()->hasLocalizedPermissionLabels() ? str($customPermission)->headline()->toString() : $customPermission,
+                $customPermission => static::shield()->hasLocalizedPermissionLabels()
+                    ? FilamentShield::getLocalizedResourcePermissionLabel($customPermission)
+                    : $customPermission,
             ])
             ->toArray();
     }
