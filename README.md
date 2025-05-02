@@ -355,11 +355,11 @@ class MyPage extends Page
     use HasPageShield;
     ...
 
-    protected function beforeBooted : void() {
+    protected function beforeBooted() : void {
         ...
     }
 
-    protected function afterBooted : void() {
+    protected function afterBooted() : void {
         ...
     }
 
@@ -367,7 +367,7 @@ class MyPage extends Page
      * Hook to perform an action before redirect if the user
      * doesn't have access to the page.  
      * */
-    protected function beforeShieldRedirects : void() {
+    protected function beforeShieldRedirects() : void {
         ...
     }
 }
