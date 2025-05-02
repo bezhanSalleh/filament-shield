@@ -22,15 +22,26 @@ class Stringer
 
     protected bool $addNewLine = false; // Track whether to add a new line
 
+    public function __construct(string $filePath)
+    {
+        $this->filePath = static::normalizePath($filePath);
+        $this->content = file_get_contents($filePath) ?: '';
+    }
+
     public static function for(string $filePath): static
     {
+        // Normalize file path for cross-OS compatibility
+        $filePath = static::normalizePath($filePath);
+
         return app(static::class, ['filePath' => $filePath]);
     }
 
-    public function __construct(string $filePath)
+    /**
+     * Normalize file path for cross-OS compatibility
+     */
+    protected static function normalizePath(string $path): string
     {
-        $this->filePath = $filePath;
-        $this->content = file_get_contents($filePath) ?: '';
+        return str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
     }
 
     protected function findLine(string $needle): ?array
