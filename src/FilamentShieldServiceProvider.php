@@ -47,7 +47,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         }
 
         if (Utils::isRolePolicyRegistered()) {
-            Gate::policy(Utils::getRoleModel(), 'App\Policies\RolePolicy');
+            Gate::policy(Utils::getRoleModel(), 'App\\' . Utils::getPolicyNamespace() . '\\RolePolicy');
         }
     }
 
