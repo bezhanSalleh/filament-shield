@@ -192,6 +192,11 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Utils::getResourceNavigationSort();
     }
 
+    public static function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return Utils::getSubNavigationPosition() ?? static::$subNavigationPosition;
+    }
+
     public static function getSlug(): string
     {
         return Utils::getResourceSlug();
