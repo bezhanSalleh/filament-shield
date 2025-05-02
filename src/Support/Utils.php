@@ -2,14 +2,14 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use Filament\Panel;
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
-use Illuminate\Filesystem\Filesystem;
-use Filament\Pages\SubNavigationPosition;
-use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\FilamentShield;
+use Filament\Facades\Filament;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Panel;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
+use Spatie\Permission\PermissionRegistrar;
 
 class Utils
 {
