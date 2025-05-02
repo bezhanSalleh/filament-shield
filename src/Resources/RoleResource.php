@@ -10,12 +10,14 @@ use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -46,12 +48,8 @@ class RoleResource extends Resource implements HasShieldPermissions
                                 Forms\Components\TextInput::make('name')
                                     ->label(__('filament-shield::filament-shield.field.name'))
                                     ->unique(
-                                        ignoreRecord: true,
-                                        modifyRuleUsing: function($rule){
-                                            if( ! Utils::isTenancyEnabled() )
-                                                return $rule ;
-                                            return $rule->where(Utils::getTenantModelForeignKey(), Filament::getTenant()?->id);
-                                        })
+                                        ignoreRecord: true, /** @phpstan-ignore-next-line */
+                                        modifyRuleUsing: fn (Unique $rule) => ! Utils::isTenancyEnabled() ? $rule : $rule->where(Utils::getTenantModelForeignKey(), Filament::getTenant()?->id)
                                     )
                                     ->required()
                                     ->maxLength(255),

@@ -7,7 +7,6 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -49,6 +48,8 @@ class GenerateCommand extends Command
 
     protected bool $onlyWidgets = false;
 
+    protected bool $ignoreConfigExclude = false;
+
     /** @var string */
     public $signature = 'shield:generate
         {--all : Generate permissions/policies for all entities }
@@ -87,6 +88,8 @@ class GenerateCommand extends Command
             $this->components->error('No entites provided for the generators ...');
             $this->components->alert('Generation skipped');
 
+            $this->resetConfigExclusionCondition($this->ignoreConfigExclude);
+
             return Command::INVALID;
         }
 
@@ -105,10 +108,7 @@ class GenerateCommand extends Command
             $this->widgetInfo($widgets->toArray());
         }
 
-        if (Cache::has('shield_general_exclude')) {
-            Utils::enableGeneralExclude();
-            Cache::forget('shield_general_exclude');
-        }
+        $this->resetConfigExclusionCondition($this->ignoreConfigExclude);
 
         return Command::SUCCESS;
     }
@@ -117,14 +117,15 @@ class GenerateCommand extends Command
     {
         $this->generatorOption = $this->option('option') ?? Utils::getGeneratorOption();
 
-        if ($this->option('ignore-config-exclude') && Utils::isGeneralExcludeEnabled()) {
-            Cache::add('shield_general_exclude', true, 3600);
+        $this->ignoreConfigExclude = $this->option('ignore-config-exclude') ?? false;
+
+        if ($this->ignoreConfigExclude && Utils::isGeneralExcludeEnabled()) {
             Utils::disableGeneralExclude();
         }
 
-        $this->resources = explode(',', $this->option('resource'));
-        $this->pages = explode(',', $this->option('page'));
-        $this->widgets = explode(',', $this->option('widget'));
+        $this->resources = filled($this->option('resource')) ? explode(',', $this->option('resource')) : [];
+        $this->pages = filled($this->option('page')) ? explode(',', $this->option('page')) : [];
+        $this->widgets = filled($this->option('widget')) ? explode(',', $this->option('widget')) : [];
 
         $this->excludeResources = $this->option('exclude') && filled($this->option('resource'));
         $this->excludePages = $this->option('exclude') && filled($this->option('page'));
@@ -300,5 +301,12 @@ class GenerateCommand extends Command
         }
 
         return 'DefaultPolicy';
+    }
+
+    protected function resetConfigExclusionCondition(bool $condition): void
+    {
+        if ($condition) {
+            Utils::enableGeneralExclude();
+        }
     }
 }
