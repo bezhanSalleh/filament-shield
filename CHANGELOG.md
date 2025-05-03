@@ -2,6 +2,26 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.6 - 2025-05-03
+
+### What's Changed
+
+* [bug] Add optional Tenant to Role name unique rule by @Cyrille37 in https://github.com/bezhanSalleh/filament-shield/pull/517
+* refactor: Use dynamic policy namespace for RolePolicy registration by @arthurpar06 in https://github.com/bezhanSalleh/filament-shield/pull/518
+* Normalize filpath generation for cross-OS compatibility by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/523
+* Fix example methods on Pages Hooks docs by @eduardr10 in https://github.com/bezhanSalleh/filament-shield/pull/527
+* Added support for customizabile sub navigation position by @panservicesas in https://github.com/bezhanSalleh/filament-shield/pull/528
+* Fixes!!! by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/535
+
+### New Contributors
+
+* @Cyrille37 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/517
+* @arthurpar06 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/518
+* @eduardr10 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/527
+* @panservicesas made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/528
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.5...3.3.6
+
 ## 3.3.5 - 2025-02-17
 
 ### What's Changed
