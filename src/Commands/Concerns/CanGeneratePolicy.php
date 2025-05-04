@@ -36,13 +36,17 @@ trait CanGeneratePolicy
             }
         }
 
-        // 👀 Fallback: if model is in a package, try inferring policy path within package
+        // 👀 Dynamically find the package root and try inferring policy location
         if (Str::of($modelPath)->contains(['vendor', 'src'])) {
-            $packageBaseDir = dirname($modelPath, 2); // from /Models/Model.php → /src
-            $packagePolicyPath = $packageBaseDir . DIRECTORY_SEPARATOR . 'Policies' . DIRECTORY_SEPARATOR . $relativePolicyPath;
+            $segments = explode(DIRECTORY_SEPARATOR, $modelPath);
+            $srcIndex = array_search('src', $segments);
+            if ($srcIndex !== false) {
+                $packageBaseDir = implode(DIRECTORY_SEPARATOR, array_slice($segments, 0, $srcIndex + 1));
+                $packagePolicyPath = $packageBaseDir . DIRECTORY_SEPARATOR . 'Policies' . DIRECTORY_SEPARATOR . $relativePolicyPath;
 
-            if (file_exists($packagePolicyPath)) {
-                return $packagePolicyPath;
+                if (file_exists($packagePolicyPath)) {
+                    return $packagePolicyPath;
+                }
             }
         }
 
@@ -69,7 +73,8 @@ trait CanGeneratePolicy
 
         $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
             ? 'App\\' . Utils::getPolicyNamespace()
-            : Str::of($namespace)->replace('Models', Utils::getPolicyNamespace()); /** @phpstan-ignore-line */
+            : Str::of($namespace)->replace('Models', Utils::getPolicyNamespace());
+        /** @phpstan-ignore-line */
         $stubVariables['model_name'] = $entity['model'];
         $stubVariables['model_fqcn'] = $namespace . '\\' . $entity['model'];
         $stubVariables['model_variable'] = Str::of($entity['model'])->camel();
