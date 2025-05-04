@@ -254,6 +254,15 @@ class Utils
         return config('filament-shield.discovery.discover_all_pages', false);
     }
 
+    public static function getPolicyPaths(): array
+    {
+        $paths = config('filament-shield.generator.policy_directories', ['app/Policies']);
+
+        return collect($paths)
+            ->map(fn($path) => Str::of($path)->replace('\\', DIRECTORY_SEPARATOR)->toString())
+            ->toArray();
+    }
+
     public static function getPolicyPath(): string
     {
         return Str::of(config('filament-shield.generator.policy_directory', 'Policies'))
@@ -265,7 +274,15 @@ class Utils
     {
         $filesystem = new Filesystem;
 
-        return (bool) $filesystem->exists(app_path(static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php'));
+        foreach (static::getPolicyPaths() as $path) {
+            $fullPath = base_path($path . DIRECTORY_SEPARATOR . 'RolePolicy.php');
+
+            if ($filesystem->exists($fullPath)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static function isTenancyEnabled(): bool

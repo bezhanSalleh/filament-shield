@@ -195,7 +195,7 @@ class GenerateCommand extends Command
                 if ($this->generatorOption === 'policies_and_permissions') {
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
-                    if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
+                    if (! Str::of($policyPath)->contains(['vendor', 'src']) && (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath)))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                     FilamentShield::generateForResource($entity);
@@ -204,7 +204,7 @@ class GenerateCommand extends Command
                 if ($this->generatorOption === 'policies') {
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
-                    if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
+                    if (! Str::of($policyPath)->contains(['vendor', 'src']) && (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath)))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                 }

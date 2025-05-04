@@ -20,25 +20,34 @@ trait CanGeneratePolicy
 
     protected function generatePolicyPath(array $entity): string
     {
-        $path = (new \ReflectionClass($entity['fqcn']::getModel()))->getFileName();
+        $modelClass = $entity['fqcn']::getModel();
+        $reflection = new \ReflectionClass($modelClass);
+        $modelPath = $reflection->getFileName();
 
-        if (Str::of($path)->contains(['vendor', 'src'])) {
-            $basePolicyPath = app_path(
-                (string) Str::of($entity['model'])
-                    ->prepend(str(Utils::getPolicyPath())->append('\\'))
-                    ->replace('\\', DIRECTORY_SEPARATOR),
-            );
+        $policyClassName = class_basename($modelClass) . 'Policy';
 
-            return "{$basePolicyPath}Policy.php";
+        $relativePolicyPath = $policyClassName . '.php';
+
+        // 🔍 Check all configured policy paths
+        foreach (Utils::getPolicyPaths() as $basePolicyPath) {
+            $fullPath = base_path(trim($basePolicyPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $relativePolicyPath);
+            if (file_exists($fullPath)) {
+                return $fullPath;
+            }
         }
 
-        /** @phpstan-ignore-next-line */
-        $basePath = Str::of($path)
-            ->replace('Models', Utils::getPolicyPath())
-            ->replaceLast('.php', 'Policy.php')
-            ->replace('\\', DIRECTORY_SEPARATOR);
+        // 👀 Fallback: if model is in a package, try inferring policy path within package
+        if (Str::of($modelPath)->contains(['vendor', 'src'])) {
+            $packageBaseDir = dirname($modelPath, 2); // from /Models/Model.php → /src
+            $packagePolicyPath = $packageBaseDir . DIRECTORY_SEPARATOR . 'Policies' . DIRECTORY_SEPARATOR . $relativePolicyPath;
 
-        return $basePath;
+            if (file_exists($packagePolicyPath)) {
+                return $packagePolicyPath;
+            }
+        }
+
+        // 🛑 Final fallback
+        return app_path('Policies' . DIRECTORY_SEPARATOR . $relativePolicyPath);
     }
 
     protected function generatePolicyStubVariables(array $entity): array
