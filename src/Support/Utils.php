@@ -158,6 +158,11 @@ class Utils
         return (string) config('filament-shield.generator.option', 'policies_and_permissions');
     }
 
+    public static function isTraitGenerationEnabled(): bool
+    {
+        return (bool) config('filament-shield.generator.generate_trait_policies', false);
+    }
+
     public static function getGeneratorNamespace(): string
     {
         return (string) config('filament-shield.generator.namespace', 'Policies');

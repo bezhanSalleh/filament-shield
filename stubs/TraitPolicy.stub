@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Policies;
+
+use {{ model_fqcn }};
+use {{ auth_model_fqcn }};
+use BezhanSalleh\FilamentShield\Traits\GeneralPoliciesTrait;
+
+class {{ modelPolicy }}
+{
+    use GeneralPoliciesTrait;
+
+    /**
+     * Get the permission suffix for the model.
+     *
+     * @return string
+     */
+    protected function getPermissionSuffix(): string
+    {
+        return '_{{ resource_name }}';
+    }
+}

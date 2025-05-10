@@ -63,6 +63,7 @@ return [
         'option' => 'policies_and_permissions',
         'policy_directory' => 'Policies',
         'policy_namespace' => 'Policies',
+        'generate_trait_policies' => false, // <-- New option
     ],
 
     'exclude' => [

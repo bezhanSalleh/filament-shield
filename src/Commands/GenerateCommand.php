@@ -296,11 +296,50 @@ class GenerateCommand extends Command
 
     protected static function getPolicyStub(string $model): string
     {
+        if (Utils::isTraitGenerationEnabled()) {
+            return 'TraitPolicy';
+        }
+
         if (Str::is(Str::of(Utils::getAuthProviderFQCN())->afterLast('\\'), $model)) {
             return 'UserPolicy';
         }
 
         return 'DefaultPolicy';
+    }
+
+    protected function generatePolicyStubVariables(array $entity): array
+    {
+        if (Utils::isTraitGenerationEnabled()) {
+            return [
+                'namespace' => 'App\\Policies',
+                'model_fqcn' => $entity['fqcn'],
+                'auth_model_fqcn' => Utils::getAuthProviderFQCN(),
+                'modelPolicy' => $entity['model'] . 'Policy',
+                'resource_name' => $entity['resource'],
+            ];
+        }
+        return [
+            'namespace' => 'App\\Policies',
+            'model_fqcn' => $entity['fqcn'],
+            'model_name' => $entity['model'],
+            'model_variable' => Str::camel($entity['model']),
+            'auth_model_fqcn' => Utils::getAuthProviderFQCN(),
+            'auth_model_name' => Str::of(Utils::getAuthProviderFQCN())->afterLast('\\'),
+            'auth_model_variable' => Str::camel(Str::of(Utils::getAuthProviderFQCN())->afterLast('\\')),
+            'modelPolicy' => $entity['model'] . 'Policy',
+            'ViewAny' => 'view_any_' . $entity['resource'],
+            'View' => 'view_' . $entity['resource'],
+            'Create' => 'create_' . $entity['resource'],
+            'Update' => 'update_' . $entity['resource'],
+            'Delete' => 'delete_' . $entity['resource'],
+            'Restore' => 'restore_' . $entity['resource'],
+            'ForceDelete' => 'force_delete_' . $entity['resource'],
+            'Replicate' => 'replicate_' . $entity['resource'],
+            'Reorder' => 'reorder_' . $entity['resource'],
+            'DeleteAny' => 'delete_any_' . $entity['resource'],
+            'ForceDeleteAny' => 'force_delete_any_' . $entity['resource'],
+            'RestoreAny' => 'restore_any_' . $entity['resource'],
+        ];
     }
 
     protected function resetConfigExclusionCondition(bool $condition): void

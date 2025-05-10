@@ -77,6 +77,7 @@ The easiest and most intuitive way to add access management to your Filament Pan
         - [Using Laravel 11](#using-laravel-11)
       - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
       - [Layout Customization](#layout-customization)
+      - [Trait-Based Policy Generation (Optional)](#trait-based-policy-generation-optional)
   - [Available Commands](#available-commands)
     - [Prohibited Commands](#prohibited-commands)
     - [Core Commands](#core-commands)
@@ -554,7 +555,80 @@ public function panel(Panel $panel): Panel
             ]);
 }
 ```
-<img width="1161" alt="Screenshot 2023-09-24 at 10 34 31 PM" src="https://github.com/bezhanSalleh/filament-shield/assets/10007504/be42bab2-72d1-4db0-8de4-8b8fba2d4e68">
+
+### Trait-Based Policy Generation (Optional)
+
+As an alternative to the default stub-based policy generation, `filament-shield` offers an option to generate policies that utilize a common trait for defining permissions. This can help reduce boilerplate code if your policies primarily differ by the permission suffix.
+
+**1. Enable Trait-Based Generation:**
+
+To use this feature, you first need to enable it in the `config/filament-shield.php` configuration file:
+
+```php
+// config/filament-shield.php
+// ...
+    'generator' => [
+        // ...
+        'generate_trait_policies' => true, // Set to true
+    ],
+// ...
+```
+
+**2. How it Works:**
+
+When `generate_trait_policies` is set to `true`, running the `php artisan shield:generate` command will:
+
+*   Use the `TraitPolicy.stub` to create new policy files.
+*   These generated policies will `use BezhanSalleh\\FilamentShield\\Traits\\GeneralPoliciesTrait`.
+*   The `GeneralPoliciesTrait` provides default implementations for common policy methods (`viewAny`, `view`, `create`, `update`, `delete`, etc.).
+*   The generated policy will override a `getPermissionSuffix()` method to return a suffix specific to the resource (e.g., `_post`, `_user`). This suffix is then used by the trait to construct the full permission string (e.g., `viewAny_post`).
+
+**Example Generated Policy (`PostPolicy.php`):**
+
+```php
+<?php
+
+namespace App\\Policies;
+
+use App\\Models\\Post; // Specific model
+use App\\Models\\User; // Auth model
+use BezhanSalleh\\FilamentShield\\Traits\\GeneralPoliciesTrait;
+
+class PostPolicy
+{
+    use GeneralPoliciesTrait;
+
+    /**
+     * Get the permission suffix for the model.
+     *
+     * @return string
+     */
+    protected function getPermissionSuffix(): string
+    {
+        return '_post'; // Suffix specific to the Post resource
+    }
+}
+```
+
+**`GeneralPoliciesTrait` Methods:**
+
+The trait handles the logic like so:
+
+```php
+// Example from GeneralPoliciesTrait
+public function viewAny(User $user): bool
+{
+    return $user->can('viewAny' . $this->getPermissionSuffix());
+}
+
+public function view(User $user, Model $model): bool
+{
+    return $user->can('view' . $this->getPermissionSuffix(), $model);
+}
+
+// ... and so on for other policy methods.
+```
+
 
 ## Available Commands
 ### Prohibited Commands
