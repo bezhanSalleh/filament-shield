@@ -243,7 +243,7 @@ class GenerateCommand extends Command
                         'Resource' => $resource['model'],
                         'Policy' => "{$resource['model']}Policy.php" . ($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
                         'Permissions' => implode(
-                            ',' . PHP_EOL,
+                            ',' . "\n",
                             collect(
                                 Utils::getResourcePermissionPrefixes($resource['fqcn'])
                             )->map(function ($permission) use ($resource) {
