@@ -330,7 +330,7 @@ class FilamentShield
     {
         return Str::of($resource)
             ->afterLast('Resources\\')
-            ->before('Resource')
+            ->beforeLast('Resource')
             ->replace('\\', '')
             ->snake()
             ->replace('_', '::');
