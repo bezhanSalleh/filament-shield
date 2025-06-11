@@ -43,9 +43,9 @@ class PublishCommand extends Command
             ? $resourceDirectories[array_search($newResourceNamespace, $resourceNamespaces)]
             : Arr::first($resourceDirectories);
 
-        $roleResourcePath = str('\\RoleResource.php')
+        $roleResourcePath = str(DIRECTORY_SEPARATOR . 'RoleResource.php')
             ->prepend($newResourcePath)
-            ->replace('\\', '/')
+            ->replace(['\\', '/'], DIRECTORY_SEPARATOR)
             ->toString();
 
         if ($this->checkForCollision([$roleResourcePath])) {

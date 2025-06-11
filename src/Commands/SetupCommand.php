@@ -139,11 +139,11 @@ class SetupCommand extends Command
 
             config()->set('permission.teams', true);
 
-            $source = __DIR__ . '/../Support/';
+            $source = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Support' . DIRECTORY_SEPARATOR;
             $destination = app_path('Models');
 
-            $this->copy($source . '/Role.php', $destination . '/Role.php');
-            $this->copy($source . '/Permission.php', $destination . '/Permission.php');
+            $this->copy($source . 'Role.php', $destination . DIRECTORY_SEPARATOR . 'Role.php');
+            $this->copy($source . 'Permission.php', $destination . DIRECTORY_SEPARATOR . 'Permission.php');
 
             $appServiceProvider = Stringer::for(app_path('Providers/AppServiceProvider.php'));
             if (
