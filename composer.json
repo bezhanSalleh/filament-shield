@@ -24,7 +24,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "filament/filament": "^3.2",
+        "filament/filament": "^v4.0.0-beta1",
         "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-permission": "^6.0"
     },
