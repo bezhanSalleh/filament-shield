@@ -579,7 +579,7 @@ use BezhanSalleh\FilamentShield\Commands;
 shield:setup [--fresh] [--minimal] [--tenant=]
 
 # Install Shield for a panel
-shield:install {panel} [--tenant] [--generate-relationships]
+shield:install {panel} [--tenant]
 
 # Generate permissions/policies
 shield:generate [options]
@@ -596,14 +596,15 @@ shield:publish {panel}
 
 ### Generate Command Options
 ```bash
---all                     Generate for all entities
---option=[OPTION]         Override generator option
---resource=[RESOURCE]     Specific resources
+--all                    Generate for all entities
+--option=[OPTION]        Override generator option
+--resource=[RESOURCE]    Specific resources
 --page=[PAGE]            Specific pages  
 --widget=[WIDGET]        Specific widgets
 --exclude                Exclude entities
 --ignore-config-exclude  Ignore config excludes
 --panel[=PANEL]          Panel ID to get the components(resources, pages, widgets)
+--relationships          Generate relationships for the given panel, only works if the panel has tenancy enabled
 ```
 > [!NOTE] 
 > For setting up super-admin user when using tenancy/team feature consult the core package **[spatie/laravel-permission](https://spatie.be/docs/laravel-permission/v6/basic-usage/teams-permissions)**

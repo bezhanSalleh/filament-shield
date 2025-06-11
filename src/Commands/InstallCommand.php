@@ -14,13 +14,12 @@ use Symfony\Component\Console\Attribute\AsCommand;
 class InstallCommand extends Command implements PromptsForMissingInput
 {
     use Concerns\CanBeProhibitable;
-    use Concerns\CanGenerateRelationshipsForTenancy;
     use Concerns\CanMakePanelTenantable;
     use Concerns\CanManipulateFiles;
     use Concerns\CanRegisterPlugin;
 
     /** @var string */
-    protected $signature = 'shield:install {panel} {--tenant} {--generate-relationships}';
+    protected $signature = 'shield:install {panel} {--tenant}';
 
     /** @var string */
     protected $description = 'Install and configure shield for the given Filament Panel';
@@ -81,10 +80,6 @@ class InstallCommand extends Command implements PromptsForMissingInput
                 panelPath: $panelPath,
                 tenantModelClass: $tenantModelClass
             );
-        }
-
-        if (filled($tenant) && $this->option('generate-relationships')) {
-            $this->generateRelationships($panel);
         }
 
         Process::run("php artisan shield:generate --resource=RoleResource --panel={$panel->getId()}");

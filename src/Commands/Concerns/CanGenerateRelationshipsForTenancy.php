@@ -15,8 +15,6 @@ trait CanGenerateRelationshipsForTenancy
 {
     protected function generateRelationships(Panel $panel): void
     {
-        Filament::setCurrentPanel($panel);
-
         collect($panel->getResources())
             ->values()
             ->filter(function ($resource): bool {
