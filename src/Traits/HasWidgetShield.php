@@ -10,7 +10,7 @@ trait HasWidgetShield
 {
     public static function canView(): bool
     {
-        return Filament::auth()->user()->can(static::getPermissionName()) || Filament::auth()->user()->hasRole(Utils::getSuperAdminName());
+        return Filament::auth()->user()->can(static::getPermissionName());
     }
 
     protected static function getPermissionName(): string
