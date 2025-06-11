@@ -63,7 +63,7 @@ class GenerateCommand extends Command
         {--minimal : Output minimal amount of info to console}
         {--ignore-existing-policies : Ignore generating policies that already exist }
         {--panel= : Panel ID to get the components(resources, pages, widgets)}
-        {--relationships: Generate relationships for the given panel, only works if the panel has tenancy enabled}
+        {--relationships : Generate relationships for the given panel, only works if the panel has tenancy enabled}
     ';
 
     /** @var string */
