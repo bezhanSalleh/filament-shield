@@ -2,6 +2,28 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.7 - 2025-06-11
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.3.0 to 2.4.0 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/540
+* [Fix] widget permissions on super admin by @Dimas-Saputra-Me in https://github.com/bezhanSalleh/filament-shield/pull/539
+* Update Polish translation by @WierzbickiKrzysztof in https://github.com/bezhanSalleh/filament-shield/pull/532
+* Switch Negated Ternary in RoleResource by @alisalehi1380 in https://github.com/bezhanSalleh/filament-shield/pull/542
+* Feat: Improve custom permissions for third party packages. by @carloeusebi in https://github.com/bezhanSalleh/filament-shield/pull/547
+* [Fix] allow Resource to be part of the Filament Resource name by @haugen86 in https://github.com/bezhanSalleh/filament-shield/pull/549
+* [Fix] Commands for auto setup/installtion to be cross-os compatible by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/552
+
+### New Contributors
+
+* @Dimas-Saputra-Me made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/539
+* @WierzbickiKrzysztof made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/532
+* @alisalehi1380 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/542
+* @carloeusebi made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/547
+* @haugen86 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/549
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.6...3.3.7
+
 ## 3.3.6 - 2025-05-03
 
 ### What's Changed
