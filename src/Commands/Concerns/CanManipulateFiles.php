@@ -24,8 +24,8 @@ trait CanManipulateFiles
     {
         $filesystem = new Filesystem;
 
-        if (! $this->fileExists($stubPath = base_path("stubs/filament-shield/{$stub}.stub"))) {
-            $stubPath = __DIR__ . "/../../../stubs/{$stub}.stub";
+        if (! $this->fileExists($stubPath = base_path('stubs' . DIRECTORY_SEPARATOR . 'filament-shield' . DIRECTORY_SEPARATOR . "{$stub}.stub"))) {
+            $stubPath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . "{$stub}.stub";
         }
 
         $stub = Str::of($filesystem->get($stubPath));

@@ -46,8 +46,8 @@ class InstallCommand extends Command implements PromptsForMissingInput
             (string) str($panel->getId())
                 ->studly()
                 ->append('PanelProvider')
-                ->prepend('Providers/Filament/')
-                ->replace('\\', '/')
+                ->prepend('Providers' . DIRECTORY_SEPARATOR . 'Filament' . DIRECTORY_SEPARATOR)
+                ->replace(['\\', '/'], DIRECTORY_SEPARATOR)
                 ->append('.php'),
         );
 
