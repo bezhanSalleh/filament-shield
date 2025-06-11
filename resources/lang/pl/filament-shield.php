@@ -8,10 +8,11 @@ return [
     */
 
     'column.name' => 'Nazwa',
-    'column.guard_name' => 'Nazwa strażnika',
+    'column.guard_name' => 'Nazwa Guarda',
+    'column.team' => 'Zespół',
     'column.roles' => 'Role',
-    'column.permissions' => 'Permisje',
-    'column.updated_at' => 'Zaktualizowano',
+    'column.permissions' => 'Uprawnienia',
+    'column.updated_at' => 'Data aktualizacji',
 
     /*
     |--------------------------------------------------------------------------
@@ -20,10 +21,12 @@ return [
     */
 
     'field.name' => 'Nazwa',
-    'field.guard_name' => 'Nzwa strażnika',
-    'field.permissions' => 'Permisje',
-    'field.select_all.name' => 'Zaznacz wszystkie',
-    'field.select_all.message' => 'Włącz wszystkie permisje obecnie<span class="text-primary font-medium">Włączone</span> dla tej roli',
+    'field.guard_name' => 'Nazwa Guarda',
+    'field.permissions' => 'Uprawnienia',
+    'field.team' => 'Zespół',
+    'field.team.placeholder' => 'Wybierz zespół...',
+    'field.select_all.name' => 'Zaznacz wszystko',
+    'field.select_all.message' => 'Włącza/wyłącza wszystkie uprawnienia dla tej roli',
 
     /*
     |--------------------------------------------------------------------------
@@ -43,11 +46,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'section' => 'Podmioty',
+    'section' => 'Komponenty',
     'resources' => 'Zasoby',
-    'widgets' => 'Widżety',
+    'widgets' => 'Widgety',
     'pages' => 'Strony',
-    'custom' => 'Niestandardowe permisje',
+    'custom' => 'Własne uprawnienia',
 
     /*
     |--------------------------------------------------------------------------
@@ -64,17 +67,17 @@ return [
     */
 
     'resource_permission_prefixes_labels' => [
-        'view' => 'Widok',
-        'view_any' => 'Widok dowolnego',
+        'view' => 'Podgląd',
+        'view_any' => 'Podgląd dowolnego',
         'create' => 'Tworzenie',
-        'update' => 'Aktualizacja',
+        'update' => 'Edycja',
         'delete' => 'Usuwanie',
         'delete_any' => 'Usuwanie dowolnego',
         'force_delete' => 'Wymuszone usunięcie',
         'force_delete_any' => 'Wymuszone usunięcie dowolnego',
         'restore' => 'Przywracanie',
-        'reorder' => 'Zmiana kolejności',
         'restore_any' => 'Przywracanie dowolnego',
+        'reorder' => 'Zmienianie kolejności',
         'replicate' => 'Duplikowanie',
     ],
 ];
