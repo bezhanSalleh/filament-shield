@@ -274,6 +274,26 @@ In the above example the `getPermissionPrefixes()` method returns the permission
     'publish' => 'Publicar'    
 ],
 ```
+#### Third-Party Plugins Permissions
+
+To generate permissions for third-party plugins, or if you don't want to change your resource, you can specify the permissions by adding a key in the `config` file inside `permission_prefixes`:
+
+```php
+'permission_prefixes' => [
+        \Tapp\FilamentAuthenticationLog\Resources\AuthenticationLogResource::class => [
+            'view_any',
+        ],
+
+        'resource' => [
+         ...
+        ],
+
+        'page' => 'page',
+        'widget' => 'widget',
+    ],
+``` 
+
+
 
 ##### Configure Permission Identifier
 By default the permission identifier is generated as follow:
