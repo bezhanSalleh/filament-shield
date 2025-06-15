@@ -2,6 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanBeProhibitable;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanGeneratePolicy;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanGenerateRelationshipsForTenancy;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
@@ -15,10 +19,10 @@ use function Laravel\Prompts\Select;
 #[AsCommand(name: 'shield:generate')]
 class GenerateCommand extends Command
 {
-    use Concerns\CanBeProhibitable;
-    use Concerns\CanGeneratePolicy;
-    use Concerns\CanGenerateRelationshipsForTenancy;
-    use Concerns\CanManipulateFiles;
+    use CanBeProhibitable;
+    use CanGeneratePolicy;
+    use CanGenerateRelationshipsForTenancy;
+    use CanManipulateFiles;
 
     /**
      * The resources to generate permissions or policies for, or should be exclude.

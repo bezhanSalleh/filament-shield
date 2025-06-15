@@ -4,8 +4,6 @@ parameters:
     level: 4
     paths:
         - src
-        - tests
-        - resources
     reportUnmatchedIgnoredErrors: false
     excludePaths:
         analyse:
@@ -13,6 +11,8 @@ parameters:
             - src/Resources/RoleResource/Pages/CreateRole.php
             - src/Resources/RoleResource/Pages/EditRole.php
     ignoreErrors:
+        -
+            identifier: trait.unused
         - '#PHPDoc tag @var#'
         - '#Call to method getModel\(\) on an unknown class BezhanSalleh\\FilamentShield\\Commands\\EloquentUserProvider#'
         - '#Call to method getProvider\(\) on an unknown class BezhanSalleh\\FilamentShield\\Commands\\SessionGuard#'

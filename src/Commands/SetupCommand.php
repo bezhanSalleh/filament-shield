@@ -2,6 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanBeProhibitable;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use BezhanSalleh\FilamentShield\Stringer;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
@@ -17,8 +19,8 @@ use function Laravel\Prompts\confirm;
 #[AsCommand(name: 'shield:setup', description: 'Setup and install core requirements for Shield')]
 class SetupCommand extends Command
 {
-    use Concerns\CanBeProhibitable;
-    use Concerns\CanManipulateFiles;
+    use CanBeProhibitable;
+    use CanManipulateFiles;
 
     public $signature = 'shield:setup
         {--F|fresh : re-run the migrations}
@@ -36,7 +38,7 @@ class SetupCommand extends Command
         }
 
         if (! Utils::isAuthProviderConfigured()) {
-            $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` or `HasFilamentShield` trait');
+            $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` trait');
 
             return Command::INVALID;
         }

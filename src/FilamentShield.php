@@ -2,6 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use InvalidArgumentException;
+use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
+use BezhanSalleh\FilamentShield\Commands\InstallCommand;
+use BezhanSalleh\FilamentShield\Commands\PublishCommand;
+use BezhanSalleh\FilamentShield\Commands\SetupCommand;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Facades\Filament;
@@ -35,7 +40,7 @@ class FilamentShield
     {
         if ($this->configurePermissionIdentifierUsing) {
 
-            $identifier = $this->evaluate(
+            $identifier = (string) $this->evaluate(
                 value: $this->configurePermissionIdentifierUsing,
                 namedInjections: [
                     'resource' => $resource,
@@ -43,7 +48,7 @@ class FilamentShield
             );
 
             if (Str::contains($identifier, '_')) {
-                throw new \InvalidArgumentException("Permission identifier `$identifier` for `$resource` cannot contain underscores.");
+                throw new InvalidArgumentException("Permission identifier `$identifier` for `$resource` cannot contain underscores.");
             }
 
             return $identifier;
@@ -411,9 +416,9 @@ class FilamentShield
      */
     public static function prohibitDestructiveCommands(bool $prohibit = true)
     {
-        Commands\GenerateCommand::prohibit($prohibit);
-        Commands\InstallCommand::prohibit($prohibit);
-        Commands\PublishCommand::prohibit($prohibit);
-        Commands\SetupCommand::prohibit($prohibit);
+        GenerateCommand::prohibit($prohibit);
+        InstallCommand::prohibit($prohibit);
+        PublishCommand::prohibit($prohibit);
+        SetupCommand::prohibit($prohibit);
     }
 }

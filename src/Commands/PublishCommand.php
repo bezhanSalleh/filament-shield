@@ -2,6 +2,8 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanBeProhibitable;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -14,8 +16,8 @@ use function Laravel\Prompts\select;
 #[AsCommand(name: 'shield:publish', description: "Publish Shield's Resource.")]
 class PublishCommand extends Command
 {
-    use Concerns\CanBeProhibitable;
-    use Concerns\CanManipulateFiles;
+    use CanBeProhibitable;
+    use CanManipulateFiles;
 
     protected $signature = 'shield:publish {panel}';
 
@@ -27,7 +29,7 @@ class PublishCommand extends Command
 
         Filament::setCurrentPanel(Filament::getPanel($this->argument('panel')));
 
-        $panel = Filament::getCurrentPanel();
+        $panel = Filament::getCurrentOrDefaultPanel();
 
         $resourceDirectories = $panel->getResourceDirectories();
         $resourceNamespaces = $panel->getResourceNamespaces();

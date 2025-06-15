@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanBeProhibitable;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanMakePanelTenantable;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanRegisterPlugin;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
@@ -13,10 +17,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 #[AsCommand(name: 'shield:install')]
 class InstallCommand extends Command implements PromptsForMissingInput
 {
-    use Concerns\CanBeProhibitable;
-    use Concerns\CanMakePanelTenantable;
-    use Concerns\CanManipulateFiles;
-    use Concerns\CanRegisterPlugin;
+    use CanBeProhibitable;
+    use CanMakePanelTenantable;
+    use CanManipulateFiles;
+    use CanRegisterPlugin;
 
     /** @var string */
     protected $signature = 'shield:install {panel} {--tenant}';

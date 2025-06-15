@@ -2,6 +2,13 @@
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Concerns\HasAboutCommand;
+use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
+use BezhanSalleh\FilamentShield\Commands\InstallCommand;
+use BezhanSalleh\FilamentShield\Commands\PublishCommand;
+use BezhanSalleh\FilamentShield\Commands\SeederCommand;
+use BezhanSalleh\FilamentShield\Commands\SetupCommand;
+use BezhanSalleh\FilamentShield\Commands\SuperAdminCommand;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
@@ -9,7 +16,7 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FilamentShieldServiceProvider extends PackageServiceProvider
 {
-    use Concerns\HasAboutCommand;
+    use HasAboutCommand;
 
     public function configurePackage(Package $package): void
     {
@@ -54,12 +61,12 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            Commands\GenerateCommand::class,
-            Commands\InstallCommand::class,
-            Commands\PublishCommand::class,
-            Commands\SeederCommand::class,
-            Commands\SetupCommand::class,
-            Commands\SuperAdminCommand::class,
+            GenerateCommand::class,
+            InstallCommand::class,
+            PublishCommand::class,
+            SeederCommand::class,
+            SetupCommand::class,
+            SuperAdminCommand::class,
         ];
     }
 }

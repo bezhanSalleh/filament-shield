@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\CheckboxList;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Forms;
-use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
@@ -16,7 +21,7 @@ trait HasShieldFormComponents
 {
     public static function getShieldFormComponents(): Component
     {
-        return Forms\Components\Tabs::make('Permissions')
+        return Tabs::make('Permissions')
             ->contained()
             ->tabs([
                 static::getTabFormComponentForResources(),
@@ -38,7 +43,7 @@ trait HasShieldFormComponents
                     : $entity['model']
                 );
 
-                return Forms\Components\Section::make($sectionLabel)
+                return Section::make($sectionLabel)
                     ->description(fn () => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['fqcn']) . '</span>'))
                     ->compact()
                     ->schema([
@@ -127,12 +132,12 @@ trait HasShieldFormComponents
     {
         return static::shield()->hasSimpleResourcePermissionView()
             ? static::getTabFormComponentForSimpleResourcePermissionsView()
-            : Forms\Components\Tabs\Tab::make('resources')
+            : Tab::make('resources')
                 ->label(__('filament-shield::filament-shield.resources'))
                 ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
                 ->badge(static::getResourceTabBadgeCount())
                 ->schema([
-                    Forms\Components\Grid::make()
+                    Grid::make()
                         ->schema(static::getResourceEntitiesSchema())
                         ->columns(static::shield()->getGridColumns()),
                 ]);
@@ -156,7 +161,7 @@ trait HasShieldFormComponents
         $options = static::getPageOptions();
         $count = count($options);
 
-        return Forms\Components\Tabs\Tab::make('pages')
+        return Tab::make('pages')
             ->label(__('filament-shield::filament-shield.pages'))
             ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && $count > 0)
             ->badge($count)
@@ -173,7 +178,7 @@ trait HasShieldFormComponents
         $options = static::getWidgetOptions();
         $count = count($options);
 
-        return Forms\Components\Tabs\Tab::make('widgets')
+        return Tab::make('widgets')
             ->label(__('filament-shield::filament-shield.widgets'))
             ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && $count > 0)
             ->badge($count)
@@ -190,7 +195,7 @@ trait HasShieldFormComponents
         $options = static::getCustomPermissionOptions();
         $count = count($options);
 
-        return Forms\Components\Tabs\Tab::make('custom')
+        return Tab::make('custom')
             ->label(__('filament-shield::filament-shield.custom'))
             ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && $count > 0)
             ->badge($count)
@@ -207,7 +212,7 @@ trait HasShieldFormComponents
         $options = FilamentShield::getAllResourcePermissions();
         $count = count($options);
 
-        return Forms\Components\Tabs\Tab::make('resources')
+        return Tab::make('resources')
             ->label(__('filament-shield::filament-shield.resources'))
             ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled() && $count > 0)
             ->badge($count)
@@ -221,7 +226,7 @@ trait HasShieldFormComponents
 
     public static function getCheckboxListFormComponent(string $name, array $options, bool $searchable = true, array | int | string | null $columns = null, array | int | string | null $columnSpan = null): Component
     {
-        return Forms\Components\CheckboxList::make($name)
+        return CheckboxList::make($name)
             ->label('')
             ->options(fn (): array => $options)
             ->searchable($searchable)

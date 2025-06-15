@@ -2,6 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -9,7 +10,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 #[AsCommand(name: 'shield:seeder')]
 class SeederCommand extends Command
 {
-    use Concerns\CanManipulateFiles;
+    use CanManipulateFiles;
 
     /**
      * The console command signature.

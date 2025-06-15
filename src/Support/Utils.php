@@ -2,10 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
+use Filament\Pages\Enums\SubNavigationPosition;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
-use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -15,7 +15,7 @@ class Utils
 {
     public static function getFilamentAuthGuard(): string
     {
-        return Filament::getCurrentPanel()?->getAuthGuard() ?? '';
+        return Filament::getCurrentOrDefaultPanel()?->getAuthGuard() ?? '';
     }
 
     public static function isResourcePublished(Panel $panel): bool

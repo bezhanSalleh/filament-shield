@@ -2,6 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
+use ReflectionClass;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Support\Str;
 
@@ -20,7 +21,7 @@ trait CanGeneratePolicy
 
     protected function generatePolicyPath(array $entity): string
     {
-        $path = (new \ReflectionClass($entity['fqcn']::getModel()))->getFileName();
+        $path = (new ReflectionClass($entity['fqcn']::getModel()))->getFileName();
 
         if (Str::of($path)->contains(['vendor', 'src'])) {
             $basePolicyPath = app_path(
@@ -54,7 +55,7 @@ trait CanGeneratePolicy
         $stubVariables['auth_model_name'] = Str::of($stubVariables['auth_model_fqcn'])->afterLast('\\');
         $stubVariables['auth_model_variable'] = Str::of($stubVariables['auth_model_name'])->camel();
 
-        $reflectionClass = new \ReflectionClass($entity['fqcn']::getModel());
+        $reflectionClass = new ReflectionClass($entity['fqcn']::getModel());
         $namespace = $reflectionClass->getNamespaceName();
         $path = $reflectionClass->getFileName();
 

@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
+use RuntimeException;
 use Illuminate\Support\Traits\Conditionable;
 
 class Stringer
@@ -28,7 +29,7 @@ class Stringer
         $content = file_get_contents($this->filePath);
 
         if ($content === false) {
-            throw new \RuntimeException("Could not read file: {$this->filePath}");
+            throw new RuntimeException("Could not read file: {$this->filePath}");
         }
 
         // Normalize line endings to \n for cross-platform compatibility

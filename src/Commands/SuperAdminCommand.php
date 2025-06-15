@@ -2,6 +2,7 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use Illuminate\Database\Eloquent\Model;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
@@ -27,7 +28,7 @@ class SuperAdminCommand extends Command
 
     protected Authenticatable $superAdmin;
 
-    /** @var ?\Illuminate\Database\Eloquent\Model */
+    /** @var ?Model */
     protected $superAdminRole = null;
 
     protected function getAuthGuard(): Guard
@@ -36,7 +37,7 @@ class SuperAdminCommand extends Command
             Filament::setCurrentPanel(Filament::getPanel($this->option('panel')));
         }
 
-        return Filament::getCurrentPanel()?->auth();
+        return Filament::getCurrentOrDefaultPanel()?->auth();
     }
 
     protected function getUserProvider(): UserProvider
@@ -106,7 +107,7 @@ class SuperAdminCommand extends Command
         $this->superAdmin
             ->assignRole($this->superAdminRole);
 
-        $loginUrl = Filament::getCurrentPanel()?->getLoginUrl();
+        $loginUrl = Filament::getCurrentOrDefaultPanel()?->getLoginUrl();
 
         $this->components->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
 

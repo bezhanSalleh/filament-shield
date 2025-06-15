@@ -2,10 +2,12 @@
 
 namespace BezhanSalleh\FilamentShield\Facades;
 
+use Closure;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \BezhanSalleh\FilamentShield\FilamentShield configurePermissionIdentifierUsing(\Closure $callback)
+ * @method static \BezhanSalleh\FilamentShield\FilamentShield configurePermissionIdentifierUsing(Closure $callback)
  * @method static string getPermissionIdentifier(string $resource)
  * @method static void generateForResource(array $entity)
  * @method static void generateForPage(string $page)
@@ -19,7 +21,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|null getWidgets()
  * @method static string getLocalizedWidgetLabel(string $widget)
  * @method static array getAllResourcePermissions()
- * @method static \Illuminate\Support\Collection|null getCustomPermissions()
+ * @method static Collection|null getCustomPermissions()
  * @method static mixed evaluate(mixed $value, array $namedInjections = [], array $typedInjections = [])
  *
  * @see \BezhanSalleh\FilamentShield\FilamentShield
