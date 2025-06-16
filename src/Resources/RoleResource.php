@@ -92,8 +92,10 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ->columns([
                                 'sm' => 2,
                                 'lg' => 3,
-                            ]),
-                    ]),
+                            ])
+                            ->columnSpanFull(),
+                        ])
+                        ->columnSpanFull(),
                 static::getShieldFormComponents(),
             ]);
     }
@@ -205,7 +207,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getSubNavigationPosition(): SubNavigationPosition
     {
-        return Utils::getSubNavigationPosition() ?? static::$subNavigationPosition;
+        return Utils::getSubNavigationPosition() ?? Filament::getSubNavigationPosition();
     }
 
     public static function getSlug(?Panel $panel = null): string

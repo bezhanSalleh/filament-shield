@@ -35,7 +35,7 @@ class Utils
 
     public static function getSubNavigationPosition(): ?SubNavigationPosition
     {
-        return config('filament-shield.shield_resource.sub_navigation_position');
+        return config('filament-shield.shield_resource.sub_navigation_position', null);
     }
 
     public static function isResourceNavigationRegistered(): bool
