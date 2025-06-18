@@ -150,7 +150,7 @@ class GenerateCommand extends Command
     protected function generatableResources(): ?array
     {
         return collect(FilamentShield::getResources())
-            ->filter(function ($resource) {
+            ->filter(function (array $resource): bool {
                 if ($this->excludeResources) {
                     return ! in_array(Str::of($resource['fqcn'])->afterLast('\\'), $this->resources);
                 }
@@ -167,7 +167,7 @@ class GenerateCommand extends Command
     protected function generatablePages(): ?array
     {
         return collect(FilamentShield::getPages())
-            ->filter(function ($page) {
+            ->filter(function (array $page): bool {
                 if ($this->excludePages) {
                     return ! in_array($page['class'], $this->pages);
                 }
@@ -184,7 +184,7 @@ class GenerateCommand extends Command
     protected function generatableWidgets(): ?array
     {
         return collect(FilamentShield::getWidgets())
-            ->filter(function ($widget) {
+            ->filter(function (array $widget): bool {
                 if ($this->excludeWidgets) {
                     return ! in_array($widget['class'], $this->widgets);
                 }
@@ -202,7 +202,7 @@ class GenerateCommand extends Command
     {
         return collect($resources)
             ->values()
-            ->each(function ($entity) {
+            ->each(function (array $entity): void {
                 if ($this->generatorOption === 'policies_and_permissions') {
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
@@ -230,14 +230,20 @@ class GenerateCommand extends Command
     {
         return collect($pages)
             ->values()
-            ->each(fn (array $page) => FilamentShield::generateForPage($page['permission']));
+            ->each(function (array $page): void {
+                FilamentShield::generateForPage($page['permission']);
+
+            });
     }
 
     protected function generateForWidgets(array $widgets): Collection
     {
         return collect($widgets)
             ->values()
-            ->each(fn (array $widget) => FilamentShield::generateForWidget($widget['permission']));
+            ->each(function (array $widget): void {
+                FilamentShield::generateForWidget($widget['permission']);
+
+            });
     }
 
     protected function resourceInfo(array $resources): void
@@ -248,7 +254,7 @@ class GenerateCommand extends Command
             $this->components->info('Successfully generated Permissions & Policies for:');
             $this->table(
                 ['#', 'Resource', 'Policy', 'Permissions'],
-                collect($resources)->map(function ($resource, $key) {
+                collect($resources)->map(function (array $resource, int $key): array {
                     return [
                         '#' => $key + 1,
                         'Resource' => $resource['model'],
@@ -257,7 +263,7 @@ class GenerateCommand extends Command
                             ',' . PHP_EOL,
                             collect(
                                 Utils::getResourcePermissionPrefixes($resource['fqcn'])
-                            )->map(function ($permission) use ($resource) {
+                            )->map(function (string $permission) use ($resource): string {
                                 return $permission . '_' . $resource['resource'];
                             })->toArray()
                         ) . ($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
@@ -275,7 +281,7 @@ class GenerateCommand extends Command
             $this->components->info('Successfully generated Page Permissions for:');
             $this->table(
                 ['#', 'Page', 'Permission'],
-                collect($pages)->map(function ($page, $key) {
+                collect($pages)->map(function (array $page, int $key): array {
                     return [
                         '#' => $key + 1,
                         'Page' => $page['class'],
@@ -294,7 +300,7 @@ class GenerateCommand extends Command
             $this->components->info('Successfully generated Widget Permissions for:');
             $this->table(
                 ['#', 'Widget', 'Permission'],
-                collect($widgets)->map(function ($widget, $key) {
+                collect($widgets)->map(function (array $widget, int $key): array {
                     return [
                         '#' => $key + 1,
                         'Widget' => $widget['class'],

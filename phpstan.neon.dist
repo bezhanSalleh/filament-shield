@@ -39,6 +39,36 @@ parameters:
             path: src/Commands/MakeShieldSeederCommand.php
         -
             message: '#Missing typehint for iterable value#'
+        -
+            message: '#Out of 222 possible return types, only 213 - 95.9 % actually have it#'
+            path: src/FilamentShieldServiceProvider.php
+        -
+            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Resources/RoleResource.php
+        -
+            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Commands/GenerateCommand.php
+        -
+            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Commands/InstallCommand.php
+        -
+            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Commands/PublishCommand.php
+        -
+            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Commands/SetupCommand.php
+        -
+            message: '#Out of [0-9]+ possible return types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Commands/GenerateCommand.php
+        -
+            message: '#Out of [0-9]+ possible return types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Commands/InstallCommand.php
+        -
+            message: '#Out of [0-9]+ possible return types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Commands/PublishCommand.php
+        -
+            message: '#Out of [0-9]+ possible return types, only [0-9]+ - [0-9.]+ % actually have it#'
+            path: src/Commands/SetupCommand.php
 
     tmpDir: build/phpstan
     checkOctaneCompatibility: true

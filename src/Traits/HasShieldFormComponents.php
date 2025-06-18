@@ -287,7 +287,7 @@ trait HasShieldFormComponents
         return Toggle::make('select_all')
             ->onIcon('heroicon-s-shield-check')
             ->offIcon('heroicon-s-shield-exclamation')
-            ->label(__('filament-shield::filament-shield.field.select_all.superAdminRoleName'))
+            ->label(__('filament-shield::filament-shield.field.select_all.name'))
             ->helperText(fn (
             ): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
             ->live()

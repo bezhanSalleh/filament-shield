@@ -36,8 +36,6 @@ class EditRole extends EditRecord
             return Arr::only($data, ['name', 'guard_name', Utils::getTenantModelForeignKey()]);
         }
 
-        dd($data);
-
         return Arr::only($data, ['name', 'guard_name']);
     }
 

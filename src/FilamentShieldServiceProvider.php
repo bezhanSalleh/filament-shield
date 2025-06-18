@@ -22,6 +22,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
 
     public static string $viewNamespace = 'filament-shield';
 
+    /** {@inheritDoc} */
     public function configurePackage(Package $package): void
     {
         /**
@@ -51,7 +52,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         $this->initAboutCommand();
 
         if (Utils::isSuperAdminDefinedViaGate()) {
-            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function ($user, $ability) {
+            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function (object $user, string $ability): ?bool {
                 return match (Utils::getSuperAdminGateInterceptionStatus()) {
                     'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
                     'after' => $user->hasRole(Utils::getSuperAdminName()),
@@ -65,6 +66,9 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         }
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         return [
