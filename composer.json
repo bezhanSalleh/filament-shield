@@ -38,6 +38,7 @@
         "pestphp/pest": "^2.0|^3.0",
         "pestphp/pest-plugin-laravel": "^2.0|^3.0",
         "pestphp/pest-plugin-livewire": "^3.0",
+        "pestphp/pest-plugin-type-coverage": "^3.5",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
@@ -59,9 +60,9 @@
     "scripts": {
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest --no-coverage",
-        "test-coverage": "vendor/bin/pest --coverage",
+        "type": "vendor/bin/pest --type-coverage",
         "format": "vendor/bin/pint",
-        "finalize": "composer format && composer analyse && composer test"
+        "finalize": "composer format && composer type && composer analyse && composer test"
     },
     "config": {
         "sort-packages": true,

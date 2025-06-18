@@ -10,7 +10,6 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
 use function Laravel\Prompts\password;
@@ -28,8 +27,7 @@ class SuperAdminCommand extends Command
 
     protected Authenticatable $superAdmin;
 
-    /** @var ?Model */
-    protected $superAdminRole = null;
+    protected ?\Illuminate\Database\Eloquent\Model $superAdminRole = null;
 
     protected function getAuthGuard(): Guard
     {

@@ -2,35 +2,31 @@
 
 namespace BezhanSalleh\FilamentShield\Resources;
 
-use Filament\Panel;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Schemas\Schema;
-use Filament\Facades\Filament;
-use Filament\Actions\EditAction;
-use Filament\Resources\Resource;
-use Filament\Actions\DeleteAction;
-use Illuminate\Support\HtmlString;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Grid;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Validation\Rules\Unique;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-use Illuminate\Contracts\Support\Arrayable;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Pages\Enums\SubNavigationPosition;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\Forms\CheckboxList;
-use BezhanSalleh\FilamentShield\Forms\SelectAll;
-use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\EditRole;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\ViewRole;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\ListRoles;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\CreateRole;
-use Filament\Schemas\Components\Component;
-use Livewire\Component as Livewire;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\EditRole;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\ListRoles;
+use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\ViewRole;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Panel;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
+
 class RoleResource extends Resource implements HasShieldPermissions
 {
     use HasShieldFormComponents;
@@ -80,32 +76,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->options(fn (): Arrayable => Utils::getTenantModel() ? Utils::getTenantModel()::pluck('name', 'id') : collect())
                                     ->hidden(fn (): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled()))
                                     ->dehydrated(fn (): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled())),
-                                SelectAll::make('select_all')
-                                    ->onIcon('heroicon-s-shield-check')
-                                    ->offIcon('heroicon-s-shield-exclamation')
-                                    ->label(__('filament-shield::filament-shield.field.select_all.name'))
-                                    ->helperText(fn (): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
-                                    // ->live()
-                                    ->afterStateHydrated(function (SelectAll $component, Livewire $livewire): void {
-                                        //     $permissions = collect($livewire->form->getFlatComponents())
-                                        //         ->reduce(function (mixed $counts, Component $component): mixed {
-                                        //             if ($component instanceof CheckboxList) {
-                                        //                 $component->callAfterStateHydrated();
-                                        //                 $counts[$component->getName()] = count(array_keys($component->getOptions())) == count(collect($component->getState())->values()->unique()->toArray());
-                                        //             }
-                                        //             return $counts;
-                                        //         }, collect())
-                                        //         ->values();
-                                        // if (!$component->getState()) {
-
-                                        //     if ($permissions->containsStrict(false)) {
-                                        //         $component->state(false);
-                                        //     } else {
-                                        //         $component->state(true);
-                                        //     }
-                                        // }
-                                    })
-                                    ->dehydrated(fn (bool $state): bool => $state),
+                                static::getSelectAllFormComponent(),
 
                             ])
                             ->columns([
@@ -126,7 +97,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                 TextColumn::make('name')
                     ->weight('font-medium')
                     ->label(__('filament-shield::filament-shield.column.name'))
-                    ->formatStateUsing(fn ($state): string => Str::headline($state))
+                    ->formatStateUsing(fn (string $state): string => Str::headline($state))
                     ->searchable(),
                 TextColumn::make('guard_name')
                     ->badge()

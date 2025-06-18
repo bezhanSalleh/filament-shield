@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Livewire\Component as Livewire;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Tabs;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Component;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Schemas\Components\Utilities\Set;
-use BezhanSalleh\FilamentShield\Forms\CheckboxList;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 
 trait HasShieldFormComponents
 {
@@ -231,7 +233,8 @@ trait HasShieldFormComponents
             ->label('')
             ->options(fn (): array => $options)
             ->searchable($searchable)
-            ->afterStateHydrated(function (Component $component, string $operation, ?Model $record, Set $set) use($options): void {
+            ->live()
+            ->afterStateHydrated(function (Component $component, string $operation, ?Model $record, Set $set) use ($options): void {
                 static::setPermissionStateForRecordPermissions(
                     component: $component,
                     operation: $operation,
@@ -241,6 +244,32 @@ trait HasShieldFormComponents
 
                 static::toggleSelectAllViaEntities($component->getLivewire(), $set);
             })
+            ->afterStateUpdated(function (Livewire $livewire, Set $set): void {
+                static::toggleSelectAllViaEntities($livewire, $set);
+            })
+            ->selectAllAction(fn (
+                Action $action,
+                Component $component,
+                Livewire $livewire,
+                Set $set
+            ) => static::bulkToggleableAction(
+                action: $action,
+                component: $component,
+                livewire: $livewire,
+                set: $set
+            ))
+            ->deselectAllAction(fn (
+                Action $action,
+                Component $component,
+                Livewire $livewire,
+                Set $set
+            ) => static::bulkToggleableAction(
+                action: $action,
+                component: $component,
+                livewire: $livewire,
+                set: $set,
+                resetState: true
+            ))
             ->dehydrated(fn ($state) => ! blank($state))
             ->bulkToggleable()
             ->gridDirection('row')
@@ -251,6 +280,21 @@ trait HasShieldFormComponents
     public static function shield(): FilamentShieldPlugin
     {
         return FilamentShieldPlugin::get();
+    }
+
+    public static function getSelectAllFormComponent(): Component
+    {
+        return Toggle::make('select_all')
+            ->onIcon('heroicon-s-shield-check')
+            ->offIcon('heroicon-s-shield-exclamation')
+            ->label(__('filament-shield::filament-shield.field.select_all.superAdminRoleName'))
+            ->helperText(fn (
+            ): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
+            ->live()
+            ->afterStateUpdated(function (Livewire $livewire, Set $set, bool $state): void {
+                static::toggleEntitiesViaSelectAll($livewire, $set, $state);
+            })
+            ->dehydrated(fn (bool $state): bool => $state);
     }
 
     public static function toggleSelectAllViaEntities(Livewire $livewire, Set $set): void
@@ -271,5 +315,35 @@ trait HasShieldFormComponents
         } else {
             $set('select_all', true);
         }
+    }
+
+    public static function toggleEntitiesViaSelectAll(Livewire $livewire, Set $set, bool $state): void
+    {
+        /** @phpstan-ignore-next-line */
+        $entitiesComponents = collect($livewire->form->getFlatComponents())
+            ->filter(fn (Component $component): bool => $component instanceof CheckboxList);
+
+        if ($state) {
+            $entitiesComponents
+                ->each(
+                    function (CheckboxList $component) use ($set) {
+                        $set($component->getName(), array_keys($component->getOptions()));
+                    }
+                );
+        } else {
+            $entitiesComponents
+                ->each(fn (CheckboxList $component) => $component->state([]));
+        }
+    }
+
+    public static function bulkToggleableAction(Action $action, Component $component, Livewire $livewire, Set $set, bool $resetState = false): void
+    {
+        $action
+            ->livewireClickHandlerEnabled(true)
+            ->action(function () use ($component, $livewire, $set, $resetState) {
+                /** @phpstan-ignore-next-line */
+                $component->state($resetState ? [] : array_keys($component->getOptions()));
+                static::toggleSelectAllViaEntities($livewire, $set);
+            });
     }
 }

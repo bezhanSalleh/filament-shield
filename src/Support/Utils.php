@@ -68,7 +68,7 @@ class Utils
         return config('filament-shield.shield_resource.is_globally_searchable', false);
     }
 
-    public static function getAuthProviderFQCN()
+    public static function getAuthProviderFQCN(): string
     {
         return config('filament-shield.auth_provider_model.fqcn');
     }

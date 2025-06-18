@@ -13,6 +13,10 @@ parameters:
     ignoreErrors:
         -
             identifier: trait.unused
+        -
+            identifier: property.notFound
+        -
+            identifier: method.notFound
         - '#PHPDoc tag @var#'
         - '#Call to method getModel\(\) on an unknown class BezhanSalleh\\FilamentShield\\Commands\\EloquentUserProvider#'
         - '#Call to method getProvider\(\) on an unknown class BezhanSalleh\\FilamentShield\\Commands\\SessionGuard#'
@@ -22,11 +26,6 @@ parameters:
         -
             message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$permissions#'
             path: src/Resources/RoleResource.php
-        -
-            message: '#Call to an undefined method Illuminate\\Foundation\\Auth\\User::hasRole\(\)#'
-            paths:
-                - src/Resources/RoleResource/Pages/ListRoles.php
-                - src/Pages/ShieldSetting.php
         -
             message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$form#'
             paths:

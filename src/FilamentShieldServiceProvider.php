@@ -2,18 +2,17 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Blade;
-use Spatie\LaravelPackageTools\Package;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Commands\SetupCommand;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use BezhanSalleh\FilamentShield\Commands\SeederCommand;
+use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
 use BezhanSalleh\FilamentShield\Commands\InstallCommand;
 use BezhanSalleh\FilamentShield\Commands\PublishCommand;
-use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
-use BezhanSalleh\FilamentShield\Concerns\HasAboutCommand;
+use BezhanSalleh\FilamentShield\Commands\SeederCommand;
+use BezhanSalleh\FilamentShield\Commands\SetupCommand;
 use BezhanSalleh\FilamentShield\Commands\SuperAdminCommand;
+use BezhanSalleh\FilamentShield\Concerns\HasAboutCommand;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Support\Facades\Gate;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FilamentShieldServiceProvider extends PackageServiceProvider
 {
@@ -25,6 +24,9 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
+        /**
+         * @var Package $package
+         */
         $package
             ->name(static::$name)
             ->hasConfigFile()
