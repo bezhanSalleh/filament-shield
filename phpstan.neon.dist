@@ -4,8 +4,6 @@ parameters:
     level: 4
     paths:
         - src
-        - tests
-        - resources
     reportUnmatchedIgnoredErrors: false
     excludePaths:
         analyse:
