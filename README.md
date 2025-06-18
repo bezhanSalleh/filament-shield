@@ -38,15 +38,14 @@ The easiest and most intuitive way to add access management to your Filament Pan
 - 📦 **Policy Generation**
 - 🌐 **Translations Support**
 
-## Requirements
+## Compatibility
 
-- PHP 8.1 | 8.2 | 8.3
-- Laravel v10.x | v11.x
-- Filament v3.2+
-- Spatie Permission v6.0+
+| Package Version | Filament Version |
+|-----------------|------------------|
+| 2.x             | 2.x              |
+| 3.x             | 3.x              |
+| 4.x             | 4.x              |
 
-> [!NOTE] 
-> For **Filament 2.x** use **[2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)** branch
 
 <div class="filament-hidden">
 <b>Table of Contents</b>
