@@ -214,7 +214,7 @@ If you need to add a single permission (for instance `lock`) and have it availab
 No worries, that's where [Custom Permissions](#custom-permissions) come to play.
 
 ##### Custom Permissions
-To define custom permissions per `Resource` your `Resource` must implement the `HasShieldPermissions` contract.
+1. To define custom permissions per `Resource` your `Resource` must implement the `HasShieldPermissions` contract.
 This contract has a `getPermissionPrefixes()` method which returns an array of permission prefixes for your `Resource`.
 
 Consider you have a `PostResource` and you want a couple of the predefined permissions plus a new permission called `publish_posts` to be only available for `PostResource` only.
@@ -273,7 +273,31 @@ In the above example the `getPermissionPrefixes()` method returns the permission
     'publish' => 'Publicar'    
 ],
 ```
+2. **Generate permissions for your resources or third-party plugins** without touching the `Resource` class. Using the `PostResource` example above, you can set it up like so:
 
+```php
+'permission_prefixes' => [
+       \App\Filament\Resources\PostResource::class => [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish', // custom permission
+        ],
+        \Tapp\FilamentAuthenticationLog\Resources\AuthenticationLogResource::class => [ // third-party plugin resource
+            'view_any',
+        ],
+
+        'resource' => [
+         ...
+        ],
+
+        'page' => 'page',
+        'widget' => 'widget',
+    ],
+``` 
 ##### Configure Permission Identifier
 By default the permission identifier is generated as follow:
 ```php
