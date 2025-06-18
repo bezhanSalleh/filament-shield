@@ -2,6 +2,16 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.8 - 2025-06-18
+
+### What's Changed
+
+* [Fix:v3] relationship generation by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/556
+* docs: updated readme with third party plugins permissions by @carloeusebi in https://github.com/bezhanSalleh/filament-shield/pull/553
+* Bump stefanzweifel/git-auto-commit-action from 5 to 6 by @dependabot in https://github.com/bezhanSalleh/filament-shield/pull/554
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.7...3.3.8
+
 ## 3.3.7 - 2025-06-11
 
 ### What's Changed
