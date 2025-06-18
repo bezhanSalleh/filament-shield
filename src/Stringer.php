@@ -6,8 +6,8 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use RuntimeException;
 use Illuminate\Support\Traits\Conditionable;
+use RuntimeException;
 
 class Stringer
 {

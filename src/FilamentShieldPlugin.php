@@ -19,8 +19,8 @@ class FilamentShieldPlugin implements Plugin
     use CanBeCentralApp;
     use CanCustomizeColumns;
     use CanLocalizePermissionLabels;
-    use HasSimpleResourcePermissionView;
     use EvaluatesClosures;
+    use HasSimpleResourcePermissionView;
 
     public static function make(): static
     {

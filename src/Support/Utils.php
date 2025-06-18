@@ -2,10 +2,10 @@
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use Filament\Pages\Enums\SubNavigationPosition;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;

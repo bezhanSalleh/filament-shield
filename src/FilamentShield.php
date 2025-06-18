@@ -2,7 +2,6 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use InvalidArgumentException;
 use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
 use BezhanSalleh\FilamentShield\Commands\InstallCommand;
 use BezhanSalleh\FilamentShield\Commands\PublishCommand;
@@ -18,6 +17,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 

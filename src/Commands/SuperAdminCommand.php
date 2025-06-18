@@ -2,7 +2,6 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Illuminate\Database\Eloquent\Model;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
@@ -11,6 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
 use function Laravel\Prompts\password;

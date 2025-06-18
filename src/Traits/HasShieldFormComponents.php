@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
-use Filament\Schemas\Components\Component;
+use Illuminate\Support\HtmlString;
+use Livewire\Component as Livewire;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Grid;
-use Filament\Forms\Components\CheckboxList;
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Filament\Schemas\Components\Component;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Forms;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
+use Filament\Schemas\Components\Utilities\Set;
+use BezhanSalleh\FilamentShield\Forms\CheckboxList;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 
 trait HasShieldFormComponents
 {
@@ -230,14 +231,16 @@ trait HasShieldFormComponents
             ->label('')
             ->options(fn (): array => $options)
             ->searchable($searchable)
-            ->afterStateHydrated(
-                fn (Component $component, string $operation, ?Model $record) => static::setPermissionStateForRecordPermissions(
+            ->afterStateHydrated(function (Component $component, string $operation, ?Model $record, Set $set) use($options): void {
+                static::setPermissionStateForRecordPermissions(
                     component: $component,
                     operation: $operation,
                     permissions: $options,
                     record: $record
-                )
-            )
+                );
+
+                static::toggleSelectAllViaEntities($component->getLivewire(), $set);
+            })
             ->dehydrated(fn ($state) => ! blank($state))
             ->bulkToggleable()
             ->gridDirection('row')
@@ -248,5 +251,25 @@ trait HasShieldFormComponents
     public static function shield(): FilamentShieldPlugin
     {
         return FilamentShieldPlugin::get();
+    }
+
+    public static function toggleSelectAllViaEntities(Livewire $livewire, Set $set): void
+    {
+        /** @phpstan-ignore-next-line */
+        $entitiesStates = collect($livewire->form->getFlatComponents())
+            ->reduce(function (mixed $counts, Component $component) {
+                if ($component instanceof CheckboxList) {
+                    //  $component->callAfterStateHydrated();
+                    $counts[$component->getName()] = count(array_keys($component->getOptions())) == count(collect($component->getState())->values()->unique()->toArray());
+                }
+
+                return $counts;
+            }, collect())
+            ->values();
+        if ($entitiesStates->containsStrict(false)) {
+            $set('select_all', false);
+        } else {
+            $set('select_all', true);
+        }
     }
 }

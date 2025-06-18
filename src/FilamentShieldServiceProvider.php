@@ -2,29 +2,34 @@
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Concerns\HasAboutCommand;
-use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Blade;
+use Spatie\LaravelPackageTools\Package;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Commands\SetupCommand;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use BezhanSalleh\FilamentShield\Commands\SeederCommand;
 use BezhanSalleh\FilamentShield\Commands\InstallCommand;
 use BezhanSalleh\FilamentShield\Commands\PublishCommand;
-use BezhanSalleh\FilamentShield\Commands\SeederCommand;
-use BezhanSalleh\FilamentShield\Commands\SetupCommand;
+use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
+use BezhanSalleh\FilamentShield\Concerns\HasAboutCommand;
 use BezhanSalleh\FilamentShield\Commands\SuperAdminCommand;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Illuminate\Support\Facades\Gate;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FilamentShieldServiceProvider extends PackageServiceProvider
 {
     use HasAboutCommand;
 
+    public static string $name = 'filament-shield';
+
+    public static string $viewNamespace = 'filament-shield';
+
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament-shield')
+            ->name(static::$name)
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews()
+            ->hasViews(static::$name)
             ->hasCommands($this->getCommands());
     }
 
