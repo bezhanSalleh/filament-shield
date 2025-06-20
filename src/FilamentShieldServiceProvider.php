@@ -32,7 +32,6 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
             ->name(static::$name)
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews(static::$name)
             ->hasCommands($this->getCommands());
     }
 
