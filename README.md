@@ -323,18 +323,13 @@ FilamentShield::configurePermissionIdentifierUsing(
 > Keep in mind that ensuring the uniqueness of the permission identifier is now up to you.
 
 ##### Custom Navigation Group
-By default the english translation renders Roles and Permissions under 'Filament Shield' if you wish to change this, first publish the [translations files](#translations) and change the relative locale to the group of your choosing for example:
+By default the navigation group renders using the `filament-shield::filament-shield.nav.group` translation key. You may define a custom translation key in your `filament-shield.php` config file. For example:
 
 ```php
-'nav.group' => 'Filament Shield',
+'shield_resource' => [
+    'navigation_group_label' => 'nav.group.admin',
+],
 ```
-
-to
-
-```php
-'nav.group' => 'User Management',
-```
-apply this to each language you have groups in.
 
 #### Pages
 
