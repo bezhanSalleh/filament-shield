@@ -8,7 +8,10 @@ use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
@@ -16,6 +19,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Livewire\Component as Livewire;
@@ -280,6 +284,26 @@ trait HasShieldFormComponents
     public static function shield(): FilamentShieldPlugin
     {
         return FilamentShieldPlugin::get();
+    }
+
+    public static function getTenantOptions(): ?Component
+    {
+        if (! Utils::isTenancyEnabled()) {
+            return null;
+        }
+
+        if (static::shield()->isCentralApp()) {
+            return Select::make(config('permission.column_names.team_foreign_key'))
+                ->label(__('filament-shield::filament-shield.field.team'))
+                ->placeholder(__('filament-shield::filament-shield.field.team.placeholder'))
+                /** @phpstan-ignore-next-line */
+                ->default([Filament::getTenant()?->id])
+                ->options(fn (): Arrayable => Utils::getTenantModel() ? Utils::getTenantModel()::pluck('name', 'id') : collect());
+        }
+
+        return Hidden::make(config('permission.column_names.team_foreign_key'))
+            /** @phpstan-ignore-next-line */
+            ->default(Filament::getTenant()?->id);
     }
 
     public static function getSelectAllFormComponent(): Component
