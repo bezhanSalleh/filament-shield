@@ -63,6 +63,11 @@ class Utils
         return config('filament-shield.shield_resource.navigation_group', true);
     }
 
+    public static function getResourceNavigationGroupLabel(): string
+    {
+        return config('filament-shield.shield_resource.navigation_group_label', 'filament-shield::filament-shield.nav.group');
+    }
+
     public static function isResourceGloballySearchable(): bool
     {
         return config('filament-shield.shield_resource.is_globally_searchable', false);
