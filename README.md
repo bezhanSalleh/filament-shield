@@ -323,7 +323,7 @@ FilamentShield::configurePermissionIdentifierUsing(
 > Keep in mind that ensuring the uniqueness of the permission identifier is now up to you.
 
 ##### Custom Navigation Group
-By default the navigation group renders using the `filament-shield::filament-shield.nav.group` translation key. You may define a custom translation key in your `filament-shield.php` config file. For example:
+By default, the navigation group renders using the `filament-shield::filament-shield.nav.group` translation key. You may define a custom translation key in your `filament-shield.php` config file. For example:
 
 ```php
 'shield_resource' => [
