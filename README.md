@@ -25,6 +25,15 @@
 
 The easiest and most intuitive way to add access management to your Filament Panels.
 
+> [!WARNING]
+> **Heads Up! This is a Pre-release (Beta) Version**
+> 
+> This package is currently in active development and tied closely to **FilamentPHP v4 pre-release**. As the core API continues to evolve, **expect breaking changes** and frequent updates.  
+> 
+> We're moving fast and iterating often — so if you're using this in your project, please do so with caution and **at your own discretion**.
+> 
+> Feedback and contributions are welcome as we move toward a stable release!.
+
 ## Features
 
 - 🛡️ **Complete Authorization Management**
