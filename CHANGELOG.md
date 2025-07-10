@@ -2,6 +2,21 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.3.9 - 2025-07-10
+
+### What's Changed
+
+* Fix typo in Spanish translation for force delete action by @jimmiroblescasanova in https://github.com/bezhanSalleh/filament-shield/pull/557
+* feat: add danish translations by @m-stilling in https://github.com/bezhanSalleh/filament-shield/pull/563
+* feat: include editTenantProfile page in permission generation by @jimmiroblescasanova in https://github.com/bezhanSalleh/filament-shield/pull/568
+
+### New Contributors
+
+* @jimmiroblescasanova made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/557
+* @m-stilling made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/563
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.8...3.3.9
+
 ## 3.3.8 - 2025-06-18
 
 ### What's Changed
