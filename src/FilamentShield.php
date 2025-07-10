@@ -204,6 +204,9 @@ class FilamentShield
             foreach (Filament::getPanels() as $panel) {
                 $pages = array_merge($pages, $panel->getPages());
             }
+            if (Filament::hasTenantProfile()) {
+                $pages[] = Filament::getTenantProfilePage();
+            }
             $pages = array_unique($pages);
         }
 
