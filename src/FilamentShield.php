@@ -280,7 +280,7 @@ class FilamentShield
         }
 
         return collect($widgets)
-            ->reject(function (string $widget): bool {
+            ->reject(function (string | WidgetConfiguration $widget): bool {
                 if (Utils::isGeneralExcludeEnabled()) {
                     return in_array(
                         needle: str(
@@ -294,7 +294,7 @@ class FilamentShield
 
                 return false;
             })
-            ->mapWithKeys(function (string $widget): array {
+            ->mapWithKeys(function (string | WidgetConfiguration $widget): array {
                 $permission = Str::of(class_basename(static::getWidgetInstanceFromWidgetConfiguration($widget)))
                     ->prepend(
                         Str::of(Utils::getWidgetPermissionPrefix())
