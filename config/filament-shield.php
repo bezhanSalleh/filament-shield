@@ -7,6 +7,7 @@ return [
         'navigation_sort' => -1,
         'navigation_badge' => true,
         'navigation_group' => true,
+        'custom_navigation_group' => null,
         'sub_navigation_position' => null,
         'is_globally_searchable' => false,
         'show_model_path' => true,

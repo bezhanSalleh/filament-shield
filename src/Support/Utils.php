@@ -62,6 +62,10 @@ class Utils
     {
         return config('filament-shield.shield_resource.navigation_group', true);
     }
+    public static function getCustomNavigationGroup(): ?string
+    {
+        return config('filament-shield.shield_resource.custom_navigation_group', null);
+    }
 
     public static function isResourceGloballySearchable(): bool
     {
