@@ -51,10 +51,12 @@ The easiest and most intuitive way to add access management to your Filament Pan
 
 - [Shield](#shield)
   - [Features](#features)
-  - [Requirements](#requirements)
+  - [Compatibility](#compatibility)
   - [Installation](#installation)
     - [1. Install Package](#1-install-package)
     - [2. Configure Auth Provider](#2-configure-auth-provider)
+      - [2.1. Publish the config and setup your auth provider model.](#21-publish-the-config-and-setup-your-auth-provider-model)
+      - [2.2 Add the `HasRoles` trait to your auth provider model:](#22-add-the-hasroles-trait-to-your-auth-provider-model)
     - [3. Setup Shield](#3-setup-shield)
     - [4. Install for Panel](#4-install-for-panel)
   - [Usage](#usage)
@@ -62,8 +64,10 @@ The easiest and most intuitive way to add access management to your Filament Pan
       - [Resources](#resources)
         - [Default](#default)
         - [Custom Permissions](#custom-permissions)
+      - [Third-Party Plugins Permissions](#third-party-plugins-permissions)
         - [Configure Permission Identifier](#configure-permission-identifier)
         - [Custom Navigation Group](#custom-navigation-group)
+        - [Parent Item](#parent-item)
       - [Pages](#pages)
           - [Pages Hooks](#pages-hooks)
           - [Pages Redirect Path](#pages-redirect-path)
@@ -71,6 +75,7 @@ The easiest and most intuitive way to add access management to your Filament Pan
     - [Policies](#policies)
       - [Path](#path)
       - [Policy Discovery](#policy-discovery)
+      - [Third-Party Plugins Policies](#third-party-plugins-policies)
         - [Using Laravel 10](#using-laravel-10)
         - [Using Laravel 11](#using-laravel-11)
       - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
@@ -335,6 +340,15 @@ to
 'nav.group' => 'User Management',
 ```
 apply this to each language you have groups in.
+
+##### Parent Item
+To add the Roles under a parent item such as Users update the filament-shield.php with the resource name, for example:
+
+```php
+'navigation_parent' => 'Users'
+```
+
+If the parent item is in a group make sure to enable navigation group and that the correct translation file is updated to the group as well as demonstrated above.
 
 #### Pages
 
