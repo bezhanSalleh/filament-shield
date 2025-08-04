@@ -68,6 +68,11 @@ class Utils
         return config('filament-shield.shield_resource.is_globally_searchable', false);
     }
 
+    public static function getResourceNavigationParentItem()
+    {
+        return config('filament-shield.shield_resource.navigation_parent', null);
+    }
+
     public static function getAuthProviderFQCN()
     {
         return config('filament-shield.auth_provider_model.fqcn');
