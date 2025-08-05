@@ -19,6 +19,7 @@ class SuperAdminCommand extends Command
 {
     public $signature = 'shield:super-admin
         {--user= : ID of user to be made super admin.}
+        {--user-column= : The column in the user table used to search for the user option value.}
         {--panel= : Panel ID to get the configuration from.}
         {--tenant= : Team/Tenant ID to assign role to user.}
     ';
@@ -57,7 +58,11 @@ class SuperAdminCommand extends Command
         $tenantId = $this->option('tenant');
 
         if ($this->option('user')) {
-            $this->superAdmin = static::getUserModel()::findOrFail($this->option('user'));
+            if (empty($this->option('user-column'))){
+                $this->superAdmin = static::getUserModel()::findOrFail($this->option('user'));
+            }else{
+                $this->superAdmin = static::getUserModel()::where($this->option('user-column'),$this->option('user'))->firstOrFail();
+            }
         } elseif ($usersCount === 1) {
             $this->superAdmin = static::getUserModel()::first();
         } elseif ($usersCount > 1) {
