@@ -23,7 +23,10 @@ class InstallCommand extends Command implements PromptsForMissingInput
     use CanRegisterPlugin;
 
     /** @var string */
-    protected $signature = 'shield:install {panel} {--tenant}';
+    protected $signature = 'shield:install {panel}
+     {--tenant}
+     {--panel-provider-path= : Filament provider path is determined according to the app base path.}
+     ';
 
     /** @var string */
     protected $description = 'Install and configure shield for the given Filament Panel';
@@ -38,6 +41,8 @@ class InstallCommand extends Command implements PromptsForMissingInput
 
         $panel = Filament::getPanel($this->argument('panel') ?? null);
 
+        $panelProviderPath=$this->option('panel-provider-path');
+
         $tenant = $this->option('tenant') ? config()->get('filament-shield.tenant_model') : null;
 
         $tenantModelClass = str($tenant)
@@ -45,7 +50,9 @@ class InstallCommand extends Command implements PromptsForMissingInput
             ->append('::class')
             ->toString();
 
-        $panelPath = app_path(
+        $panelPath = !empty($panelProviderPath)?
+            base_path($panelProviderPath):
+            app_path(
             (string) str($panel->getId())
                 ->studly()
                 ->append('PanelProvider')
