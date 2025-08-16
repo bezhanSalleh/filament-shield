@@ -66,9 +66,12 @@ class FilamentShieldPlugin implements Plugin
     protected function getPluginDefaults(): array
     {
         return [
-            'navigationGroup' => 'Administration',
-            'navigationLabel' => 'Roles',
-            'navigationIcon' => 'heroicon-o-shield-check',
+            'modelLabel' => __('filament-shield::filament-shield.resource.label.role'),
+            'pluralModelLabel' => __('filament-shield::filament-shield.resource.label.roles'),
+
+            'navigationGroup' => __('filament-shield::filament-shield.nav.group'),
+            'navigationLabel' => __('filament-shield::filament-shield.nav.role.label'),
+            'navigationIcon' => __('filament-shield::filament-shield.nav.role.icon'),
             'activeNavigationIcon' => 'heroicon-s-shield-check',
         ];
     }
