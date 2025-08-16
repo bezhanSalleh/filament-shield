@@ -156,79 +156,15 @@ class RoleResource extends Resource implements HasShieldPermissions
         ];
     }
 
-    // public static function getCluster(): ?string
-    // {
-    //     return Utils::getResourceCluster() ?? static::$cluster;
-    // }
-
     public static function getModel(): string
     {
         return Utils::getRoleModel();
     }
 
-    // public static function getModelLabel(): string
-    // {
-    //     return __('filament-shield::filament-shield.resource.label.role');
-    // }
-
-    // public static function getPluralModelLabel(): string
-    // {
-    //     return __('filament-shield::filament-shield.resource.label.roles');
-    // }
-
-    // public static function shouldRegisterNavigation(): bool
-    // {
-    //     return Utils::isResourceNavigationRegistered();
-    // }
-
-    // public static function getNavigationGroup(): ?string
-    // {
-    //     return Utils::isResourceNavigationGroupEnabled()
-    //         ? __('filament-shield::filament-shield.nav.group')
-    //         : '';
-    // }
-
-    // public static function getNavigationLabel(): string
-    // {
-    //     return __('filament-shield::filament-shield.nav.role.label');
-    // }
-
-    // public static function getNavigationIcon(): string
-    // {
-    //     return __('filament-shield::filament-shield.nav.role.icon');
-    // }
-
-    // public static function getNavigationSort(): ?int
-    // {
-    //     return Utils::getResourceNavigationSort();
-    // }
-
-    // public static function getSubNavigationPosition(): SubNavigationPosition
-    // {
-    //     return Utils::getSubNavigationPosition() ?? Filament::getSubNavigationPosition();
-    // }
-
     public static function getSlug(?Panel $panel = null): string
     {
         return Utils::getResourceSlug();
     }
-
-    // public static function getNavigationBadge(): ?string
-    // {
-    //     return Utils::isResourceNavigationBadgeEnabled()
-    //         ? strval(static::getEloquentQuery()->count())
-    //         : null;
-    // }
-
-    // public static function isScopedToTenant(): bool
-    // {
-    //     return Utils::isScopedToTenant();
-    // }
-
-    // public static function canGloballySearch(): bool
-    // {
-    //     return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
-    // }
 
     public static function getEssentialsPlugin(): ?FilamentShieldPlugin
     {
