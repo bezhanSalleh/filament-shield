@@ -3,12 +3,14 @@
 namespace BezhanSalleh\FilamentShield\Resources;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\CreateRole;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\EditRole;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\ListRoles;
 use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\ViewRole;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
+use BezhanSalleh\PluginEssentials\Concerns\Resource as Essentials;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -30,6 +32,12 @@ use Illuminate\Validation\Rules\Unique;
 class RoleResource extends Resource implements HasShieldPermissions
 {
     use HasShieldFormComponents;
+    use Essentials\HasNavigation;
+    use Essentials\HasLabels;
+    use Essentials\HasGlobalSearch;
+    use Essentials\BelongsToCluster;
+    use Essentials\BelongsToParent;
+    use Essentials\BelongsToTenant;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -148,77 +156,82 @@ class RoleResource extends Resource implements HasShieldPermissions
         ];
     }
 
-    public static function getCluster(): ?string
-    {
-        return Utils::getResourceCluster() ?? static::$cluster;
-    }
+    // public static function getCluster(): ?string
+    // {
+    //     return Utils::getResourceCluster() ?? static::$cluster;
+    // }
 
     public static function getModel(): string
     {
         return Utils::getRoleModel();
     }
 
-    public static function getModelLabel(): string
-    {
-        return __('filament-shield::filament-shield.resource.label.role');
-    }
+    // public static function getModelLabel(): string
+    // {
+    //     return __('filament-shield::filament-shield.resource.label.role');
+    // }
 
-    public static function getPluralModelLabel(): string
-    {
-        return __('filament-shield::filament-shield.resource.label.roles');
-    }
+    // public static function getPluralModelLabel(): string
+    // {
+    //     return __('filament-shield::filament-shield.resource.label.roles');
+    // }
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        return Utils::isResourceNavigationRegistered();
-    }
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     return Utils::isResourceNavigationRegistered();
+    // }
 
-    public static function getNavigationGroup(): ?string
-    {
-        return Utils::isResourceNavigationGroupEnabled()
-            ? __('filament-shield::filament-shield.nav.group')
-            : '';
-    }
+    // public static function getNavigationGroup(): ?string
+    // {
+    //     return Utils::isResourceNavigationGroupEnabled()
+    //         ? __('filament-shield::filament-shield.nav.group')
+    //         : '';
+    // }
 
-    public static function getNavigationLabel(): string
-    {
-        return __('filament-shield::filament-shield.nav.role.label');
-    }
+    // public static function getNavigationLabel(): string
+    // {
+    //     return __('filament-shield::filament-shield.nav.role.label');
+    // }
 
-    public static function getNavigationIcon(): string
-    {
-        return __('filament-shield::filament-shield.nav.role.icon');
-    }
+    // public static function getNavigationIcon(): string
+    // {
+    //     return __('filament-shield::filament-shield.nav.role.icon');
+    // }
 
-    public static function getNavigationSort(): ?int
-    {
-        return Utils::getResourceNavigationSort();
-    }
+    // public static function getNavigationSort(): ?int
+    // {
+    //     return Utils::getResourceNavigationSort();
+    // }
 
-    public static function getSubNavigationPosition(): SubNavigationPosition
-    {
-        return Utils::getSubNavigationPosition() ?? Filament::getSubNavigationPosition();
-    }
+    // public static function getSubNavigationPosition(): SubNavigationPosition
+    // {
+    //     return Utils::getSubNavigationPosition() ?? Filament::getSubNavigationPosition();
+    // }
 
     public static function getSlug(?Panel $panel = null): string
     {
         return Utils::getResourceSlug();
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return Utils::isResourceNavigationBadgeEnabled()
-            ? strval(static::getEloquentQuery()->count())
-            : null;
-    }
+    // public static function getNavigationBadge(): ?string
+    // {
+    //     return Utils::isResourceNavigationBadgeEnabled()
+    //         ? strval(static::getEloquentQuery()->count())
+    //         : null;
+    // }
 
-    public static function isScopedToTenant(): bool
-    {
-        return Utils::isScopedToTenant();
-    }
+    // public static function isScopedToTenant(): bool
+    // {
+    //     return Utils::isScopedToTenant();
+    // }
 
-    public static function canGloballySearch(): bool
+    // public static function canGloballySearch(): bool
+    // {
+    //     return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
+    // }
+
+    public static function getEssentialsPlugin(): ?FilamentShieldPlugin
     {
-        return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
+        return FilamentShieldPlugin::get();
     }
 }

@@ -24,6 +24,7 @@
     ],
     "require": {
         "php": "^8.2",
+        "bezhansalleh/filament-plugin-essentials": "^1.0@beta",
         "filament/filament": "^4.0",
         "filament/upgrade": "^4.0",
         "illuminate/contracts": "^11.28|^12.0",
