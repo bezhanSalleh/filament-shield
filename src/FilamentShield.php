@@ -340,9 +340,8 @@ class FilamentShield
     protected function getDefaultPermissionIdentifier(string $resource): string
     {
         return Str::of($resource)
-            ->afterLast('Resources\\')
+            ->afterLast('\\')
             ->beforeLast('Resource')
-            ->replace('\\', '')
             ->snake()
             ->replace('_', '::');
     }
