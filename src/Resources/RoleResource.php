@@ -31,13 +31,13 @@ use Illuminate\Validation\Rules\Unique;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
-    use HasShieldFormComponents;
-    use Essentials\HasNavigation;
-    use Essentials\HasLabels;
-    use Essentials\HasGlobalSearch;
     use Essentials\BelongsToCluster;
     use Essentials\BelongsToParent;
     use Essentials\BelongsToTenant;
+    use Essentials\HasGlobalSearch;
+    use Essentials\HasLabels;
+    use Essentials\HasNavigation;
+    use HasShieldFormComponents;
 
     protected static ?string $recordTitleAttribute = 'name';
 

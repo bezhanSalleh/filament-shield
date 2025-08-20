@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
 use BezhanSalleh\FilamentShield\Concerns\CanBeCentralApp;
 use BezhanSalleh\FilamentShield\Concerns\CanCustomizeColumns;
-use BezhanSalleh\PluginEssentials\Concerns\Plugin as Essentials;
 use BezhanSalleh\FilamentShield\Concerns\CanLocalizePermissionLabels;
 use BezhanSalleh\FilamentShield\Concerns\HasSimpleResourcePermissionView;
+use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\PluginEssentials\Concerns\Plugin as Essentials;
+use Filament\Contracts\Plugin;
+use Filament\Panel;
+use Filament\Support\Concerns\EvaluatesClosures;
 
 class FilamentShieldPlugin implements Plugin
 {
     use CanBeCentralApp;
     use CanCustomizeColumns;
     use CanLocalizePermissionLabels;
-    use EvaluatesClosures;
-    use HasSimpleResourcePermissionView;
-    use Essentials\HasNavigation;
-    use Essentials\HasLabels;
-    use Essentials\HasGlobalSearch;
     use Essentials\BelongsToCluster;
     use Essentials\BelongsToParent;
     use Essentials\BelongsToTenant;
+    use Essentials\HasGlobalSearch;
+    use Essentials\HasLabels;
+    use Essentials\HasNavigation;
     use Essentials\HasPluginDefaults;
+    use EvaluatesClosures;
+    use HasSimpleResourcePermissionView;
 
     public static function make(): static
     {
