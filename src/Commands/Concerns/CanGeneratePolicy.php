@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
-use ReflectionClass;
-use Illuminate\Support\Str;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Support\Str;
+use ReflectionClass;
 
 trait CanGeneratePolicy
 {
