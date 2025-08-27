@@ -2,11 +2,11 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\Commands\Concerns\CanBeProhibitable;
 use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use BezhanSalleh\FilamentShield\Stringer;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
+use Illuminate\Console\Prohibitable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -19,8 +19,8 @@ use function Laravel\Prompts\confirm;
 #[AsCommand(name: 'shield:setup', description: 'Setup and install core requirements for Shield')]
 class SetupCommand extends Command
 {
-    use CanBeProhibitable;
     use CanManipulateFiles;
+    use Prohibitable;
 
     public $signature = 'shield:setup
         {--F|fresh : re-run the migrations}
