@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Resources\Roles;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
@@ -81,7 +83,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->placeholder(__('filament-shield::filament-shield.field.team.placeholder'))
                                     /** @phpstan-ignore-next-line */
                                     ->default([Filament::getTenant()?->id])
-                                    ->options(fn (): Arrayable => Utils::getTenantModel() ? Utils::getTenantModel()::pluck('name', 'id') : collect())
+                                    ->options(fn (): Arrayable => in_array(Utils::getTenantModel(), [null, '', '0'], true) ? collect() : Utils::getTenantModel()::pluck('name', 'id'))
                                     ->hidden(fn (): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled()))
                                     ->dehydrated(fn (): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled())),
                                 static::getSelectAllFormComponent(),

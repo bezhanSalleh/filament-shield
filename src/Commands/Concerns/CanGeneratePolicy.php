@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
@@ -16,7 +18,8 @@ trait CanGeneratePolicy
             ->trim('\\')
             ->trim(' ')
             ->studly()
-            ->replace('/', '\\');
+            ->replace('/', '\\')
+            ->toString();
     }
 
     protected function generatePolicyPath(array $entity): string
@@ -27,7 +30,8 @@ trait CanGeneratePolicy
             $basePolicyPath = app_path(
                 (string) Str::of($entity['model'])
                     ->prepend(str(Utils::getPolicyPath())->append('\\'))
-                    ->replace('\\', DIRECTORY_SEPARATOR),
+                    ->replace('\\', DIRECTORY_SEPARATOR)
+                    ->toString(),
             );
 
             return "{$basePolicyPath}Policy.php";
@@ -37,7 +41,8 @@ trait CanGeneratePolicy
         $basePath = Str::of($path)
             ->replace('Models', Utils::getPolicyPath())
             ->replaceLast('.php', 'Policy.php')
-            ->replace('\\', DIRECTORY_SEPARATOR);
+            ->replace('\\', DIRECTORY_SEPARATOR)
+            ->toString();
 
         return $basePath;
     }
@@ -45,7 +50,7 @@ trait CanGeneratePolicy
     protected function generatePolicyStubVariables(array $entity): array
     {
         $stubVariables = collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-            ->reduce(function ($gates, $permission) use ($entity) {
+            ->reduce(function (array $gates, string $permission) use ($entity) {
                 $gates[Str::studly($permission)] = $permission . '_' . $entity['resource'];
 
                 return $gates;

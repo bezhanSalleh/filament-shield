@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
@@ -72,20 +74,17 @@ class SetupCommand extends Command
             $this->components->info('`shield:setup` command was cancelled.');
         }
 
-        if (! $this->option('minimal')) {
-            if (confirm('Would you like to show some love by starring the repo?')) {
-                if (PHP_OS_FAMILY === 'Darwin') {
-                    exec('open https://github.com/bezhanSalleh/filament-shield');
-                }
-                if (PHP_OS_FAMILY === 'Linux') {
-                    exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
-                }
-                if (PHP_OS_FAMILY === 'Windows') {
-                    exec('start https://github.com/bezhanSalleh/filament-shield');
-                }
-
-                $this->components->info('Thank you!');
+        if (! $this->option('minimal') && confirm('Would you like to show some love by starring the repo?')) {
+            if (PHP_OS_FAMILY === 'Darwin') {
+                exec('open https://github.com/bezhanSalleh/filament-shield');
             }
+            if (PHP_OS_FAMILY === 'Linux') {
+                exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
+            }
+            if (PHP_OS_FAMILY === 'Windows') {
+                exec('start https://github.com/bezhanSalleh/filament-shield');
+            }
+            $this->components->info('Thank you!');
         }
 
         return Command::SUCCESS;
@@ -123,7 +122,7 @@ class SetupCommand extends Command
             }
 
             $shieldConfig
-                ->append('tenant_model', "'tenant_model' => '" . get_class($tenantModel) . "',")
+                ->append('tenant_model', "'tenant_model' => '" . $tenantModel::class . "',")
                 ->deleteLine('tenant_model')
                 ->deleteLine("'tenant_model' => null,")
                 ->save();
@@ -190,7 +189,7 @@ class SetupCommand extends Command
                 $this->getTables()->each(fn (string $table) => DB::statement('DROP TABLE IF EXISTS ' . $table));
                 Schema::enableForeignKeyConstraints();
             } catch (Throwable $e) {
-                $this->components->info($e);
+                $this->components->info($e->getMessage());
             }
 
             $this->components->info('Freshening up shield migrations.');

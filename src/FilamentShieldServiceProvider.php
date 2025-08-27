@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
@@ -39,9 +41,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
     {
         parent::packageRegistered();
 
-        $this->app->scoped('filament-shield', function (): FilamentShield {
-            return new FilamentShield;
-        });
+        $this->app->scoped('filament-shield', fn (): FilamentShield => new FilamentShield);
     }
 
     public function packageBooted(): void
@@ -51,12 +51,10 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
         $this->initAboutCommand();
 
         if (Utils::isSuperAdminDefinedViaGate()) {
-            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(function (object $user, string $ability): ?bool {
-                return match (Utils::getSuperAdminGateInterceptionStatus()) {
-                    'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
-                    'after' => $user->hasRole(Utils::getSuperAdminName()),
-                    default => false
-                };
+            Gate::{Utils::getSuperAdminGateInterceptionStatus()}(fn (object $user, string $ability): ?bool => match (Utils::getSuperAdminGateInterceptionStatus()) {
+                'before' => $user->hasRole(Utils::getSuperAdminName()) ? true : null,
+                'after' => $user->hasRole(Utils::getSuperAdminName()),
+                default => false
             });
         }
 

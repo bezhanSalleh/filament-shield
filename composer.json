@@ -63,7 +63,8 @@
         "test": "vendor/bin/pest --no-coverage",
         "type": "vendor/bin/pest --type-coverage",
         "lint": "vendor/bin/pint",
-        "finalize": "composer lint && composer type && composer analyse && composer test"
+        "refactor": "vendor/bin/rector",
+        "finalize": "composer refactor && composer lint && composer type && composer analyse && composer test"
     },
     "config": {
         "sort-packages": true,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Support;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
@@ -39,7 +41,7 @@ class Utils
 
     public static function isAuthProviderConfigured(): bool
     {
-        return in_array("Spatie\Permission\Traits\HasRoles", class_uses_recursive(static::getAuthProviderFQCN()));
+        return in_array(\Spatie\Permission\Traits\HasRoles::class, class_uses_recursive(static::getAuthProviderFQCN()));
     }
 
     public static function isSuperAdminEnabled(): bool
@@ -54,7 +56,7 @@ class Utils
 
     public static function isSuperAdminDefinedViaGate(): bool
     {
-        return (bool) static::isSuperAdminEnabled() && config('filament-shield.super_admin.define_via_gate', false);
+        return static::isSuperAdminEnabled() && config('filament-shield.super_admin.define_via_gate', false);
     }
 
     public static function getSuperAdminGateInterceptionStatus(): string
@@ -176,7 +178,7 @@ class Utils
     public static function showModelPath(string $resourceFQCN): string
     {
         return config('filament-shield.shield_resource.show_model_path', true)
-            ? get_class(new ($resourceFQCN::getModel())())
+            ? (new ($resourceFQCN::getModel())())::class
             : '';
     }
 

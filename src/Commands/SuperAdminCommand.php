@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\FilamentShield;
@@ -63,15 +65,13 @@ class SuperAdminCommand extends Command
         } elseif ($usersCount > 1) {
             $this->table(
                 ['ID', 'Name', 'Email', 'Roles'],
-                static::getUserModel()::with('roles')->get()->map(function (Authenticatable $user) {
-                    return [
-                        'id' => $user->getKey(),
-                        'name' => $user->getAttribute('name'),
-                        'email' => $user->getAttribute('email'),
-                        /** @phpstan-ignore-next-line */
-                        'roles' => implode(',', $user->roles->pluck('name')->toArray()),
-                    ];
-                })
+                static::getUserModel()::with('roles')->get()->map(fn (Authenticatable $user): array => [
+                    'id' => $user->getKey(),
+                    'name' => $user->getAttribute('name'),
+                    'email' => $user->getAttribute('email'),
+                    /** @phpstan-ignore-next-line */
+                    'roles' => implode(',', $user->roles->pluck('name')->toArray()),
+                ])
             );
 
             $superAdminId = text(
@@ -128,7 +128,7 @@ class SuperAdminCommand extends Command
             'password' => Hash::make(password(
                 label: 'Password',
                 required: true,
-                validate: fn (string $value) => match (true) {
+                validate: fn (string $value): ?string => match (true) {
                     strlen($value) < 8 => 'The password must be at least 8 characters.',
                     default => null
                 }

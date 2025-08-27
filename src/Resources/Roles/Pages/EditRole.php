@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Resources\Roles\Pages;
 
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
@@ -25,9 +27,7 @@ class EditRole extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $this->permissions = collect($data)
-            ->filter(function (mixed $permission, string $key): bool {
-                return ! in_array($key, ['name', 'guard_name', 'select_all', Utils::getTenantModelForeignKey()]);
-            })
+            ->filter(fn (mixed $permission, string $key): bool => ! in_array($key, ['name', 'guard_name', 'select_all', Utils::getTenantModelForeignKey()]))
             ->values()
             ->flatten()
             ->unique();

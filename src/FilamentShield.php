@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
@@ -35,7 +37,7 @@ class FilamentShield
 
     public function getPermissionIdentifier(string $resource): string
     {
-        if ($this->configurePermissionIdentifierUsing) {
+        if ($this->configurePermissionIdentifierUsing instanceof \Closure) {
 
             $identifier = (string) $this->evaluate(
                 value: $this->configurePermissionIdentifierUsing,
@@ -62,7 +64,7 @@ class FilamentShield
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect();
             collect($permissionPrefixes)
-                ->each(function (string $prefix) use ($entity, $permissions) {
+                ->each(function (string $prefix) use ($entity, $permissions): void {
                     $permissions->push(Utils::getPermissionModel()::firstOrCreate(
                         ['name' => $prefix . '_' . $entity['resource']],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
@@ -101,19 +103,14 @@ class FilamentShield
     {
         $customPermissions = collect(static::getCustomPermissions())->keys();
 
-        if (Utils::isCustomPermissionEntityEnabled()) {
-
-            if ($customPermissions->isNotEmpty()) {
-                $permissions = $customPermissions
-                    ->map(function (string $permission): string {
-                        return Utils::getPermissionModel()::firstOrCreate(
-                            ['name' => $permission],
-                            ['guard_name' => Utils::getFilamentAuthGuard()]
-                        )->name;
-                    })
-                    ->toArray();
-                static::giveSuperAdminPermission($permissions);
-            }
+        if (Utils::isCustomPermissionEntityEnabled() && $customPermissions->isNotEmpty()) {
+            $permissions = $customPermissions
+                ->map(fn (string $permission): string => Utils::getPermissionModel()::firstOrCreate(
+                    ['name' => $permission],
+                    ['guard_name' => Utils::getFilamentAuthGuard()]
+                )->name)
+                ->toArray();
+            static::giveSuperAdminPermission($permissions);
         }
     }
 
@@ -200,9 +197,7 @@ class FilamentShield
             }
             $resources = array_unique($resources);
         }
-        $label = collect($resources)->filter(function (string $resource) use ($entity): bool {
-            return $resource === $entity;
-        })->first()::getModelLabel();
+        $label = collect($resources)->filter(fn (string $resource): bool => $resource === $entity)->first()::getModelLabel();
 
         return str($label)->headline()->toString();
     }
@@ -362,7 +357,8 @@ class FilamentShield
             ->beforeLast('Resource')
             ->replace('\\', '')
             ->snake()
-            ->replace('_', '::');
+            ->replace('_', '::')
+            ->toString();
     }
 
     protected static function getWidgetInstanceFromWidgetConfiguration(string | WidgetConfiguration $widget): string
@@ -375,29 +371,27 @@ class FilamentShield
     public function getAllResourcePermissions(): array
     {
         return collect($this->getResources())
-            ->map(function (array $resourceEntity): array {
-                return collect(
-                    Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
-                )
-                    ->flatMap(function (string $permission) use ($resourceEntity): array {
-                        $name = $permission . '_' . $resourceEntity['resource'];
-                        $permissionLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
-                            ? str(static::getLocalizedResourcePermissionLabel($permission))
-                                ->prepend(
-                                    str($resourceEntity['fqcn']::getPluralModelLabel())
-                                        ->title()
-                                        ->append(' - ')
-                                        ->toString()
-                                )
-                                ->toString()
-                            : $name;
+            ->map(fn (array $resourceEntity): array => collect(
+                Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
+            )
+                ->flatMap(function (string $permission) use ($resourceEntity): array {
+                    $name = $permission . '_' . $resourceEntity['resource'];
+                    $permissionLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
+                        ? str(static::getLocalizedResourcePermissionLabel($permission))
+                            ->prepend(
+                                str($resourceEntity['fqcn']::getPluralModelLabel())
+                                    ->title()
+                                    ->append(' - ')
+                                    ->toString()
+                            )
+                            ->toString()
+                        : $name;
 
-                        return [
-                            $name => $permissionLabel,
-                        ];
-                    })
-                    ->toArray();
-            })
+                    return [
+                        $name => $permissionLabel,
+                    ];
+                })
+                ->toArray())
             ->sortKeys()
             ->collapse()
             ->toArray();
@@ -429,9 +423,9 @@ class FilamentShield
     protected function getEntitiesPermissions(): ?array
     {
         return collect($this->getAllResourcePermissions())->keys()
-            ->merge(collect($this->getPages())->map->permission->keys())
-            ->merge(collect($this->getWidgets())->map->permission->keys())
-            ->merge(collect($this->getCustomPermissions())->keys())
+            ->merge(collect(static::getPages())->map->permission->keys())
+            ->merge(collect(static::getWidgets())->map->permission->keys())
+            ->merge(collect(static::getCustomPermissions())->keys())
             ->values()
             ->unique()
             ->toArray();

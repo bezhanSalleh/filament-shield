@@ -39,7 +39,7 @@ trait HasShieldFormComponents
     {
         return collect(FilamentShield::getResources())
             ->sortKeys()
-            ->map(function ($entity) {
+            ->map(function (array $entity): \Filament\Schemas\Components\Section {
                 $sectionLabel = strval(
                     static::shield()->hasLocalizedPermissionLabels()
                     ? FilamentShield::getLocalizedResourceLabel($entity['fqcn'])
@@ -47,7 +47,7 @@ trait HasShieldFormComponents
                 );
 
                 return Section::make($sectionLabel)
-                    ->description(fn () => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['fqcn']) . '</span>'))
+                    ->description(fn (): \Illuminate\Support\HtmlString => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['fqcn']) . '</span>'))
                     ->compact()
                     ->schema([
                         static::getCheckBoxListComponentForResource($entity),
@@ -61,14 +61,14 @@ trait HasShieldFormComponents
     public static function getResourceTabBadgeCount(): ?int
     {
         return collect(FilamentShield::getResources())
-            ->map(fn ($resource) => count(static::getResourcePermissionOptions($resource)))
+            ->map(fn ($resource): int => count(static::getResourcePermissionOptions($resource)))
             ->sum();
     }
 
     public static function getResourcePermissionOptions(array $entity): array
     {
         return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-            ->flatMap(function ($permission) use ($entity) {
+            ->flatMap(function (string $permission) use ($entity) {
                 $name = $permission . '_' . $entity['resource'];
                 $label = static::shield()->hasLocalizedPermissionLabels()
                     ? FilamentShield::getLocalizedResourcePermissionLabel($permission)
@@ -128,7 +128,7 @@ trait HasShieldFormComponents
             ? static::getTabFormComponentForSimpleResourcePermissionsView()
             : Tab::make('resources')
                 ->label(__('filament-shield::filament-shield.resources'))
-                ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled())
+                ->visible(fn (): bool => Utils::isResourceEntityEnabled())
                 ->badge(static::getResourceTabBadgeCount())
                 ->schema([
                     Grid::make()
@@ -144,9 +144,9 @@ trait HasShieldFormComponents
         return static::getCheckboxListFormComponent(
             name: $entity['resource'],
             options: $permissionsArray,
+            searchable: false,
             columns: static::shield()->getResourceCheckboxListColumns(),
-            columnSpan: static::shield()->getResourceCheckboxListColumnSpan(),
-            searchable: false
+            columnSpan: static::shield()->getResourceCheckboxListColumnSpan()
         );
     }
 
@@ -157,7 +157,7 @@ trait HasShieldFormComponents
 
         return Tab::make('pages')
             ->label(__('filament-shield::filament-shield.pages'))
-            ->visible(fn (): bool => (bool) Utils::isPageEntityEnabled() && $count > 0)
+            ->visible(fn (): bool => Utils::isPageEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(
@@ -174,7 +174,7 @@ trait HasShieldFormComponents
 
         return Tab::make('widgets')
             ->label(__('filament-shield::filament-shield.widgets'))
-            ->visible(fn (): bool => (bool) Utils::isWidgetEntityEnabled() && $count > 0)
+            ->visible(fn (): bool => Utils::isWidgetEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(
@@ -191,7 +191,7 @@ trait HasShieldFormComponents
 
         return Tab::make('custom_permissions')
             ->label(__('filament-shield::filament-shield.custom'))
-            ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && $count > 0)
+            ->visible(fn (): bool => Utils::isCustomPermissionEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(
@@ -208,7 +208,7 @@ trait HasShieldFormComponents
 
         return Tab::make('resources')
             ->label(__('filament-shield::filament-shield.resources'))
-            ->visible(fn (): bool => (bool) Utils::isResourceEntityEnabled() && $count > 0)
+            ->visible(fn (): bool => Utils::isResourceEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(
@@ -261,7 +261,7 @@ trait HasShieldFormComponents
                 set: $set,
                 resetState: true
             ))
-            ->dehydrated(fn ($state) => ! blank($state))
+            ->dehydrated(fn ($state): bool => ! blank($state))
             ->bulkToggleable()
             ->gridDirection('row')
             ->columns($columns ?? static::shield()->getCheckboxListColumns())
@@ -295,7 +295,7 @@ trait HasShieldFormComponents
             ->reduce(function (mixed $counts, Component $component) {
                 if ($component instanceof CheckboxList) {
                     //  $component->callAfterStateHydrated();
-                    $counts[$component->getName()] = count(array_keys($component->getOptions())) == count(collect($component->getState())->values()->unique()->toArray());
+                    $counts[$component->getName()] = count(array_keys($component->getOptions())) === count(collect($component->getState())->values()->unique()->toArray());
                 }
 
                 return $counts;
@@ -317,13 +317,13 @@ trait HasShieldFormComponents
         if ($state) {
             $entitiesComponents
                 ->each(
-                    function (CheckboxList $component) use ($set) {
+                    function (CheckboxList $component) use ($set): void {
                         $set($component->getName(), array_keys($component->getOptions()));
                     }
                 );
         } else {
             $entitiesComponents
-                ->each(fn (CheckboxList $component) => $component->state([]));
+                ->each(fn (CheckboxList $component): \Filament\Forms\Components\CheckboxList => $component->state([]));
         }
     }
 
@@ -331,7 +331,7 @@ trait HasShieldFormComponents
     {
         $action
             ->livewireClickHandlerEnabled(true)
-            ->action(function () use ($component, $livewire, $set, $resetState) {
+            ->action(function () use ($component, $livewire, $set, $resetState): void {
                 /** @phpstan-ignore-next-line */
                 $component->state($resetState ? [] : array_keys($component->getOptions()));
                 static::toggleSelectAllViaEntities($livewire, $set);

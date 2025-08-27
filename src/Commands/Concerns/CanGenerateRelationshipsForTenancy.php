@@ -17,10 +17,8 @@ trait CanGenerateRelationshipsForTenancy
     {
         collect($panel->getResources())
             ->values()
-            ->filter(function ($resource): bool {
-                return filled($this->guessResourceModelRelationshipType($resource::getModel(), Filament::getTenantModel()));
-            })
-            ->map(function ($resource) {
+            ->filter(fn ($resource): bool => filled($this->guessResourceModelRelationshipType($resource::getModel(), Filament::getTenantModel())))
+            ->map(function ($resource): array {
                 $resource = resolve($resource);
                 $tenantModel = Filament::getTenantModel();
 
@@ -46,15 +44,13 @@ trait CanGenerateRelationshipsForTenancy
                     ],
                 ];
             })
-            ->each(function ($modifiedResource) {
+            ->each(function (array $modifiedResource): void {
                 $resourceModelStringer = Stringer::for($modifiedResource['modelPath']);
                 $tenantModelstringer = Stringer::for($modifiedResource['tenantModelPath']);
 
                 if (! $resourceModelStringer->contains($modifiedResource['resource_model_method']['name'])) {
-                    if (filled($importStatement = $this->addModelReturnTypeImportStatement($modifiedResource['resource_model_method']['relationshipName']))) {
-                        if (! $resourceModelStringer->contains($importStatement)) {
-                            $resourceModelStringer->append('use', $importStatement);
-                        }
+                    if (filled($importStatement = $this->addModelReturnTypeImportStatement($modifiedResource['resource_model_method']['relationshipName'])) && ! $resourceModelStringer->contains($importStatement)) {
+                        $resourceModelStringer->append('use', $importStatement);
                     }
                     $resourceModelStringer
                         ->newLine()
@@ -67,10 +63,8 @@ trait CanGenerateRelationshipsForTenancy
                         ->save();
                 }
                 if (! $tenantModelstringer->contains($modifiedResource['tenant_model_method']['name'])) {
-                    if (filled($importStatement = $this->addModelReturnTypeImportStatement($modifiedResource['tenant_model_method']['relationshipName']))) {
-                        if (! $tenantModelstringer->contains($importStatement)) {
-                            $tenantModelstringer->append('use', $importStatement);
-                        }
+                    if (filled($importStatement = $this->addModelReturnTypeImportStatement($modifiedResource['tenant_model_method']['relationshipName'])) && ! $tenantModelstringer->contains($importStatement)) {
+                        $tenantModelstringer->append('use', $importStatement);
                     }
 
                     $tenantModelstringer

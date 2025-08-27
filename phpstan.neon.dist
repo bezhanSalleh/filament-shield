@@ -7,7 +7,7 @@ parameters:
 
     ignoreErrors:
         -
-            identifier: argument.unresolvableType 
+            identifier: argument.unresolvableType
         -
             identifier: argument.type
         -

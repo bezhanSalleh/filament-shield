@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Commands;
 
 use BezhanSalleh\FilamentShield\Commands\Concerns\CanGeneratePolicy;
@@ -80,12 +82,10 @@ class GenerateCommand extends Command
             return Command::FAILURE;
         }
 
-        $panel = $this->option('panel')
-            ? $this->option('panel')
-            : Select(
-                label: 'Which panel do you want to generate permissions/policies for?',
-                options: collect(Filament::getPanels())->keys()->toArray()
-            );
+        $panel = $this->option('panel') ?: Select(
+            label: 'Which panel do you want to generate permissions/policies for?',
+            options: collect(Filament::getPanels())->keys()->toArray()
+        );
 
         Filament::setCurrentPanel(Filament::getPanel($panel));
 
@@ -255,21 +255,17 @@ class GenerateCommand extends Command
             $this->components->info('Successfully generated Permissions & Policies for:');
             $this->table(
                 ['#', 'Resource', 'Policy', 'Permissions'],
-                collect($resources)->map(function (array $resource, int $key): array {
-                    return [
-                        '#' => $key + 1,
-                        'Resource' => $resource['model'],
-                        'Policy' => "{$resource['model']}Policy.php" . ($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
-                        'Permissions' => implode(
-                            ',' . PHP_EOL,
-                            collect(
-                                Utils::getResourcePermissionPrefixes($resource['fqcn'])
-                            )->map(function (string $permission) use ($resource): string {
-                                return $permission . '_' . $resource['resource'];
-                            })->toArray()
-                        ) . ($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
-                    ];
-                })
+                collect($resources)->map(fn (array $resource, int $key): array => [
+                    '#' => $key + 1,
+                    'Resource' => $resource['model'],
+                    'Policy' => "{$resource['model']}Policy.php" . ($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
+                    'Permissions' => implode(
+                        ',' . PHP_EOL,
+                        collect(
+                            Utils::getResourcePermissionPrefixes($resource['fqcn'])
+                        )->map(fn (string $permission): string => $permission . '_' . $resource['resource'])->toArray()
+                    ) . ($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
+                ])
             );
         }
     }
@@ -282,13 +278,11 @@ class GenerateCommand extends Command
             $this->components->info('Successfully generated Page Permissions for:');
             $this->table(
                 ['#', 'Page', 'Permission'],
-                collect($pages)->map(function (array $page, int $key): array {
-                    return [
-                        '#' => $key + 1,
-                        'Page' => $page['class'],
-                        'Permission' => $page['permission'],
-                    ];
-                })
+                collect($pages)->map(fn (array $page, int $key): array => [
+                    '#' => $key + 1,
+                    'Page' => $page['class'],
+                    'Permission' => $page['permission'],
+                ])
             );
         }
     }
@@ -301,13 +295,11 @@ class GenerateCommand extends Command
             $this->components->info('Successfully generated Widget Permissions for:');
             $this->table(
                 ['#', 'Widget', 'Permission'],
-                collect($widgets)->map(function (array $widget, int $key): array {
-                    return [
-                        '#' => $key + 1,
-                        'Widget' => $widget['class'],
-                        'Permission' => $widget['permission'],
-                    ];
-                })
+                collect($widgets)->map(fn (array $widget, int $key): array => [
+                    '#' => $key + 1,
+                    'Widget' => $widget['class'],
+                    'Permission' => $widget['permission'],
+                ])
             );
         }
     }
