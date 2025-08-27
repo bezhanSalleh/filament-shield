@@ -10,6 +10,7 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Console\Prohibitable;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -207,7 +208,7 @@ class GenerateCommand extends Command
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
                     if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
-                        $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
+                        $this->copyStubToApp(static::getPolicyStub($entity['modelFqcn']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                     FilamentShield::generateForResource($entity);
                 }
@@ -216,7 +217,7 @@ class GenerateCommand extends Command
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
                     if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
-                        $this->copyStubToApp(static::getPolicyStub($entity['model']), $policyPath, $this->generatePolicyStubVariables($entity));
+                        $this->copyStubToApp(static::getPolicyStub($entity['modelFqcn']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                 }
 
@@ -313,7 +314,7 @@ class GenerateCommand extends Command
 
     protected static function getPolicyStub(string $model): string
     {
-        if (Str::is(Str::of(Utils::getAuthProviderFQCN())->afterLast('\\'), $model)) {
+        if (resolve($model) instanceof Authenticatable) {
             return 'UserPolicy';
         }
 

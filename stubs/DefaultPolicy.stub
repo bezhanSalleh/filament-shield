@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace {{ namespace }};
 
 use {{ auth_model_fqcn }};
@@ -10,97 +12,61 @@ class {{ modelPolicy }}
 {
     use HandlesAuthorization;
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can view any models.
-     */
     public function viewAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ ViewAny }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can view the model.
-     */
     public function view({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ View }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can create models.
-     */
     public function create({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Create }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can update the model.
-     */
     public function update({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Update }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can delete the model.
-     */
     public function delete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Delete }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can bulk delete.
-     */
     public function deleteAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ DeleteAny }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can permanently delete.
-     */
     public function forceDelete({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ ForceDelete }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can permanently bulk delete.
-     */
     public function forceDeleteAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ ForceDeleteAny }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can restore.
-     */
     public function restore({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Restore }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can bulk restore.
-     */
     public function restoreAny({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ RestoreAny }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can replicate.
-     */
     public function replicate({{ auth_model_name }} ${{ auth_model_variable }}, {{ model_name }} ${{ model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Replicate }}');
     }
 
-    /**
-     * Determine whether the {{ auth_model_variable }} can reorder.
-     */
     public function reorder({{ auth_model_name }} ${{ auth_model_variable }}): bool
     {
         return ${{ auth_model_variable }}->can('{{ Reorder }}');
