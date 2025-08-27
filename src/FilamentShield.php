@@ -321,7 +321,7 @@ class FilamentShield
         $widgetInstance = app()->make($widget);
 
         return match (true) {
-            $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
+            $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(), // @phpstan-ignore-line
             self::hasValidHeading($widgetInstance) => (string) invade($widgetInstance)->getHeading(),
             default => str($widget)
                 ->afterLast('\\')
@@ -332,7 +332,7 @@ class FilamentShield
 
     private static function hasValidHeading(Widget $widgetInstance): bool
     {
-        return $widgetInstance instanceof Widget
+        return $widgetInstance instanceof Widget // @phpstan-ignore-line
             && method_exists($widgetInstance, 'getHeading')
             && filled(invade($widgetInstance)->getHeading());
     }

@@ -22,6 +22,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Arrayable;
@@ -38,8 +39,9 @@ class RoleResource extends Resource implements HasShieldPermissions
     use Essentials\HasNavigation;
     use HasShieldFormComponents;
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static string | null $recordTitleAttribute = 'name';
 
+    /** @return array<int, string> */
     public static function getPermissionPrefixes(): array
     {
         return [
@@ -102,7 +104,7 @@ class RoleResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->weight('font-medium')
+                    ->weight(FontWeight::Medium)
                     ->label(__('filament-shield::filament-shield.column.name'))
                     ->formatStateUsing(fn (string $state): string => Str::headline($state))
                     ->searchable(),

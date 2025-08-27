@@ -214,7 +214,6 @@ class SetupCommand extends Command
 
         if (! class_exists($model) || ! (app($model) instanceof Model)) {
             $this->components->error("Model not found: {$model}");
-            /** @phpstan-ignore-next-line */
             exit();
         }
 
