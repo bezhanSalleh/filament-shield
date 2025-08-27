@@ -165,6 +165,11 @@ class RoleResource extends Resource implements HasShieldPermissions
         return Utils::getResourceSlug();
     }
 
+    public static function getCluster(): ?string
+    {
+        return Utils::getResourceCluster();
+    }
+
     public static function getEssentialsPlugin(): ?FilamentShieldPlugin
     {
         return FilamentShieldPlugin::get();

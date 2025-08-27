@@ -5,7 +5,6 @@ namespace BezhanSalleh\FilamentShield\Support;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\FilamentShield;
 use Filament\Facades\Filament;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
@@ -31,41 +30,6 @@ class Utils
     public static function getResourceSlug(): string
     {
         return (string) config('filament-shield.shield_resource.slug');
-    }
-
-    public static function getSubNavigationPosition(): ?SubNavigationPosition
-    {
-        return config('filament-shield.shield_resource.sub_navigation_position', null);
-    }
-
-    public static function isResourceNavigationRegistered(): bool
-    {
-        return config('filament-shield.shield_resource.should_register_navigation', true);
-    }
-
-    public static function getResourceNavigationSort(): ?int
-    {
-        return config('filament-shield.shield_resource.navigation_sort');
-    }
-
-    public static function isResourceNavigationBadgeEnabled(): bool
-    {
-        return config('filament-shield.shield_resource.navigation_badge', true);
-    }
-
-    public static function isScopedToTenant(): bool
-    {
-        return config('filament-shield.shield_resource.is_scoped_to_tenant', true);
-    }
-
-    public static function isResourceNavigationGroupEnabled(): bool
-    {
-        return config('filament-shield.shield_resource.navigation_group', true);
-    }
-
-    public static function isResourceGloballySearchable(): bool
-    {
-        return config('filament-shield.shield_resource.is_globally_searchable', false);
     }
 
     public static function getAuthProviderFQCN(): string
