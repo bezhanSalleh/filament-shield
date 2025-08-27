@@ -2,9 +2,9 @@
 
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Illuminate\Support\Str;
 use ReflectionClass;
+use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 trait CanGeneratePolicy
 {
@@ -51,9 +51,9 @@ trait CanGeneratePolicy
                 return $gates;
             }, []);
 
-        $stubVariables['auth_model_fqcn'] = Utils::getAuthProviderFQCN();
-        $stubVariables['auth_model_name'] = Str::of($stubVariables['auth_model_fqcn'])->afterLast('\\');
-        $stubVariables['auth_model_variable'] = Str::of($stubVariables['auth_model_name'])->camel();
+        $stubVariables['auth_model_fqcn'] = 'Illuminate\\Foundation\\Auth\\User as AuthUser';
+        $stubVariables['auth_model_name'] = 'AuthUser';
+        $stubVariables['auth_model_variable'] = 'authUser';
 
         $reflectionClass = new ReflectionClass($entity['fqcn']::getModel());
         $namespace = $reflectionClass->getNamespaceName();
