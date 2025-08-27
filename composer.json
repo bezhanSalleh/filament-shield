@@ -44,6 +44,7 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^10.1|^11.0",
+        "rector/rector": "^2.1",
         "spatie/laravel-ray": "^1.40"
     },
     "autoload": {
