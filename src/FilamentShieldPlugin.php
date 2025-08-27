@@ -8,7 +8,7 @@ use BezhanSalleh\FilamentShield\Concerns\CanBeCentralApp;
 use BezhanSalleh\FilamentShield\Concerns\CanCustomizeColumns;
 use BezhanSalleh\FilamentShield\Concerns\CanLocalizePermissionLabels;
 use BezhanSalleh\FilamentShield\Concerns\HasSimpleResourcePermissionView;
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\PluginEssentials\Concerns\Plugin as Essentials;
 use Filament\Contracts\Plugin;

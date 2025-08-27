@@ -1,28 +1,20 @@
 <?php
 
-namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
+namespace BezhanSalleh\FilamentShield\Resources\Roles\Pages;
 
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Actions\DeleteAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-class EditRole extends EditRecord
+class CreateRole extends CreateRecord
 {
     protected static string $resource = RoleResource::class;
 
     public Collection $permissions;
 
-    protected function getActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
         $this->permissions = collect($data)
             ->filter(function (mixed $permission, string $key): bool {
@@ -39,11 +31,12 @@ class EditRole extends EditRecord
         return Arr::only($data, ['name', 'guard_name']);
     }
 
-    protected function afterSave(): void
+    protected function afterCreate(): void
     {
         $permissionModels = collect();
         $this->permissions->each(function (string $permission) use ($permissionModels): void {
             $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
+                /** @phpstan-ignore-next-line */
                 'name' => $permission,
                 'guard_name' => $this->data['guard_name'],
             ]));

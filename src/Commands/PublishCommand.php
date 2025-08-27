@@ -2,10 +2,6 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Filament\Panel;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 use Illuminate\Console\Prohibitable;
 use Illuminate\Filesystem\Filesystem;
@@ -17,7 +13,6 @@ use Filament\Support\Commands\Concerns\HasResourcesLocation;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-use function Laravel\Prompts\select;
 use function Laravel\Prompts\confirm;
 
 #[AsCommand(name: 'shield:publish', description: "Publish Shield's Resource.")]
@@ -29,16 +24,6 @@ class PublishCommand extends Command
     use HasPanel;
     use HasCluster;
     use HasResourcesLocation;
-
-
-
-    // /** @var string */
-    // protected $signature = 'shield:publish
-    //     {--C|cluster= : The cluster to create the resource in}
-    //     {--N|nested= : Nest the resource inside another through a relationship}
-    //     {--panel= : The panel to create the resource in}
-    //     {--F|force : Overwrite the contents of the files if they already exist}
-    // ';
 
     protected bool $isNested;
 
@@ -59,8 +44,6 @@ class PublishCommand extends Command
         $this->configureResourcesLocation(question: 'Which namespace would you like to create this resource in?');
         $this->configureParentResource();
 
-        // dd($this->resourcesNamespace, $this->resourcesDirectory);
-
         $roleResourcePath = str(DIRECTORY_SEPARATOR . 'Roles/RoleResource.php')
             ->prepend($this->resourcesDirectory)
             ->replace(['\\', '/'], DIRECTORY_SEPARATOR)
@@ -73,7 +56,7 @@ class PublishCommand extends Command
             }
         }
 
-        $resourcePath = $this->resourcesNamespace . '/Roles';
+        $resourcePath = $this->resourcesDirectory . '/Roles';
         $filesystem->ensureDirectoryExists($resourcePath . '/Pages');
 
         $sourcePath = __DIR__ . '/../Resources/Roles';
@@ -90,15 +73,15 @@ class PublishCommand extends Command
 
         $this->replaceInFile(
             $resourcePath . '/RoleResource.php',
-            'BezhanSalleh\\FilamentShield\\Resources',
-            $newResourceNamespace
+            'BezhanSalleh\\FilamentShield\\Resources\\Roles',
+            $this->resourcesNamespace . '\\Roles'
         );
 
         foreach (['CreateRole', 'EditRole', 'ListRoles', 'ViewRole'] as $page) {
             $this->replaceInFile(
                 $resourcePath . "/Pages/{$page}.php",
-                'BezhanSalleh\\FilamentShield\\Resources',
-                $newResourceNamespace
+                'BezhanSalleh\\FilamentShield\\Resources\\Roles',
+                $this->resourcesNamespace . '\\Roles'
             );
         }
 

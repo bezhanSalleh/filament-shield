@@ -1,13 +1,13 @@
 <?php
 
-namespace BezhanSalleh\FilamentShield\Resources;
+namespace BezhanSalleh\FilamentShield\Resources\Roles;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\CreateRole;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\EditRole;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\ListRoles;
-use BezhanSalleh\FilamentShield\Resources\RoleResource\Pages\ViewRole;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\CreateRole;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\EditRole;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ListRoles;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ViewRole;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
 use BezhanSalleh\PluginEssentials\Concerns\Resource as Essentials;
