@@ -39,7 +39,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     use Essentials\HasNavigation;
     use HasShieldFormComponents;
 
-    protected static string | null $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'name';
 
     /** @return array<int, string> */
     public static function getPermissionPrefixes(): array
