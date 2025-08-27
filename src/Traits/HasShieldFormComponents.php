@@ -122,15 +122,6 @@ trait HasShieldFormComponents
             ->toArray();
     }
 
-    public static function getCustomPermissionOptions(): ?array
-    {
-        return FilamentShield::getCustomPermissions()
-            ->mapWithKeys(fn ($customPermission) => [
-                $customPermission => static::shield()->hasLocalizedPermissionLabels() ? str($customPermission)->headline()->toString() : $customPermission,
-            ])
-            ->toArray();
-    }
-
     public static function getTabFormComponentForResources(): Component
     {
         return static::shield()->hasSimpleResourcePermissionView()
@@ -195,16 +186,16 @@ trait HasShieldFormComponents
 
     public static function getTabFormComponentForCustomPermissions(): Component
     {
-        $options = static::getCustomPermissionOptions();
+        $options = FilamentShield::getCustomPermissions(localizedOrFormatted: static::shield()->hasLocalizedPermissionLabels());
         $count = count($options);
 
-        return Tab::make('custom')
+        return Tab::make('custom_permissions')
             ->label(__('filament-shield::filament-shield.custom'))
             ->visible(fn (): bool => (bool) Utils::isCustomPermissionEntityEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(
-                    name: 'custom_permissions',
+                    name: 'custom_permissions_tab',
                     options: $options,
                 ),
             ]);

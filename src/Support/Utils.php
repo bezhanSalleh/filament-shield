@@ -247,4 +247,10 @@ class Utils
     {
         return config()->get('permission.column_names.team_foreign_key', 'team_id');
     }
+
+    /** @return array<int, string>|array<string, string> */
+    public static function getCustomPermissions(): array
+    {
+        return config('filament-shield.custom_permissions', []);
+    }
 }

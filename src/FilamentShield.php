@@ -14,7 +14,6 @@ use Filament\Widgets\TableWidget;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -26,8 +25,6 @@ class FilamentShield
     use EvaluatesClosures;
 
     protected ?Closure $configurePermissionIdentifierUsing = null;
-
-    public ?Collection $customPermissions = null;
 
     public function configurePermissionIdentifierUsing(Closure $callback): static
     {
@@ -97,6 +94,26 @@ class FilamentShield
             )->name;
 
             static::giveSuperAdminPermission($permission);
+        }
+    }
+
+    public static function generateCustomPermissions(): void
+    {
+        $customPermissions = collect(static::getCustomPermissions())->keys();
+
+        if (Utils::isCustomPermissionEntityEnabled()) {
+
+            if ($customPermissions->isNotEmpty()) {
+                $permissions = $customPermissions
+                    ->map(function (string $permission): string {
+                        return Utils::getPermissionModel()::firstOrCreate(
+                            ['name' => $permission],
+                            ['guard_name' => Utils::getFilamentAuthGuard()]
+                        )->name;
+                    })
+                    ->toArray();
+                static::giveSuperAdminPermission($permissions);
+            }
         }
     }
 
@@ -373,9 +390,6 @@ class FilamentShield
                                 )
                                 ->toString()
                             : $name;
-                        $resourceLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
-                            ? static::getLocalizedResourceLabel($resourceEntity['fqcn'])
-                            : $resourceEntity['model'];
 
                         return [
                             $name => $permissionLabel,
@@ -388,18 +402,27 @@ class FilamentShield
             ->toArray();
     }
 
-    public function getCustomPermissions(): ?Collection
+    public static function getLocalizedOrFormattedCustomPermissionLabel(string $permission): string
     {
+        return Lang::has("shield-permissions.$permission")
+            ? __("shield-permissions.$permission")
+            : Str::of($permission)->headline()->toString();
+    }
 
-        if (blank($this->customPermissions)) {
-            $query = Utils::getPermissionModel()::query();
-            $this->customPermissions = $query
-                ->select('name')
-                ->whereNotIn(DB::raw('lower(name)'), $this->getEntitiesPermissions())
-                ->pluck('name');
-        }
+    /** @return array<string, string> */
+    public static function getCustomPermissions(bool $localizedOrFormatted = false): array
+    {
+        return collect(Utils::getCustomPermissions())
+            ->mapWithKeys(function (string $label, int | string $key) use ($localizedOrFormatted): array {
+                $permission = is_numeric($key) ? $label : $key;
 
-        return $this->customPermissions;
+                return [
+                    Str::of($permission)->snake()->toString() => $localizedOrFormatted
+                        ? static::getLocalizedOrFormattedCustomPermissionLabel($permission)
+                        : Str::of($label)->headline()->toString(),
+                ];
+            })
+            ->toArray();
     }
 
     protected function getEntitiesPermissions(): ?array
@@ -407,7 +430,7 @@ class FilamentShield
         return collect($this->getAllResourcePermissions())->keys()
             ->merge(collect($this->getPages())->map->permission->keys())
             ->merge(collect($this->getWidgets())->map->permission->keys())
-            ->map(fn (string $permission): string => str($permission)->lower()->toString())
+            ->merge(collect($this->getCustomPermissions())->keys())
             ->values()
             ->unique()
             ->toArray();

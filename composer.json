@@ -26,7 +26,6 @@
         "php": "^8.2",
         "bezhansalleh/filament-plugin-essentials": "^1.0@beta",
         "filament/filament": "^4.0",
-        "filament/upgrade": "^4.0",
         "illuminate/contracts": "^11.28|^12.0",
         "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-permission": "^6.0"
@@ -62,8 +61,8 @@
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest --no-coverage",
         "type": "vendor/bin/pest --type-coverage",
-        "format": "vendor/bin/pint",
-        "finalize": "composer format && composer type && composer analyse && composer test"
+        "lint": "vendor/bin/pint",
+        "finalize": "composer lint && composer type && composer analyse && composer test"
     },
     "config": {
         "sort-packages": true,
@@ -83,5 +82,11 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "facade-documenter": {
+            "type": "vcs",
+            "url": "git@github.com:laravel/facade-documenter.git"
+        }
+    }
 }

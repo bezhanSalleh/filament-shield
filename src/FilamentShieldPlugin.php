@@ -20,7 +20,6 @@ class FilamentShieldPlugin implements Plugin
     use CanBeCentralApp;
     use CanCustomizeColumns;
     use CanLocalizePermissionLabels;
-    use Essentials\BelongsToCluster;
     use Essentials\BelongsToParent;
     use Essentials\BelongsToTenant;
     use Essentials\HasGlobalSearch;

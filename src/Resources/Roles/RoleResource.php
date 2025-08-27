@@ -31,7 +31,6 @@ use Illuminate\Validation\Rules\Unique;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
-    use Essentials\BelongsToCluster;
     use Essentials\BelongsToParent;
     use Essentials\BelongsToTenant;
     use Essentials\HasGlobalSearch;

@@ -82,4 +82,6 @@ return [
         'enabled' => true,
     ],
 
+    'custom_permissions' => [],
+
 ];
