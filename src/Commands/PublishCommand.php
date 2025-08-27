@@ -2,32 +2,32 @@
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
+use Filament\Support\Commands\Concerns\CanAskForResource;
+use Filament\Support\Commands\Concerns\HasCluster;
+use Filament\Support\Commands\Concerns\HasPanel;
+use Filament\Support\Commands\Concerns\HasResourcesLocation;
 use Illuminate\Console\Command;
 use Illuminate\Console\Prohibitable;
 use Illuminate\Filesystem\Filesystem;
-use Filament\Support\Commands\Concerns\HasCluster;
-use Filament\Support\Commands\Concerns\HasPanel;
-use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanAskForResource;
-use Filament\Support\Commands\Concerns\HasResourcesLocation;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputOption;
 
 use function Laravel\Prompts\confirm;
 
 #[AsCommand(name: 'shield:publish', description: "Publish Shield's Resource.")]
 class PublishCommand extends Command
 {
-    use Prohibitable;
-    use CanManipulateFiles;
     use CanAskForResource;
-    use HasPanel;
+    use CanManipulateFiles;
     use HasCluster;
+    use HasPanel;
     use HasResourcesLocation;
+    use Prohibitable;
 
     protected bool $isNested;
 
-        /**
+    /**
      * @var ?class-string
      */
     protected ?string $parentResourceFqn = null;
@@ -151,7 +151,7 @@ class PublishCommand extends Command
         $this->configureClusterResourcesLocation();
     }
 
-        protected function configureParentResource(): void
+    protected function configureParentResource(): void
     {
         if (! $this->isNested) {
             return;
