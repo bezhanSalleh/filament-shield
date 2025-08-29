@@ -29,14 +29,13 @@ class InstallCommand extends Command implements PromptsForMissingInput
     /** @var string */
     protected $signature = 'shield:install {panel?} {--tenant}';
 
-
     public function handle(): int
     {
         if ($this->isProhibited()) {
             return Command::FAILURE;
         }
 
-        if ($this->option('tenant') && !Utils::isTenancyEnabled()) {
+        if ($this->option('tenant') && ! Utils::isTenancyEnabled()) {
             $this->components->error('Shield is not configured with tenancy/teams feature.');
             if (! confirm('Would you like to proceed with normal installation?', true)) {
                 return Command::FAILURE;
@@ -54,7 +53,6 @@ class InstallCommand extends Command implements PromptsForMissingInput
         $panel = Filament::getPanel($panelId);
 
         $tenant = $this->option('tenant') ? config()->get('filament-shield.tenant_model') : null;
-
 
         $tenantModelClass = str($tenant)
             ->prepend('\\')

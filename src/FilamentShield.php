@@ -172,9 +172,10 @@ class FilamentShield
                 $name = $this->getPermissionIdentifier($resource);
                 $key = Str::of($resource)
                     ->after('\\Resources')
-                    ->replace('\\','')
+                    ->replace('\\', '')
                     ->snake()
                     ->toString();
+
                 return [
                     $key => [
                         'resource' => "{$name}",

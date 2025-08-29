@@ -258,7 +258,7 @@ class GenerateCommand extends Command
                 $this->counts['permissions'] += collect(
                     Utils::getResourcePermissionPrefixes($resource['fqcn'])
                 )->map(fn (string $permission): string => $permission . '_' . $resource['resource'])
-                ->count();
+                    ->count();
 
             }
         });

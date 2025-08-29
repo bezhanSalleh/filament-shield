@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use Throwable;
-use Filament\Facades\Filament;
-use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Console\Prohibitable;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Process;
-use Symfony\Component\Console\Attribute\AsCommand;
-
+use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use BezhanSalleh\FilamentShield\Stringer;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
+use Filament\Facades\Filament;
+use Illuminate\Console\Command;
+use Illuminate\Console\Prohibitable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Schema;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
@@ -37,9 +35,12 @@ class SetupCommand extends Command
     ';
 
     protected string $callingMethod = 'call';
+
     protected bool $refresh = false;
+
     protected bool $shouldConfigureTenancy = false;
-    protected string | null $tenantModel = null;
+
+    protected ?string $tenantModel = null;
 
     public function handle(): int
     {
@@ -76,13 +77,13 @@ class SetupCommand extends Command
             $this->components->info('Shield has been successfully setup & configured!');
         }
 
-        if (confirm("Would you like to run `shield:install`?", true)) {
+        if (confirm('Would you like to run `shield:install`?', true)) {
             $this->promptForOtherShieldCommands();
         }
 
         $this->components->info('Filament Shield🛡 is now active ✅');
 
-        if ( ! $this->option('starred') && confirm('Would you like to show some love by starring the repo?', true)) {
+        if (! $this->option('starred') && confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/bezhanSalleh/filament-shield');
             }
@@ -137,7 +138,7 @@ class SetupCommand extends Command
 
     protected function configureTenancy(): void
     {
-        if (!$this->shouldConfigureTenancy && ($this->refresh || ! $this->isShieldInstalled())) {
+        if (! $this->shouldConfigureTenancy && ($this->refresh || ! $this->isShieldInstalled())) {
             if (confirm('Do you want to configure Shield for multi-tenancy?', false)) {
                 $this->tenantModel = text(label: 'Please provide the Team/Tenant model (e.g App\\Models\\Team)', required: true);
                 $this->shouldConfigureTenancy = true;
