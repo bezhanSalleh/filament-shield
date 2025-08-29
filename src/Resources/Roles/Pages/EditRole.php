@@ -32,7 +32,7 @@ class EditRole extends EditRecord
             ->flatten()
             ->unique();
 
-        if (Arr::has($data, Utils::getTenantModelForeignKey())) {
+        if (Utils::isTenancyEnabled() && filled($data[Utils::getTenantModelForeignKey()]) && Arr::has($data, Utils::getTenantModelForeignKey())) {
             return Arr::only($data, ['name', 'guard_name', Utils::getTenantModelForeignKey()]);
         }
 

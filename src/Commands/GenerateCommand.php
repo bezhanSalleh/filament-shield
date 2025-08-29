@@ -19,7 +19,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\Select;
 
-#[AsCommand(name: 'shield:generate')]
+#[AsCommand(name: 'shield:generate', description: 'Generate Permissions and/or Policies for Filament entities.')]
 class GenerateCommand extends Command
 {
     use CanGeneratePolicy;
@@ -27,19 +27,10 @@ class GenerateCommand extends Command
     use CanManipulateFiles;
     use Prohibitable;
 
-    /**
-     * The resources to generate permissions or policies for, or should be exclude.
-     */
     protected array $resources = [];
 
-    /**
-     * The pages to generate permissions for, or should be excluded.
-     */
     protected array $pages = [];
 
-    /**
-     * The widgets to generate permissions for, or should be excluded.
-     */
     protected array $widgets = [];
 
     protected string $generatorOption;
@@ -58,6 +49,12 @@ class GenerateCommand extends Command
 
     protected bool $ignoreConfigExclude = false;
 
+    protected array $counts = [
+        'entities' => 0,
+        'policies' => 0,
+        'permissions' => 0,
+    ];
+
     /** @var string */
     public $signature = 'shield:generate
         {--all : Generate permissions/policies for all entities }
@@ -67,14 +64,10 @@ class GenerateCommand extends Command
         {--widget= : One or many widgets separated by comma (,) }
         {--exclude : Exclude the given entities during generation }
         {--ignore-config-exclude : Ignore config `<fg=yellow;options=bold>exclude</>` option during generation }
-        {--minimal : Output minimal amount of info to console}
         {--ignore-existing-policies : Ignore generating policies that already exist }
         {--panel= : Panel ID to get the components(resources, pages, widgets)}
         {--relationships : Generate relationships for the given panel, only works if the panel has tenancy enabled}
     ';
-
-    /** @var string */
-    public $description = 'Generate Permissions and/or Policies for Filament entities.';
 
     public function handle(): int
     {
@@ -116,6 +109,12 @@ class GenerateCommand extends Command
         }
 
         $this->resetConfigExclusionCondition($this->ignoreConfigExclude);
+
+        if (! $this->option('verbose')) {
+            $this->components->twoColumnDetail('# Policies generated', (string) $this->counts['policies']);
+            $this->components->twoColumnDetail('# Permissions generated', (string) $this->counts['permissions']);
+            $this->components->twoColumnDetail('# Entities (Resources, Pages, Widgets) processed', (string) $this->counts['entities']);
+        }
 
         if (Filament::hasTenancy() && Utils::isTenancyEnabled() && $this->option('relationships')) {
             $this->generateRelationships(Filament::getPanel($panel));
@@ -249,9 +248,22 @@ class GenerateCommand extends Command
 
     protected function resourceInfo(array $resources): void
     {
-        if ($this->option('minimal')) {
-            $this->components->info('Successfully generated Permissions & Policies.');
-        } else {
+        collect($resources)->map(function (array $resource): void {
+            $this->counts['entities']++;
+            if ($this->generatorOption !== 'permissions') {
+                $this->counts['policies']++;
+            }
+
+            if ($this->generatorOption !== 'policies') {
+                $this->counts['permissions'] += collect(
+                    Utils::getResourcePermissionPrefixes($resource['fqcn'])
+                )->map(fn (string $permission): string => $permission . '_' . $resource['resource'])
+                ->count();
+
+            }
+        });
+
+        if ($this->option('verbose')) {
             $this->components->info('Successfully generated Permissions & Policies for:');
             $this->table(
                 ['#', 'Resource', 'Policy', 'Permissions'],
@@ -272,9 +284,10 @@ class GenerateCommand extends Command
 
     protected function pageInfo(array $pages): void
     {
-        if ($this->option('minimal')) {
-            $this->components->info('Successfully generated Page Permissions.');
-        } else {
+        $this->counts['entities'] += count($pages);
+        $this->counts['permissions'] += count($pages);
+
+        if ($this->option('verbose')) {
             $this->components->info('Successfully generated Page Permissions for:');
             $this->table(
                 ['#', 'Page', 'Permission'],
@@ -289,9 +302,10 @@ class GenerateCommand extends Command
 
     protected function widgetInfo(array $widgets): void
     {
-        if ($this->option('minimal')) {
-            $this->components->info('Successfully generated Widget Permissions.');
-        } else {
+        $this->counts['entities'] += count($widgets);
+        $this->counts['permissions'] += count($widgets);
+
+        if ($this->option('verbose')) {
             $this->components->info('Successfully generated Widget Permissions for:');
             $this->table(
                 ['#', 'Widget', 'Permission'],

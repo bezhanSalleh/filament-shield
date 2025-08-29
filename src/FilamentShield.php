@@ -170,9 +170,13 @@ class FilamentShield
             })
             ->mapWithKeys(function (string $resource): array {
                 $name = $this->getPermissionIdentifier($resource);
-
+                $key = Str::of($resource)
+                    ->after('\\Resources')
+                    ->replace('\\','')
+                    ->snake()
+                    ->toString();
                 return [
-                    $name => [
+                    $key => [
                         'resource' => "{$name}",
                         'model' => str($resource::getModel())->afterLast('\\')->toString(),
                         'modelFqcn' => str($resource::getModel())->toString(),
@@ -354,8 +358,8 @@ class FilamentShield
     {
         return Str::of($resource)
             ->afterLast('\\')
-            ->beforeLast('Resource')
-            ->replace('\\', '')
+            ->before('Resource')
+            ->prepend(Str::of($resource::getNavigationGroup())->replace(' ', ''))
             ->snake()
             ->replace('_', '::')
             ->toString();

@@ -17,10 +17,7 @@ trait CanRegisterPlugin
         $pluginsArray = "->plugins([\n";
         $pluginsTarget = '->middleware([';
 
-        if ($stringer->contains($shieldPlugin)) {
-            $this->components->warn('Shield plugin is already registered! skipping...');
-        } else {
-
+        if (! $stringer->contains($shieldPlugin)) {
             $stringer
                 ->when(
                     value: ! $stringer->contains($shieldPluginImportStatement),
@@ -60,10 +57,10 @@ trait CanRegisterPlugin
                         )
                 )
                 ->save();
-
             $this->components->info('Shield plugin has been registered successfully!');
 
+        } else {
+            $this->components->warn('Shield plugin is already registered! skipping...');
         }
-
     }
 }
