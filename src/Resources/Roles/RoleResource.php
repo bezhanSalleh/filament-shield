@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Resources\Roles;
 
-use Filament\Panel;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Schemas\Schema;
-use Filament\Facades\Filament;
-use Filament\Actions\EditAction;
-use Filament\Resources\Resource;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\CreateRole;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\EditRole;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ListRoles;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ViewRole;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
+use BezhanSalleh\PluginEssentials\Concerns\Resource as Essentials;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Grid;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Panel;
+use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\Resources\Roles\Pages\EditRole;
-use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ViewRole;
-use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
-use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ListRoles;
-use BezhanSalleh\FilamentShield\Resources\Roles\Pages\CreateRole;
-use BezhanSalleh\PluginEssentials\Concerns\Resource as Essentials;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
