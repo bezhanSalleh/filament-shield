@@ -40,10 +40,10 @@ class PublishCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->configurePanel(question: 'Which panel would you like to publish shield resource in?');
+        $this->configurePanel(question: 'Which panel would you like to publish the shield resource in?');
         $this->configureIsNested();
         $this->configureCluster();
-        $this->configureResourcesLocation(question: 'Which namespace would you like to create this resource in?');
+        $this->configureResourcesLocation(question: 'Which namespace would you like to publish the shield resource in?');
         $this->configureParentResource();
 
         $roleResourcePath = str(DIRECTORY_SEPARATOR . 'Roles/RoleResource.php')
@@ -102,7 +102,7 @@ class PublishCommand extends Command
                 name: 'cluster',
                 shortcut: 'C',
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'The cluster to create the resource in',
+                description: 'The cluster to publish the resource in',
             ),
             new InputOption(
                 name: 'nested',
@@ -116,7 +116,7 @@ class PublishCommand extends Command
                 name: 'panel',
                 shortcut: null,
                 mode: InputOption::VALUE_REQUIRED,
-                description: 'The panel to create the resource in',
+                description: 'The panel to publish the resource in',
             ),
             new InputOption(
                 name: 'force',

@@ -24,9 +24,10 @@
     ],
     "require": {
         "php": "^8.2",
-        "bezhansalleh/filament-plugin-essentials": "^1.0@beta",
+        "bezhansalleh/filament-plugin-essentials": "dev-main",
         "filament/filament": "^4.0",
         "illuminate/contracts": "^11.28|^12.0",
+        "illuminate/support": "*",
         "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-permission": "^6.0"
     },
@@ -85,10 +86,13 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "repositories": {
-        "facade-documenter": {
-            "type": "vcs",
-            "url": "git@github.com:laravel/facade-documenter.git"
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/Users/bsalleh/Sites/packages/filament-plugin-essentials",
+            "options": {
+                "symlink": true
+            }
         }
-    }
+    ]
 }
