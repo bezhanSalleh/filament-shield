@@ -4,32 +4,31 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Resources\Roles;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-use BezhanSalleh\FilamentShield\Resources\Roles\Pages\CreateRole;
-use BezhanSalleh\FilamentShield\Resources\Roles\Pages\EditRole;
-use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ListRoles;
-use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ViewRole;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
-use BezhanSalleh\PluginEssentials\Concerns\Resource as Essentials;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Panel;
-use Filament\Resources\Resource;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
+use Filament\Facades\Filament;
+use Filament\Actions\EditAction;
+use Filament\Resources\Resource;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\EditRole;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ViewRole;
+use BezhanSalleh\FilamentShield\Traits\HasShieldFormComponents;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\ListRoles;
+use BezhanSalleh\FilamentShield\Resources\Roles\Pages\CreateRole;
+use BezhanSalleh\PluginEssentials\Concerns\Resource as Essentials;
 
 class RoleResource extends Resource implements HasShieldPermissions
 {
@@ -82,8 +81,8 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->label(__('filament-shield::filament-shield.field.team'))
                                     ->placeholder(__('filament-shield::filament-shield.field.team.placeholder'))
                                     /** @phpstan-ignore-next-line */
-                                    ->default([Filament::getTenant()?->id])
-                                    ->options(fn (): Arrayable => in_array(Utils::getTenantModel(), [null, '', '0'], true) ? collect() : Utils::getTenantModel()::pluck('name', 'id'))
+                                    ->default(Filament::getTenant()?->id)
+                                    ->options(fn (): array => in_array(Utils::getTenantModel(), [null, '', '0'], true) ? [] : Utils::getTenantModel()::pluck('name', 'id')->toArray())
                                     ->visible(fn (): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled())
                                     ->dehydrated(fn (): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled()),
                                 static::getSelectAllFormComponent(),
@@ -124,7 +123,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))
                     ->counts('permissions')
-                    ->colors(['success']),
+                    ->color('primary'),
                 TextColumn::make('updated_at')
                     ->label(__('filament-shield::filament-shield.column.updated_at'))
                     ->dateTime(),

@@ -353,7 +353,7 @@ class FilamentShield
     protected function getDefaultPermissionIdentifier(string $resource): string
     {
         return Str::of($resource)
-            ->afterLast('Resources\\')
+            ->afterLast('\\')
             ->beforeLast('Resource')
             ->replace('\\', '')
             ->snake()
@@ -420,13 +420,14 @@ class FilamentShield
             ->toArray();
     }
 
-    protected function getEntitiesPermissions(): ?array
+    public function getEntitiesPermissions(): ?array
     {
         return collect($this->getAllResourcePermissions())->keys()
             ->merge(collect(static::getPages())->map->permission->keys())
             ->merge(collect(static::getWidgets())->map->permission->keys())
             ->merge(collect(static::getCustomPermissions())->keys())
             ->values()
+            ->flatten()
             ->unique()
             ->toArray();
     }
