@@ -22,7 +22,7 @@ trait CanMakePanelTenantable
         if ($panel->hasTenancy()) {
             $this->activateTenancy($panelPath);
         }
-        
+
         $this->components->info("Panel `{$panel->getId()}` is now tenantable.");
     }
 
