@@ -24,7 +24,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "bezhansalleh/filament-plugin-essentials": "dev-main",
+        "bezhansalleh/filament-plugin-essentials": "^1.0",
         "filament/filament": "^4.0",
         "illuminate/contracts": "^11.28|^12.0",
         "illuminate/support": "*",
@@ -85,14 +85,5 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/Users/bsalleh/Sites/packages/filament-plugin-essentials",
-            "options": {
-                "symlink": true
-            }
-        }
-    ]
+    "prefer-stable": true
 }
