@@ -315,7 +315,7 @@ class GenerateCommand extends Command
     protected static function getPolicyStub(string $model): string
     {
         if (resolve($model) instanceof Authenticatable) {
-            return 'UserPolicy';
+            return 'AuthenticatablePolicy';
         }
 
         return 'DefaultPolicy';

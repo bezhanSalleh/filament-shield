@@ -67,8 +67,10 @@ return [
         'single_parameter_methods' => [
             'viewAny',
             'create',
-            'replicate',
-            'reorder',
+            'deleteAny',
+            'forceDeleteAny',
+            'restoreAny',
+            'reorder'
         ],
     ],
 

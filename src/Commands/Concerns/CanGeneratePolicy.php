@@ -7,6 +7,7 @@ namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 use ReflectionClass;
 use Illuminate\Support\Str;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Support\ShieldConfig;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 
 trait CanGeneratePolicy
@@ -50,10 +51,18 @@ trait CanGeneratePolicy
 
     protected function generatePolicyStubVariables(array $entity): array
     {
+        $stubVariables = [];
+        $policyConfig = ShieldConfig::init()->policies;
+        $singleParameterMethods = $policyConfig->single_parameter_methods ?? [];
         // since now the return data from resources is structured we can use it directly via key
         // but the kye needs to be first decided upon, what should be the key actually
-        $stubVariables = FilamentShield::getResourcePolicyActionsWithPermissions($entity['resourceFqcn']);
-        dd($stubVariables);
+        foreach(FilamentShield::getResourcePolicyActionsWithPermissions($entity['resourceFqcn']) as $method => $permission) {
+            $stubVariables[$method] = [
+                'stub' => in_array($method, $singleParameterMethods) ? 'SingleParamMethod': 'MultiParamMethod',
+                'permission' => $permission,
+            ];
+        }
+
         $stubVariables['auth_model_fqcn'] = 'Illuminate\\Foundation\\Auth\\User as AuthUser';
         $stubVariables['auth_model_name'] = 'AuthUser';
         $stubVariables['auth_model_variable'] = 'authUser';
