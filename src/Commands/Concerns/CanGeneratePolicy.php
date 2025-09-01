@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Illuminate\Support\Str;
 use ReflectionClass;
+use Illuminate\Support\Str;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 
 trait CanGeneratePolicy
 {
@@ -24,7 +25,7 @@ trait CanGeneratePolicy
 
     protected function generatePolicyPath(array $entity): string
     {
-        $path = (new ReflectionClass($entity['fqcn']::getModel()))->getFileName();
+        $path = (new ReflectionClass($entity['modelFqcn']))->getFileName();
 
         if (Str::of($path)->contains(['vendor', 'src'])) {
             $basePolicyPath = app_path(
@@ -49,18 +50,15 @@ trait CanGeneratePolicy
 
     protected function generatePolicyStubVariables(array $entity): array
     {
-        $stubVariables = collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-            ->reduce(function (array $gates, string $permission) use ($entity) {
-                $gates[Str::studly($permission)] = $permission . '_' . $entity['resource'];
-
-                return $gates;
-            }, []);
-
+        // since now the return data from resources is structured we can use it directly via key
+        // but the kye needs to be first decided upon, what should be the key actually
+        $stubVariables = FilamentShield::getResourcePolicyActionsWithPermissions($entity['resourceFqcn']);
+        dd($stubVariables);
         $stubVariables['auth_model_fqcn'] = 'Illuminate\\Foundation\\Auth\\User as AuthUser';
         $stubVariables['auth_model_name'] = 'AuthUser';
         $stubVariables['auth_model_variable'] = 'authUser';
 
-        $reflectionClass = new ReflectionClass($entity['fqcn']::getModel());
+        $reflectionClass = new ReflectionClass($entity['modelFqcn']);
         $namespace = $reflectionClass->getNamespaceName();
         $path = $reflectionClass->getFileName();
 

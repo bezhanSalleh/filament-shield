@@ -7,6 +7,7 @@ return [
         'cluster' => null,
     ],
 
+    'auth_model' => '',
     'tenant_model' => null,
 
     'auth_provider_model' => [
@@ -23,6 +24,52 @@ return [
     'panel_user' => [
         'enabled' => true,
         'name' => 'panel_user',
+    ],
+
+    'permissions' => [
+        'separator' => ':',
+        'case' => 'pascal', // sanke, kebab, pascal, upper_snake, lower_snake
+        'generate' => true,
+        'resource' => [
+            'subject' => 'model', //class
+            // prefix for resources are resolved from policy methods
+        ],
+        'page' => [
+            'subject' => 'class', // model if you page has $page::getModel(),
+            'prefix' => 'view',
+        ],
+        'widget' => [
+            'subject' => 'class', // model if you widget has $widget::getModel(),
+            'prefix' => 'view',
+        ],
+        'localization' => [
+            'enabled' => false,
+            'key' => 'filament-shield::filament-shield'
+        ]
+    ],
+
+    'policies' => [
+        'paths' => [app_path('Policies')],
+        'merge' => true,
+        'generate' => true,
+        'methods' => [
+            'viewAny',
+            'view',
+            'create',
+            'update',
+            'delete',
+            'restore',
+            'forceDelete',
+            'replicate',
+            'reorder',
+            'viewAny'
+        ],
+        'single_parameter_methods' => [
+            'viewAny',
+            'create',
+            'replicate',
+            'reorder',
+        ],
     ],
 
     'permission_prefixes' => [
@@ -52,7 +99,7 @@ return [
         'custom_permissions' => false,
     ],
 
-    'generator' => [
+    'generator' => [ // should be replaced now
         'option' => 'policies_and_permissions',
         'policy_directory' => 'Policies',
         'policy_namespace' => 'Policies',
@@ -60,6 +107,8 @@ return [
 
     'exclude' => [
         'enabled' => true,
+
+        'resources' => [],
 
         'pages' => [
             'Dashboard',
@@ -69,7 +118,6 @@ return [
             'AccountWidget', 'FilamentInfoWidget',
         ],
 
-        'resources' => [],
     ],
 
     'discovery' => [
@@ -78,9 +126,7 @@ return [
         'discover_all_pages' => false,
     ],
 
-    'register_role_policy' => [
-        'enabled' => true,
-    ],
+    'register_role_policy' => true,
 
     'custom_permissions' => [],
 

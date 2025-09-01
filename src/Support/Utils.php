@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\FilamentShield;
-use Filament\Facades\Filament;
 use Filament\Panel;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use Filament\Facades\Filament;
+use Illuminate\Filesystem\Filesystem;
 use Spatie\Permission\PermissionRegistrar;
+use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\ShieldConfig;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 class Utils
 {
@@ -145,7 +146,7 @@ class Utils
         config(['filament-shield.exclude.enabled' => false]);
     }
 
-    public static function getExcludedResouces(): array
+    public static function getExcludedResouces(): ?array
     {
         return config('filament-shield.exclude.resources');
     }
@@ -167,7 +168,7 @@ class Utils
 
     public static function isRolePolicyRegistered(): bool
     {
-        return static::isRolePolicyGenerated() && config('filament-shield.register_role_policy.enabled', false);
+        return static::isRolePolicyGenerated() && config('filament-shield.register_role_policy', false);
     }
 
     public static function doesResourceHaveCustomPermissions(string $resourceClass): bool

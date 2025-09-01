@@ -126,7 +126,7 @@ class GenerateCommand extends Command
 
     protected function determinGeneratorOptionAndEntities(): void
     {
-        $this->generatorOption = $this->option('option') ?? Utils::getGeneratorOption();
+        $this->generatorOption = $this->option('option') ?? FilamentShield::getGeneratorOption();
 
         $this->ignoreConfigExclude = $this->option('ignore-config-exclude') ?? false;
 
@@ -152,11 +152,11 @@ class GenerateCommand extends Command
         return collect(FilamentShield::getResources())
             ->filter(function (array $resource): bool {
                 if ($this->excludeResources) {
-                    return ! in_array(Str::of($resource['fqcn'])->afterLast('\\'), $this->resources);
+                    return ! in_array(Str::of($resource['resourceFqcn'])->afterLast('\\'), $this->resources);
                 }
 
                 if ($this->onlyResources) {
-                    return in_array(Str::of($resource['fqcn'])->afterLast('\\'), $this->resources);
+                    return in_array(Str::of($resource['resourceFqcn'])->afterLast('\\'), $this->resources);
                 }
 
                 return true;
@@ -169,11 +169,11 @@ class GenerateCommand extends Command
         return collect(FilamentShield::getPages())
             ->filter(function (array $page): bool {
                 if ($this->excludePages) {
-                    return ! in_array($page['class'], $this->pages);
+                    return ! in_array(Str::of($page['pageFqcn'])->afterLast('\\'), $this->pages);
                 }
 
                 if ($this->onlyPages) {
-                    return in_array($page['class'], $this->pages);
+                    return in_array(Str::of($page['pageFqcn'])->afterLast('\\'), $this->pages);
                 }
 
                 return true;
@@ -186,11 +186,11 @@ class GenerateCommand extends Command
         return collect(FilamentShield::getWidgets())
             ->filter(function (array $widget): bool {
                 if ($this->excludeWidgets) {
-                    return ! in_array($widget['class'], $this->widgets);
+                    return ! in_array(Str::of($widget['class'])->afterLast('\\'), $this->widgets);
                 }
 
                 if ($this->onlyWidgets) {
-                    return in_array($widget['class'], $this->widgets);
+                    return in_array(Str::of($widget['class'])->afterLast('\\'), $this->widgets);
                 }
 
                 return true;
@@ -203,13 +203,14 @@ class GenerateCommand extends Command
         return collect($resources)
             ->values()
             ->each(function (array $entity): void {
+
                 if ($this->generatorOption === 'policies_and_permissions') {
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
                     if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['modelFqcn']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
-                    FilamentShield::generateForResource($entity);
+                    FilamentShield::generateForResource($entity['resourceFqcn']);
                 }
 
                 if ($this->generatorOption === 'policies') {
@@ -221,7 +222,7 @@ class GenerateCommand extends Command
                 }
 
                 if ($this->generatorOption === 'permissions') {
-                    FilamentShield::generateForResource($entity);
+                    FilamentShield::generateForResource($entity['resourceFqcn']);
                 }
             });
     }
@@ -231,8 +232,7 @@ class GenerateCommand extends Command
         return collect($pages)
             ->values()
             ->each(function (array $page): void {
-                FilamentShield::generateForPage($page['permission']);
-
+                FilamentShield::generateForPage(array_key_first($page['permissions']));
             });
     }
 
@@ -241,8 +241,7 @@ class GenerateCommand extends Command
         return collect($widgets)
             ->values()
             ->each(function (array $widget): void {
-                FilamentShield::generateForWidget($widget['permission']);
-
+                FilamentShield::generateForWidget(array_key_first($widget['permissions']));
             });
     }
 
@@ -255,10 +254,7 @@ class GenerateCommand extends Command
             }
 
             if ($this->generatorOption !== 'policies') {
-                $this->counts['permissions'] += collect(
-                    Utils::getResourcePermissionPrefixes($resource['fqcn'])
-                )->map(fn (string $permission): string => $permission . '_' . $resource['resource'])
-                    ->count();
+                $this->counts['permissions'] += count(FilamentShield::getResourcePermissions($resource['resourceFqcn']));
 
             }
         });
@@ -273,9 +269,7 @@ class GenerateCommand extends Command
                     'Policy' => "{$resource['model']}Policy.php" . ($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
                     'Permissions' => implode(
                         ',' . PHP_EOL,
-                        collect(
-                            Utils::getResourcePermissionPrefixes($resource['fqcn'])
-                        )->map(fn (string $permission): string => $permission . '_' . $resource['resource'])->toArray()
+                        FilamentShield::getResourcePermissions($resource['resourceFqcn'])
                     ) . ($this->generatorOption !== 'policies' ? ' ✅' : ' ❌'),
                 ])
             );
