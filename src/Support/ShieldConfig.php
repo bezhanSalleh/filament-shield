@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
 
 class ShieldConfig extends Fluent
@@ -14,26 +13,27 @@ class ShieldConfig extends Fluent
     public function __construct(array $attributes = [])
     {
         foreach ($attributes as $key => $value) {
-        if (is_array($value)) {
-            if (empty($value)) {
-                // Empty arrays behave like "not set"
-                $this->attributes[$key] = [];
-                continue;
-            }
+            if (is_array($value)) {
+                if (empty($value)) {
+                    // Empty arrays behave like "not set"
+                    $this->attributes[$key] = [];
 
-            $isAssoc = array_keys($value) !== range(0, count($value) - 1);
+                    continue;
+                }
 
-            if ($isAssoc) {
-                // Assoc arrays → treat as option bags
-                $this->attributes[$key] = new self($value);
+                $isAssoc = array_keys($value) !== range(0, count($value) - 1);
+
+                if ($isAssoc) {
+                    // Assoc arrays → treat as option bags
+                    $this->attributes[$key] = new self($value);
+                } else {
+                    // Sequential arrays → keep as is
+                    $this->attributes[$key] = $value;
+                }
             } else {
-                // Sequential arrays → keep as is
                 $this->attributes[$key] = $value;
             }
-        } else {
-            $this->attributes[$key] = $value;
         }
-    }
     }
 
     public static function init(): self
