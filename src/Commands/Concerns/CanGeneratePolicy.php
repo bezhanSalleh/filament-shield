@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
-use BezhanSalleh\FilamentShield\Support\ShieldConfig;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use RuntimeException;
 
 trait CanGeneratePolicy
 {
@@ -30,33 +30,27 @@ trait CanGeneratePolicy
         $path = (new ReflectionClass($entity['modelFqcn']))->getFileName();
 
         if (Str::of($path)->contains(['vendor', 'src'])) {
-            $basePolicyPath = app_path(
-                (string) Str::of($entity['model'])
+            return Str::of($entity['model'])
                     ->prepend(str(Utils::getPolicyPath())->append('\\'))
                     ->replace('\\', DIRECTORY_SEPARATOR)
-                    ->toString(),
-            );
-
-            return "{$basePolicyPath}Policy.php";
+                    ->append('Policy.php')
+                    ->toString();
         }
 
         /** @phpstan-ignore-next-line */
-        $basePath = Str::of($path)
-            ->replace('Models', Utils::getPolicyPath())
+        return Str::of($path)
+            ->replace('Models', Str::of($this->resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString())
             ->replaceLast('.php', 'Policy.php')
             ->replace('\\', DIRECTORY_SEPARATOR)
             ->toString();
-
-        return $basePath;
     }
 
     protected function generatePolicyStubVariables(array $entity): array
     {
         $stubVariables = [];
-        $policyConfig = ShieldConfig::init()->policies;
+        $policyConfig = Utils::getConfig()->policies;
         $singleParameterMethods = $policyConfig->single_parameter_methods ?? [];
-        // since now the return data from resources is structured we can use it directly via key
-        // but the kye needs to be first decided upon, what should be the key actually
+
         foreach (FilamentShield::getResourcePolicyActionsWithPermissions($entity['resourceFqcn']) as $method => $permission) {
             $stubVariables[$method] = [
                 'stub' => resolve($entity['modelFqcn']) instanceof Authenticatable ? 'SingleParamMethod' : (in_array($method, $singleParameterMethods) ? 'SingleParamMethod' : 'MultiParamMethod'),
@@ -72,14 +66,52 @@ trait CanGeneratePolicy
         $namespace = $reflectionClass->getNamespaceName();
         $path = $reflectionClass->getFileName();
 
+        $policyNamespace = Str::of($this->resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString();
+
         $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
-            ? 'App\\' . Utils::getPolicyNamespace()
-            : Str::of($namespace)->replace('Models', Utils::getPolicyNamespace()); /** @phpstan-ignore-line */
+            ? $this->resolveNamespaceFromPath(Utils::getPolicyPath())
+            : Str::of($namespace)->replace('Models', $policyNamespace)->toString(); /** @phpstan-ignore-line */
+
         $stubVariables['model_name'] = $entity['model'];
         $stubVariables['model_fqcn'] = $namespace . '\\' . $entity['model'];
         $stubVariables['model_variable'] = Str::of($entity['model'])->camel();
         $stubVariables['modelPolicy'] = "{$entity['model']}Policy";
 
         return $stubVariables;
+    }
+
+    protected function resolveNamespaceFromPath(string $configuredPath): string
+    {
+        // Normalize separators
+        $configuredPath = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $configuredPath);
+
+        // Only prepend base_path if it's relative
+        if (! preg_match('/^[a-zA-Z]:' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', $configuredPath)
+            && ! Str::startsWith($configuredPath, DIRECTORY_SEPARATOR)) {
+            $configuredPath = base_path($configuredPath);
+        }
+
+        $composer = json_decode(file_get_contents(base_path('composer.json')), true);
+        $psr4 = $composer['autoload']['psr-4'] ?? [];
+
+        foreach ($psr4 as $namespace => $base) {
+            $basePath = base_path(str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $base));
+            $basePath = rtrim($basePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $checkPath = rtrim($configuredPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+            if (strtolower($checkPath) === strtolower($basePath) || Str::startsWith(strtolower($checkPath), strtolower($basePath))) {
+                $relative = Str::after($checkPath, $basePath);
+                $relative = rtrim($relative, DIRECTORY_SEPARATOR);
+
+                $ns = rtrim($namespace, '\\');
+                if ($relative) {
+                    $ns .= '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relative);
+                }
+
+                return $ns;
+            }
+        }
+
+        throw new RuntimeException("Configured path does not match any PSR-4 mapping: {$configuredPath}");
     }
 }

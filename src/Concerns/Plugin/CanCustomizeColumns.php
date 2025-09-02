@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BezhanSalleh\FilamentShield\Concerns;
+namespace BezhanSalleh\FilamentShield\Concerns\Plugin;
 
 trait CanCustomizeColumns
 {

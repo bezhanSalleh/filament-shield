@@ -1,18 +1,22 @@
 <?php
 
 return [
+
     'shield_resource' => [
         'slug' => 'shield/roles',
         'show_model_path' => true,
         'cluster' => null,
+        'tabs' => [
+            'pages' => true,
+            'widgets' => true,
+            'resources' => true,
+            'custom_permissions' => false,
+        ],
     ],
 
-    'auth_model' => '',
     'tenant_model' => null,
 
-    'auth_provider_model' => [
-        'fqcn' => 'App\\Models\\User',
-    ],
+    'auth_provider_model' => 'App\\Models\\User',
 
     'super_admin' => [
         'enabled' => true,
@@ -49,7 +53,7 @@ return [
     ],
 
     'policies' => [
-        'paths' => [app_path('Policies')],
+        'path' => app_path('Policies'),
         'merge' => true,
         'generate' => true,
         'methods' => [
@@ -74,41 +78,13 @@ return [
         ],
     ],
 
-    'permission_prefixes' => [
-        'resource' => [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'restore',
-            'restore_any',
-            'replicate',
-            'reorder',
-            'delete',
-            'delete_any',
-            'force_delete',
-            'force_delete_any',
-        ],
-
-        'page' => 'page',
-        'widget' => 'widget',
-    ],
-
-    'entities' => [
-        'pages' => true,
-        'widgets' => true,
-        'resources' => true,
-        'custom_permissions' => false,
-    ],
-
-    'generator' => [ // should be replaced now
+    'generator' => [ // TODO: should be replaced now
         'option' => 'policies_and_permissions',
         'policy_directory' => 'Policies',
         'policy_namespace' => 'Policies',
     ],
 
     'exclude' => [
-        'enabled' => true,
 
         'resources' => [],
 

@@ -34,7 +34,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getLocalizedResourceLabel(\Filament\Resources\Resource $resource)
  * @method static string getLocalizedPageLabel(\Filament\Pages\Page $page)
  * @method static string getLocalizedWidgetLabel(\Filament\Widgets\Widget $widget)
- * @method static string getGeneratorOption()
  * @method static void prohibitDestructiveCommands(bool $prohibit = true)
  * @method static mixed evaluate(mixed $value, array $namedInjections = [], array $typedInjections = [])
  *

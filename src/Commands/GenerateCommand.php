@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\note;
 use function Laravel\Prompts\select;
 
 #[AsCommand(name: 'shield:generate', description: 'Generate Permissions and/or Policies for Filament entities.')]
@@ -34,7 +35,7 @@ class GenerateCommand extends Command
 
     protected array $widgets = [];
 
-    protected string $generatorOption;
+    protected ?string $generatorOption = null;
 
     protected bool $excludeResources = false;
 
@@ -47,8 +48,6 @@ class GenerateCommand extends Command
     protected bool $onlyPages = false;
 
     protected bool $onlyWidgets = false;
-
-    protected bool $ignoreConfigExclude = false;
 
     protected array $counts = [
         'entities' => 0,
@@ -64,7 +63,6 @@ class GenerateCommand extends Command
         {--page= : One or many pages separated by comma (,) }
         {--widget= : One or many widgets separated by comma (,) }
         {--exclude : Exclude the given entities during generation }
-        {--ignore-config-exclude : Ignore config `<fg=yellow;options=bold>exclude</>` option during generation }
         {--ignore-existing-policies : Ignore generating policies that already exist }
         {--panel= : Panel ID to get the components(resources, pages, widgets)}
         {--relationships : Generate relationships for the given panel, only works if the panel has tenancy enabled}
@@ -81,17 +79,21 @@ class GenerateCommand extends Command
             options: collect(Filament::getPanels())->keys()->toArray()
         );
 
-        confirm('Would you like to select what to generate (permissions, policies or both) ?', default: true) ?
-            $this->input->setOption('option', Select(
+        $this->generatorOption = $this->option('option');
+
+        if (blank($this->generatorOption) && confirm('Would you like to select what to generate (permissions, policies or both) ?', default: true)) {
+            $this->generatorOption = Select(
                 label: 'What do you want to generate?',
                 options: [
                     'policies_and_permissions' => 'Policies & Permissions',
                     'policies' => 'Policies only',
                     'permissions' => 'Permissions only',
                 ],
-                default: FilamentShield::getGeneratorOption(),
-            )) :
-            $this->components->info('Continuing with the config generator option: ' . FilamentShield::getGeneratorOption());
+                default: Utils::getGeneratorOption(),
+            );
+        } else {
+            $this->generatorOption = Utils::getGeneratorOption();
+        }
 
         Filament::setCurrentPanel(Filament::getPanel($panel));
 
@@ -100,8 +102,6 @@ class GenerateCommand extends Command
         if ($this->option('exclude') && blank($this->option('resource')) && blank($this->option('page')) && blank($this->option('widget'))) {
             $this->components->error('No entites provided for the generators ...');
             $this->components->alert('Generation skipped');
-
-            $this->resetConfigExclusionCondition($this->ignoreConfigExclude);
 
             return Command::INVALID;
         }
@@ -121,32 +121,23 @@ class GenerateCommand extends Command
             $this->widgetInfo($widgets->toArray());
         }
 
-        $this->resetConfigExclusionCondition($this->ignoreConfigExclude);
-
-        if (! $this->option('verbose')) {
-            $this->components->twoColumnDetail('# Policies generated', (string) $this->counts['policies']);
-            $this->components->twoColumnDetail('# Permissions generated', (string) $this->counts['permissions']);
-            $this->components->twoColumnDetail('# Entities (Resources, Pages, Widgets) processed', (string) $this->counts['entities']);
-        }
-
         if (Filament::hasTenancy() && Utils::isTenancyEnabled() && $this->option('relationships')) {
             $this->generateRelationships(Filament::getPanel($panel));
             $this->components->info('Successfully generated relationships for the given panel.');
         }
+
+        $this->newLine();
+
+        note('<fg=green;options=bold>Summary:</>');
+        $this->components->twoColumnDetail('# Policies generated', (string) $this->counts['policies']);
+        $this->components->twoColumnDetail('# Permissions generated', (string) $this->counts['permissions']);
+        $this->components->twoColumnDetail('# Entities (Resources, Pages, Widgets) processed', (string) $this->counts['entities']);
 
         return Command::SUCCESS;
     }
 
     protected function determinGeneratorOptionAndEntities(): void
     {
-        $this->generatorOption = $this->option('option') ?? FilamentShield::getGeneratorOption();
-
-        $this->ignoreConfigExclude = $this->option('ignore-config-exclude') ?? false;
-
-        if ($this->ignoreConfigExclude && Utils::isGeneralExcludeEnabled()) {
-            Utils::disableGeneralExclude();
-        }
-
         $this->resources = filled($this->option('resource')) ? explode(',', $this->option('resource')) : [];
         $this->pages = filled($this->option('page')) ? explode(',', $this->option('page')) : [];
         $this->widgets = filled($this->option('widget')) ? explode(',', $this->option('widget')) : [];
@@ -223,7 +214,7 @@ class GenerateCommand extends Command
                     if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['modelFqcn']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
-                    FilamentShield::generateForResource($entity['resourceFqcn']);
+                    Utils::generateForResource($entity['resourceFqcn']);
                 }
 
                 if ($this->generatorOption === 'policies') {
@@ -235,7 +226,7 @@ class GenerateCommand extends Command
                 }
 
                 if ($this->generatorOption === 'permissions') {
-                    FilamentShield::generateForResource($entity['resourceFqcn']);
+                    Utils::generateForResource($entity['resourceFqcn']);
                 }
             });
     }
@@ -246,7 +237,7 @@ class GenerateCommand extends Command
             ->values()
             ->each(function (array $page): void {
                 if ($this->generatorOption === 'permissions') {
-                    FilamentShield::generateForPage(array_key_first($page['permissions']));
+                    Utils::generateForPageOrWidget(array_key_first($page['permissions']));
                 }
             });
     }
@@ -257,7 +248,7 @@ class GenerateCommand extends Command
             ->values()
             ->each(function (array $widget): void {
                 if ($this->generatorOption === 'permissions') {
-                    FilamentShield::generateForWidget(array_key_first($widget['permissions']));
+                    Utils::generateForPageOrWidget(array_key_first($widget['permissions']));
                 }
             });
     }
@@ -266,18 +257,22 @@ class GenerateCommand extends Command
     {
         collect($resources)->map(function (array $resource): void {
             $this->counts['entities']++;
-            if ($this->generatorOption !== 'permissions') {
+            if ($this->generatorOption === 'policies_and_permissions') {
+                $this->counts['policies']++;
+                $this->counts['permissions'] += count(FilamentShield::getResourcePermissions($resource['resourceFqcn']));
+            }
+
+            if ($this->generatorOption === 'policies') {
                 $this->counts['policies']++;
             }
 
-            if ($this->generatorOption !== 'policies') {
+            if ($this->generatorOption === 'permissions') {
                 $this->counts['permissions'] += count(FilamentShield::getResourcePermissions($resource['resourceFqcn']));
-
             }
         });
 
         if ($this->option('verbose')) {
-            $this->components->info('Successfully generated Permissions & Policies for:');
+
             $this->table(
                 ['#', 'Resource', 'Policy', 'Permissions'],
                 collect($resources)->map(fn (array $resource, int $key): array => [
@@ -296,16 +291,18 @@ class GenerateCommand extends Command
     protected function pageInfo(array $pages): void
     {
         $this->counts['entities'] += count($pages);
-        $this->counts['permissions'] += count($pages);
+        if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
+            $this->counts['permissions'] += count($pages);
+        }
 
-        if ($this->option('verbose')) {
-            $this->components->info('Successfully generated Page Permissions for:');
+        if ($this->option('verbose') && in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
+
             $this->table(
                 ['#', 'Page', 'Permission'],
                 collect($pages)->map(fn (array $page, int $key): array => [
                     '#' => $key + 1,
-                    'Page' => $page['class'],
-                    'Permission' => $page['permission'],
+                    'Page' => $page['pageFqcn'],
+                    'Permission' => array_key_first($page['permissions']),
                 ])
             );
         }
@@ -314,16 +311,18 @@ class GenerateCommand extends Command
     protected function widgetInfo(array $widgets): void
     {
         $this->counts['entities'] += count($widgets);
-        $this->counts['permissions'] += count($widgets);
 
-        if ($this->option('verbose')) {
-            $this->components->info('Successfully generated Widget Permissions for:');
+        if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
+            $this->counts['permissions'] += count($widgets);
+        }
+
+        if ($this->option('verbose') && in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
             $this->table(
                 ['#', 'Widget', 'Permission'],
                 collect($widgets)->map(fn (array $widget, int $key): array => [
                     '#' => $key + 1,
-                    'Widget' => $widget['class'],
-                    'Permission' => $widget['permission'],
+                    'Widget' => $widget['widgetFqcn'],
+                    'Permission' => array_key_first($widget['permissions']),
                 ])
             );
         }
@@ -336,12 +335,5 @@ class GenerateCommand extends Command
         }
 
         return 'DefaultPolicy';
-    }
-
-    protected function resetConfigExclusionCondition(bool $condition): void
-    {
-        if ($condition) {
-            Utils::enableGeneralExclude();
-        }
     }
 }

@@ -14,7 +14,7 @@ class ShieldConfig extends Fluent
     {
         foreach ($attributes as $key => $value) {
             if (is_array($value)) {
-                if (empty($value)) {
+                if ($value === []) {
                     // Empty arrays behave like "not set"
                     $this->attributes[$key] = [];
 
@@ -38,7 +38,7 @@ class ShieldConfig extends Fluent
 
     public static function init(): self
     {
-        if (! static::$instance) {
+        if (! static::$instance instanceof \BezhanSalleh\FilamentShield\Support\ShieldConfig) {
             static::$instance = new self(config('filament-shield'));
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
 use Illuminate\Filesystem\Filesystem;

@@ -128,7 +128,7 @@ trait HasShieldFormComponents
             ? static::getTabFormComponentForSimpleResourcePermissionsView()
             : Tab::make('resources')
                 ->label(__('filament-shield::filament-shield.resources'))
-                ->visible(fn (): bool => Utils::isResourceEntityEnabled())
+                ->visible(fn (): bool => Utils::isResourceTabEnabled())
                 ->badge(static::getResourceTabBadgeCount())
                 ->schema([
                     Grid::make()
@@ -157,7 +157,7 @@ trait HasShieldFormComponents
 
         return Tab::make('pages')
             ->label(__('filament-shield::filament-shield.pages'))
-            ->visible(fn (): bool => Utils::isPageEntityEnabled() && $count > 0)
+            ->visible(fn (): bool => Utils::isPageTabEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(
@@ -174,7 +174,7 @@ trait HasShieldFormComponents
 
         return Tab::make('widgets')
             ->label(__('filament-shield::filament-shield.widgets'))
-            ->visible(fn (): bool => Utils::isWidgetEntityEnabled() && $count > 0)
+            ->visible(fn (): bool => Utils::isWidgetTabEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(
@@ -191,7 +191,7 @@ trait HasShieldFormComponents
 
         return Tab::make('custom_permissions')
             ->label(__('filament-shield::filament-shield.custom'))
-            ->visible(fn (): bool => Utils::isCustomPermissionEntityEnabled() && $count > 0)
+            ->visible(fn (): bool => Utils::isCustomPermissionTabEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(
@@ -208,7 +208,7 @@ trait HasShieldFormComponents
 
         return Tab::make('resources')
             ->label(__('filament-shield::filament-shield.resources'))
-            ->visible(fn (): bool => Utils::isResourceEntityEnabled() && $count > 0)
+            ->visible(fn (): bool => Utils::isResourceTabEnabled() && $count > 0)
             ->badge($count)
             ->schema([
                 static::getCheckboxListFormComponent(

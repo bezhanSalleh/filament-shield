@@ -116,9 +116,11 @@ class SetupCommand extends Command
         Process::forever()->tty()->run("php artisan shield:install {$panel} " . ($makePanelTenantable ? '--tenant' : ''));
 
         if (confirm("Would you like to run `shield:generate` for `{$panel}` Panel?", true)) {
-            $this->components->info('Generation Summary:');
             Process::forever()->tty()->run("php artisan shield:generate --all --panel={$panel}");
+        }
+        if (confirm("Would you like to run `shield:super-admin` for `{$panel}` Panel?", true)) {
             $this->newLine();
+            Process::forever()->tty()->run("php artisan shield:super-admin --panel={$panel}");
         }
     }
 
@@ -138,11 +140,9 @@ class SetupCommand extends Command
 
     protected function configureTenancy(): void
     {
-        if (! $this->shouldConfigureTenancy && ($this->refresh || ! $this->isShieldInstalled())) {
-            if (confirm('Do you want to configure Shield for multi-tenancy?', false)) {
-                $this->tenantModel = text(label: 'Please provide the Team/Tenant model (e.g App\\Models\\Team)', required: true);
-                $this->shouldConfigureTenancy = true;
-            }
+        if (! $this->shouldConfigureTenancy && ($this->refresh || ! $this->isShieldInstalled()) && confirm('Do you want to configure Shield for multi-tenancy?', false)) {
+            $this->tenantModel = text(label: 'Please provide the Team/Tenant model (e.g App\\Models\\Team)', required: true);
+            $this->shouldConfigureTenancy = true;
         }
 
         if ($this->shouldConfigureTenancy) {
