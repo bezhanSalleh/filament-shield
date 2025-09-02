@@ -284,7 +284,7 @@ class FilamentShield
         return $this->format($config->case, $affix) . $config->separator . $this->format($config->case, $subject);
     }
 
-    protected function getDefaultPermissionKeys(string $entity, string|array $affixes): array
+    public function getDefaultPermissionKeys(string $entity, string|array $affixes): array
     {
         $subject = $this->resolveSubject($entity);
 
