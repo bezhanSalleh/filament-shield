@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace BezhanSalleh\FilamentShield\Concerns;
 
 use Filament\Pages\Page;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Filament\Widgets\Widget;
+use InvalidArgumentException;
 use Filament\Resources\Resource;
 use Filament\Widgets\TableWidget;
-use Filament\Widgets\Widget;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 trait HasLabelResolver
 {
@@ -34,12 +35,12 @@ trait HasLabelResolver
 
     public function getLocalizedPageLabel(Page $page): string
     {
-        return $page->getTitle()
-                ?? $page->getHeading()
-                ?? $page->getNavigationLabel()
+        return $page->getTitle() // @phpstan-ignore-line
+                ?? $page->getHeading() // @phpstan-ignore-line
+                ?? $page->getNavigationLabel() // @phpstan-ignore-line
                 ?? __(Str::of(class_basename($page))
                     ->snake()
-                    ->prepend($this->getConfig()->permissions->localization->key . '.')
+                    ->prepend(Utils::getConfig()->localization->key . '.')
                     ->toString())
                 ?? Str::of(class_basename($page))->headline()->toString();
     }
@@ -49,7 +50,7 @@ trait HasLabelResolver
         return match (true) {
             $widget instanceof TableWidget => (string) invade($widget)->makeTable()->getHeading(), // @phpstan-ignore-line
             $this->hasValidHeading($widget) => (string) invade($widget)->getHeading(),
-            default => __(Str::of(class_basename($widget))->snake()->prepend($this->getConfig()->permissions->localization->key . '.')->toString()) ?? str($widget)
+            default => __(Str::of(class_basename($widget))->snake()->prepend(Utils::getConfig()->localization->key . '.')->toString()) ?? str($widget)
                 ->afterLast('\\')
                 ->headline()
                 ->toString(),
@@ -63,20 +64,18 @@ trait HasLabelResolver
             && filled(invade($widgetInstance)->getHeading());
     }
 
-    public function getAffixLabel(string $affix): string
+    public function getAffixLabel(string $affix, string | null $resource = null): string
     {
         return Arr::get(
-            array: $this->getLocalizedResourceAffixes(),
+            array: $this->getLocalizedResourceAffixes($resource),
             key: Str::of($affix)->camel()->toString(),
             default: Str::of($affix)->headline()->toString()
         );
     }
 
-    public function getLocalizedResourceAffixes(): array
+    public function getLocalizedResourceAffixes(string | null $resource = null): array
     {
-        $config = $this->getConfig();
-
-        return collect($config->policies->methods)
+        return collect($this->getDefaultPolicyMethodsOrFor($resource))
             ->mapWithKeys(fn ($method): array => [
                 $method => $this->getPermissionLabel(Str::of($method)->snake()->toString()),
             ])
@@ -85,7 +84,7 @@ trait HasLabelResolver
 
     public function getPermissionLabel(string $permission): string
     {
-        $localizationConfig = $this->getConfig()->permissions->localization;
+        $localizationConfig = Utils::getConfig()->localization;
 
         return $localizationConfig->enabled && Lang::has("$localizationConfig->key.$permission")
             ? __("$localizationConfig->key.$permission")

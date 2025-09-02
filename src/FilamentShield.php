@@ -16,7 +16,6 @@ use InvalidArgumentException;
 
 class FilamentShield
 {
-    use Concerns\HasConfig;
     use Concerns\HasEntityDiscovery;
     use Concerns\HasEntityTransformers;
     use Concerns\HasLabelResolver;
@@ -64,7 +63,7 @@ class FilamentShield
 
     private function buildPermissionKey(string $entity, string $affix, string $subject): string
     {
-        $permissionConfig = $this->getConfig()->permissions;
+        $permissionConfig = Utils::getConfig()->permissions;
 
         if ($this->buildPermissionKeyUsing instanceof \Closure) {
 
@@ -95,7 +94,7 @@ class FilamentShield
                 ->mapWithKeys(fn (string $affix): array => [
                     $this->format('camel', $affix) => [
                         'key' => $this->buildPermissionKey($entity, $affix, $subject),
-                        'label' => $this->getAffixLabel($affix) . ' ' . $this->resolveLabel($entity),
+                        'label' => $this->getAffixLabel($affix, $entity) . ' ' . $this->resolveLabel($entity),
                     ],
                 ])
                 ->uniqueStrict()
@@ -108,12 +107,11 @@ class FilamentShield
     protected function resolveSubject(string $entity): string
     {
         $entity = resolve($entity);
-        $permissionConfig = $this->getConfig()->permissions;
 
         $subject = match (true) {
-            $entity instanceof Resource => $permissionConfig->resource->subject,
-            $entity instanceof Page => $permissionConfig->page->subject,
-            $entity instanceof Widget => $permissionConfig->widget->subject,
+            $entity instanceof Resource => Utils::getConfig()->resources->subject,
+            $entity instanceof Page => Utils::getConfig()->pages->subject,
+            $entity instanceof Widget => Utils::getConfig()->widgets->subject,
             default => throw new InvalidArgumentException('Entity must be an instance of Resource, Page, or Widget.'),
         };
 

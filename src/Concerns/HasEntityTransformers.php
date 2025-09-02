@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Concerns;
 
-use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Str;
+use Filament\Widgets\WidgetConfiguration;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 trait HasEntityTransformers
 {
     public function transformResources(): ?array
     {
         return $this->discoverResources()
-            ->reject(fn (string $resource): bool => in_array($resource, $this->getConfig()->exclude->resources))
+            ->reject(fn (string $resource): bool => in_array($resource, Utils::getConfig()->resources->exclude))
             ->mapWithKeys(fn (string $resource): array => [
                 $resource => [
                     'resourceFqcn' => $resource,
                     'model' => class_basename($resource::getModel()),
                     'modelFqcn' => str($resource::getModel())->toString(),
-                    'permissions' => $this->getDefaultPermissionKeys($resource, $this->getAffixesFor($resource)),
+                    'permissions' => $this->getDefaultPermissionKeys($resource, $this->getDefaultPolicyMethodsOrFor($resource)),
                 ],
             ])
             ->sortKeys()
@@ -40,12 +41,12 @@ trait HasEntityTransformers
                     return true;
                 }
 
-                return in_array($page, $this->getConfig()->exclude->pages);
+                return in_array($page, Utils::getConfig()->pages->exclude);
             })
             ->mapWithKeys(fn (string $page): array => [
                 $page => [
                     'pageFqcn' => $page,
-                    'permissions' => $this->getDefaultPermissionKeys($page, $this->getConfig()->permissions->page->prefix),
+                    'permissions' => $this->getDefaultPermissionKeys($page, Utils::getConfig()->pages->prefix),
                 ],
             ])
             ->toArray();
@@ -56,12 +57,12 @@ trait HasEntityTransformers
         return $this->discoverWidgets()
             ->reject(fn (string | WidgetConfiguration $widget): bool => in_array(
                 needle: $this->getWidgetInstanceFromWidgetConfiguration($widget),
-                haystack: $this->getConfig()->exclude->widgets
+                haystack: Utils::getConfig()->widgets->exclude
             ))
             ->mapWithKeys(fn (string | WidgetConfiguration $widget): array => [
                 $widget => [
                     'widgetFqcn' => $this->getWidgetInstanceFromWidgetConfiguration($widget),
-                    'permissions' => $this->getDefaultPermissionKeys($widget, $this->getConfig()->permissions->widget->prefix),
+                    'permissions' => $this->getDefaultPermissionKeys($widget, Utils::getConfig()->widgets->prefix),
                 ],
             ])
             ->toArray();
@@ -70,7 +71,7 @@ trait HasEntityTransformers
     /** @return array<string, string> */
     public function transformCustomPermissions(bool $localizedOrFormatted = false): ?array
     {
-        return collect($this->getConfig()->custom_permissions)
+        return collect(Utils::getConfig()->custom_permissions)
             ->mapWithKeys(function (string $label, int | string $key) use ($localizedOrFormatted): array {
                 $permission = is_numeric($key) ? $label : $key;
 
@@ -83,21 +84,29 @@ trait HasEntityTransformers
             ->toArray();
     }
 
-    protected function getAffixesFor(string $resource): array
+    protected function getResourcesToManage(): array
     {
-        $policyConfig = $this->getConfig()->policies;
-        $methods = [];
+        return collect(Utils::getConfig()->resources->manage)
+            ->mapWithKeys(fn (array $methods, string $key) => [basename($key) => $methods])
+            ->toArray();
+    }
 
-        if (method_exists($resource, 'getPermissionPrefixes')) {
-            $methods = $resource::getPermissionPrefixes();
+    protected function getDefaultPolicyMethodsOrFor(string|null $resource = null): array
+    {
+        $policyConfig = Utils::getConfig()->policies;
+        $defaultPolicyMethods = $policyConfig->methods;
+
+        if (filled($resource)) {
+            $resourcePolicyMethods = data_get($this->getResourcesToManage(), $resource, null);
+
+            $defaultPolicyMethods = $policyConfig->merge
+                ? array_merge($defaultPolicyMethods, $resourcePolicyMethods ?? [])
+                : $resourcePolicyMethods ?? $defaultPolicyMethods;
+
         }
-
-        if ($policyConfig->merge) {
-            $methods = array_merge($methods, $policyConfig->methods);
-        }
-
-        return collect($methods)
-            ->map(fn ($affix): string => $this->format('camel', $affix))
+        
+        return collect($defaultPolicyMethods)
+            ->map(fn ($method): string => $this->format('camel', $method))
             ->unique()
             ->toArray();
     }

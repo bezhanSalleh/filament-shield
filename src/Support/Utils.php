@@ -16,11 +16,9 @@ use Spatie\Permission\PermissionRegistrar;
 
 class Utils
 {
-    protected static ?ShieldConfig $config = null;
-
     public static function getConfig(): ShieldConfig
     {
-        return static::$config ??= ShieldConfig::init();
+        return ShieldConfig::init();
     }
 
     public static function getFilamentAuthGuard(): string

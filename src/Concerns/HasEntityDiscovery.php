@@ -6,6 +6,7 @@ namespace BezhanSalleh\FilamentShield\Concerns;
 
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
+use BezhanSalleh\FilamentShield\Support\Utils;
 
 trait HasEntityDiscovery
 {
@@ -21,21 +22,21 @@ trait HasEntityDiscovery
 
     public function discoverResources(): Collection
     {
-        return $this->getConfig()->discovery->discover_all_resources
+        return Utils::getConfig()->discovery->discover_all_resources
             ? collect(Filament::getPanels())->flatMap(fn ($panel): array => $panel->getResources())->unique()
             : collect(Filament::getResources());
     }
 
     public function discoverPages(): Collection
     {
-        return $this->getConfig()->discovery->discover_all_pages
+        return Utils::getConfig()->discovery->discover_all_pages
             ? collect(Filament::getPanels())->flatMap(fn ($panel): array => $panel->getPages())->unique()
             : collect(Filament::getPages());
     }
 
     public function discoverWidgets(): Collection
     {
-        return $this->getConfig()->discovery->discover_all_widgets
+        return Utils::getConfig()->discovery->discover_all_widgets
             ? collect(Filament::getPanels())->flatMap(fn ($panel): array => $panel->getWidgets())->unique()
             : collect(Filament::getWidgets());
     }

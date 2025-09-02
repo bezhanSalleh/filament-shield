@@ -1,5 +1,8 @@
 <?php
 
+use Filament\Pages\Dashboard;
+use Filament\Widgets\AccountWidget;
+
 return [
 
     'shield_resource' => [
@@ -34,27 +37,11 @@ return [
         'separator' => ':',
         'case' => 'pascal', // sanke, kebab, pascal, upper_snake, lower_snake
         'generate' => true,
-        'resource' => [
-            'subject' => 'model', // class
-            // prefix for resources are resolved from policy methods
-        ],
-        'page' => [
-            'subject' => 'class', // model if you page has $page::getModel(),
-            'prefix' => 'view',
-        ],
-        'widget' => [
-            'subject' => 'class', // model if you widget has $widget::getModel(),
-            'prefix' => 'view',
-        ],
-        'localization' => [
-            'enabled' => false,
-            'key' => 'filament-shield::filament-shield',
-        ],
     ],
 
     'policies' => [
         'path' => app_path('Policies'),
-        'merge' => true,
+        'merge' => true, // when true this will merge the following default methods with the ones defined per resource in the resources.manage key
         'generate' => true,
         'methods' => [
             'viewAny',
@@ -78,19 +65,45 @@ return [
         ],
     ],
 
-    'exclude' => [
-
-        'resources' => [],
-
-        'pages' => [
-            'Dashboard',
-        ],
-
-        'widgets' => [
-            'AccountWidget', 'FilamentInfoWidget',
-        ],
-
+    'localization' => [
+        'enabled' => false,
+        'key' => 'filament-shield::filament-shield',
     ],
+
+    'resources' => [
+        'subject' => 'model', // class
+        'manage' => [ // list of resources as keys(Fully Quilified Class Name) and array of affixes as values
+            \BezhanSalleh\FilamentShield\Resources\Roles\RoleResource::class => [
+                'viewAny',
+                'view',
+                'create',
+                'update',
+                'delete',
+            ]
+        ],
+        'exclude' => [ // list of resources (fully qualified class names) to exclude
+            //
+        ]
+    ],
+
+    'pages' => [
+        'subject' => 'class', // model if you page has $page::getModel(),
+        'prefix' => 'view',
+        'exclude' => [ // list of pages (fully qualified class names) to exclude
+            \Filament\Pages\Dashboard::class,
+        ]
+    ],
+
+    'widgets' => [
+        'subject' => 'class', // model if you widget has $widget::getModel(),
+        'prefix' => 'view',
+        'exclude' => [ // list of widgets (fully qualified class names) to exclude
+            \Filament\Widgets\AccountWidget::class,
+            \Filament\Widgets\FilamentInfoWidget::class,
+        ]
+    ],
+
+    'custom_permissions' => [],
 
     'discovery' => [
         'discover_all_resources' => false,
@@ -100,6 +113,5 @@ return [
 
     'register_role_policy' => true,
 
-    'custom_permissions' => [],
 
 ];

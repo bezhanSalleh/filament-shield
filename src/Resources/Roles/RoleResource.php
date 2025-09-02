@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Resources\Roles;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\Pages\CreateRole;
 use BezhanSalleh\FilamentShield\Resources\Roles\Pages\EditRole;
@@ -30,7 +29,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 
-class RoleResource extends Resource implements HasShieldPermissions
+class RoleResource extends Resource
 {
     use Essentials\BelongsToParent;
     use Essentials\BelongsToTenant;
@@ -40,19 +39,6 @@ class RoleResource extends Resource implements HasShieldPermissions
     use HasShieldFormComponents;
 
     protected static ?string $recordTitleAttribute = 'name';
-
-    /** @return array<int, string> */
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
-            'delete_any',
-        ];
-    }
 
     public static function form(Schema $schema): Schema
     {

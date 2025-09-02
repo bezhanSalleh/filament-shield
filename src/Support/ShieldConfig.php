@@ -36,13 +36,10 @@ class ShieldConfig extends Fluent
         }
     }
 
+    // we don't want to memoize this, because we want it to react to config changes at runtime
     public static function init(): self
     {
-        if (! static::$instance instanceof \BezhanSalleh\FilamentShield\Support\ShieldConfig) {
-            static::$instance = new self(config('filament-shield'));
-        }
-
-        return static::$instance;
+        return static::$instance = new self(config('filament-shield'));
     }
 
     public static function __callStatic(mixed $name, mixed $arguments)
