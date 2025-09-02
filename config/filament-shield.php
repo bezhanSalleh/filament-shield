@@ -31,7 +31,7 @@ return [
         'case' => 'pascal', // sanke, kebab, pascal, upper_snake, lower_snake
         'generate' => true,
         'resource' => [
-            'subject' => 'model', //class
+            'subject' => 'model', // class
             // prefix for resources are resolved from policy methods
         ],
         'page' => [
@@ -44,8 +44,8 @@ return [
         ],
         'localization' => [
             'enabled' => false,
-            'key' => 'filament-shield::filament-shield'
-        ]
+            'key' => 'filament-shield::filament-shield',
+        ],
     ],
 
     'policies' => [
@@ -62,7 +62,7 @@ return [
             'forceDelete',
             'replicate',
             'reorder',
-            'viewAny'
+            'viewAny',
         ],
         'single_parameter_methods' => [
             'viewAny',
@@ -70,7 +70,7 @@ return [
             'deleteAny',
             'forceDeleteAny',
             'restoreAny',
-            'reorder'
+            'reorder',
         ],
     ],
 

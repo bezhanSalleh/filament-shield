@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use Closure;
-use Filament\Pages\Page;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Filament\Widgets\Widget;
-use InvalidArgumentException;
-use Filament\Facades\Filament;
-use Filament\Resources\Resource;
-use Filament\Widgets\TableWidget;
-use Illuminate\Support\Collection;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Lang;
-use Filament\Widgets\WidgetConfiguration;
-use Spatie\Permission\PermissionRegistrar;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Support\Concerns\EvaluatesClosures;
-use BezhanSalleh\FilamentShield\Support\ShieldConfig;
-use BezhanSalleh\FilamentShield\Commands\SetupCommand;
+use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
 use BezhanSalleh\FilamentShield\Commands\InstallCommand;
 use BezhanSalleh\FilamentShield\Commands\PublishCommand;
-use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
+use BezhanSalleh\FilamentShield\Commands\SetupCommand;
+use BezhanSalleh\FilamentShield\Support\ShieldConfig;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Closure;
+use Filament\Facades\Filament;
+use Filament\Pages\Page;
+use Filament\Resources\Resource;
+use Filament\Support\Concerns\EvaluatesClosures;
+use Filament\Widgets\TableWidget;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
 {
@@ -43,7 +43,8 @@ class FilamentShield
     {
         if (Utils::isResourceEntityEnabled()) {
             $permissions = collect($this->getResourcePermissions($resourceKey))
-                ->map(fn (string $permission): string => Utils::getPermissionModel()::firstOrCreate(
+                ->map(
+                    fn (string $permission): string => Utils::getPermissionModel()::firstOrCreate(
                         ['name' => $permission],
                         ['guard_name' => Utils::getFilamentAuthGuard()]
                     )->name
@@ -205,6 +206,7 @@ class FilamentShield
                 if (in_array($page, $clusters)) {
                     return true;
                 }
+
                 return in_array($page, ShieldConfig::init()->exclude->pages);
             })
             ->mapWithKeys(function (string $page): array {
@@ -250,8 +252,6 @@ class FilamentShield
             ->toArray();
     }
 
-
-
     private static function hasValidHeading(Widget $widgetInstance): bool
     {
         return $widgetInstance instanceof Widget // @phpstan-ignore-line
@@ -294,7 +294,7 @@ class FilamentShield
                     $this->format('camel', $affix) => [
                         'key' => $this->buildPermissionKey($entity, $affix, $subject),
                         'label' => $this->getAffixLabel($affix) . ' ' . $this->resolveLabel($entity),
-                    ]
+                    ],
                 ])
                 ->uniqueStrict()
                 ->toArray();
@@ -307,7 +307,7 @@ class FilamentShield
     {
         $entity = resolve($entity);
 
-        return match(true) {
+        return match (true) {
             $entity instanceof Resource => $this->getLocalizedResourceLabel($entity),
             $entity instanceof Page => $this->getLocalizedPageLabel($entity),
             $entity instanceof Widget => $this->getLocalizedWidgetLabel($entity),
@@ -320,7 +320,7 @@ class FilamentShield
         $entity = resolve($entity);
         $permissionConfig = ShieldConfig::init()->permissions;
 
-        $subject = match(true) {
+        $subject = match (true) {
             $entity instanceof Resource => $permissionConfig->resource->subject,
             $entity instanceof Page => $permissionConfig->page->subject,
             $entity instanceof Widget => $permissionConfig->widget->subject,
@@ -435,25 +435,24 @@ class FilamentShield
             target: FilamentShield::getResources(),
             key: "$key.permissions"
         ))
-        ->mapWithKeys(fn (array $permission, string $action): array => [$action => $permission['key']])
-        ->toArray();
+            ->mapWithKeys(fn (array $permission, string $action): array => [$action => $permission['key']])
+            ->toArray();
     }
 
     // prefixes
 
-
     public function getLocalizedResourceAffixes(): array
     {
-         $config = ShieldConfig::init();
+        $config = ShieldConfig::init();
 
         return collect($config->policies->methods)
             ->mapWithKeys(function ($method) use ($config): array {
                 $affix = Str::of($method)->snake()->toString();
                 if ($config->permissions->localization->enabled) {
-                    return [ $method => __("{$config->permissions->localization->key}.{$affix}") ];
+                    return [$method => __("{$config->permissions->localization->key}.{$affix}")];
                 }
 
-                return [ $method => Str::of($method)->headline()->toString() ];
+                return [$method => Str::of($method)->headline()->toString()];
             })
             ->toArray();
     }
@@ -494,11 +493,11 @@ class FilamentShield
         };
     }
 
-
     public function getGeneratorOption(): string
     {
         $config = ShieldConfig::init();
-        return match(true) {
+
+        return match (true) {
             $config->permissions->generate && $config->policies->generate => 'policies_and_permissions',
             $config->permissions->generate => 'permissions',
             $config->policies->generate => 'policies',

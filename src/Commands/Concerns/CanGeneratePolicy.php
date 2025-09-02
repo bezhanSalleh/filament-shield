@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
-use ReflectionClass;
-use Illuminate\Support\Str;
-use BezhanSalleh\FilamentShield\Support\Utils;
-use BezhanSalleh\FilamentShield\Support\ShieldConfig;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\ShieldConfig;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Str;
+use ReflectionClass;
 
 trait CanGeneratePolicy
 {
@@ -57,9 +57,9 @@ trait CanGeneratePolicy
         $singleParameterMethods = $policyConfig->single_parameter_methods ?? [];
         // since now the return data from resources is structured we can use it directly via key
         // but the kye needs to be first decided upon, what should be the key actually
-        foreach(FilamentShield::getResourcePolicyActionsWithPermissions($entity['resourceFqcn']) as $method => $permission) {
+        foreach (FilamentShield::getResourcePolicyActionsWithPermissions($entity['resourceFqcn']) as $method => $permission) {
             $stubVariables[$method] = [
-                'stub' => resolve($entity['modelFqcn']) instanceof Authenticatable ? 'SingleParamMethod' : (in_array($method, $singleParameterMethods) ? 'SingleParamMethod': 'MultiParamMethod'),
+                'stub' => resolve($entity['modelFqcn']) instanceof Authenticatable ? 'SingleParamMethod' : (in_array($method, $singleParameterMethods) ? 'SingleParamMethod' : 'MultiParamMethod'),
                 'permission' => $permission,
             ];
         }
