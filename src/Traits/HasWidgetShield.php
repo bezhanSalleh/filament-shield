@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Facades\Filament;
 
 trait HasWidgetShield
 {

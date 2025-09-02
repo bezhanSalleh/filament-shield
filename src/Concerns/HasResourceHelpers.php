@@ -37,4 +37,17 @@ trait HasResourceHelpers
             ->mapWithKeys(fn (array $permission, string $action): array => [$action => $permission['key']])
             ->toArray();
     }
+
+    public function getAllResourcePermissionsWithLabels(): array
+    {
+        return once(
+            fn (): array => collect($this->getResources())
+                ->flatMap(
+                    fn (array $resource): array => $this->getResourcePermissionsWithLabels(
+                        $resource['resourceFqcn']
+                    )
+                )
+                ->toArray()
+        );
+    }
 }

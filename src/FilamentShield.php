@@ -134,20 +134,6 @@ class FilamentShield
         };
     }
 
-    // TODO: needs to use new methods
-    public function getAllResourcePermissionsWithLabels(): array
-    {
-        return once(
-            fn (): array => collect($this->getResources())
-                ->flatMap(
-                    fn (array $resource): array => FilamentShield::getResourcePermissionsWithLabels(
-                        $resource['resourceFqcn']
-                    )
-                )
-                ->toArray()
-        );
-    }
-
     public function getEntitiesPermissions(): ?array
     {
         return collect($this->getAllResourcePermissionsWithLabels())->keys()
