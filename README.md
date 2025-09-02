@@ -23,21 +23,28 @@
 
 # Shield
 
-Access & authorization management for Filament Panels: roles, permissions, policies, multi‑tenancy, and UI tooling in one plugin.
+The easiest and most intuitive way to add access management to your Filament Panels.
 
 ## Features
 
-- Resource, Page & Widget permission generation
-- Custom (ad‑hoc) permissions
-- Automatic policy generation (merge or override)
-- Super admin role or gate interception
-- Optional baseline panel user role
-- Multi‑tenancy / teams (spatie/laravel-permission teams) with relationship scaffolding
-- Entity discovery (across all panels if enabled)
-- Localized permission & entity labels
-- Seeder generation (roles + direct permissions)
-- Publish & customize the built‑in Role management resource
-- Fine‑grained command line tooling with safe prohibiting
+- 🛡️ **Complete Authorization Management**
+  - 📦 Resource Permissions
+  - 📄 Page Permissions
+  - 🧩 Widget Permissions
+- 🛠️ **Custom (ad‑hoc) permissions**
+- 🤖 **Automatic Policy Generation**
+  - 📜 Default Policy methods for Filament Resources
+  - 🏷️ Per Resource Policy definition
+  - 🔗 Third-party resource policy & permission generation
+- 👑 **Super admin role or gate interception**
+- 👤 **Optional baseline panel user role**
+- 🔄 **Multi-tenancy Support**
+- 🔍 **Entity discovery** (across all panels if enabled)
+- 🌐 **Localized permission & entity labels**
+- 🌱 **Seeder generation** (roles + direct permissions)
+- 🎨 **Best UI**
+    - 🖌️ Publish & customize the built-in resource
+- ⚡ **Fine-grained CLI tooling** with safe prohibiting
 
 ## Table of Contents
 
@@ -45,36 +52,35 @@ Access & authorization management for Filament Panels: roles, permissions, polic
 <div class="filament-hidden">
 <b>Table of Contents</b>
 
-- [Shield](#shield)
-    - [Features](#features)
-    - [Installation](#installation)
-        - [1. Install Package](#1-install-package)
-        - [2. Configure Auth Provider](#2-configure-auth-provider)
-        - [3. Setup Shield](#3-setup-shield)
-        - [4. Install for Panel](#4-install-for-panel)
-    - [Usage](#usage)
-        - [Configuration](#configuration)
-        - [Resources](#resources)
-            - [Default](#default)
-            - [Resource-Specific Methods](#resource-specific-methods)
-            - [Custom Permissions](#custom-permissions)
-            - [Custom Navigation Group](#custom-navigation-group)
-        - [Pages](#pages)
-        - [Widgets](#widgets)
-        - [Policies](#policies)
-        - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
-        - [Layout Customization](#layout-customization)
-    - [Available Commands](#available-commands)
-        - [Prohibited Commands](#prohibited-commands)
-        - [Core Commands](#core-commands)
-        - [Generate Command Options (recap)](#generate-command-options-recap)
-        - [Translations](#translations)
-    - [Testing](#testing)
-    - [Changelog](#changelog)
-    - [Contributing](#contributing)
-    - [Security Vulnerabilities](#security-vulnerabilities)
-    - [Credits](#credits)
-    - [License](#license)
+- [Features](#features)
+- [Installation](#installation)
+    - [1. Install Package](#1-install-package)
+    - [2. Configure Auth Provider](#2-configure-auth-provider)
+    - [3. Setup Shield](#3-setup-shield)
+    - [4. Install for Panel](#4-install-for-panel)
+- [Usage](#usage)
+    - [Configuration](#configuration)
+    - [Resources](#resources)
+        - [Default](#default)
+        - [Resource-Specific Methods](#resource-specific-methods)
+        - [Custom Permissions](#custom-permissions)
+        - [Custom Navigation Group](#custom-navigation-group)
+    - [Pages](#pages)
+    - [Widgets](#widgets)
+    - [Policies](#policies)
+    - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
+    - [Layout Customization](#layout-customization)
+- [Available Commands](#available-commands)
+    - [Prohibited Commands](#prohibited-commands)
+    - [Core Commands](#core-commands)
+    - [Generate Command Options (recap)](#generate-command-options-recap)
+    - [Translations](#translations)
+- [Testing](#testing)
+- [Changelog](#changelog)
+- [Contributing](#contributing)
+- [Security Vulnerabilities](#security-vulnerabilities)
+- [Credits](#credits)
+- [License](#license)
 </div>
 
 ## Installation
@@ -111,39 +117,6 @@ class User extends Authenticatable
 Run the setup command (it is interactive and smart):
 ```bash
 php artisan shield:setup
-```
-What it does / prompts for:
-1. Detects existing install; offers reinstall (with optional fresh migration + tables reset via --fresh).
-2. Publishes required configs & migrations (only once unless --force / reinstall).
-3. Optionally configures multi‑tenancy (asks for tenant model if you didn't pass --tenant=FQCN).
-4. Runs migrations (fresh or normal). 
-5. Offers to immediately run `shield:install` for a chosen panel.
-6. After install, offers to run `shield:generate --all` for that panel.
-7. Offers to create a super admin user/assign role.
-8. Optionally opens the repository star link.
-
-Optional flags:
---fresh  Re-run migrations & rebuild permission tables
---tenant=App\\Models\\Team  Skip prompt & configure tenancy directly
---force  Overwrite published config/migrations
---starred  Skip star prompt
-
-### 4. Install for Panel
-If you accepted the prompt during setup you can skip this. Otherwise:
-```bash
-php artisan shield:install admin
-```
-Add `--tenant` to make the panel tenantable (Shield will validate tenancy is enabled) and it will:
-- Register the `FilamentShieldPlugin`
-- (With --tenant) mark the panel tenantable & add `SyncShieldTenant` middleware
-- Automatically generate initial permissions for the Role resource (`shield:generate --resource=RoleResource` is invoked internally)
-
-Manual registration (alternative):
-```php
-// In your Panel Provider
-->plugins([
-    \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
-])
 ```
 
 ## Usage
@@ -204,23 +177,9 @@ Add ad‑hoc permissions under `custom_permissions`:
 They appear in the Role resource (Custom Permissions tab) when enabled.
 Permission key format is configurable via `FilamentShield::buildPermissionKeyUsing()`.
 
-##### Custom Navigation Group
-By default translations render Roles & Permissions under "Filament Shield". Publish translations and change:
-
-```php
-'nav.group' => 'Filament Shield',
-```
-
-to
-
-```php
-'nav.group' => 'User Management',
-```
-Repeat for each locale.
-
 #### Pages
 
-If you have generated permissions for `Pages` you can toggle the page's navigation from sidebar and restrict access to the page. You can set this up manually but this package comes with a `HasPageShield` trait to speed up this process. All you have to do is use the trait in you pages:
+If you have generated permissions for `Pages` you can toggle the page's navigation from sidebar and restrict access to the page. You can set this up manually but this package comes with a `HasPageShield` trait to speed up this process. All you have to do is drop in the trait to your pages:
 ```php
 <?php
 
@@ -233,72 +192,12 @@ class MyPage extends Page
 {
     use HasPageShield;
     ...
-}
-```
-
-📕 <b style="color:darkred">`HasPageShield` uses the `booted` method to check the user's permissions and makes sure to execute the `booted` page method in the parent page if exists.</b>
-
-###### Pages Hooks
-
-However if you need to perform some methods before and after the booted method you can declare the next hooks methods in your filament page.
-
-```php
-<?php
-
-namespace App\Filament\Pages;
-
-use ...;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-
-class MyPage extends Page
-{
-    use HasPageShield;
-    ...
-
-    protected function beforeBooted() : void {
-        ...
-    }
-
-    protected function afterBooted() : void {
-        ...
-    }
-
-    /**
-     * Hook to perform an action before redirect if the user
-     * doesn't have access to the page.  
-     * */
-    protected function beforeShieldRedirects() : void {
-        ...
-    }
-}
-```
-
-###### Pages Redirect Path
-
-`HasPageShield` uses the `config('filament.path')` value by default to perform the shield redirection. If you need to overwrite the rediretion path, just add the next method to your page:
-
-```php
-<?php
-
-namespace App\Filament\Pages;
-
-use ...;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-
-class MyPage extends Page
-{
-    use HasPageShield;
-    ...
-
-    protected function getShieldRedirectPath(): string {
-        return '/'; // redirect to the root index...
-    }
 }
 ```
 
 #### Widgets
 
-if you have generated permissions for `Widgets` you can toggle their state based on whether a user have permission or not. You can set this up manually but this package comes with a `HasWidgetShield` trait to speed up this process. All you have to do is use the trait in you widgets:
+if you have generated permissions for `Widgets` you can toggle their state based on whether a user have permission or not. You can set this up manually but this package comes with a `HasWidgetShield` trait to speed up this process. All you have to do is drop in the trait to your widgets:
 ```php
 <?php
 
@@ -314,7 +213,7 @@ class IncomeWidget extends LineChartWidget
 }
 ```
 
-### Policies
+### Policies <!-- TODO: Document policy generation -->
 
 Shield generates policies to `policies.path`. Add or remove method names under `policies.methods`. Set `policies.merge` to control merging with per‑resource overrides. Existing policy files are skipped unless you use `--ignore-existing-policies` when generating.
 
