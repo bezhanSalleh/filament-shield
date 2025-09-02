@@ -130,6 +130,7 @@ class Utils
     {
         $filesystem = new Filesystem;
         $path = static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php';
+
         return $filesystem->exists($path) ? Str::of(static::resolveNamespaceFromPath($path))->before('.php')->toString() : null;
     }
 

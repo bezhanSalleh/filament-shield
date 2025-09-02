@@ -9,7 +9,6 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
 use ReflectionClass;
-use RuntimeException;
 
 trait CanGeneratePolicy
 {

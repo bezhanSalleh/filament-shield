@@ -236,7 +236,7 @@ class GenerateCommand extends Command
         return collect($pages)
             ->values()
             ->each(function (array $page): void {
-                 if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
+                if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
                     Utils::generateForPageOrWidget(array_key_first($page['permissions']));
                 }
             });

@@ -28,13 +28,17 @@ trait HasLabelResolver
         };
     }
 
-    public function getLocalizedResourceLabel(Resource $resource): string
+    public function getLocalizedResourceLabel(Resource | string $resource): string
     {
+        $resource = is_string($resource) ? resolve($resource) : $resource;
+
         return Str::of($resource::getModelLabel())->headline()->toString();
     }
 
-    public function getLocalizedPageLabel(Page $page): string
+    public function getLocalizedPageLabel(Page | string $page): string
     {
+        $page = is_string($page) ? resolve($page) : $page;
+
         return $page->getTitle() // @phpstan-ignore-line
                 ?? $page->getHeading() // @phpstan-ignore-line
                 ?? $page->getNavigationLabel() // @phpstan-ignore-line
@@ -45,8 +49,10 @@ trait HasLabelResolver
                 ?? Str::of(class_basename($page))->headline()->toString();
     }
 
-    public function getLocalizedWidgetLabel(Widget $widget): string
+    public function getLocalizedWidgetLabel(Widget | string $widget): string
     {
+        $widget = is_string($widget) ? resolve($widget) : $widget;
+
         return match (true) {
             $widget instanceof TableWidget => (string) invade($widget)->makeTable()->getHeading(), // @phpstan-ignore-line
             $this->hasValidHeading($widget) => (string) invade($widget)->getHeading(),

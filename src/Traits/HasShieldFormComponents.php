@@ -38,16 +38,15 @@ trait HasShieldFormComponents
     public static function getResourceEntitiesSchema(): ?array
     {
         return collect(FilamentShield::getResources())
-            ->sortKeys()
             ->map(function (array $entity): \Filament\Schemas\Components\Section {
                 $sectionLabel = strval(
                     static::shield()->hasLocalizedPermissionLabels()
-                    ? FilamentShield::getLocalizedResourceLabel($entity['fqcn'])
+                    ? FilamentShield::getLocalizedResourceLabel($entity['resourceFqcn'])
                     : $entity['model']
                 );
 
                 return Section::make($sectionLabel)
-                    ->description(fn (): \Illuminate\Support\HtmlString => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['fqcn']) . '</span>'))
+                    ->description(fn (): \Illuminate\Support\HtmlString => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['modelFqcn']) . '</span>'))
                     ->compact()
                     ->schema([
                         static::getCheckBoxListComponentForResource($entity),
@@ -60,25 +59,15 @@ trait HasShieldFormComponents
 
     public static function getResourceTabBadgeCount(): ?int
     {
-        return collect(FilamentShield::getResources())
-            ->map(fn ($resource): int => count(static::getResourcePermissionOptions($resource)))
-            ->sum();
+        return once(
+            fn (): int => collect(FilamentShield::getResources())
+                ->sum(fn (array $resource): int => count($resource['permissions']))
+        );
     }
 
     public static function getResourcePermissionOptions(array $entity): array
     {
-        return collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-            ->flatMap(function (string $permission) use ($entity) {
-                $name = $permission . '_' . $entity['resource'];
-                $label = static::shield()->hasLocalizedPermissionLabels()
-                    ? FilamentShield::getLocalizedResourcePermissionLabel($permission)
-                    : $name;
-
-                return [
-                    $name => $label,
-                ];
-            })
-            ->toArray();
+        return once(fn (): array => FilamentShield::getResourcePermissionsWithLabels($entity['resourceFqcn']));
     }
 
     public static function setPermissionStateForRecordPermissions(Component $component, string $operation, array $permissions, ?Model $record): void
@@ -103,22 +92,14 @@ trait HasShieldFormComponents
     public static function getPageOptions(): array
     {
         return collect(FilamentShield::getPages())
-            ->flatMap(fn ($page) => [
-                $page['permission'] => static::shield()->hasLocalizedPermissionLabels()
-                    ? FilamentShield::getLocalizedPageLabel($page['class'])
-                    : $page['permission'],
-            ])
+            ->flatMap(fn ($page) => $page['permissions'])
             ->toArray();
     }
 
     public static function getWidgetOptions(): array
     {
         return collect(FilamentShield::getWidgets())
-            ->flatMap(fn ($widget) => [
-                $widget['permission'] => static::shield()->hasLocalizedPermissionLabels()
-                    ? FilamentShield::getLocalizedWidgetLabel($widget['class'])
-                    : $widget['permission'],
-            ])
+            ->flatMap(fn ($widget) => $widget['permissions'])
             ->toArray();
     }
 
@@ -142,7 +123,7 @@ trait HasShieldFormComponents
         $permissionsArray = static::getResourcePermissionOptions($entity);
 
         return static::getCheckboxListFormComponent(
-            name: $entity['resource'],
+            name: $entity['resourceFqcn'],
             options: $permissionsArray,
             searchable: false,
             columns: static::shield()->getResourceCheckboxListColumns(),
@@ -186,7 +167,7 @@ trait HasShieldFormComponents
 
     public static function getTabFormComponentForCustomPermissions(): Component
     {
-        $options = FilamentShield::getCustomPermissions(localizedOrFormatted: static::shield()->hasLocalizedPermissionLabels());
+        $options = FilamentShield::getCustomPermissions(static::shield()->hasLocalizedPermissionLabels());
         $count = count($options);
 
         return Tab::make('custom_permissions')
@@ -203,8 +184,8 @@ trait HasShieldFormComponents
 
     public static function getTabFormComponentForSimpleResourcePermissionsView(): Component
     {
-        $options = FilamentShield::getAllResourcePermissions();
-        $count = count($options);
+        $options = FilamentShield::getAllResourcePermissionsWithLabels();
+        $count = once(fn (): int => count($options));
 
         return Tab::make('resources')
             ->label(__('filament-shield::filament-shield.resources'))
@@ -279,8 +260,7 @@ trait HasShieldFormComponents
             ->onIcon('heroicon-s-shield-check')
             ->offIcon('heroicon-s-shield-exclamation')
             ->label(__('filament-shield::filament-shield.field.select_all.name'))
-            ->helperText(fn (
-            ): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
+            ->helperText(fn (): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
             ->live()
             ->afterStateUpdated(function (Livewire $livewire, Set $set, bool $state): void {
                 static::toggleEntitiesViaSelectAll($livewire, $set, $state);

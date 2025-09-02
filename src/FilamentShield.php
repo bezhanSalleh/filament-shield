@@ -46,9 +46,9 @@ class FilamentShield
         return once(fn (): ?array => $this->transformWidgets());
     }
 
-    public function getCustomPermissions(): ?array
+    public function getCustomPermissions(bool $localized = false): ?array
     {
-        return once(fn (): ?array => $this->transformCustomPermissions());
+        return once(fn (): ?array => $this->transformCustomPermissions($localized));
     }
 
     /**
@@ -135,38 +135,22 @@ class FilamentShield
     }
 
     // TODO: needs to use new methods
-    public function getAllResourcePermissions(): array
+    public function getAllResourcePermissionsWithLabels(): array
     {
-        return collect($this->getResources())
-            ->map(fn (array $resourceEntity): array => collect(
-                // Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
-            )
-                ->flatMap(function (string $permission) use ($resourceEntity): array {
-                    $name = $permission . '_' . $resourceEntity['resource'];
-                    $permissionLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
-                        ? str(static::getLocalizedResourcePermissionLabel($permission))
-                            ->prepend(
-                                str($resourceEntity['fqcn']::getPluralModelLabel())
-                                    ->title()
-                                    ->append(' - ')
-                                    ->toString()
-                            )
-                            ->toString()
-                        : $name;
-
-                    return [
-                        $name => $permissionLabel,
-                    ];
-                })
-                ->toArray())
-            ->sortKeys()
-            ->collapse()
-            ->toArray();
+        return once(
+            fn (): array => collect($this->getResources())
+                ->flatMap(
+                    fn (array $resource): array => FilamentShield::getResourcePermissionsWithLabels(
+                        $resource['resourceFqcn']
+                    )
+                )
+                ->toArray()
+        );
     }
 
     public function getEntitiesPermissions(): ?array
     {
-        return collect($this->getAllResourcePermissions())->keys()
+        return collect($this->getAllResourcePermissionsWithLabels())->keys()
             ->merge(collect($this->getPages())->map->permission->keys())
             ->merge(collect($this->getWidgets())->map->permission->keys())
             ->merge(collect($this->getCustomPermissions())->keys())
