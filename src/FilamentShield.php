@@ -156,6 +156,7 @@ class FilamentShield
                     ->map(fn ($affix) => $this->format('camel', $affix))
                     ->unique()
                     ->toArray();
+
                 return [
                     $resource => [
                         'resourceFqcn' => $resource,
@@ -281,16 +282,17 @@ class FilamentShield
 
         // Default implementation
         $config = ShieldConfig::init()->permissions;
+
         return $this->format($config->case, $affix) . $config->separator . $this->format($config->case, $subject);
     }
 
-    public function getDefaultPermissionKeys(string $entity, string|array $affixes): array
+    public function getDefaultPermissionKeys(string $entity, string | array $affixes): array
     {
         $subject = $this->resolveSubject($entity);
 
         if (is_array($affixes)) {
             return collect($affixes)
-                ->mapWithKeys(fn(string $affix): array => [
+                ->mapWithKeys(fn (string $affix): array => [
                     $this->format('camel', $affix) => [
                         'key' => $this->buildPermissionKey($entity, $affix, $subject),
                         'label' => $this->getAffixLabel($affix) . ' ' . $this->resolveLabel($entity),

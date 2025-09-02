@@ -2,19 +2,22 @@
 
 use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
-use BezhanSalleh\FilamentShield\Support\ShieldConfig;
 
 beforeEach(function () {
     // Mock Filament panel to avoid NoDefaultPanelSetException
     $this->app->bind('filament', function () {
-        return new class {
-            public function getResources() { return []; }
+        return new class
+        {
+            public function getResources()
+            {
+                return [];
+            }
         };
     });
 });
 
 it('builds default permission keys for resources', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     $affixes = ['view', 'create', 'update', 'delete'];
     $permissions = $shield->getDefaultPermissionKeys(RoleResource::class, $affixes);
@@ -31,7 +34,7 @@ it('builds default permission keys for resources', function () {
 });
 
 it('builds default permission key for single affix', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     // Use RoleResource instead of non-existent Dashboard class
     $permissions = $shield->getDefaultPermissionKeys(RoleResource::class, 'view');
@@ -46,7 +49,7 @@ it('builds default permission key for single affix', function () {
 });
 
 it('allows custom permission key building', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     $shield->buildPermissionKeyUsing(function ($entity, $affix, $subject, $case, $separator) {
         return "custom_{$affix}_{$subject}";
@@ -60,11 +63,12 @@ it('allows custom permission key building', function () {
 });
 
 it('provides correct parameters to custom permission key builder', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
     $capturedParams = [];
 
     $shield->buildPermissionKeyUsing(function ($entity, $affix, $subject, $case, $separator) use (&$capturedParams) {
         $capturedParams = compact('entity', 'affix', 'subject', 'case', 'separator');
+
         return "{$affix}_{$subject}";
     });
 
@@ -79,12 +83,13 @@ it('provides correct parameters to custom permission key builder', function () {
 });
 
 it('allows entity-specific custom permission keys', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     $shield->buildPermissionKeyUsing(function ($entity, $affix, $subject, $case, $separator) {
         if (str_contains($entity, 'Resource')) {
             return "resource_{$affix}_{$subject}";
         }
+
         return "{$affix}_{$subject}";
     });
 
@@ -94,7 +99,7 @@ it('allows entity-specific custom permission keys', function () {
 });
 
 it('respects config case and separator in custom builders', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     $shield->buildPermissionKeyUsing(function ($entity, $affix, $subject, $case, $separator) {
         // Use provided case and separator from config
@@ -120,7 +125,7 @@ it('respects config case and separator in custom builders', function () {
 });
 
 it('builds permission labels correctly', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     $affixes = ['view', 'create'];
     $permissions = $shield->getDefaultPermissionKeys(RoleResource::class, $affixes);
@@ -131,7 +136,7 @@ it('builds permission labels correctly', function () {
 });
 
 it('resets custom permission key builder correctly', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     // Set custom builder
     $shield->buildPermissionKeyUsing(function ($entity, $affix, $subject, $case, $separator) {
@@ -142,14 +147,14 @@ it('resets custom permission key builder correctly', function () {
     expect($customPermissions['view']['key'])->toStartWith('custom_view_');
 
     // Create new instance (simulating reset)
-    $newShield = new FilamentShield();
+    $newShield = new FilamentShield;
     $defaultPermissions = $newShield->getDefaultPermissionKeys(RoleResource::class, ['view']);
 
     expect($defaultPermissions['view']['key'])->not->toStartWith('custom_');
 });
 
 it('maintains fluent interface for buildPermissionKeyUsing', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     $result = $shield->buildPermissionKeyUsing(function ($entity, $affix, $subject, $case, $separator) {
         return "{$affix}_{$subject}";
@@ -159,7 +164,7 @@ it('maintains fluent interface for buildPermissionKeyUsing', function () {
 });
 
 it('handles different affix formats', function () {
-    $shield = new FilamentShield();
+    $shield = new FilamentShield;
 
     // Test with snake_case affixes
     $permissions1 = $shield->getDefaultPermissionKeys(RoleResource::class, ['view_any', 'delete_any']);
