@@ -30,59 +30,13 @@ class FilamentShield
 {
     use EvaluatesClosures;
 
-    protected ?Closure $buildResourcePermissionKeysUsing = null;
-    protected ?Closure $buildNonResourcePermissionKeyUsing = null;
+    protected ?Closure $buildPermissionKeyUsing = null;
 
-    public function buildResourcePermissionKeysUsing(Closure $callback): static
+    public function buildPermissionKeyUsing(Closure $callback): static
     {
-        $this->buildResourcePermissionKeysUsing = $callback;
+        $this->buildPermissionKeyUsing = $callback;
 
         return $this;
-    }
-
-    public function buildNonResourcePermissionKeyUsing(Closure $callback): static
-    {
-        $this->buildNonResourcePermissionKeyUsing = $callback;
-
-        return $this;
-    }
-
-    public function getResourcePermissionKeys(string $entity, array $affixes): array|string
-    {
-        if ($this->buildResourcePermissionKeysUsing instanceof \Closure) {
-
-            /** @var array|string $key */
-            $key = $this->evaluate(
-                value: $this->buildResourcePermissionKeysUsing,
-                namedInjections: [
-                    'entity' => $entity,
-                    'affixes' => $affixes,
-                ]
-            );
-
-            return $key;
-        }
-
-        return $this->getDefaultResourcePermissionKeys($entity, $affixes);
-    }
-
-    public function getNonResourcePermissionKey(string $entity, string $affix): array|string
-    {
-        if ($this->buildNonResourcePermissionKeyUsing instanceof \Closure) {
-
-            /** @var array|string $key */
-            $key = $this->evaluate(
-                value: $this->buildNonResourcePermissionKeyUsing,
-                namedInjections: [
-                    'entity' => $entity,
-                    'affixes' => $affix,
-                ]
-            );
-
-            return $key;
-        }
-
-        return $this->getDefaultNonResourcePermissionKey($entity, $affix);
     }
 
     public function generateForResource(string $resourceKey): void
@@ -206,7 +160,7 @@ class FilamentShield
                         'resourceFqcn' => $resource,
                         'model' => class_basename($resource::getModel()),
                         'modelFqcn' => str($resource::getModel())->toString(),
-                        'permissions' => $this->getResourcePermissionKeys($resource, $affixes),
+                        'permissions' => $this->getDefaultPermissionKeys($resource, $affixes),
                     ],
                 ];
             })
@@ -257,7 +211,7 @@ class FilamentShield
                 return [
                     $page => [
                         'pageFqcn' => $page,
-                        'permissions' => $this->getNonResourcePermissionKey($page, ShieldConfig::init()->permissions->page->prefix),
+                        'permissions' => $this->getDefaultPermissionKeys($page, ShieldConfig::init()->permissions->page->prefix),
                     ],
                 ];
             })
@@ -289,7 +243,7 @@ class FilamentShield
                 return [
                     $widget => [
                         'widgetFqcn' => static::getWidgetInstanceFromWidgetConfiguration($widget),
-                        'permissions' => $this->getNonResourcePermissionKey($widget, ShieldConfig::init()->permissions->widget->prefix),
+                        'permissions' => $this->getDefaultPermissionKeys($widget, ShieldConfig::init()->permissions->widget->prefix),
                     ],
                 ];
             })
@@ -305,30 +259,40 @@ class FilamentShield
             && filled(invade($widgetInstance)->getHeading());
     }
 
-    public function getDefaultResourcePermissionKeys(string $resource, array $affixes): array
+    private function buildPermissionKey(string $entity, string $affix, string $subject): string
     {
-        return $this->getDefaultPermissionKeys($resource, $affixes);
-    }
+        if ($this->buildPermissionKeyUsing instanceof \Closure) {
+            $config = ShieldConfig::init()->permissions;
 
-    public function getDefaultNonResourcePermissionKey(string $resource, string $affix): array
-    {
-        return $this->getDefaultPermissionKeys($resource, $affix);
+            /** @var string $result */
+            $result = $this->evaluate(
+                value: $this->buildPermissionKeyUsing,
+                namedInjections: [
+                    'entity' => $entity,
+                    'affix' => $affix,
+                    'subject' => $subject,
+                    'case' => $config->case,
+                    'separator' => $config->separator,
+                ]
+            );
+
+            return $result;
+        }
+
+        // Default implementation
+        $config = ShieldConfig::init()->permissions;
+        return $this->format($config->case, $affix) . $config->separator . $this->format($config->case, $subject);
     }
 
     protected function getDefaultPermissionKeys(string $entity, string|array $affixes): array
     {
-        $permissionConfig = ShieldConfig::init()->permissions;
-        $separator = $permissionConfig->separator;
         $subject = $this->resolveSubject($entity);
 
         if (is_array($affixes)) {
             return collect($affixes)
                 ->mapWithKeys(fn(string $affix): array => [
                     $this->format('camel', $affix) => [
-                        'key' => str($this->format($permissionConfig->case, $affix))
-                            ->append($separator)
-                            ->append($this->format($permissionConfig->case, $subject))
-                            ->toString(),
+                        'key' => $this->buildPermissionKey($entity, $affix, $subject),
                         'label' => $this->getAffixLabel($affix) . ' ' . $this->resolveLabel($entity),
                     ]
                 ])
@@ -336,7 +300,7 @@ class FilamentShield
                 ->toArray();
         }
 
-        return [$this->format($permissionConfig->case, $affixes). $separator . $this->format($permissionConfig->case, $subject) => $this->resolveLabel($entity)];
+        return [$this->buildPermissionKey($entity, $affixes, $subject) => $this->resolveLabel($entity)];
     }
 
     protected function resolveLabel(string $entity): string
