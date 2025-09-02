@@ -78,12 +78,6 @@ return [
         ],
     ],
 
-    'generator' => [ // TODO: should be replaced now
-        'option' => 'policies_and_permissions',
-        'policy_directory' => 'Policies',
-        'policy_namespace' => 'Policies',
-    ],
-
     'exclude' => [
 
         'resources' => [],
