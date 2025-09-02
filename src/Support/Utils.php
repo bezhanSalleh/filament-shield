@@ -141,18 +141,6 @@ class Utils
         return $filesystem->exists($rolePolicyPath = static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php') ? $rolePolicyPath : null;
     }
 
-    // TODO: required update
-    public static function getGeneratorNamespace(): string
-    {
-        return (string) config('filament-shield.generator.namespace', 'Policies');
-    }
-
-    // TODO: required update
-    public static function getPolicyNamespace(): string
-    {
-        return (string) config('filament-shield.generator.policy_namespace', 'Policies');
-    }
-
     public static function isRolePolicyRegistered(): bool
     {
         return filled(static::getRolePolicyPath()) && static::getConfig()->register_role_policy;
