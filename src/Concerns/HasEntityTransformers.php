@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Concerns;
 
-use Illuminate\Support\Str;
-use Filament\Widgets\WidgetConfiguration;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Widgets\WidgetConfiguration;
+use Illuminate\Support\Str;
 
 trait HasEntityTransformers
 {
@@ -91,7 +91,7 @@ trait HasEntityTransformers
             ->toArray();
     }
 
-    protected function getDefaultPolicyMethodsOrFor(string|null $resource = null): array
+    protected function getDefaultPolicyMethodsOrFor(?string $resource = null): array
     {
         $policyConfig = Utils::getConfig()->policies;
         $defaultPolicyMethods = $policyConfig->methods;
@@ -104,7 +104,7 @@ trait HasEntityTransformers
                 : $resourcePolicyMethods ?? $defaultPolicyMethods;
 
         }
-        
+
         return collect($defaultPolicyMethods)
             ->map(fn ($method): string => $this->format('camel', $method))
             ->unique()

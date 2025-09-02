@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Concerns;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Pages\Page;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Filament\Widgets\Widget;
-use InvalidArgumentException;
 use Filament\Resources\Resource;
 use Filament\Widgets\TableWidget;
+use Filament\Widgets\Widget;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Lang;
-use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 trait HasLabelResolver
 {
@@ -64,7 +64,7 @@ trait HasLabelResolver
             && filled(invade($widgetInstance)->getHeading());
     }
 
-    public function getAffixLabel(string $affix, string | null $resource = null): string
+    public function getAffixLabel(string $affix, ?string $resource = null): string
     {
         return Arr::get(
             array: $this->getLocalizedResourceAffixes($resource),
@@ -73,7 +73,7 @@ trait HasLabelResolver
         );
     }
 
-    public function getLocalizedResourceAffixes(string | null $resource = null): array
+    public function getLocalizedResourceAffixes(?string $resource = null): array
     {
         return collect($this->getDefaultPolicyMethodsOrFor($resource))
             ->mapWithKeys(fn ($method): array => [

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Concerns;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Support\Collection;
-use BezhanSalleh\FilamentShield\Support\Utils;
 
 trait HasEntityDiscovery
 {

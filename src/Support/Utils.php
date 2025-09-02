@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Support;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -88,13 +87,6 @@ class Utils
         }
     }
 
-    // TODO: should be handled differently and no longer required i think
-    public static function getGeneralResourcePermissionPrefixes(string $resourceFQCN): array
-    {
-        return config("filament-shield.permission_prefixes.$resourceFQCN") ??
-            config('filament-shield.permission_prefixes.resource');
-    }
-
     public static function isResourceTabEnabled(): bool
     {
         return (bool) static::getConfig()->shield_resource->tabs->resources;
@@ -144,11 +136,6 @@ class Utils
         return filled(static::getRolePolicyPath()) && static::getConfig()->register_role_policy;
     }
 
-    public static function doesResourceHaveCustomPermissions(string $resourceClass): bool
-    {
-        return in_array(HasShieldPermissions::class, class_implements($resourceClass));
-    }
-
     public static function showModelPath(string $resourceFQCN): string
     {
         return config('filament-shield.shield_resource.show_model_path', true)
@@ -159,13 +146,6 @@ class Utils
     public static function getResourceCluster(): ?string
     {
         return config('filament-shield.shield_resource.cluster', null);
-    }
-
-    public static function getResourcePermissionPrefixes(string $resourceFQCN): array
-    {
-        return static::doesResourceHaveCustomPermissions($resourceFQCN)
-            ? $resourceFQCN::getPermissionPrefixes()
-            : static::getGeneralResourcePermissionPrefixes($resourceFQCN);
     }
 
     public static function getRoleModel(): string
@@ -194,8 +174,6 @@ class Utils
     {
         return static::getConfig()->tenant_model ?? null;
     }
-
-    // new
 
     public static function createRole(?string $name = null, int | string | null $tenantId = null): Role
     {

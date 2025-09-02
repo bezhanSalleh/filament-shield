@@ -134,11 +134,12 @@ class FilamentShield
         };
     }
 
+    // TODO: needs to use new methods
     public function getAllResourcePermissions(): array
     {
         return collect($this->getResources())
             ->map(fn (array $resourceEntity): array => collect(
-                Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
+                // Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
             )
                 ->flatMap(function (string $permission) use ($resourceEntity): array {
                     $name = $permission . '_' . $resourceEntity['resource'];

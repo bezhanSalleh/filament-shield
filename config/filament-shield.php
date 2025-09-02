@@ -1,8 +1,5 @@
 <?php
 
-use Filament\Pages\Dashboard;
-use Filament\Widgets\AccountWidget;
-
 return [
 
     'shield_resource' => [
@@ -79,11 +76,11 @@ return [
                 'create',
                 'update',
                 'delete',
-            ]
+            ],
         ],
         'exclude' => [ // list of resources (fully qualified class names) to exclude
             //
-        ]
+        ],
     ],
 
     'pages' => [
@@ -91,7 +88,7 @@ return [
         'prefix' => 'view',
         'exclude' => [ // list of pages (fully qualified class names) to exclude
             \Filament\Pages\Dashboard::class,
-        ]
+        ],
     ],
 
     'widgets' => [
@@ -100,7 +97,7 @@ return [
         'exclude' => [ // list of widgets (fully qualified class names) to exclude
             \Filament\Widgets\AccountWidget::class,
             \Filament\Widgets\FilamentInfoWidget::class,
-        ]
+        ],
     ],
 
     'custom_permissions' => [],
@@ -112,6 +109,5 @@ return [
     ],
 
     'register_role_policy' => true,
-
 
 ];
