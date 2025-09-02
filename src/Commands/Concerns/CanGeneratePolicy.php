@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Support\ShieldConfig;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 trait CanGeneratePolicy
 {
@@ -58,7 +59,7 @@ trait CanGeneratePolicy
         // but the kye needs to be first decided upon, what should be the key actually
         foreach(FilamentShield::getResourcePolicyActionsWithPermissions($entity['resourceFqcn']) as $method => $permission) {
             $stubVariables[$method] = [
-                'stub' => in_array($method, $singleParameterMethods) ? 'SingleParamMethod': 'MultiParamMethod',
+                'stub' => resolve($entity['modelFqcn']) instanceof Authenticatable ? 'SingleParamMethod' : (in_array($method, $singleParameterMethods) ? 'SingleParamMethod': 'MultiParamMethod'),
                 'permission' => $permission,
             ];
         }

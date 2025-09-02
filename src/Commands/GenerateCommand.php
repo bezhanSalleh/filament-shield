@@ -17,7 +17,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-use function Laravel\Prompts\Select;
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\select;
 
 #[AsCommand(name: 'shield:generate', description: 'Generate Permissions and/or Policies for Filament entities.')]
 class GenerateCommand extends Command
@@ -79,6 +80,18 @@ class GenerateCommand extends Command
             label: 'Which panel do you want to generate permissions/policies for?',
             options: collect(Filament::getPanels())->keys()->toArray()
         );
+
+        confirm('Would you like to select what to generate (permissions, policies or both) ?', default: true) ?
+            $this->input->setOption('option', Select(
+                label: 'What do you want to generate?',
+                options: [
+                    'policies_and_permissions' => 'Policies & Permissions',
+                    'policies' => 'Policies only',
+                    'permissions' => 'Permissions only',
+                ],
+                default: FilamentShield::getGeneratorOption(),
+            )) :
+            $this->components->info('Continuing with the config generator option: ' . FilamentShield::getGeneratorOption());
 
         Filament::setCurrentPanel(Filament::getPanel($panel));
 
@@ -232,7 +245,9 @@ class GenerateCommand extends Command
         return collect($pages)
             ->values()
             ->each(function (array $page): void {
-                FilamentShield::generateForPage(array_key_first($page['permissions']));
+                if ($this->generatorOption === 'permissions') {
+                    FilamentShield::generateForPage(array_key_first($page['permissions']));
+                }
             });
     }
 
@@ -241,7 +256,9 @@ class GenerateCommand extends Command
         return collect($widgets)
             ->values()
             ->each(function (array $widget): void {
-                FilamentShield::generateForWidget(array_key_first($widget['permissions']));
+                if ($this->generatorOption === 'permissions') {
+                    FilamentShield::generateForWidget(array_key_first($widget['permissions']));
+                }
             });
     }
 
