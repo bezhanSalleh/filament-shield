@@ -31,10 +31,10 @@ trait CanGeneratePolicy
 
         if (Str::of($path)->contains(['vendor', 'src'])) {
             return Str::of($entity['model'])
-                    ->prepend(str(Utils::getPolicyPath())->append('\\'))
-                    ->replace('\\', DIRECTORY_SEPARATOR)
-                    ->append('Policy.php')
-                    ->toString();
+                ->prepend(str(Utils::getPolicyPath())->append('\\'))
+                ->replace('\\', DIRECTORY_SEPARATOR)
+                ->append('Policy.php')
+                ->toString();
         }
 
         /** @phpstan-ignore-next-line */
@@ -71,7 +71,6 @@ trait CanGeneratePolicy
         $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
             ? $this->resolveNamespaceFromPath(Utils::getPolicyPath())
             : Str::of($namespace)->replace('Models', $policyNamespace)->toString(); /** @phpstan-ignore-line */
-
         $stubVariables['model_name'] = $entity['model'];
         $stubVariables['model_fqcn'] = $namespace . '\\' . $entity['model'];
         $stubVariables['model_variable'] = Str::of($entity['model'])->camel();
@@ -86,7 +85,7 @@ trait CanGeneratePolicy
         $configuredPath = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $configuredPath);
 
         // Only prepend base_path if it's relative
-        if (! preg_match('/^[a-zA-Z]:' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', $configuredPath)
+        if (in_array(preg_match('/^[a-zA-Z]:' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', $configuredPath), [0, false], true)
             && ! Str::startsWith($configuredPath, DIRECTORY_SEPARATOR)) {
             $configuredPath = base_path($configuredPath);
         }
@@ -103,8 +102,8 @@ trait CanGeneratePolicy
                 $relative = Str::after($checkPath, $basePath);
                 $relative = rtrim($relative, DIRECTORY_SEPARATOR);
 
-                $ns = rtrim($namespace, '\\');
-                if ($relative) {
+                $ns = rtrim((string) $namespace, '\\');
+                if ($relative !== '' && $relative !== '0') {
                     $ns .= '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relative);
                 }
 

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
-use BezhanSalleh\FilamentShield\Commands\InstallCommand;
-use BezhanSalleh\FilamentShield\Commands\PublishCommand;
-use BezhanSalleh\FilamentShield\Commands\SetupCommand;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Pages\Page;
