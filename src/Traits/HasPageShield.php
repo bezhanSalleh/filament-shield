@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Traits;
 
-use Filament\Facades\Filament;
 use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Filament\Facades\Filament;
 
 trait HasPageShield
 {
