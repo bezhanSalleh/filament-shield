@@ -15,6 +15,8 @@ use Spatie\Permission\PermissionRegistrar;
 
 class Utils
 {
+    protected static ?array $psr4Cache = null;
+
     public static function getConfig(): ShieldConfig
     {
         return ShieldConfig::init();
@@ -127,8 +129,8 @@ class Utils
     public static function getRolePolicyPath(): ?string
     {
         $filesystem = new Filesystem;
-
-        return $filesystem->exists($rolePolicyPath = static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php') ? $rolePolicyPath : null;
+        $path = static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php';
+        return $filesystem->exists($path) ? Str::of(static::resolveNamespaceFromPath($path))->before('.php')->toString() : null;
     }
 
     public static function isRolePolicyRegistered(): bool
@@ -237,5 +239,61 @@ class Utils
 
             static::giveSuperAdminPermission($permissions);
         }
+    }
+
+    public static function resolveNamespaceFromPath(string $configuredPath): string
+    {
+        // Cache PSR-4 mappings to avoid repeated file I/O
+        if (static::$psr4Cache === null) {
+            $composer = json_decode(file_get_contents(base_path('composer.json')), true);
+            static::$psr4Cache = $composer['autoload']['psr-4'] ?? [];
+        }
+
+        // Normalize path separators once
+        $configuredPath = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $configuredPath);
+
+        // Convert relative path to absolute
+        if (! static::isAbsolutePath($configuredPath)) {
+            $configuredPath = base_path($configuredPath);
+        }
+
+        // Normalize and prepare for comparison
+        $checkPath = rtrim($configuredPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $checkPathLower = strtolower($checkPath);
+
+        foreach (static::$psr4Cache as $namespace => $base) {
+            $basePath = rtrim(base_path(str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $base)), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $basePathLower = strtolower($basePath);
+
+            // Fast path: exact match
+            if ($checkPathLower === $basePathLower) {
+                return rtrim($namespace, '\\');
+            }
+
+            // Check if configured path is within this PSR-4 base
+            if (str_starts_with($checkPathLower, $basePathLower)) {
+                $relative = substr($checkPath, strlen($basePath));
+                $relative = rtrim($relative, DIRECTORY_SEPARATOR);
+
+                $ns = rtrim($namespace, '\\');
+                if ($relative !== '') {
+                    $ns .= '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relative);
+                }
+
+                return $ns;
+            }
+        }
+
+        throw new \RuntimeException("Configured path does not match any PSR-4 mapping: {$configuredPath}");
+    }
+
+    protected static function isAbsolutePath(string $path): bool
+    {
+        // windows os
+        if (preg_match('/^[a-zA-Z]:[\\\\\\/]/', $path)) {
+            return true;
+        }
+
+        return str_starts_with($path, DIRECTORY_SEPARATOR);
     }
 }

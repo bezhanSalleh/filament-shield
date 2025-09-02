@@ -236,7 +236,7 @@ class GenerateCommand extends Command
         return collect($pages)
             ->values()
             ->each(function (array $page): void {
-                if ($this->generatorOption === 'permissions') {
+                 if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
                     Utils::generateForPageOrWidget(array_key_first($page['permissions']));
                 }
             });
@@ -247,7 +247,7 @@ class GenerateCommand extends Command
         return collect($widgets)
             ->values()
             ->each(function (array $widget): void {
-                if ($this->generatorOption === 'permissions') {
+                if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
                     Utils::generateForPageOrWidget(array_key_first($widget['permissions']));
                 }
             });
@@ -257,17 +257,14 @@ class GenerateCommand extends Command
     {
         collect($resources)->map(function (array $resource): void {
             $this->counts['entities']++;
-            if ($this->generatorOption === 'policies_and_permissions') {
-                $this->counts['policies']++;
-                $this->counts['permissions'] += count(FilamentShield::getResourcePermissions($resource['resourceFqcn']));
-            }
 
-            if ($this->generatorOption === 'policies') {
+            if (in_array($this->generatorOption, ['policies', 'policies_and_permissions'], true)) {
                 $this->counts['policies']++;
             }
 
-            if ($this->generatorOption === 'permissions') {
-                $this->counts['permissions'] += count(FilamentShield::getResourcePermissions($resource['resourceFqcn']));
+            if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
+                $generated = FilamentShield::getResourcePermissions($resource['resourceFqcn']);
+                $this->counts['permissions'] += count($generated);
             }
         });
 

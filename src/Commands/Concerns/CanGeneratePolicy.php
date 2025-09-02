@@ -39,7 +39,7 @@ trait CanGeneratePolicy
 
         /** @phpstan-ignore-next-line */
         return Str::of($path)
-            ->replace('Models', Str::of($this->resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString())
+            ->replace('Models', Str::of(Utils::resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString())
             ->replaceLast('.php', 'Policy.php')
             ->replace('\\', DIRECTORY_SEPARATOR)
             ->toString();
@@ -66,10 +66,10 @@ trait CanGeneratePolicy
         $namespace = $reflectionClass->getNamespaceName();
         $path = $reflectionClass->getFileName();
 
-        $policyNamespace = Str::of($this->resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString();
+        $policyNamespace = Str::of(Utils::resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString();
 
         $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
-            ? $this->resolveNamespaceFromPath(Utils::getPolicyPath())
+            ? Utils::resolveNamespaceFromPath(Utils::getPolicyPath())
             : Str::of($namespace)->replace('Models', $policyNamespace)->toString(); /** @phpstan-ignore-line */
         $stubVariables['model_name'] = $entity['model'];
         $stubVariables['model_fqcn'] = $namespace . '\\' . $entity['model'];
@@ -77,40 +77,5 @@ trait CanGeneratePolicy
         $stubVariables['modelPolicy'] = "{$entity['model']}Policy";
 
         return $stubVariables;
-    }
-
-    protected function resolveNamespaceFromPath(string $configuredPath): string
-    {
-        // Normalize separators
-        $configuredPath = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $configuredPath);
-
-        // Only prepend base_path if it's relative
-        if (in_array(preg_match('/^[a-zA-Z]:' . preg_quote(DIRECTORY_SEPARATOR, '/') . '/', $configuredPath), [0, false], true)
-            && ! Str::startsWith($configuredPath, DIRECTORY_SEPARATOR)) {
-            $configuredPath = base_path($configuredPath);
-        }
-
-        $composer = json_decode(file_get_contents(base_path('composer.json')), true);
-        $psr4 = $composer['autoload']['psr-4'] ?? [];
-
-        foreach ($psr4 as $namespace => $base) {
-            $basePath = base_path(str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $base));
-            $basePath = rtrim($basePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-            $checkPath = rtrim($configuredPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-
-            if (strtolower($checkPath) === strtolower($basePath) || Str::startsWith(strtolower($checkPath), strtolower($basePath))) {
-                $relative = Str::after($checkPath, $basePath);
-                $relative = rtrim($relative, DIRECTORY_SEPARATOR);
-
-                $ns = rtrim((string) $namespace, '\\');
-                if ($relative !== '' && $relative !== '0') {
-                    $ns .= '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relative);
-                }
-
-                return $ns;
-            }
-        }
-
-        throw new RuntimeException("Configured path does not match any PSR-4 mapping: {$configuredPath}");
     }
 }
