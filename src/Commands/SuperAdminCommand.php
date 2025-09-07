@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Auth\EloquentUserProvider;
@@ -13,6 +14,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
 
 use function Laravel\Prompts\password;
+use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 class SuperAdminCommand extends Command
@@ -27,15 +29,13 @@ class SuperAdminCommand extends Command
 
     protected Authenticatable $superAdmin;
 
+    protected ?string $panel = null;
+
     protected ?\Illuminate\Database\Eloquent\Model $superAdminRole = null;
 
     protected function getAuthGuard(): Guard
     {
-        if ($this->option('panel')) {
-            Filament::setCurrentPanel(Filament::getPanel($this->option('panel')));
-        }
-
-        return Filament::getCurrentOrDefaultPanel()?->auth();
+        return Filament::getPanel($this->panel)->auth();
     }
 
     protected function getUserProvider(): UserProvider
@@ -53,6 +53,12 @@ class SuperAdminCommand extends Command
 
     public function handle(): int
     {
+        $this->panel = $this->option('panel') ?? select(
+            label: 'Which Panel would you like to use?',
+            options: collect(Filament::getPanels())->keys(),
+            required: true
+        );
+
         $usersCount = static::getUserModel()::count();
         $tenantId = $this->option('tenant');
 
@@ -63,15 +69,13 @@ class SuperAdminCommand extends Command
         } elseif ($usersCount > 1) {
             $this->table(
                 ['ID', 'Name', 'Email', 'Roles'],
-                static::getUserModel()::with('roles')->get()->map(function (Authenticatable $user) {
-                    return [
-                        'id' => $user->getKey(),
-                        'name' => $user->getAttribute('name'),
-                        'email' => $user->getAttribute('email'),
-                        /** @phpstan-ignore-next-line */
-                        'roles' => implode(',', $user->roles->pluck('name')->toArray()),
-                    ];
-                })
+                static::getUserModel()::with('roles')->get()->map(fn (Authenticatable $user): array => [
+                    'id' => $user->getKey(),
+                    'name' => $user->getAttribute('name'),
+                    'email' => $user->getAttribute('email'),
+                    /** @phpstan-ignore-next-line */
+                    'roles' => implode(',', $user->roles->pluck('name')->toArray()),
+                ])
             );
 
             $superAdminId = text(
@@ -91,11 +95,11 @@ class SuperAdminCommand extends Command
                 return self::FAILURE;
             }
             setPermissionsTeamId($tenantId);
-            $this->superAdminRole = FilamentShield::createRole(tenantId: $tenantId);
+            $this->superAdminRole = Utils::createRole(tenantId: $tenantId);
             $this->superAdminRole->syncPermissions(Utils::getPermissionModel()::pluck('id'));
 
         } else {
-            $this->superAdminRole = FilamentShield::createRole();
+            $this->superAdminRole = Utils::createRole();
         }
 
         $this->superAdmin
@@ -128,7 +132,7 @@ class SuperAdminCommand extends Command
             'password' => Hash::make(password(
                 label: 'Password',
                 required: true,
-                validate: fn (string $value) => match (true) {
+                validate: fn (string $value): ?string => match (true) {
                     strlen($value) < 8 => 'The password must be at least 8 characters.',
                     default => null
                 }

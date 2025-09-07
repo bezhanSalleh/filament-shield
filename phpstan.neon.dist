@@ -1,76 +1,26 @@
 includes:
     - phpstan-baseline.neon
 parameters:
-    level: 4
+    level: 5
     paths:
         - src
-    reportUnmatchedIgnoredErrors: false
-    excludePaths:
-        analyse:
-            - src/FilamentShield.php
-            - src/Resources/RoleResource/Pages/CreateRole.php
-            - src/Resources/RoleResource/Pages/EditRole.php
+
     ignoreErrors:
         -
+            identifier: argument.unresolvableType
+        -
+            identifier: argument.type
+        -
             identifier: trait.unused
+        -
+            identifier: typeCoverage.paramTypeCoverage
         -
             identifier: property.notFound
         -
             identifier: method.notFound
-        - '#PHPDoc tag @var#'
-        - '#Call to method getModel\(\) on an unknown class BezhanSalleh\\FilamentShield\\Commands\\EloquentUserProvider#'
-        - '#Call to method getProvider\(\) on an unknown class BezhanSalleh\\FilamentShield\\Commands\\SessionGuard#'
-        -
-            message: '#Call to an undefined static method [a-zA-Z0-9\\_]+::whereName\(\)#'
-            path: src/Commands/MakeShieldSuperAdminCommand.php
-        -
-            message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$permissions#'
-            path: src/Resources/RoleResource.php
-        -
-            message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$form#'
-            paths:
-                - src/Resources/RoleResource/Pages/EditRole.php
-                - src/Resources/RoleResource/Pages/CreateRole.php
-        -
-            message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$onlyWidgets#'
-            path: src/Commands/MakeShieldGenerateCommand.php
-        -
-            message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]#'
-            path: src/Commands/MakeShieldSeederCommand.php
-        -
-            message: '#Missing typehint for iterable value#'
-        -
-            message: '#Out of 222 possible return types, only 213 - 95.9 % actually have it#'
-            path: src/FilamentShieldServiceProvider.php
-        -
-            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Resources/RoleResource.php
-        -
-            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Commands/GenerateCommand.php
-        -
-            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Commands/InstallCommand.php
-        -
-            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Commands/PublishCommand.php
-        -
-            message: '#Out of [0-9]+ possible param types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Commands/SetupCommand.php
-        -
-            message: '#Out of [0-9]+ possible return types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Commands/GenerateCommand.php
-        -
-            message: '#Out of [0-9]+ possible return types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Commands/InstallCommand.php
-        -
-            message: '#Out of [0-9]+ possible return types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Commands/PublishCommand.php
-        -
-            message: '#Out of [0-9]+ possible return types, only [0-9]+ - [0-9.]+ % actually have it#'
-            path: src/Commands/SetupCommand.php
 
-    tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
+    tmpDir: build/phpstan
     treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: true

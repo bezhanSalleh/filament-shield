@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Concerns\CanBeCentralApp;
-use BezhanSalleh\FilamentShield\Concerns\CanCustomizeColumns;
-use BezhanSalleh\FilamentShield\Concerns\CanLocalizePermissionLabels;
-use BezhanSalleh\FilamentShield\Concerns\HasSimpleResourcePermissionView;
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
+use BezhanSalleh\FilamentShield\Concerns\Plugin;
+use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Contracts\Plugin;
+use BezhanSalleh\PluginEssentials\Concerns\Plugin as Essentials;
+use Filament\Contracts\Plugin as FilamentPlugin;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
 
-class FilamentShieldPlugin implements Plugin
+class FilamentShieldPlugin implements FilamentPlugin
 {
-    use CanBeCentralApp;
-    use CanCustomizeColumns;
-    use CanLocalizePermissionLabels;
+    use Essentials\BelongsToParent;
+    use Essentials\BelongsToTenant;
+    use Essentials\HasGlobalSearch;
+    use Essentials\HasLabels;
+    use Essentials\HasNavigation;
+    use Essentials\HasPluginDefaults;
     use EvaluatesClosures;
-    use HasSimpleResourcePermissionView;
+    use Plugin\CanBeCentralApp;
+    use Plugin\CanCustomizeColumns;
+    use Plugin\CanLocalizePermissionLabels;
+    use Plugin\HasSimpleResourcePermissionView;
 
     public static function make(): static
     {
@@ -53,5 +57,18 @@ class FilamentShieldPlugin implements Plugin
         $plugin = filament(app(static::class)->getId());
 
         return $plugin;
+    }
+
+    protected function getPluginDefaults(): array
+    {
+        return [
+            'modelLabel' => __('filament-shield::filament-shield.resource.label.role'),
+            'pluralModelLabel' => __('filament-shield::filament-shield.resource.label.roles'),
+
+            'navigationGroup' => __('filament-shield::filament-shield.nav.group'),
+            'navigationLabel' => __('filament-shield::filament-shield.nav.role.label'),
+            'navigationIcon' => __('filament-shield::filament-shield.nav.role.icon'),
+            'activeNavigationIcon' => 'heroicon-s-shield-check',
+        ];
     }
 }

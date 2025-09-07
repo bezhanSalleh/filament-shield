@@ -1,26 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Traits;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Facades\Filament;
-use Illuminate\Support\Str;
 
 trait HasWidgetShield
 {
+    protected static ?string $widgetPermissionKey = null;
+
     public static function canView(): bool
     {
-        return Filament::auth()->user()->can(static::getPermissionName());
+        $permission = static::getWidgetPermission();
+        $user = Filament::auth()?->user();
+
+        return $permission && $user
+            ? $user->can($permission)
+            : parent::canAccess();
     }
 
-    protected static function getPermissionName(): string
+    protected static function getWidgetPermission(): ?string
     {
-        return Str::of(class_basename(static::class))
-            ->prepend(
-                Str::of(Utils::getWidgetPermissionPrefix())
-                    ->append('_')
-                    ->toString()
-            )
-            ->toString();
+        if (static::$widgetPermissionKey === null) {
+            $widget = FilamentShield::getWidgets()[static::class] ?? null;
+            static::$widgetPermissionKey = $widget ? array_key_first($widget['permissions']) : null;
+        }
+
+        return static::$widgetPermissionKey;
     }
 }

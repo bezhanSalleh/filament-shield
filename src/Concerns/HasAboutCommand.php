@@ -11,7 +11,7 @@ use Illuminate\Foundation\Console\AboutCommand;
 
 trait HasAboutCommand
 {
-    public function initAboutCommand()
+    public function initAboutCommand(): void
     {
         AboutCommand::add('Shield', [
             'Auth Provider' => Utils::getAuthProviderFQCN() . '|' . static::authProviderConfigured(),

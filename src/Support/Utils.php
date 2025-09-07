@@ -1,18 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Support;
 
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Facades\Filament;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class Utils
 {
+    protected static ?array $psr4Cache = null;
+
+    public static function getConfig(): ShieldConfig
+    {
+        return ShieldConfig::init();
+    }
+
     public static function getFilamentAuthGuard(): string
     {
         return Filament::getCurrentOrDefaultPanel()?->getAuthGuard() ?? '';
@@ -30,202 +39,116 @@ class Utils
 
     public static function getResourceSlug(): string
     {
-        return (string) config('filament-shield.shield_resource.slug');
-    }
-
-    public static function getSubNavigationPosition(): ?SubNavigationPosition
-    {
-        return config('filament-shield.shield_resource.sub_navigation_position', null);
-    }
-
-    public static function isResourceNavigationRegistered(): bool
-    {
-        return config('filament-shield.shield_resource.should_register_navigation', true);
-    }
-
-    public static function getResourceNavigationSort(): ?int
-    {
-        return config('filament-shield.shield_resource.navigation_sort');
-    }
-
-    public static function isResourceNavigationBadgeEnabled(): bool
-    {
-        return config('filament-shield.shield_resource.navigation_badge', true);
-    }
-
-    public static function isScopedToTenant(): bool
-    {
-        return config('filament-shield.shield_resource.is_scoped_to_tenant', true);
-    }
-
-    public static function isResourceNavigationGroupEnabled(): bool
-    {
-        return config('filament-shield.shield_resource.navigation_group', true);
-    }
-
-    public static function isResourceGloballySearchable(): bool
-    {
-        return config('filament-shield.shield_resource.is_globally_searchable', false);
+        return (string) static::getConfig()->shield_resource->slug;
     }
 
     public static function getAuthProviderFQCN(): string
     {
-        return config('filament-shield.auth_provider_model.fqcn');
+        return (string) static::getConfig()->auth_provider_model;
     }
 
     public static function isAuthProviderConfigured(): bool
     {
-        return in_array("Spatie\Permission\Traits\HasRoles", class_uses_recursive(static::getAuthProviderFQCN()));
+        return in_array(\Spatie\Permission\Traits\HasRoles::class, class_uses_recursive(static::getAuthProviderFQCN()));
     }
 
     public static function isSuperAdminEnabled(): bool
     {
-        return (bool) config('filament-shield.super_admin.enabled', true);
+        return (bool) static::getConfig()->super_admin->enabled;
     }
 
     public static function getSuperAdminName(): string
     {
-        return (string) config('filament-shield.super_admin.name');
+        return (string) static::getConfig()->super_admin->name;
     }
 
     public static function isSuperAdminDefinedViaGate(): bool
     {
-        return (bool) static::isSuperAdminEnabled() && config('filament-shield.super_admin.define_via_gate', false);
+        return static::isSuperAdminEnabled() && static::getConfig()->super_admin->define_via_gate;
     }
 
     public static function getSuperAdminGateInterceptionStatus(): string
     {
-        return (string) config('filament-shield.super_admin.intercept_gate');
+        return (string) static::getConfig()->super_admin->intercept_gate;
     }
 
     public static function isPanelUserRoleEnabled(): bool
     {
-        return (bool) config('filament-shield.panel_user.enabled', false);
+        return (bool) static::getConfig()->panel_user->enabled;
     }
 
     public static function getPanelUserRoleName(): string
     {
-        return (string) config('filament-shield.panel_user.name', 'panel_user');
+        return (string) static::getConfig()->panel_user->name;
     }
 
     public static function createPanelUserRole(): void
     {
         if (static::isPanelUserRoleEnabled()) {
-            FilamentShield::createRole(name: Utils::getPanelUserRoleName());
+            static::createRole(name: static::getPanelUserRoleName());
         }
     }
 
-    public static function getGeneralResourcePermissionPrefixes(string $resourceFQCN): array
+    public static function isResourceTabEnabled(): bool
     {
-        return config("filament-shield.permission_prefixes.$resourceFQCN") ??
-            config('filament-shield.permission_prefixes.resource');
+        return (bool) static::getConfig()->shield_resource->tabs->resources;
     }
 
-    public static function getPagePermissionPrefix(): string
+    public static function isPageTabEnabled(): bool
     {
-        return (string) config('filament-shield.permission_prefixes.page');
+        return (bool) static::getConfig()->shield_resource->tabs->pages;
     }
 
-    public static function getWidgetPermissionPrefix(): string
+    public static function isWidgetTabEnabled(): bool
     {
-        return (string) config('filament-shield.permission_prefixes.widget');
+        return (bool) static::getConfig()->shield_resource->tabs->widgets;
     }
 
-    public static function isResourceEntityEnabled(): bool
+    public static function isCustomPermissionTabEnabled(): bool
     {
-        return (bool) config('filament-shield.entities.resources', true);
-    }
-
-    public static function isPageEntityEnabled(): bool
-    {
-        return (bool) config('filament-shield.entities.pages', true);
-    }
-
-    /**
-     * Widget Entity Status
-     */
-    public static function isWidgetEntityEnabled(): bool
-    {
-        return (bool) config('filament-shield.entities.widgets', true);
-    }
-
-    public static function isCustomPermissionEntityEnabled(): bool
-    {
-        return (bool) config('filament-shield.entities.custom_permissions', false);
+        return (bool) static::getConfig()->shield_resource->tabs->custom_permissions;
     }
 
     public static function getGeneratorOption(): string
     {
-        return (string) config('filament-shield.generator.option', 'policies_and_permissions');
+        return match (true) {
+            static::getConfig()->permissions->generate && static::getConfig()->policies->generate => 'policies_and_permissions',
+            static::getConfig()->permissions->generate => 'permissions',
+            static::getConfig()->policies->generate => 'policies',
+            default => 'none',
+        };
     }
 
-    public static function getGeneratorNamespace(): string
+    public static function getPolicyPath(): string
     {
-        return (string) config('filament-shield.generator.namespace', 'Policies');
+        return Str::of(static::getConfig()->policies->path ?? app_path('Policies'))
+            ->replace('\\', DIRECTORY_SEPARATOR)
+            ->toString();
     }
 
-    public static function isGeneralExcludeEnabled(): bool
+    public static function getRolePolicyPath(): ?string
     {
-        return (bool) config('filament-shield.exclude.enabled', true);
-    }
+        $filesystem = new Filesystem;
+        $path = static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php';
 
-    public static function enableGeneralExclude(): void
-    {
-        config(['filament-shield.exclude.enabled' => true]);
-    }
-
-    public static function disableGeneralExclude(): void
-    {
-        config(['filament-shield.exclude.enabled' => false]);
-    }
-
-    public static function getExcludedResouces(): array
-    {
-        return config('filament-shield.exclude.resources');
-    }
-
-    public static function getExcludedPages(): array
-    {
-        return config('filament-shield.exclude.pages');
-    }
-
-    public static function getPolicyNamespace(): string
-    {
-        return (string) config('filament-shield.generator.policy_namespace', 'Policies');
-    }
-
-    public static function getExcludedWidgets(): array
-    {
-        return config('filament-shield.exclude.widgets');
+        return $filesystem->exists($path) ? Str::of(static::resolveNamespaceFromPath($path))->before('.php')->toString() : null;
     }
 
     public static function isRolePolicyRegistered(): bool
     {
-        return static::isRolePolicyGenerated() && config('filament-shield.register_role_policy.enabled', false);
-    }
-
-    public static function doesResourceHaveCustomPermissions(string $resourceClass): bool
-    {
-        return in_array(HasShieldPermissions::class, class_implements($resourceClass));
+        return filled(static::getRolePolicyPath()) && static::getConfig()->register_role_policy;
     }
 
     public static function showModelPath(string $resourceFQCN): string
     {
         return config('filament-shield.shield_resource.show_model_path', true)
-            ? get_class(new ($resourceFQCN::getModel())())
+            ? (new ($resourceFQCN::getModel())())::class
             : '';
     }
 
     public static function getResourceCluster(): ?string
     {
         return config('filament-shield.shield_resource.cluster', null);
-    }
-
-    public static function getResourcePermissionPrefixes(string $resourceFQCN): array
-    {
-        return static::doesResourceHaveCustomPermissions($resourceFQCN)
-            ? $resourceFQCN::getPermissionPrefixes()
-            : static::getGeneralResourcePermissionPrefixes($resourceFQCN);
     }
 
     public static function getRoleModel(): string
@@ -240,47 +163,138 @@ class Utils
             ->getPermissionClass();
     }
 
-    public static function discoverAllResources(): bool
-    {
-        return config('filament-shield.discovery.discover_all_resources', false);
-    }
-
-    public static function discoverAllWidgets(): bool
-    {
-        return config('filament-shield.discovery.discover_all_widgets', false);
-    }
-
-    public static function discoverAllPages(): bool
-    {
-        return config('filament-shield.discovery.discover_all_pages', false);
-    }
-
-    public static function getPolicyPath(): string
-    {
-        return Str::of(config('filament-shield.generator.policy_directory', 'Policies'))
-            ->replace('\\', DIRECTORY_SEPARATOR)
-            ->toString();
-    }
-
-    protected static function isRolePolicyGenerated(): bool
-    {
-        $filesystem = new Filesystem;
-
-        return (bool) $filesystem->exists(app_path(static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php'));
-    }
-
     public static function isTenancyEnabled(): bool
     {
         return (bool) config()->get('permission.teams', false);
     }
 
-    public static function getTenantModel(): ?string
-    {
-        return config()->get('filament-shield.tenant_model', null);
-    }
-
     public static function getTenantModelForeignKey(): string
     {
         return config()->get('permission.column_names.team_foreign_key', 'team_id');
+    }
+
+    public static function getTenantModel(): ?string
+    {
+        return static::getConfig()->tenant_model ?? null;
+    }
+
+    public static function createRole(?string $name = null, int | string | null $tenantId = null): Role
+    {
+        if (static::isTenancyEnabled()) {
+            return static::getRoleModel()::firstOrCreate(
+                [
+                    'name' => $name ?? static::getConfig()->super_admin->name,
+                    static::getTenantModelForeignKey() => $tenantId,
+                ],
+                ['guard_name' => static::getFilamentAuthGuard()]
+            );
+        }
+
+        return static::getRoleModel()::firstOrCreate(
+            ['name' => $name ?? static::getSuperAdminName()],
+            ['guard_name' => static::getFilamentAuthGuard()]
+        );
+    }
+
+    public static function createPermission(string $name): string
+    {
+        return static::getPermissionModel()::firstOrCreate(
+            ['name' => $name],
+            ['guard_name' => static::getFilamentAuthGuard()]
+        )->name;
+    }
+
+    public static function giveSuperAdminPermission(string | array | Collection $permissions): void
+    {
+        if (! static::isSuperAdminDefinedViaGate() && static::isSuperAdminEnabled()) {
+            $superAdmin = static::createRole();
+
+            $superAdmin->givePermissionTo($permissions);
+
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
+        }
+    }
+
+    public static function generateForResource(string $resourceKey): void
+    {
+        $permissions = collect(FilamentShield::getResourcePermissions($resourceKey))
+            ->map(static::createPermission(...))
+            ->toArray();
+
+        static::giveSuperAdminPermission($permissions);
+    }
+
+    public static function generateForPageOrWidget(string $name): void
+    {
+        static::giveSuperAdminPermission(static::createPermission($name));
+    }
+
+    public static function generateForExtraPermissions(): void
+    {
+        $customPermissions = collect(FilamentShield::getCustomPermissions())->keys();
+
+        if ($customPermissions->isNotEmpty()) {
+            $permissions = $customPermissions
+                ->map(static::createPermission(...))
+                ->toArray();
+
+            static::giveSuperAdminPermission($permissions);
+        }
+    }
+
+    public static function resolveNamespaceFromPath(string $configuredPath): string
+    {
+        // Cache PSR-4 mappings to avoid repeated file I/O
+        if (static::$psr4Cache === null) {
+            $composer = json_decode(file_get_contents(base_path('composer.json')), true);
+            static::$psr4Cache = $composer['autoload']['psr-4'] ?? [];
+        }
+
+        // Normalize path separators once
+        $configuredPath = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $configuredPath);
+
+        // Convert relative path to absolute
+        if (! static::isAbsolutePath($configuredPath)) {
+            $configuredPath = base_path($configuredPath);
+        }
+
+        // Normalize and prepare for comparison
+        $checkPath = rtrim($configuredPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $checkPathLower = strtolower($checkPath);
+
+        foreach (static::$psr4Cache as $namespace => $base) {
+            $basePath = rtrim(base_path(str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $base)), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $basePathLower = strtolower($basePath);
+
+            // Fast path: exact match
+            if ($checkPathLower === $basePathLower) {
+                return rtrim($namespace, '\\');
+            }
+
+            // Check if configured path is within this PSR-4 base
+            if (str_starts_with($checkPathLower, $basePathLower)) {
+                $relative = substr($checkPath, strlen($basePath));
+                $relative = rtrim($relative, DIRECTORY_SEPARATOR);
+
+                $ns = rtrim($namespace, '\\');
+                if ($relative !== '') {
+                    $ns .= '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relative);
+                }
+
+                return $ns;
+            }
+        }
+
+        throw new \RuntimeException("Configured path does not match any PSR-4 mapping: {$configuredPath}");
+    }
+
+    protected static function isAbsolutePath(string $path): bool
+    {
+        // windows os
+        if (preg_match('/^[a-zA-Z]:[\\\\\\/]/', $path)) {
+            return true;
+        }
+
+        return str_starts_with($path, DIRECTORY_SEPARATOR);
     }
 }

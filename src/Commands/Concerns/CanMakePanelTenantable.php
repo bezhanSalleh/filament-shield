@@ -17,15 +17,13 @@ trait CanMakePanelTenantable
                 ->prepend('->discoverResources', '->tenant(' . $tenantModelClass . ')')
                 ->save();
             $this->activateTenancy($panelPath);
-
-            $this->components->info("Panel `{$panel->getId()}` is now tenantable.");
         }
 
         if ($panel->hasTenancy()) {
             $this->activateTenancy($panelPath);
-
-            $this->components->info("Panel `{$panel->getId()}` is now tenantable.");
         }
+
+        $this->components->info("Panel `{$panel->getId()}` is now tenantable.");
     }
 
     private function activateTenancy(string $panelPath): void

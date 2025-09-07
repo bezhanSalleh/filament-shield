@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Commands\Concerns;
 
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
 use ReflectionClass;
 
@@ -16,52 +20,56 @@ trait CanGeneratePolicy
             ->trim('\\')
             ->trim(' ')
             ->studly()
-            ->replace('/', '\\');
+            ->replace('/', '\\')
+            ->toString();
     }
 
     protected function generatePolicyPath(array $entity): string
     {
-        $path = (new ReflectionClass($entity['fqcn']::getModel()))->getFileName();
+        $path = (new ReflectionClass($entity['modelFqcn']))->getFileName();
 
         if (Str::of($path)->contains(['vendor', 'src'])) {
-            $basePolicyPath = app_path(
-                (string) Str::of($entity['model'])
-                    ->prepend(str(Utils::getPolicyPath())->append('\\'))
-                    ->replace('\\', DIRECTORY_SEPARATOR),
-            );
-
-            return "{$basePolicyPath}Policy.php";
+            return Str::of($entity['model'])
+                ->prepend(str(Utils::getPolicyPath())->append('\\'))
+                ->replace('\\', DIRECTORY_SEPARATOR)
+                ->append('Policy.php')
+                ->toString();
         }
 
         /** @phpstan-ignore-next-line */
-        $basePath = Str::of($path)
-            ->replace('Models', Utils::getPolicyPath())
+        return Str::of($path)
+            ->replace('Models', Str::of(Utils::resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString())
             ->replaceLast('.php', 'Policy.php')
-            ->replace('\\', DIRECTORY_SEPARATOR);
-
-        return $basePath;
+            ->replace('\\', DIRECTORY_SEPARATOR)
+            ->toString();
     }
 
     protected function generatePolicyStubVariables(array $entity): array
     {
-        $stubVariables = collect(Utils::getResourcePermissionPrefixes($entity['fqcn']))
-            ->reduce(function ($gates, $permission) use ($entity) {
-                $gates[Str::studly($permission)] = $permission . '_' . $entity['resource'];
+        $stubVariables = [];
+        $policyConfig = Utils::getConfig()->policies;
+        $singleParameterMethods = $policyConfig->single_parameter_methods ?? [];
 
-                return $gates;
-            }, []);
+        foreach (FilamentShield::getResourcePolicyActionsWithPermissions($entity['resourceFqcn']) as $method => $permission) {
+            $stubVariables[$method] = [
+                'stub' => resolve($entity['modelFqcn']) instanceof Authenticatable ? 'SingleParamMethod' : (in_array($method, $singleParameterMethods) ? 'SingleParamMethod' : 'MultiParamMethod'),
+                'permission' => $permission,
+            ];
+        }
 
-        $stubVariables['auth_model_fqcn'] = Utils::getAuthProviderFQCN();
-        $stubVariables['auth_model_name'] = Str::of($stubVariables['auth_model_fqcn'])->afterLast('\\');
-        $stubVariables['auth_model_variable'] = Str::of($stubVariables['auth_model_name'])->camel();
+        $stubVariables['auth_model_fqcn'] = 'Illuminate\\Foundation\\Auth\\User as AuthUser';
+        $stubVariables['auth_model_name'] = 'AuthUser';
+        $stubVariables['auth_model_variable'] = 'authUser';
 
-        $reflectionClass = new ReflectionClass($entity['fqcn']::getModel());
+        $reflectionClass = new ReflectionClass($entity['modelFqcn']);
         $namespace = $reflectionClass->getNamespaceName();
         $path = $reflectionClass->getFileName();
 
+        $policyNamespace = Str::of(Utils::resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString();
+
         $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
-            ? 'App\\' . Utils::getPolicyNamespace()
-            : Str::of($namespace)->replace('Models', Utils::getPolicyNamespace()); /** @phpstan-ignore-line */
+            ? Utils::resolveNamespaceFromPath(Utils::getPolicyPath())
+            : Str::of($namespace)->replace('Models', $policyNamespace)->toString(); /** @phpstan-ignore-line */
         $stubVariables['model_name'] = $entity['model'];
         $stubVariables['model_fqcn'] = $namespace . '\\' . $entity['model'];
         $stubVariables['model_variable'] = Str::of($entity['model'])->camel();

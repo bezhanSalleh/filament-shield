@@ -72,7 +72,7 @@ class Stringer
         foreach ($parts as $part) {
             if ($part === '..') {
                 // Remove the last directory from the stack if it's not empty and not '..'
-                if (! empty($normalizedParts) && end($normalizedParts) !== '..') {
+                if ($normalizedParts !== [] && end($normalizedParts) !== '..') {
                     array_pop($normalizedParts);
                 } else {
                     $normalizedParts[] = $part;
@@ -87,15 +87,13 @@ class Stringer
         // Preserve absolute path indicators for different OS
         if (PHP_OS_FAMILY === 'Windows') {
             // On Windows, preserve drive letter (e.g., C:)
-            if (preg_match('/^[a-zA-Z]:/', $path) && ! preg_match('/^[a-zA-Z]:/', $normalizedPath)) {
+            if (preg_match('/^[a-zA-Z]:/', $path) && in_array(preg_match('/^[a-zA-Z]:/', $normalizedPath), [0, false], true)) {
                 $driveLetter = substr($path, 0, 2);
                 $normalizedPath = $driveLetter . DIRECTORY_SEPARATOR . ltrim($normalizedPath, DIRECTORY_SEPARATOR);
             }
-        } else {
+        } elseif (str_starts_with($path, '/') && ! str_starts_with($normalizedPath, DIRECTORY_SEPARATOR)) {
             // On Unix-like systems, preserve leading slash for absolute paths
-            if (str_starts_with($path, '/') && ! str_starts_with($normalizedPath, DIRECTORY_SEPARATOR)) {
-                $normalizedPath = DIRECTORY_SEPARATOR . $normalizedPath;
-            }
+            $normalizedPath = DIRECTORY_SEPARATOR . $normalizedPath;
         }
 
         return $normalizedPath;
@@ -135,48 +133,41 @@ class Stringer
             if ($startPos === false) {
                 return $this; // Needle not found
             }
-
             // Find the opening parenthesis position
             $openingParenPos = strpos($this->content, '(', $startPos);
             if ($openingParenPos === false) {
                 return $this; // No opening parenthesis found
             }
-
             // Find the closing parenthesis
             $closingParenPos = $this->findClosingParen($openingParenPos);
             if (is_null($closingParenPos)) {
                 return $this; // No closing parenthesis found
             }
-
             // Get the line indentation
             $lineInfo = $this->findLine($needle);
             $indentation = $lineInfo['indentation'] . $this->getIndentation();
-
             // Format the new content based on the newLine flag
             $formattedReplacement = $this->addNewLine
                 ? "\n" . $indentation . trim($contentToPrepend)
                 : $indentation . trim($contentToPrepend);
-
-            $this->addNewLine = false; // Reset flag
-
+            $this->addNewLine = false;
+            // Reset flag
             // Insert the formatted replacement before the opening parenthesis
             $this->content = substr_replace($this->content, $formattedReplacement, $openingParenPos, 0);
-        } else {
+        } elseif (($lineInfo = $this->findLine($needle)) !== null && ($lineInfo = $this->findLine($needle)) !== []) {
             // Normal prepend logic
-            if ($lineInfo = $this->findLine($needle)) {
-                // Prepend the content with proper indentation
-                $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToPrepend);
-                if ($this->addNewLine) {
-                    $newContent = "\n" . $newContent;
-                    $this->addNewLine = false; // Reset the flag
-                }
-                $this->content = substr_replace(
-                    $this->content,
-                    $newContent,
-                    $lineInfo['start'],
-                    0
-                );
+            // Prepend the content with proper indentation
+            $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToPrepend);
+            if ($this->addNewLine) {
+                $newContent = "\n" . $newContent;
+                $this->addNewLine = false; // Reset the flag
             }
+            $this->content = substr_replace(
+                $this->content,
+                $newContent,
+                $lineInfo['start'],
+                0
+            );
         }
 
         return $this;
@@ -194,30 +185,25 @@ class Stringer
             if ($startPos === false) {
                 return $this; // Needle not found
             }
-
             // Find the opening parenthesis position
             $openingParenPos = strpos($this->content, '(', $startPos);
             if ($openingParenPos === false) {
                 return $this; // No opening parenthesis found
             }
-
             // Find the closing parenthesis
             $closingParenPos = $this->findClosingParen($openingParenPos);
             if (is_null($closingParenPos)) {
                 return $this; // No closing parenthesis found
             }
-
             // Get the line indentation
             $lineInfo = $this->findLine($needle);
             $indentation = $lineInfo['indentation'] . $this->getIndentation();
-
             // Format the new content based on the newLine flag
             $formattedReplacement = $this->addNewLine
                 ? $indentation . trim($contentToAppend) . "\n"
                 : $indentation . trim($contentToAppend);
-
-            $this->addNewLine = false; // Reset flag
-
+            $this->addNewLine = false;
+            // Reset flag
             // If the closing parenthesis has a semicolon, move it to a new line with indentation
             if ($this->content[$closingParenPos + 1] === ';') {
                 $this->content = substr_replace(
@@ -228,25 +214,22 @@ class Stringer
                 );
                 $closingParenPos += strlen("\n" . $indentation . ';'); // Adjust closing position
             }
-
             // Insert the formatted replacement after the closing parenthesis
             $this->content = substr_replace($this->content, $formattedReplacement, $closingParenPos + 1, 0);
-        } else {
+        } elseif (($lineInfo = $this->findLine($needle)) !== null && ($lineInfo = $this->findLine($needle)) !== []) {
             // Normal append logic
-            if ($lineInfo = $this->findLine($needle)) {
-                // Append the content with proper indentation
-                $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToAppend);
-                if ($this->addNewLine) {
-                    $newContent = $newContent . "\n";
-                    $this->addNewLine = false; // Reset the flag
-                }
-                $this->content = substr_replace(
-                    $this->content,
-                    $newContent,
-                    $lineInfo['end'],
-                    0
-                );
+            // Append the content with proper indentation
+            $newContent = $lineInfo['indentation'] . $this->getIndentation() . trim($contentToAppend);
+            if ($this->addNewLine) {
+                $newContent .= "\n";
+                $this->addNewLine = false; // Reset the flag
             }
+            $this->content = substr_replace(
+                $this->content,
+                $newContent,
+                $lineInfo['end'],
+                0
+            );
         }
 
         return $this;
@@ -273,7 +256,7 @@ class Stringer
 
     public function replace(string $needle, string $replacement): static
     {
-        if ($lineInfo = $this->findLine($needle)) {
+        if (($lineInfo = $this->findLine($needle)) !== null && ($lineInfo = $this->findLine($needle)) !== []) {
             // Replace the entire line containing the needle
             $this->content = substr_replace(
                 $this->content,
@@ -315,10 +298,10 @@ class Stringer
             $needle = trim($needle, '*');
 
             return (bool) preg_match('/' . preg_quote($needle, '/') . '/', $this->content);
-        } else {
-            // Perform an exact search
-            return str_contains($this->content, $needle);
         }
+
+        // Perform an exact search
+        return str_contains($this->content, $needle);
     }
 
     public function save(): bool
@@ -367,14 +350,15 @@ class Stringer
     {
         $lines = explode("\n", $this->content);
         $normalizedNeedle = preg_replace('/\s+/', ' ', trim($needle));
+        $counter = count($lines);
 
-        for ($i = 0; $i < count($lines); $i++) {
+        for ($i = 0; $i < $counter; $i++) {
             $currentLine = trim($lines[$i]);
             $nextLine = isset($lines[$i + 1]) ? trim($lines[$i + 1]) : '';
 
             // Check if current line contains the method declaration
             // and next line contains the opening brace
-            if (str_contains(preg_replace('/\s+/', ' ', $currentLine), $normalizedNeedle)
+            if (str_contains((string) preg_replace('/\s+/', ' ', $currentLine), (string) $normalizedNeedle)
                 && str_contains($nextLine, '{')) {
 
                 $startPos = 0;
@@ -429,7 +413,7 @@ class Stringer
         $normalizedBlock = preg_replace('/\s+/', ' ', trim($block));
 
         // Split the block into individual method calls
-        $methodCalls = array_map('trim', explode('->', $normalizedBlock));
+        $methodCalls = array_map('trim', explode('->', (string) $normalizedBlock));
 
         $lines = explode("\n", $this->content);
         $contentLength = count($lines);
@@ -446,10 +430,10 @@ class Stringer
                 $normalizedLine = preg_replace('/\s+/', ' ', $currentLine);
 
                 // Check if current line contains the current method call
-                if (str_contains($normalizedLine, trim($methodCalls[$currentMethodIndex]))) {
+                if (str_contains((string) $normalizedLine, trim($methodCalls[$currentMethodIndex]))) {
                     $currentMethodIndex++;
                     $endLine++;
-                } elseif (! empty($currentLine)) {
+                } elseif ($currentLine !== '' && $currentLine !== '0') {
                     // If we find a non-empty line that doesn't match, break
                     $matchFound = false;
 
@@ -500,7 +484,7 @@ class Stringer
         // Use findMethodDeclaration for better method handling
         $lineInfo = $this->findMethodDeclaration($needle);
 
-        if (! $lineInfo) {
+        if ($lineInfo === null || $lineInfo === []) {
             return $this;
         }
 
@@ -517,7 +501,10 @@ class Stringer
             $formattedContent = '';
             foreach ($contentLines as $index => $line) {
                 $trimmedLine = trim($line);
-                if (empty($trimmedLine)) {
+                if ($trimmedLine === '') {
+                    continue;
+                }
+                if ($trimmedLine === '0') {
                     continue;
                 }
 
@@ -526,7 +513,7 @@ class Stringer
 
             // Add new line if flag is set
             if ($this->addNewLine) {
-                $formattedContent = $formattedContent . "\n";
+                $formattedContent .= "\n";
                 $this->addNewLine = false;
             }
 
@@ -564,7 +551,7 @@ class Stringer
 
     public function deleteLine(string $needle): static
     {
-        if ($lineInfo = $this->findLine($needle)) {
+        if (($lineInfo = $this->findLine($needle)) !== null && ($lineInfo = $this->findLine($needle)) !== []) {
             $this->content = substr_replace(
                 $this->content,
                 '',

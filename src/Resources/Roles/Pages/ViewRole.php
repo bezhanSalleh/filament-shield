@@ -1,8 +1,10 @@
 <?php
 
-namespace BezhanSalleh\FilamentShield\Resources\RoleResource\Pages;
+declare(strict_types=1);
 
-use BezhanSalleh\FilamentShield\Resources\RoleResource;
+namespace BezhanSalleh\FilamentShield\Resources\Roles\Pages;
+
+use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 

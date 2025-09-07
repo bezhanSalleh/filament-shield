@@ -17,10 +17,7 @@ trait CanRegisterPlugin
         $pluginsArray = "->plugins([\n";
         $pluginsTarget = '->middleware([';
 
-        if ($stringer->contains($shieldPlugin)) {
-            $this->components->warn('Shield plugin is already registered! skipping...');
-        } else {
-
+        if (! $stringer->contains($shieldPlugin)) {
             $stringer
                 ->when(
                     value: ! $stringer->contains($shieldPluginImportStatement),
@@ -32,11 +29,11 @@ trait CanRegisterPlugin
                     callback: fn (Stringer $stringer): Stringer => $stringer
                         ->when(
                             value: $centralApp,
-                            callback: fn (Stringer $stringer) => $stringer
+                            callback: fn (Stringer $stringer): \BezhanSalleh\FilamentShield\Stringer => $stringer
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin)
                                 ->append($shieldPlugin, '->centralApp(' . $tenantModelClass . '),'),
-                            default: fn (Stringer $stringer) => $stringer
+                            default: fn (Stringer $stringer): \BezhanSalleh\FilamentShield\Stringer => $stringer
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin . ',')
                         ),
@@ -46,13 +43,13 @@ trait CanRegisterPlugin
                     callback: fn (Stringer $stringer): Stringer => $stringer
                         ->when(
                             value: $centralApp,
-                            callback: fn (Stringer $stringer) => $stringer
+                            callback: fn (Stringer $stringer): \BezhanSalleh\FilamentShield\Stringer => $stringer
                                 ->append($pluginsTarget, $pluginsArray, true)
                                 ->append($pluginsArray, '])')
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin)
                                 ->append($shieldPlugin, '->centralApp(' . $tenantModelClass . '),'),
-                            default: fn (Stringer $stringer) => $stringer
+                            default: fn (Stringer $stringer): \BezhanSalleh\FilamentShield\Stringer => $stringer
                                 ->append($pluginsTarget, $pluginsArray, true)
                                 ->append($pluginsArray, '])')
                                 ->indent(4)
@@ -60,10 +57,10 @@ trait CanRegisterPlugin
                         )
                 )
                 ->save();
-
             $this->components->info('Shield plugin has been registered successfully!');
 
+        } else {
+            $this->components->warn('Shield plugin is already registered! skipping...');
         }
-
     }
 }

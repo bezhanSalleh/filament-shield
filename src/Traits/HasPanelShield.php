@@ -9,22 +9,21 @@ use Filament\Panel;
 
 trait HasPanelShield
 {
-    public static function bootHasPanelShield()
+    public static function bootHasPanelShield(): void
     {
-        if (! app()->runningInConsole()) {
-            if (Utils::isPanelUserRoleEnabled()) {
-
-                Utils::createPanelUserRole();
-
-                static::created(fn ($user) => $user->assignRole(Utils::getPanelUserRoleName()));
-
-                static::deleting(fn ($user) => $user->removeRole(Utils::getPanelUserRoleName()));
-            }
+        if (! app()->runningInConsole() && Utils::isPanelUserRoleEnabled()) {
+            Utils::createPanelUserRole();
+            static::created(fn ($user) => $user->assignRole(Utils::getPanelUserRoleName()));
+            static::deleting(fn ($user) => $user->removeRole(Utils::getPanelUserRoleName()));
         }
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasRole(Utils::getSuperAdminName()) || $this->hasRole(Utils::getPanelUserRoleName());
+        if ($this->hasRole(Utils::getSuperAdminName())) {
+            return true;
+        }
+
+        return (bool) $this->hasRole(Utils::getPanelUserRoleName());
     }
 }

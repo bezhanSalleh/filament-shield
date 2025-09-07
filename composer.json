@@ -24,9 +24,10 @@
     ],
     "require": {
         "php": "^8.2",
+        "bezhansalleh/filament-plugin-essentials": "^1.0",
         "filament/filament": "^4.0",
-        "filament/upgrade": "^4.0",
         "illuminate/contracts": "^11.28|^12.0",
+        "illuminate/support": "*",
         "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-permission": "^6.0"
     },
@@ -44,6 +45,7 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^10.1|^11.0",
+        "rector/rector": "^2.1",
         "spatie/laravel-ray": "^1.40"
     },
     "autoload": {
@@ -61,8 +63,9 @@
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest --no-coverage",
         "type": "vendor/bin/pest --type-coverage",
-        "format": "vendor/bin/pint",
-        "finalize": "composer format && composer type && composer analyse && composer test"
+        "lint": "vendor/bin/pint",
+        "refactor": "vendor/bin/rector",
+        "finalize": "composer refactor && composer lint && composer type && composer analyse && composer test"
     },
     "config": {
         "sort-packages": true,

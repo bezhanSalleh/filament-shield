@@ -1,192 +1,54 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Commands\GenerateCommand;
-use BezhanSalleh\FilamentShield\Commands\InstallCommand;
-use BezhanSalleh\FilamentShield\Commands\PublishCommand;
-use BezhanSalleh\FilamentShield\Commands\SetupCommand;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Filament\Facades\Filament;
+use Filament\Pages\Page;
+use Filament\Resources\Resource;
 use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Widgets\TableWidget;
 use Filament\Widgets\Widget;
-use Filament\Widgets\WidgetConfiguration;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\PermissionRegistrar;
 
 class FilamentShield
 {
+    use Concerns\HasEntityDiscovery;
+    use Concerns\HasEntityTransformers;
+    use Concerns\HasLabelResolver;
+    use Concerns\HasResourceHelpers;
     use EvaluatesClosures;
 
-    protected ?Closure $configurePermissionIdentifierUsing = null;
+    protected ?Closure $buildPermissionKeyUsing = null;
 
-    public ?Collection $customPermissions = null;
-
-    public function configurePermissionIdentifierUsing(Closure $callback): static
+    public function buildPermissionKeyUsing(Closure $callback): static
     {
-        $this->configurePermissionIdentifierUsing = $callback;
+        $this->buildPermissionKeyUsing = $callback;
 
         return $this;
     }
 
-    public function getPermissionIdentifier(string $resource): string
-    {
-        if ($this->configurePermissionIdentifierUsing) {
-
-            $identifier = (string) $this->evaluate(
-                value: $this->configurePermissionIdentifierUsing,
-                namedInjections: [
-                    'resource' => $resource,
-                ]
-            );
-
-            if (Str::contains($identifier, '_')) {
-                throw new InvalidArgumentException("Permission identifier `$identifier` for `$resource` cannot contain underscores.");
-            }
-
-            return $identifier;
-        }
-
-        return $this->getDefaultPermissionIdentifier($resource);
-    }
-
-    public function generateForResource(array $entity): void
-    {
-        $resourceByFQCN = $entity['fqcn'];
-        $permissionPrefixes = Utils::getResourcePermissionPrefixes($resourceByFQCN);
-
-        if (Utils::isResourceEntityEnabled()) {
-            $permissions = collect();
-            collect($permissionPrefixes)
-                ->each(function (string $prefix) use ($entity, $permissions) {
-                    $permissions->push(Utils::getPermissionModel()::firstOrCreate(
-                        ['name' => $prefix . '_' . $entity['resource']],
-                        ['guard_name' => Utils::getFilamentAuthGuard()]
-                    ));
-                });
-
-            static::giveSuperAdminPermission($permissions);
-        }
-    }
-
-    public static function generateForPage(string $page): void
-    {
-        if (Utils::isPageEntityEnabled()) {
-            $permission = Utils::getPermissionModel()::firstOrCreate(
-                ['name' => $page],
-                ['guard_name' => Utils::getFilamentAuthGuard()]
-            )->name;
-
-            static::giveSuperAdminPermission($permission);
-        }
-    }
-
-    public static function generateForWidget(string $widget): void
-    {
-        if (Utils::isWidgetEntityEnabled()) {
-            $permission = Utils::getPermissionModel()::firstOrCreate(
-                ['name' => $widget],
-                ['guard_name' => Utils::getFilamentAuthGuard()]
-            )->name;
-
-            static::giveSuperAdminPermission($permission);
-        }
-    }
-
-    protected static function giveSuperAdminPermission(string | array | Collection $permissions): void
-    {
-        if (! Utils::isSuperAdminDefinedViaGate() && Utils::isSuperAdminEnabled()) {
-            $superAdmin = static::createRole();
-
-            $superAdmin->givePermissionTo($permissions);
-
-            app(PermissionRegistrar::class)->forgetCachedPermissions();
-        }
-    }
-
-    public static function createRole(?string $name = null, int | string | null $tenantId = null): Role
-    {
-        if (Utils::isTenancyEnabled()) {
-            return Utils::getRoleModel()::firstOrCreate(
-                [
-                    'name' => $name ?? Utils::getSuperAdminName(),
-                    Utils::getTenantModelForeignKey() => $tenantId,
-                ],
-                ['guard_name' => Utils::getFilamentAuthGuard()]
-            );
-        }
-
-        return Utils::getRoleModel()::firstOrCreate(
-            ['name' => $name ?? Utils::getSuperAdminName()],
-            ['guard_name' => Utils::getFilamentAuthGuard()]
-        );
-    }
-
-    /**
-     * Transform filament resources to key value pair for shield
-     */
     public function getResources(): ?array
     {
-        $resources = Filament::getResources();
-        if (Utils::discoverAllResources()) {
-            $resources = [];
-            foreach (Filament::getPanels() as $panel) {
-                $resources = array_merge($resources, $panel->getResources());
-            }
-            $resources = array_unique($resources);
-        }
-
-        return collect($resources)
-            ->reject(function (string $resource): bool {
-                if (Utils::isGeneralExcludeEnabled()) {
-                    return in_array(
-                        Str::of($resource)->afterLast('\\'),
-                        Utils::getExcludedResouces()
-                    );
-                }
-
-                return false;
-            })
-            ->mapWithKeys(function (string $resource): array {
-                $name = $this->getPermissionIdentifier($resource);
-
-                return [
-                    $name => [
-                        'resource' => "{$name}",
-                        'model' => str($resource::getModel())->afterLast('\\')->toString(),
-                        'fqcn' => $resource,
-                    ],
-                ];
-            })
-            ->sortKeys()
-            ->toArray();
+        return once(fn (): ?array => $this->transformResources());
     }
 
-    /**
-     * Get the localized resource label
-     */
-    public static function getLocalizedResourceLabel(string $entity): string
+    public function getPages(): ?array
     {
-        $resources = Filament::getResources();
-        if (Utils::discoverAllResources()) {
-            $resources = [];
-            foreach (Filament::getPanels() as $panel) {
-                $resources = array_merge($resources, $panel->getResources());
-            }
-            $resources = array_unique($resources);
-        }
-        $label = collect($resources)->filter(function (string $resource) use ($entity): bool {
-            return $resource === $entity;
-        })->first()::getModelLabel();
+        return once(fn (): ?array => $this->transformPages());
+    }
 
-        return str($label)->headline()->toString();
+    public function getWidgets(): ?array
+    {
+        return once(fn (): ?array => $this->transformWidgets());
+    }
+
+    public function getCustomPermissions(bool $localized = false): ?array
+    {
+        return once(fn (): ?array => $this->transformCustomPermissions($localized));
     }
 
     /**
@@ -199,229 +61,88 @@ class FilamentShield
             : Str::of($permission)->headline();
     }
 
-    /**
-     * Transform filament pages to key value pair for shield
-     */
-    public static function getPages(): ?array
+    private function buildPermissionKey(string $entity, string $affix, string $subject): string
     {
-        $pages = Filament::getPages();
+        $permissionConfig = Utils::getConfig()->permissions;
 
-        if (Utils::discoverAllPages()) {
-            $pages = [];
-            foreach (Filament::getPanels() as $panel) {
-                $pages = array_merge($pages, $panel->getPages());
-            }
-            $pages = array_unique($pages);
+        if ($this->buildPermissionKeyUsing instanceof \Closure) {
+
+            /** @var string $result */
+            $result = $this->evaluate(
+                value: $this->buildPermissionKeyUsing,
+                namedInjections: [
+                    'entity' => $entity,
+                    'affix' => $affix,
+                    'subject' => $subject,
+                    'case' => $permissionConfig->case,
+                    'separator' => $permissionConfig->separator,
+                ]
+            );
+
+            return $result;
         }
 
-        $clusters = collect($pages)
-            ->map(fn (string $page): ?string => $page::getCluster())
-            ->reject(fn (mixed $cluster): bool => is_null($cluster))
-            ->unique()
-            ->values()
-            ->toArray();
+        return $this->format($permissionConfig->case, $affix) . $permissionConfig->separator . $this->format($permissionConfig->case, $subject);
+    }
 
-        return collect($pages)
-            ->reject(function (string $page) use ($clusters): bool {
-                if (in_array($page, $clusters)) {
-                    return true;
-                }
+    public function getDefaultPermissionKeys(string $entity, string | array $affixes): array
+    {
+        $subject = $this->resolveSubject($entity);
 
-                if (Utils::isGeneralExcludeEnabled()) {
-                    return in_array(Str::afterLast($page, '\\'), Utils::getExcludedPages());
-                }
-
-                return false;
-            })
-            ->mapWithKeys(function (string $page): array {
-                $permission = Str::of(class_basename($page))
-                    ->prepend(
-                        Str::of(Utils::getPagePermissionPrefix())
-                            ->append('_')
-                            ->toString()
-                    )
-                    ->toString();
-
-                return [
-                    $permission => [
-                        'class' => $page,
-                        'permission' => $permission,
+        if (is_array($affixes)) {
+            return collect($affixes)
+                ->mapWithKeys(fn (string $affix): array => [
+                    $this->format('camel', $affix) => [
+                        'key' => $this->buildPermissionKey($entity, $affix, $subject),
+                        'label' => $this->getAffixLabel($affix, $entity) . ' ' . $this->resolveLabel($entity),
                     ],
-                ];
-            })
-            ->toArray();
-    }
-
-    /**
-     * Get localized page label
-     */
-    public static function getLocalizedPageLabel(string $page): string
-    {
-        $pageInstance = app()->make($page);
-
-        return $pageInstance->getTitle()
-                ?? $pageInstance->getHeading()
-                ?? $pageInstance->getNavigationLabel()
-                ?? '';
-    }
-
-    /**
-     * Transform filament widgets to key value pair for shield
-     */
-    public static function getWidgets(): ?array
-    {
-        $widgets = Filament::getWidgets();
-        if (Utils::discoverAllWidgets()) {
-            $widgets = [];
-            foreach (Filament::getPanels() as $panel) {
-                $widgets = array_merge($widgets, $panel->getWidgets());
-            }
-            $widgets = array_unique($widgets);
+                ])
+                ->uniqueStrict()
+                ->toArray();
         }
 
-        return collect($widgets)
-            ->reject(function (string | WidgetConfiguration $widget): bool {
-                if (Utils::isGeneralExcludeEnabled()) {
-                    return in_array(
-                        needle: str(
-                            static::getWidgetInstanceFromWidgetConfiguration($widget)
-                        )
-                            ->afterLast('\\')
-                            ->toString(),
-                        haystack: Utils::getExcludedWidgets()
-                    );
-                }
-
-                return false;
-            })
-            ->mapWithKeys(function (string | WidgetConfiguration $widget): array {
-                $permission = Str::of(class_basename(static::getWidgetInstanceFromWidgetConfiguration($widget)))
-                    ->prepend(
-                        Str::of(Utils::getWidgetPermissionPrefix())
-                            ->append('_')
-                            ->toString()
-                    )
-                    ->toString();
-
-                return [
-                    $permission => [
-                        'class' => static::getWidgetInstanceFromWidgetConfiguration($widget),
-                        'permission' => $permission,
-                    ],
-                ];
-            })
-            ->toArray();
+        return [$this->buildPermissionKey($entity, $affixes, $subject) => $this->resolveLabel($entity)];
     }
 
-    /**
-     * Get localized widget label
-     */
-    public static function getLocalizedWidgetLabel(string $widget): string
+    protected function resolveSubject(string $entity): string
     {
-        $widgetInstance = app()->make($widget);
+        $entity = resolve($entity);
 
-        return match (true) {
-            $widgetInstance instanceof TableWidget => (string) invade($widgetInstance)->makeTable()->getHeading(),
-            self::hasValidHeading($widgetInstance) => (string) invade($widgetInstance)->getHeading(),
-            default => str($widget)
-                ->afterLast('\\')
-                ->headline()
-                ->toString(),
+        $subject = match (true) {
+            $entity instanceof Resource => Utils::getConfig()->resources->subject,
+            $entity instanceof Page => Utils::getConfig()->pages->subject,
+            $entity instanceof Widget => Utils::getConfig()->widgets->subject,
+            default => throw new InvalidArgumentException('Entity must be an instance of Resource, Page, or Widget.'),
+        };
+
+        if ($subject === 'model' && method_exists($entity::class, 'getModel')) {
+            return class_basename($entity::getModel());
+        }
+
+        return class_basename($entity);
+    }
+
+    protected function format(string $case, string $value): string
+    {
+        return match ($case) {
+            'kebab' => Str::of($value)->kebab()->toString(),
+            'pascal' => Str::of($value)->studly()->toString(),
+            'upper_snake' => Str::of($value)->snake()->upper()->toString(),
+            'lower_snake' => Str::of($value)->snake()->lower()->toString(),
+            'camel' => Str::of($value)->camel()->toString(),
+            default => Str::of($value)->snake()->toString(),
         };
     }
 
-    private static function hasValidHeading(Widget $widgetInstance): bool
+    public function getEntitiesPermissions(): ?array
     {
-        return $widgetInstance instanceof Widget
-            && method_exists($widgetInstance, 'getHeading')
-            && filled(invade($widgetInstance)->getHeading());
-    }
-
-    protected function getDefaultPermissionIdentifier(string $resource): string
-    {
-        return Str::of($resource)
-            ->afterLast('Resources\\')
-            ->beforeLast('Resource')
-            ->replace('\\', '')
-            ->snake()
-            ->replace('_', '::');
-    }
-
-    protected static function getWidgetInstanceFromWidgetConfiguration(string | WidgetConfiguration $widget): string
-    {
-        return $widget instanceof WidgetConfiguration
-            ? $widget->widget
-            : $widget;
-    }
-
-    public function getAllResourcePermissions(): array
-    {
-        return collect($this->getResources())
-            ->map(function (array $resourceEntity): array {
-                return collect(
-                    Utils::getResourcePermissionPrefixes($resourceEntity['fqcn'])
-                )
-                    ->flatMap(function (string $permission) use ($resourceEntity): array {
-                        $name = $permission . '_' . $resourceEntity['resource'];
-                        $permissionLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
-                            ? str(static::getLocalizedResourcePermissionLabel($permission))
-                                ->prepend(
-                                    str($resourceEntity['fqcn']::getPluralModelLabel())
-                                        ->title()
-                                        ->append(' - ')
-                                        ->toString()
-                                )
-                                ->toString()
-                            : $name;
-                        $resourceLabel = FilamentShieldPlugin::get()->hasLocalizedPermissionLabels()
-                            ? static::getLocalizedResourceLabel($resourceEntity['fqcn'])
-                            : $resourceEntity['model'];
-
-                        return [
-                            $name => $permissionLabel,
-                        ];
-                    })
-                    ->toArray();
-            })
-            ->sortKeys()
-            ->collapse()
-            ->toArray();
-    }
-
-    public function getCustomPermissions(): ?Collection
-    {
-
-        if (blank($this->customPermissions)) {
-            $query = Utils::getPermissionModel()::query();
-            $this->customPermissions = $query
-                ->select('name')
-                ->whereNotIn(DB::raw('lower(name)'), $this->getEntitiesPermissions())
-                ->pluck('name');
-        }
-
-        return $this->customPermissions;
-    }
-
-    protected function getEntitiesPermissions(): ?array
-    {
-        return collect($this->getAllResourcePermissions())->keys()
+        return collect($this->getAllResourcePermissionsWithLabels())->keys()
             ->merge(collect($this->getPages())->map->permission->keys())
             ->merge(collect($this->getWidgets())->map->permission->keys())
-            ->map(fn (string $permission): string => str($permission)->lower()->toString())
+            ->merge(collect($this->getCustomPermissions())->keys())
             ->values()
+            ->flatten()
             ->unique()
             ->toArray();
-    }
-
-    /**
-     * Indicate if destructive Shield commands should be prohibited.
-     * Prohibits: shield:setup, shield:install, and shield:generate
-     */
-    public static function prohibitDestructiveCommands(bool $prohibit = true): void
-    {
-        GenerateCommand::prohibit($prohibit);
-        InstallCommand::prohibit($prohibit);
-        PublishCommand::prohibit($prohibit);
-        SetupCommand::prohibit($prohibit);
     }
 }

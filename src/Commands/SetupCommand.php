@@ -1,35 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BezhanSalleh\FilamentShield\Commands;
 
-use BezhanSalleh\FilamentShield\Commands\Concerns\CanBeProhibitable;
 use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use BezhanSalleh\FilamentShield\Stringer;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Facades\Filament;
 use Illuminate\Console\Command;
+use Illuminate\Console\Prohibitable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Schema;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Throwable;
 
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 #[AsCommand(name: 'shield:setup', description: 'Setup and install core requirements for Shield')]
 class SetupCommand extends Command
 {
-    use CanBeProhibitable;
     use CanManipulateFiles;
+    use Prohibitable;
 
     public $signature = 'shield:setup
         {--F|fresh : re-run the migrations}
-        {--minimal : Output minimal amount of info to console}
         {--tenant= : Tenant model}
         {--force}
+        {--starred : Skip the prompt to star the repo}
     ';
 
-    public $description = 'Setup and install core requirements for Shield';
+    protected string $callingMethod = 'call';
+
+    protected bool $refresh = false;
+
+    protected bool $shouldConfigureTenancy = false;
+
+    protected ?string $tenantModel = null;
 
     public function handle(): int
     {
@@ -37,61 +48,83 @@ class SetupCommand extends Command
             return Command::FAILURE;
         }
 
+        $this->refresh = $this->option('fresh') ?? false;
+        $this->callingMethod = $this->option('verbose') ? 'call' : 'callSilently';
+        $this->tenantModel = $this->option('tenant');
+        $this->shouldConfigureTenancy = filled($this->tenantModel);
+
         if (! Utils::isAuthProviderConfigured()) {
-            $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses either `HasRoles` trait');
-
-            return Command::INVALID;
+            $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses the `HasRoles` trait');
         }
 
-        if ($this->option('minimal')) {
-            $confirmed = true;
-        } else {
-            $this->components->alert('Following operations will be performed:');
-            $this->components->info('- Publishes core package config');
-            $this->components->info('- Publishes core package migration');
-            $this->components->warn('- On fresh applications database will be migrated');
-            $this->components->warn('- You can also force this behavior by supplying the --fresh option');
+        if ($this->isShieldInstalled() && ! $this->refresh) {
+            $confirmed = confirm('Shield is already installed. Would you like to reinstall?', false);
 
-            $confirmed = confirm('Do you wish to continue?');
-        }
+            $this->refresh = $confirmed;
 
-        if ($this->CheckIfAlreadyInstalled() && ! $this->option('fresh')) {
-            $this->components->info('Seems you have already installed the Core package(`spatie/laravel-permission`)!');
-            $this->components->info('You should run `shield:install --fresh` instead to refresh the Core package tables and setup shield.');
-
-            if (confirm('Run `shield:setup --fresh` instead?', false)) {
-                $this->install(true);
+            if (! $confirmed) {
+                return Command::INVALID;
             }
-
-            return Command::INVALID;
         }
 
-        if ($confirmed) {
-            $this->install($this->option('fresh'));
-        } else {
-            $this->components->info('`shield:setup` command was cancelled.');
+        $this->publishConfigs();
+
+        $this->configureTenancy();
+
+        $this->manageMigrations();
+
+        if (! $this->option('verbose')) {
+            $this->components->info('Shield has been successfully setup & configured!');
         }
 
-        if (! $this->option('minimal')) {
-            if (confirm('Would you like to show some love by starring the repo?')) {
-                if (PHP_OS_FAMILY === 'Darwin') {
-                    exec('open https://github.com/bezhanSalleh/filament-shield');
-                }
-                if (PHP_OS_FAMILY === 'Linux') {
-                    exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
-                }
-                if (PHP_OS_FAMILY === 'Windows') {
-                    exec('start https://github.com/bezhanSalleh/filament-shield');
-                }
+        if (confirm('Would you like to run `shield:install`?', true)) {
+            $this->promptForOtherShieldCommands();
+        }
 
-                $this->components->info('Thank you!');
+        $this->components->info('Filament Shield🛡 is now active ✅');
+
+        if (! $this->option('starred') && confirm('Would you like to show some love by starring the repo?', true)) {
+            if (PHP_OS_FAMILY === 'Darwin') {
+                exec('open https://github.com/bezhanSalleh/filament-shield');
             }
+            if (PHP_OS_FAMILY === 'Linux') {
+                exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
+            }
+            if (PHP_OS_FAMILY === 'Windows') {
+                exec('start https://github.com/bezhanSalleh/filament-shield');
+            }
+            $this->components->info('Thank you!');
         }
 
         return Command::SUCCESS;
     }
 
-    protected function CheckIfAlreadyInstalled(): bool
+    protected function promptForOtherShieldCommands(): void
+    {
+        $installOptions = [];
+
+        $panel = select(
+            label: 'Which Panel would you like to install Shield for?',
+            options: collect(Filament::getPanels())->keys(),
+            required: true
+        );
+
+        $installOptions['panel'] = $panel;
+
+        $makePanelTenantable = $this->shouldConfigureTenancy && confirm("Would you like to make the `{$panel}` panel tenantable?", false);
+
+        Process::forever()->tty()->run("php artisan shield:install {$panel} " . ($makePanelTenantable ? '--tenant' : ''));
+
+        if (confirm("Would you like to run `shield:generate` for `{$panel}` Panel?", true)) {
+            Process::forever()->tty()->run("php artisan shield:generate --all --panel={$panel}");
+        }
+        if (confirm("Would you like to run `shield:super-admin` for `{$panel}` Panel?", true)) {
+            $this->newLine();
+            Process::forever()->tty()->run("php artisan shield:super-admin --panel={$panel}");
+        }
+    }
+
+    protected function isShieldInstalled(): bool
     {
         $count = $this->getTables()
             ->filter(fn (string $table) => Schema::hasTable($table))
@@ -102,18 +135,18 @@ class SetupCommand extends Command
 
     protected function getTables(): Collection
     {
-        return collect(['role_has_permissions', 'model_has_roles', 'model_has_permissions', 'roles', 'permissions']);
+        return collect(config('permission.table_names', ['role_has_permissions', 'model_has_roles', 'model_has_permissions', 'roles', 'permissions']));
     }
 
-    protected function install(bool $fresh = false): void
+    protected function configureTenancy(): void
     {
-        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
-            '--tag' => 'filament-shield-config',
-            '--force' => $this->option('force') || $fresh,
-        ]);
+        if (! $this->shouldConfigureTenancy && ($this->refresh || ! $this->isShieldInstalled()) && confirm('Do you want to configure Shield for multi-tenancy?', false)) {
+            $this->tenantModel = text(label: 'Please provide the Team/Tenant model (e.g App\\Models\\Team)', required: true);
+            $this->shouldConfigureTenancy = true;
+        }
 
-        if (filled($tenant = $this->option('tenant'))) {
-            $tenantModel = $this->getModel($tenant);
+        if ($this->shouldConfigureTenancy) {
+            $tenantModel = $this->getModel($this->tenantModel);
 
             $shieldConfig = Stringer::for(config_path('filament-shield.php'));
 
@@ -123,17 +156,10 @@ class SetupCommand extends Command
             }
 
             $shieldConfig
-                ->append('tenant_model', "'tenant_model' => '" . get_class($tenantModel) . "',")
+                ->append('tenant_model', "'tenant_model' => '" . $tenantModel::class . "',")
                 ->deleteLine('tenant_model')
                 ->deleteLine("'tenant_model' => null,")
                 ->save();
-
-            if (! $this->fileExists(config_path('permission.php')) || $fresh) {
-                $this->call('vendor:publish', [
-                    '--tag' => 'permission-config',
-                    '--force' => true,
-                ]);
-            }
 
             Stringer::for(config_path('permission.php'))
                 ->replace("'teams' => false,", "'teams' => true,")
@@ -169,40 +195,49 @@ class SetupCommand extends Command
                         ", true)
                     ->save();
             }
-        } else {
-            $this->call('vendor:publish', [
-                '--tag' => 'permission-config',
-                '--force' => $this->option('force') || $fresh,
+        }
+    }
+
+    protected function publishConfigs(): void
+    {
+        $force = $this->refresh || $this->option('force');
+
+        if (! $this->fileExists(config_path('filament-shield.php')) || $force) {
+            $this->{$this->callingMethod}('vendor:publish', [
+                '--tag' => 'filament-shield-config',
+                '--force' => $force,
             ]);
         }
 
-        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('vendor:publish', [
-            '--tag' => 'permission-migrations',
-            '--force' => $this->option('force') || $fresh,
-        ]);
+        if (! $this->fileExists(config_path('permission.php')) || $force) {
+            $this->{$this->callingMethod}('vendor:publish', [
+                '--tag' => 'permission-config',
+                '--force' => $force,
+            ]);
+        }
+    }
 
-        $this->components->info('Core Package config published.');
-
-        if ($fresh) {
-            try {
-                Schema::disableForeignKeyConstraints();
-                DB::table('migrations')->where('migration', 'like', '%_create_permission_tables')->delete();
-                $this->getTables()->each(fn (string $table) => DB::statement('DROP TABLE IF EXISTS ' . $table));
-                Schema::enableForeignKeyConstraints();
-            } catch (Throwable $e) {
-                $this->components->info($e);
-            }
-
-            $this->components->info('Freshening up shield migrations.');
-        } else {
-            $this->components->info('running shield migrations.');
+    protected function manageMigrations(): void
+    {
+        $forced = $this->refresh || $this->option('force');
+        if ($forced) {
+            Schema::disableForeignKeyConstraints();
+            DB::table('migrations')->where('migration', 'like', '%create_permission_tables')->delete();
+            $this->getTables()->each(fn (string $table) => DB::statement('DROP TABLE IF EXISTS ' . $table));
+            Schema::enableForeignKeyConstraints();
         }
 
-        $this->{$this->option('minimal') ? 'callSilent' : 'call'}('migrate', [
-            '--force' => $fresh,
+        $this->{$this->callingMethod}('vendor:publish', [
+            '--tag' => 'permission-migrations',
+            '--force' => $forced,
         ]);
 
-        $this->components->info('Filament Shield🛡 is now active ✅');
+        if ($forced) {
+            Process::quietly()
+                ->run('php artisan migrate --force');
+        } else {
+            $this->{$this->callingMethod}('migrate');
+        }
     }
 
     protected function getModel(string $model): ?Model
@@ -214,7 +249,6 @@ class SetupCommand extends Command
 
         if (! class_exists($model) || ! (app($model) instanceof Model)) {
             $this->components->error("Model not found: {$model}");
-            /** @phpstan-ignore-next-line */
             exit();
         }
 
