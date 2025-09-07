@@ -44,7 +44,7 @@ class Utils
 
     public static function getAuthProviderFQCN(): string
     {
-        return (string) static::getConfig()->auth_provider_model;
+        return (string) static::getConfig()->auth_provider_model['fqcn'];
     }
 
     public static function isAuthProviderConfigured(): bool
