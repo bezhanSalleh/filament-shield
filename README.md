@@ -25,6 +25,10 @@
 
 The easiest and most intuitive way to add access management to your Filament Panels.
 
+> [!NOTE]
+> The Documentation is a work in progress. Please refer to the [CHANGELOG](CHANGELOG.md) and [PR](https://github.com/bezhanSalleh/filament-shield/pull/592) for latest updates.
+> Feedbacks and contributions are welcome!
+
 ## Features
 
 - 🛡️ **Complete Authorization Management**
@@ -45,6 +49,18 @@ The easiest and most intuitive way to add access management to your Filament Pan
 - 🎨 **Best UI**
     - 🖌️ Publish & customize the built-in resource
 - ⚡ **Fine-grained CLI tooling** with safe prohibiting
+
+<div class="filament-hidden">
+
+## Compatibility
+
+| Package Version | Filament Version |
+|-----------------|------------------|
+| [2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)             | 2.x              |
+| [4.x](https://github.com/bezhanSalleh/filament-shield/tree/3.x)             | 3.x              |
+| **4.x**             | 4.x              |
+
+</div>
 
 ## Table of Contents
 
@@ -175,7 +191,6 @@ Add ad‑hoc permissions under `custom_permissions`:
 ],
 ```
 They appear in the Role resource (Custom Permissions tab) when enabled.
-Permission key format is configurable via `FilamentShield::buildPermissionKeyUsing()`.
 
 #### Pages
 
@@ -323,6 +338,7 @@ shield:publish --panel={panel} [--cluster=] [--nested] [--force]
 ```
 
 ### Generate Command Options (recap)
+```bash
 --all  Generate for all discovered entities
 --option=policies_and_permissions|policies|permissions|tenant_relationships Override generator mode
 --resource=FooResource,BarResource  Target resources (class basenames)
@@ -332,7 +348,7 @@ shield:publish --panel={panel} [--cluster=] [--nested] [--force]
 --ignore-existing-policies          Force regeneration of already existing policies
 --panel=admin                       Panel ID (required when not interactive)
 --relationships                     Generate tenancy relationships (panel must have tenancy)
-
+```
 #### Translations 
 
 Publish the translations using:
