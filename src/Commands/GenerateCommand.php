@@ -112,7 +112,7 @@ class GenerateCommand extends Command
 
         $this->resetConfigExclusionCondition($this->ignoreConfigExclude);
 
-        if (Filament::hasTenancy() && Utils::isTenancyEnabled() && ($this->option('relationships') || $this->option('all'))) {
+        if (Filament::hasTenancy() && Utils::isTenancyEnabled() && $this->option('relationships')) {
             $this->generateRelationships(Filament::getPanel($panel));
             $this->components->info('Successfully generated relationships for the given panel.');
         }
