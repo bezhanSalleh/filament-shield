@@ -25,6 +25,12 @@
 
 The easiest and most intuitive way to add access management to your Filament Panels.
 
+
+> [!IMPORTANT]
+> This iteration is a complete rewrite from 3.x|4.x-beta and is not backward compatible. Please refer to the release notes on how to [UPGRADE](https://github.com/bezhanSalleh/filament-shield/releases/tag/4.0.0).
+
+
+
 > [!NOTE]
 > The Documentation is a work in progress. Please refer to the [CHANGELOG](CHANGELOG.md) and [PR](https://github.com/bezhanSalleh/filament-shield/pull/592) for latest updates.
 > Feedbacks and contributions are welcome!
@@ -61,9 +67,6 @@ The easiest and most intuitive way to add access management to your Filament Pan
 | **4.x**             | 4.x              |
 
 </div>
-
-## Table of Contents
-
 
 <div class="filament-hidden">
 <b>Table of Contents</b>
