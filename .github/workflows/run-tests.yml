@@ -2,9 +2,9 @@ name: run-tests
 
 on:
   push:
-    branches: [4.x]
+    branches: [main]
   pull_request:
-    branches: [4.x]
+    branches: [main]
 
 jobs:
   test:
@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
