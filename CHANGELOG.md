@@ -2,6 +2,24 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 4.0.0 - 2025-09-07
+
+### What's Changed
+
+* Support for v4 stable release by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/592
+* Fixes #560 by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/572
+* Fixes artisan cache/optimize by @malzariey in https://github.com/bezhanSalleh/filament-shield/pull/559
+* Add missing CZ and SK translations (4.x) by @hamrak in https://github.com/bezhanSalleh/filament-shield/pull/574
+* Bump aglipanci/laravel-pint-action from 2.5 to 2.6 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/601
+* Bump stefanzweifel/git-auto-commit-action from 5 to 6 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/602
+* Bump actions/checkout from 4 to 5 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/603
+
+### New Contributors
+
+* @malzariey made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/559
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.7...4.0.0
+
 ## 3.3.7 - 2025-06-11
 
 ### What's Changed
