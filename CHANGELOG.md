@@ -2,6 +2,22 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 3.9.10 - 2025-09-07
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.5 to 2.6 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/581
+* Bump actions/checkout from 4 to 5 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/593
+* Add missing CZ and SK translations (3.x) by @hamrak in https://github.com/bezhanSalleh/filament-shield/pull/573
+* Add missing Myanmar (mr) translations (3.x) by @Khant-Nyar in https://github.com/bezhanSalleh/filament-shield/pull/591
+* fixes generate commands relationship gen by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/600
+
+### New Contributors
+
+* @Khant-Nyar made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/591
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/3.3.9...3.9.10
+
 ## 3.3.9 - 2025-07-10
 
 ### What's Changed
