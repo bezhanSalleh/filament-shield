@@ -92,6 +92,22 @@ trait CanManipulateFiles
         );
     }
 
+    protected function copy(string $source, string $destination): bool
+    {
+        $filesystem = new Filesystem;
+
+        if (! $this->fileExists($destination)) {
+            $filesystem->copy($source, $destination);
+            $this->components->info("$destination file published!");
+
+            return true;
+        }
+
+        $this->components->warn("$destination already exists, skipping ...");
+
+        return false;
+    }
+
     protected function getDefaultStubPath(): string
     {
         $reflectionClass = new ReflectionClass($this);
