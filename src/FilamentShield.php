@@ -6,7 +6,7 @@ namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
-use Filament\Pages\Page;
+use Filament\Pages\BasePage as Page;
 use Filament\Resources\Resource;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\Widget;

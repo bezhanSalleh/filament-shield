@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace BezhanSalleh\FilamentShield\Concerns;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Pages\Page;
+use Filament\Pages\BasePage as Page;
 use Filament\Resources\Resource;
 use Filament\Widgets\TableWidget;
 use Filament\Widgets\Widget;
