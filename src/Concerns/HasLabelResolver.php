@@ -92,8 +92,8 @@ trait HasLabelResolver
     {
         $localizationConfig = Utils::getConfig()->localization;
 
-        return $localizationConfig->enabled && Lang::has("$localizationConfig->key.$permission")
-            ? __("$localizationConfig->key.$permission")
+        return $localizationConfig->enabled && Lang::has("$localizationConfig->key.resource_permission_prefixes_labels.$permission")
+            ? __("$localizationConfig->key.resource_permission_prefixes_labels.$permission")
             : Str::of($permission)->headline()->toString();
     }
 }
