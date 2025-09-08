@@ -27,7 +27,7 @@ trait CanManipulateFiles
     {
         $filesystem = app(Filesystem::class);
 
-        if (! $this->fileExists($stubPath = base_path("stubs/filament-shield/{$stub}.stub"))) {
+        if (!$this->fileExists($stubPath = base_path("stubs/filament-shield/{$stub}.stub"))) {
             $stubPath = $this->getDefaultStubPath() . "/{$stub}.stub";
         }
 
@@ -38,7 +38,7 @@ trait CanManipulateFiles
         foreach ($replacements as $methodName => $replacement) {
             if (is_array($replacement) && isset($replacement['stub'], $replacement['permission'])) {
 
-                if (! $this->fileExists($methodStubPath = base_path("stubs/filament-shield/{$stub}.stub"))) {
+                if (!$this->fileExists($methodStubPath = base_path("stubs/filament-shield/{$stub}.stub"))) {
                     $methodStubPath = $this->getDefaultStubPath() . "/{$replacement['stub']}.stub";
                 }
 
@@ -56,10 +56,16 @@ trait CanManipulateFiles
         // Replace methods placeholder with generated methods
         $stub = $stub->replace('{{ methods }}', $methods);
 
+        // Only replace placeholders if they exist in the $replacements array
+        $namespace = $replacements['namespace'] ?? '';
+        $authModelFqcn = $replacements['auth_model_fqcn'] ?? '';
+        $modelFqcn = $replacements['model_fqcn'] ?? '';
+        $modelPolicy = $replacements['modelPolicy'] ?? '';
+
         // Replace other placeholders in the policy class
         $stub = (string) $stub->replace(
             ['{{ namespace }}', '{{ auth_model_fqcn }}', '{{ model_fqcn }}', '{{ modelPolicy }}'],
-            [$replacements['namespace'], $replacements['auth_model_fqcn'], $replacements['model_fqcn'], $replacements['modelPolicy']]
+            [$namespace, $authModelFqcn, $modelFqcn, $modelPolicy]
         );
 
         $this->writeFile($targetPath, $stub);
@@ -96,7 +102,7 @@ trait CanManipulateFiles
     {
         $filesystem = new Filesystem;
 
-        if (! $this->fileExists($destination)) {
+        if (!$this->fileExists($destination)) {
             $filesystem->copy($source, $destination);
             $this->components->info("$destination file published!");
 
