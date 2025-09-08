@@ -2,6 +2,14 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## gp - 2025-09-08
+
+### What's Changed
+
+* [Fix] Tenancy Part of `shield:setup` command by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/611
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/4.0.0...4.0.1
+
 ## 4.0.0 - 2025-09-07
 
 ### What's Changed
