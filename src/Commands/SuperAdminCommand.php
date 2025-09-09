@@ -59,7 +59,7 @@ class SuperAdminCommand extends Command
         if ($this->isProhibited()) {
             return Command::FAILURE;
         }
-        
+
         $this->panel = $this->option('panel') ?? select(
             label: 'Which Panel would you like to use?',
             options: collect(Filament::getPanels())->keys(),
