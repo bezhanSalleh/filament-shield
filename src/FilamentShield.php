@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Pages\Page;
-use Illuminate\Support\Str;
-use Filament\Widgets\Widget;
-use InvalidArgumentException;
 use Filament\Resources\Resource;
-use Illuminate\Support\Facades\Lang;
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Support\Concerns\EvaluatesClosures;
-use BezhanSalleh\FilamentShield\Commands;
+use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class FilamentShield
 {
