@@ -97,7 +97,7 @@ trait HasEntityTransformers
         $defaultPolicyMethods = $policyConfig->methods;
 
         if (filled($resource)) {
-            $resourcePolicyMethods = data_get($this->getResourcesToManage(), $resource, null);
+            $resourcePolicyMethods = data_get($this->getResourcesToManage(), basename($resource), null);
 
             $defaultPolicyMethods = $policyConfig->merge
                 ? array_merge($defaultPolicyMethods, $resourcePolicyMethods ?? [])
