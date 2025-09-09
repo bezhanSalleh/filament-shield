@@ -121,6 +121,10 @@ class GenerateCommand extends Command
             $this->widgetInfo($widgets->toArray());
         }
 
+        if (filled($this->option('all'))) {
+            $this->generateCustomPermissions();
+        }
+
         if (Filament::hasTenancy() && Utils::isTenancyEnabled() && $this->option('relationships')) {
             $this->generateRelationships(Filament::getPanel($panel));
             $this->components->info('Successfully generated relationships for the given panel.');
@@ -251,6 +255,25 @@ class GenerateCommand extends Command
                     Utils::generateForPageOrWidget(array_key_first($widget['permissions']));
                 }
             });
+    }
+
+    protected function generateCustomPermissions(): void
+    {
+        if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
+            Utils::generateForExtraPermissions();
+            $generated = collect(FilamentShield::getCustomPermissions())->keys();
+            $this->counts['permissions'] += count($generated);
+
+            if ($this->option('verbose') && $generated->isNotEmpty()) {
+                $this->table(
+                    ['#', 'Custom Permissions'],
+                    $generated->map(fn (string $permission, int $key): array => [
+                        '#' => $key + 1,
+                        'Permission' => $permission,
+                    ])
+                );
+            }
+        }
     }
 
     protected function resourceInfo(array $resources): void
