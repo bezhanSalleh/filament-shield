@@ -71,35 +71,37 @@ The easiest and most intuitive way to add access management to your Filament Pan
 <div class="filament-hidden">
 <b>Table of Contents</b>
 
-- [Features](#features)
-- [Installation](#installation)
+- [Shield](#shield)
+  - [Features](#features)
+  - [Compatibility](#compatibility)
+  - [Installation](#installation)
     - [1. Install Package](#1-install-package)
     - [2. Configure Auth Provider](#2-configure-auth-provider)
+      - [2.1. Publish the config and set your auth provider model.](#21-publish-the-config-and-set-your-auth-provider-model)
+      - [2.2 Add the `HasRoles` trait to your auth provider model:](#22-add-the-hasroles-trait-to-your-auth-provider-model)
     - [3. Setup Shield](#3-setup-shield)
-    - [4. Install for Panel](#4-install-for-panel)
-- [Usage](#usage)
-    - [Configuration](#configuration)
-    - [Resources](#resources)
+  - [Usage](#usage)
+      - [Configuration](#configuration)
+      - [Resources](#resources)
         - [Default](#default)
         - [Resource-Specific Methods](#resource-specific-methods)
         - [Custom Permissions](#custom-permissions)
-        - [Custom Navigation Group](#custom-navigation-group)
-    - [Pages](#pages)
-    - [Widgets](#widgets)
-    - [Policies](#policies)
-    - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
-    - [Layout Customization](#layout-customization)
-- [Available Commands](#available-commands)
+      - [Pages](#pages)
+      - [Widgets](#widgets)
+    - [Policies ](#policies-)
+      - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
+      - [Layout Customization](#layout-customization)
+  - [Available Commands](#available-commands)
     - [Prohibited Commands](#prohibited-commands)
     - [Core Commands](#core-commands)
     - [Generate Command Options (recap)](#generate-command-options-recap)
-    - [Translations](#translations)
-- [Testing](#testing)
-- [Changelog](#changelog)
-- [Contributing](#contributing)
-- [Security Vulnerabilities](#security-vulnerabilities)
-- [Credits](#credits)
-- [License](#license)
+      - [Translations](#translations)
+  - [Testing](#testing)
+  - [Changelog](#changelog)
+  - [Contributing](#contributing)
+  - [Security Vulnerabilities](#security-vulnerabilities)
+  - [Credits](#credits)
+  - [License](#license)
 </div>
 
 ## Installation
@@ -317,10 +319,12 @@ use BezhanSalleh\FilamentShield\Commands;
     public function boot(): void
     {
         // individually prohibit commands
-        Commands\SetupCommand::prohibit($this->app->isProduction());
-        Commands\InstallCommand::prohibit($this->app->isProduction());
         Commands\GenerateCommand::prohibit($this->app->isProduction());
+        Commands\InstallCommand::prohibit($this->app->isProduction());
         Commands\PublishCommand::prohibit($this->app->isProduction());
+        Commands\SetupCommand::prohibit($this->app->isProduction());
+        Commands\SeederCommand::prohibit($this->app->isProduction());
+        Commands\SuperAdminCommand::prohibit($this->app->isProduction());
         // or prohibit the above commands all at once
         FilamentShield::prohibitDestructiveCommands($this->app->isProduction())
     }

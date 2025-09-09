@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield;
 
-use BezhanSalleh\FilamentShield\Support\Utils;
 use Closure;
 use Filament\Pages\Page;
-use Filament\Resources\Resource;
-use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
+use Filament\Widgets\Widget;
 use InvalidArgumentException;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Lang;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Support\Concerns\EvaluatesClosures;
+use BezhanSalleh\FilamentShield\Commands;
 
 class FilamentShield
 {
@@ -144,5 +145,15 @@ class FilamentShield
             ->flatten()
             ->unique()
             ->toArray();
+    }
+
+    public function prohibitDestructiveCommands(bool $prohibit = true): void
+    {
+        Commands\GenerateCommand::prohibit($prohibit);
+        Commands\InstallCommand::prohibit($prohibit);
+        Commands\PublishCommand::prohibit($prohibit);
+        Commands\SeederCommand::prohibit($prohibit);
+        Commands\SetupCommand::prohibit($prohibit);
+        Commands\SuperAdminCommand::prohibit($prohibit);
     }
 }
