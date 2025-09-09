@@ -8,24 +8,27 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Facades\Filament;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
+use Illuminate\Console\Prohibitable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
+#[AsCommand(name: 'shield:super-admin', description: 'Assign the super admin role to a user')]
 class SuperAdminCommand extends Command
 {
+    use Prohibitable;
+
     public $signature = 'shield:super-admin
         {--user= : ID of user to be made super admin.}
         {--panel= : Panel ID to get the configuration from.}
         {--tenant= : Team/Tenant ID to assign role to user.}
     ';
-
-    public $description = 'Creates Filament Super Admin';
 
     protected Authenticatable $superAdmin;
 
@@ -53,6 +56,10 @@ class SuperAdminCommand extends Command
 
     public function handle(): int
     {
+        if ($this->isProhibited()) {
+            return Command::FAILURE;
+        }
+        
         $this->panel = $this->option('panel') ?? select(
             label: 'Which Panel would you like to use?',
             options: collect(Filament::getPanels())->keys(),
