@@ -90,12 +90,18 @@ The easiest and most intuitive way to add access management to your Filament Pan
       - [Widgets](#widgets)
     - [Policies ](#policies-)
       - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
-      - [Layout Customization](#layout-customization)
-  - [Available Commands](#available-commands)
+  - [FilamentShieldPlugin \& RoleResource](#filamentshieldplugin--roleresource)
+    - [Navigation](#navigation)
+    - [Labels](#labels)
+    - [Global Search](#global-search)
+    - [Parent Resource](#parent-resource)
+    - [Tenancy](#tenancy)
+    - [Layout Customization](#layout-customization)
+  - [Commands](#commands)
     - [Prohibited Commands](#prohibited-commands)
     - [Core Commands](#core-commands)
     - [Generate Command Options (recap)](#generate-command-options-recap)
-      - [Translations](#translations)
+  - [Translations](#translations)
   - [Testing](#testing)
   - [Changelog](#changelog)
   - [Contributing](#contributing)
@@ -278,40 +284,106 @@ You can find out more about these components in the [Filament Docs](https://fila
 - [Select](https://filamentphp.com/docs/3.x/forms/fields/select)
 - [CheckboxList](https://filamentphp.com/docs/3.x/forms/fields/checkbox-list)
 
-#### Layout Customization
-You can easily customize the `Grid`, `Section` and `CheckboxList`'s `columns()` and `columnSpan()` without publishing the resource.
+## FilamentShieldPlugin & RoleResource
+The plugin exposes a couple of methods to handle resource related customizations and overrides without publishing the resource. You can use the plugin as following:
+
+### Navigation
+You may use the following methods to customize the navigation of the `RoleResource`:
+
 ```php
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
-
-public function panel(Panel $panel): Panel
-{
-        return $panel
-            ...
-            ...
-            ->plugins([
-                FilamentShieldPlugin::make()
-                    ->gridColumns([
-                        'default' => 1,
-                        'sm' => 2,
-                        'lg' => 3
-                    ])
-                    ->sectionColumnSpan(1)
-                    ->checkboxListColumns([
-                        'default' => 1,
-                        'sm' => 2,
-                        'lg' => 4,
-                    ])
-                    ->resourceCheckboxListColumns([
-                        'default' => 1,
-                        'sm' => 2,
-                    ]),
-            ]);
-}
+FilamentShieldPlugin::make()
+    ->navigationLabel('Label')                  // string|Closure|null
+    ->navigationIcon('heroicon-o-home')         // string|Closure|null  
+    ->activeNavigationIcon('heroicon-s-home')   // string|Closure|null
+    ->navigationGroup('Group')                  // string|Closure|null
+    ->navigationSort(10)                        // int|Closure|null
+    ->navigationBadge('5')                      // string|Closure|null
+    ->navigationBadgeColor('success')           // string|array|Closure|null
+    ->navigationParentItem('parent.item')       // string|Closure|null
+    ->registerNavigation();                     // bool|Closure
 ```
-<img width="1161" alt="Screenshot 2023-09-24 at 10 34 31 PM" src="https://github.com/bezhanSalleh/filament-shield/assets/10007504/be42bab2-72d1-4db0-8de4-8b8fba2d4e68">
 
-## Available Commands
+### Labels
+You may use the following methods to customize the labels of the `RoleResource`:
+
+```php
+FilamentShieldPlugin::make()
+    ->modelLabel('Model')                       // string|Closure|null
+    ->pluralModelLabel('Models')                // string|Closure|null
+    ->recordTitleAttribute('name')              // string|Closure|null
+    ->titleCaseModelLabel(false);               // bool|Closure
+
+```
+
+### Global Search
+You may use the following methods to customize the global search related functionality of the `RoleResource`:
+
+```php
+FilamentShieldPlugin::make()
+    ->globallySearchable(true)                  // bool|Closure
+    ->globalSearchResultsLimit(50)              // int|Closure
+    ->forceGlobalSearchCaseInsensitive(true)    // bool|Closure|null
+    ->splitGlobalSearchTerms(false);            // bool|Closure
+```
+
+### Parent Resource
+You may use the following method to set a parent resource for the `RoleResource`:
+
+```php
+FilamentShieldPlugin::make()
+    ->parentResource(ParentResource::class);    // string|Closure|null
+```
+
+### Tenancy
+You may use the following methods to customize the tenancy related functionality of the `RoleResource`:
+
+```php
+FilamentShieldPlugin::make()
+    ->scopeToTenant(true)                       // bool|Closure
+    ->tenantRelationshipName('organization')    // string|Closure|null
+    ->tenantOwnershipRelationshipName('owner'); // string|Closure|null
+```
+
+### Layout Customization
+1. You can easily customize the `Grid`, `Section` and `CheckboxList`'s `columns()` and `columnSpan()` without publishing the resource.
+   ```php
+   FilamentShieldPlugin::make()
+       ->gridColumns([
+           'default' => 1,
+           'sm' => 2,
+           'lg' => 3
+       ])
+       ->sectionColumnSpan(1)
+       ->checkboxListColumns([
+           'default' => 1,
+           'sm' => 2,
+           'lg' => 4,
+       ])
+       ->resourceCheckboxListColumns([
+           'default' => 1,
+           'sm' => 2,
+       ]),
+   ```
+   <img width="1161" alt="Screenshot 2023-09-24 at 10 34 31 PM" src="https://github.com/bezhanSalleh/filament-shield/assets/10007504/be42bab2-72d1-4db0-8de4-8b8fba2d4e68">
+
+2. You can also make the resource tab to have a simple view like the other tabs by using the following method:
+
+   ```php
+      FilamentShieldPlugin::make()
+          ->simpleResourcePermissionView()
+    ```
+
+3. When you have localization enabled and setup and you want the permission labels to react to your application's chosen locale/language you can use the following method:
+
+   ```php
+   FilamentShieldPlugin::make()
+       ->localizePermissionLabels()
+   ```
+
+## Commands
+
 ### Prohibited Commands
+
 Since almost all shield commands are destructive and can cause data loss, they can be prohibited by calling the prohibit method of the command as following in a service provider's `boot()` method:
 ```php
 use BezhanSalleh\FilamentShield\FilamentShield;
@@ -329,7 +401,9 @@ use BezhanSalleh\FilamentShield\Commands;
         FilamentShield::prohibitDestructiveCommands($this->app->isProduction())
     }
 ```
+
 ### Core Commands
+
 ```bash
 shield:setup [--fresh] [--tenant=] [--force] [--starred]
 
@@ -345,6 +419,7 @@ shield:publish --panel={panel} [--cluster=] [--nested] [--force]
 ```
 
 ### Generate Command Options (recap)
+
 ```bash
 --all  Generate for all discovered entities
 --option=policies_and_permissions|policies|permissions|tenant_relationships Override generator mode
@@ -356,7 +431,8 @@ shield:publish --panel={panel} [--cluster=] [--nested] [--force]
 --panel=admin                       Panel ID (required when not interactive)
 --relationships                     Generate tenancy relationships (panel must have tenancy)
 ```
-#### Translations 
+
+## Translations 
 
 Publish the translations using:
 
