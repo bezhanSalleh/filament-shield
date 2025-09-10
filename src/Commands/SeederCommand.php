@@ -75,7 +75,7 @@ class SeederCommand extends Command
                 ]);
         }
 
-        $this->copyStubToApp(
+        $this->copySeederStubToApp(
             stub: 'ShieldSeeder',
             targetPath: $path,
             replacements: [
