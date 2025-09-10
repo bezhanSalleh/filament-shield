@@ -13,9 +13,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|null getWidgets()
  * @method static array|null getCustomPermissions(bool $localized = false)
  * @method static string getLocalizedResourcePermissionLabel(string $permission)
+ * @method static string defaultPermissionKeyBuilder(string $affix, string $separator, string $subject, string $case)
  * @method static array getDefaultPermissionKeys(string $entity, array|string $affixes)
- * @method static array getAllResourcePermissionsWithLabels()
  * @method static array|null getEntitiesPermissions()
+ * @method static void prohibitDestructiveCommands(bool $prohibit = true)
  * @method static \Illuminate\Support\Collection|null discoverEntities(string $entityType)
  * @method static \Illuminate\Support\Collection discoverResources()
  * @method static \Illuminate\Support\Collection discoverPages()
@@ -34,6 +35,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|null getResourcePolicyActions(string $key)
  * @method static array|null getResourcePermissionsWithLabels(string $key)
  * @method static array|null getResourcePolicyActionsWithPermissions(string $key)
+ * @method static array getAllResourcePermissionsWithLabels()
  * @method static mixed evaluate(mixed $value, array $namedInjections = [], array $typedInjections = [])
  *
  * @see \BezhanSalleh\FilamentShield\FilamentShield
