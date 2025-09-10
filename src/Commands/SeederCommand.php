@@ -83,13 +83,16 @@ class SeederCommand extends Command
                     'guard_name' => $permission->guard_name,
                 ]);
         }
-
+        /**
+         * The json_encode() function converts the PHP arrays ($permissionsViaRoles->all() and $directPermissions->all()) to JSON strings.
+         * The stub file expects JSON strings for the placeholders, so this ensures the replacements are done correctly.
+         */
         $this->copyStubToApp(
             stub: 'ShieldSeeder',
             targetPath: $path,
             replacements: [
-                'RolePermissions' => $permissionsViaRoles->all(),
-                'DirectPermissions' => $directPermissions->all(),
+                'RolePermissions' => json_encode($permissionsViaRoles->all(), JSON_THROW_ON_ERROR),
+                'DirectPermissions' => json_encode($directPermissions->all(), JSON_THROW_ON_ERROR),
             ]
         );
 
