@@ -641,7 +641,11 @@ return collect(FilamentShield::getAllResourcePermissionsWithLabels())
                     ->toString()
             )
     )
-    ->merge(collect(FilamentShield::getCustomPermissions())->keys())
+    ->merge(
+        collect(FilamentShield::getCustomPermissions())
+            ->keys()
+            ->transform(fn($value) => str($value)->snake()->toString())
+    )
     ->unique()
     ->values()
     ->toArray();
