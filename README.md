@@ -613,16 +613,61 @@ supported locales following Laravel's localization conventions. The translation 
 named anything you want. 
 For example, you can create a file named `permissions.php` per locale and then set the 
 `localization.key` in the config as `localization.key' => 'permissions'`. 
-For the default permission pattern, the structure of the translation file could be as follow:
+
+Now given that Filament entities(Resources, Pages, Widgets) can be already localized using their own methods,
+you only need to provide translations for the resource prefixes, page and widget names, and any custom permissions you have defined. 
+For custom permissions, the keys will be the same as you define them, but in snake cased format.
+To get the list of keys that you need to provide translations for, you can run the following code snippet in Tinker or wherever you want:
 
 ```php
-return [
-    'ViewAny:Posts' => 'View All Posts',
-    'View:Posts' => 'View Post',
-    'Create:Posts' => 'Create Post',
-    'Update:Posts' => 'Update Post',
-    'Delete:Posts' => 'Delete Post',
-];
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+
+return collect(FilamentShield::getAllResourcePermissionsWithLabels())
+    ->keys()
+    ->transform(
+        fn($value) => str($value)
+            ->before(config("filament-shield.permissions.separator"))
+            ->snake()
+            ->toString()
+    )
+    ->merge(
+        collect(FilamentShield::getPages())
+            ->merge(FilamentShield::getWidgets())
+            ->flatMap->permissions->keys()
+            ->transform(
+                fn($value) => str($value)
+                    ->after(config("filament-shield.permissions.separator"))
+                    ->snake()
+                    ->toString()
+            )
+    )
+    ->merge(collect(FilamentShield::getCustomPermissions())->keys())
+    ->unique()
+    ->values()
+    ->toArray();
+```
+**Example output:** running the above in the Filament Demo app context, with `custom_permissions` => ['Impersonate:User', 'View:IconLibrary'] will give you the following output:
+```php
+[
+    "view_any",
+    "view",
+    "create",
+    "update",
+    "delete",
+    "restore",
+    "force_delete",
+    "force_delete_any",
+    "restore_any",
+    "replicate",
+    "reorder",
+    "products_cluster",
+    "stats_overview_widget",
+    "orders_chart",
+    "customers_chart",
+    "latest_orders",
+    "impersonate:_user",
+    "view:_icon_library",
+]
 ```
 
 ### Default
