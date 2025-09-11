@@ -2,6 +2,40 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 4.0.2 - 2025-09-11
+
+### What's Changed
+
+* Includes features and fixes
+  - [Feat] Custom Permission Generation
+  - [Feat] Single Command to Prohibit Destructive Commands
+  - [Fix] `shield:seeder` command
+  - [Doc] Documenting:
+    - Installation & Setup
+    - Permissions and `buildPermissionKeyUsing()` documented with usage and example
+    - Policies
+    - Resources
+    - Pages & Widgets
+    - Custom Permissions
+    - Plugin & Resource
+    - Commands
+    - Localization
+    
+  
+
+By @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/621
+
+* Fix SimplePage #613 by @hamrak in https://github.com/bezhanSalleh/filament-shield/pull/614
+* [Fix:Bug:WindowsOS] Resource Specific Permissions by @tszulczewski in https://github.com/bezhanSalleh/filament-shield/pull/625
+* [Fix:#629] Edit/Create when tenancy is enabled by @Wsmallnews in https://github.com/bezhanSalleh/filament-shield/pull/630
+
+### New Contributors
+
+* @tszulczewski made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/625
+* @Wsmallnews made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/630
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/4.0.1...4.0.2
+
 ## gp - 2025-09-08
 
 ### What's Changed
