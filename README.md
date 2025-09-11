@@ -74,28 +74,27 @@ The easiest and most intuitive way to add access management to your Filament Pan
 - [Installation](#installation)
   - [1. Install Package](#1-install-package)
   - [2. Configure Auth Provider](#2-configure-auth-provider)
-    - [2.1. Publish the config and set your auth provider model.](#21-publish-the-config-and-set-your-auth-provider-model)
-    - [2.2 Add the `HasRoles` trait to your auth provider model:](#22-add-the-hasroles-trait-to-your-auth-provider-model)
   - [3. Setup Shield](#3-setup-shield)
-- [Usage](#usage)
-    - [Configuration](#configuration)
+- [Usage \& Configuration](#usage--configuration)
   - [Permissions](#permissions)
     - [Customize permission key composition](#customize-permission-key-composition)
   - [Policies](#policies)
-    - [Configuration](#configuration-1)
+    - [Configuration](#configuration)
     - [Methods](#methods)
     - [Merge](#merge)
     - [Single Parameter Methods](#single-parameter-methods)
     - [Policy Enforcement](#policy-enforcement)
   - [Resources](#resources)
-    - [Default](#default)
-    - [Resource-Specific Methods](#resource-specific-methods)
+    - [Configuration](#configuration-1)
+    - [Subject](#subject)
+    - [Manage](#manage)
+    - [Exclude](#exclude)
   - [Pages \& Widgets](#pages--widgets)
     - [Configuration](#configuration-2)
     - [Options](#options)
     - [Permission Enforcement](#permission-enforcement)
   - [Custom Permissions](#custom-permissions)
-    - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
+  - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
   - [Shield Plugin \& Resource](#shield-plugin--resource)
     - [Navigation](#navigation)
     - [Labels](#labels)
@@ -107,13 +106,13 @@ The easiest and most intuitive way to add access management to your Filament Pan
     - [Prohibited Commands](#prohibited-commands)
     - [Core Commands](#core-commands)
     - [Generate Command Options (recap)](#generate-command-options-recap)
-  - [Translations](#translations)
-  - [Testing](#testing)
-  - [Changelog](#changelog)
-  - [Contributing](#contributing)
-  - [Security Vulnerabilities](#security-vulnerabilities)
-  - [Credits](#credits)
-  - [License](#license)
+- [Translations](#translations)
+- [Testing](#testing)
+- [Changelog](#changelog)
+- [Contributing](#contributing)
+- [Security Vulnerabilities](#security-vulnerabilities)
+- [Credits](#credits)
+- [License](#license)
 </div>
 
 # Installation
@@ -124,27 +123,27 @@ composer require bezhansalleh/filament-shield
 ```
 
 ## 2. Configure Auth Provider
-### 2.1. Publish the config and set your auth provider model.
-```bash
-php artisan vendor:publish --tag="filament-shield-config"
-```
-```php
-// config/filament-shield.php
-return [
-    // ...
-    'auth_provider_model' => 'App\\Models\\User',
-    // ...
-];
-```
-### 2.2 Add the `HasRoles` trait to your auth provider model:
-```php
-use Spatie\Permission\Traits\HasRoles;
+1. Publish the config and set your auth provider model.
+   ```bash
+   php artisan vendor:publish --tag="filament-shield-config"
+   ```
+   ```php
+   // config/filament-shield.php
+   return [
+       // ...
+       'auth_provider_model' => 'App\\Models\\User',
+       // ...
+   ];
+   ```
+2. Add the `HasRoles` trait to your auth provider model:
+   ```php
+   use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
-{
-    use HasRoles;
-}
-```
+   class User extends Authenticatable
+   {
+       use HasRoles;
+   }
+   ```
 
 ## 3. Setup Shield
 Run the setup command (it is interactive and smart):
@@ -152,24 +151,8 @@ Run the setup command (it is interactive and smart):
 php artisan shield:setup
 ```
 
-# Usage
-
-### Configuration
-See `config/filament-shield.php`. Key areas:
-
-- `shield_resource` (slug, tabs, cluster, model path visibility)
-- `tenant_model` & spatie teams integration
-- `auth_provider_model`
-- `super_admin` (role name, gate interception)
-- `panel_user` baseline role
-- `permissions` (separator, case, auto-generate toggle, custom builder)
-- `policies` (path, merge, generate, methods lists)
-- `localization` (enable + namespace key)
-- `resources` (subject mode, manage overrides, exclusions)
-- `pages` / `widgets` (prefix, subject, exclusions)
-- `custom_permissions` (ad‑hoc)
-- `discovery` (multi-panel discovery toggles)
-- `register_role_policy`
+# Usage & Configuration
+The package comes with a sensible default configuration that should work for most applications. You can customize the configuration and modifying it to fit your needs. The following sections explain the various configuration options available.
 
 ## Permissions
 You can customize how permission keys are generated to match your preferred naming convention and organizational standards. Shield uses these settings from `filament-shield.php` **config** when creating permission names from your `{Resources|Page|Widgets}`.
@@ -199,12 +182,10 @@ You can customize how permission keys are generated by providing your own callba
   ```php
   use BezhanSalleh\FilamentShield\Facades\FilamentShield;
   use Filament\Resources\Resource;
-  use Filament\Pages\BasePage as Page;
-  use Filament\Widgets\Widget;
 
   FilamentShield::buildPermissionKeyUsing(
       function (string $entity, string $affix, string $subject, string $case, string $separator) {
-        if (in_array(
+        if (is_subclass_of($entity, Resource::class) && in_array(
               needle: $entity, 
               haystack: [
                   'App\Filament\Resources\Blog\Categories\CategoryResource',
@@ -212,7 +193,6 @@ You can customize how permission keys are generated by providing your own callba
               ]
               strict: true
         )) {
-            $resource = resolve($entity);
             $subject = str($subject)
                 ->prepend($resource::getNavigationGroup())
                 ->trim()
@@ -298,21 +278,32 @@ Gate::guessPolicyNamesUsing(function (string $modelClass) {
 ## Resources
 Shield derives resource permission keys from configured policy methods. Since Filament `Resources`' authorization is handled via policies, generated permissions align with policy methods.
 
-### Default
-Add or remove global policy method names under `policies.methods`. Re-run `shield:generate` to sync roles/permissions. Example additions: `lock`, `archive`.
-
-### Resource-Specific Methods
-Provide overrides/additions per resource via `resources.manage`:
+### Configuration
 ```php
 'resources' => [
+    'subject' => 'model',
     'manage' => [
-        \App\Filament\Resources\PostResource::class => [
-            'viewAny','view','create','update','delete','publish',
+        \BezhanSalleh\FilamentShield\Resources\Roles\RoleResource::class => [
+            'viewAny',
+            'view',
+            'create',
+            'update',
+            'delete',
         ],
+    ],
+    'exclude' => [
+        //
     ],
 ],
 ```
-`publish` will be merged with defaults when `policies.merge = true`.
+### Subject
+You can customize the subject used for resource permissions by setting the `subject` key in the `resources` configuration. The subject can be set to either `class` or `model`. Default is `model`.
+
+### Manage
+You can define resource-specific policy methods in the `resources.manage` configuration. This allows you to tailor the permissions for individual resources(in-app or third-party) based on their unique requirements. When you specify methods here, Shield will generate permissions for these methods in addition to the global methods defined in `policies.methods`, provided that `policies.merge` is set to `true`. This ensures that each resource has a comprehensive set of permissions that reflect both standard and resource-specific actions.
+
+### Exclude
+You can exclude specific resources from permission generation by listing them in the `resources.exclude` configuration. This is useful for resources that should always be accessible or do not require permission checks. When a resource is excluded, Shield will skip generating permissions and policy for it.
 
 ## Pages & Widgets  
 
@@ -403,7 +394,7 @@ Most of the time you will have some ad‑hoc permissions that don't fit into the
 They appear in the `Role Resource`'s **Custom Permissions** tab when enabled.
 To enable the tab, set `shield_resource.tabs.custom_permissions` to `true` in the config.
 
-### Users (Assigning Roles to Users)
+## Users (Assigning Roles to Users)
 Shield does not come with a way to assign roles to your users out of the box, however you can easily assign roles to your users using Filament `Forms`'s `Select` or `CheckboxList` component. Inside your users `Resource`'s form add one of these components and configure them as you need:
 1. **Without Tenancy**
 ```php
@@ -592,7 +583,7 @@ shield:publish --panel={panel} [--cluster=] [--nested] [--force]
 --relationships                     Generate tenancy relationships (panel must have tenancy)
 ```
 
-## Translations 
+# Translations 
 
 Publish the translations using:
 
@@ -600,29 +591,29 @@ Publish the translations using:
 php artisan vendor:publish --tag="filament-shield-translations"
 ```
 
-## Testing
+# Testing
 
 ```bash
 composer test
 ```
 
-## Changelog
+# Changelog
 
 See [CHANGELOG](CHANGELOG.md).
 
-## Contributing
+# Contributing
 
 Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
-## Security Vulnerabilities
+# Security Vulnerabilities
 
 Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
-## Credits
+# Credits
 
 - [Bezhan Salleh](https://github.com/bezhanSalleh)
 - [All Contributors](../../contributors)
 
-## License
+# License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
