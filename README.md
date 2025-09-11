@@ -21,7 +21,7 @@
     </a>
 </p>
 
-<span style="font-size:2em; font-weight:bold; display:block; margin:0.67em 0;">Shield</span>
+<h1 style="font-size:2em; font-weight:bold; display:block; margin:0.67em 0;">Shield</h1>
 
 The easiest and most intuitive way to add access management to your Filament panels.
 
