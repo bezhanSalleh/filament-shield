@@ -24,7 +24,7 @@ class CreateRole extends CreateRecord
             ->flatten()
             ->unique();
 
-        if (Utils::isTenancyEnabled() && filled($data[Utils::getTenantModelForeignKey()]) && Arr::has($data, Utils::getTenantModelForeignKey())) {
+        if (Utils::isTenancyEnabled() && Arr::has($data, Utils::getTenantModelForeignKey()) && filled($data[Utils::getTenantModelForeignKey()])) {
             return Arr::only($data, ['name', 'guard_name', Utils::getTenantModelForeignKey()]);
         }
 
