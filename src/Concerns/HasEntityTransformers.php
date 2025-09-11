@@ -13,8 +13,8 @@ trait HasEntityTransformers
     public function transformResources(): ?array
     {
         return $this->discoverResources()
-            ->reject(fn(string $resource): bool => in_array($resource, Utils::getConfig()->resources->exclude))
-            ->mapWithKeys(fn(string $resource): array => [
+            ->reject(fn (string $resource): bool => in_array($resource, Utils::getConfig()->resources->exclude))
+            ->mapWithKeys(fn (string $resource): array => [
                 $resource => [
                     'resourceFqcn' => $resource,
                     'model' => class_basename($resource::getModel()),
@@ -29,8 +29,8 @@ trait HasEntityTransformers
     public function transformPages(): ?array
     {
         $clusters = $this->discoverPages()
-            ->map(fn(string $page): ?string => $page::getCluster())
-            ->reject(fn(mixed $cluster): bool => is_null($cluster))
+            ->map(fn (string $page): ?string => $page::getCluster())
+            ->reject(fn (mixed $cluster): bool => is_null($cluster))
             ->unique()
             ->values()
             ->toArray();
@@ -43,7 +43,7 @@ trait HasEntityTransformers
 
                 return in_array($page, Utils::getConfig()->pages->exclude);
             })
-            ->mapWithKeys(fn(string $page): array => [
+            ->mapWithKeys(fn (string $page): array => [
                 $page => [
                     'pageFqcn' => $page,
                     'permissions' => $this->getDefaultPermissionKeys($page, Utils::getConfig()->pages->prefix),
@@ -55,11 +55,11 @@ trait HasEntityTransformers
     public function transformWidgets(): ?array
     {
         return $this->discoverWidgets()
-            ->reject(fn(string | WidgetConfiguration $widget): bool => in_array(
+            ->reject(fn (string | WidgetConfiguration $widget): bool => in_array(
                 needle: $this->getWidgetInstanceFromWidgetConfiguration($widget),
                 haystack: Utils::getConfig()->widgets->exclude
             ))
-            ->mapWithKeys(fn(string | WidgetConfiguration $widget): array => [
+            ->mapWithKeys(fn (string | WidgetConfiguration $widget): array => [
                 $widget => [
                     'widgetFqcn' => $this->getWidgetInstanceFromWidgetConfiguration($widget),
                     'permissions' => $this->getDefaultPermissionKeys($widget, Utils::getConfig()->widgets->prefix),
@@ -87,7 +87,7 @@ trait HasEntityTransformers
     protected function getResourcesToManage(): array
     {
         return collect(Utils::getConfig()->resources->manage)
-            ->mapWithKeys(fn(array $methods, string $key) => [basename($key) => $methods])
+            ->mapWithKeys(fn (array $methods, string $key) => [basename($key) => $methods])
             ->toArray();
     }
 
@@ -105,7 +105,7 @@ trait HasEntityTransformers
         }
 
         return collect($defaultPolicyMethods)
-            ->map(fn($method): string => $this->format('camel', $method))
+            ->map(fn ($method): string => $this->format('camel', $method))
             ->unique()
             ->toArray();
     }
