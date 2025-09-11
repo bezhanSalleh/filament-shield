@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array|null transformWidgets()
  * @method static array transformCustomPermissions(bool $localizedOrFormatted = false)
  * @method static string getLocalizedResourceLabel(\Filament\Resources\Resource|string $resource)
- * @method static string getLocalizedPageLabel(\Filament\Pages\Page|string $page)
+ * @method static string getLocalizedPageLabel(\Filament\Pages\BasePage|string $page)
  * @method static string getLocalizedWidgetLabel(\Filament\Widgets\Widget|string $widget)
  * @method static string getAffixLabel(string $affix, string|null $resource = null)
  * @method static array getLocalizedResourceAffixes(string|null $resource = null)
