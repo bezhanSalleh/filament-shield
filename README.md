@@ -108,6 +108,10 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Prohibited Commands](#prohibited-commands)
     - [Core Commands](#core-commands)
     - [Generate Command Options (recap)](#generate-command-options-recap)
+  - [Localization](#localization)
+    - [Configuration](#configuration-4)
+    - [Key](#key)
+    - [Default](#default)
 - [Translations](#translations)
 - [Testing](#testing)
 - [Changelog](#changelog)
@@ -591,6 +595,38 @@ shield:publish --panel={panel} [--cluster=] [--nested] [--force]
 --panel=admin                       Panel ID (required when not interactive)
 --relationships                     Generate tenancy relationships (panel must have tenancy)
 ```
+
+## Localization
+Shield supports multiple languages out of the box. When enabled, you can provide translated labels for 
+permissions to create a more localized experience for your international users.
+
+### Configuration
+```php
+'localization' => [
+     'enabled' => false,
+     'key' => 'filament-shield::filament-shield',
+ ],
+```
+### Key
+You can translate the permission labels by creating the translations files for your application's 
+supported locales following Laravel's localization conventions. The translation file can be 
+named anything you want. 
+For example, you can create a file named `permissions.php` per locale and then set the 
+`localization.key` in the config as `localization.key' => 'permissions'`. 
+For the default permission pattern, the structure of the translation file could be as follow:
+
+```php
+return [
+    'ViewAny:Posts' => 'View All Posts',
+    'View:Posts' => 'View Post',
+    'Create:Posts' => 'Create Post',
+    'Update:Posts' => 'Update Post',
+    'Delete:Posts' => 'Delete Post',
+];
+```
+
+### Default
+if you want to use the default translations provided by the package for the commonly used set of permissions for resources, you can set the `localization.key` in the config as `localization.key' => 'filament-shield::filament-shield.resource_permission_prefixes_labels'` and enable localization by setting `localization.enabled` to `true`.
 
 # Translations 
 

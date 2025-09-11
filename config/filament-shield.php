@@ -139,8 +139,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Shield supports multiple languages out of the box. When enabled, you
-    | can provide translated labels for permissions and roles to create a
-    | more localized experience for your international users.
+    | can provide translated labels for permissions to create a more
+    | localized experience for your international users.
     |
     */
 
