@@ -7,30 +7,21 @@ namespace BezhanSalleh\FilamentShield\Commands;
 use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
+use Illuminate\Console\Prohibitable;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'shield:seeder')]
+#[AsCommand(name: 'shield:seeder', description: 'Create a seeder file from existing/configured roles and permission, that could be used within your deploy script.')]
 class SeederCommand extends Command
 {
     use CanManipulateFiles;
+    use Prohibitable;
 
-    /**
-     * The console command signature.
-     *
-     * @var string
-     */
+    /** @var string */
     public $signature = 'shield:seeder
         {--generate : Generates permissions for all entities as configured }
         {--option= : Generate only permissions via roles or direct permissions (<fg=green;options=bold>permissions_via_roles,direct_permissions</>)}
         {--F|force : Override if the seeder already exists }
     ';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    public $description = 'Create a seeder file from existing/configured roles and permission, that could be used within your deploy script.';
 
     public function handle(): int
     {
@@ -84,7 +75,7 @@ class SeederCommand extends Command
                 ]);
         }
 
-        $this->copyStubToApp(
+        $this->copySeederStubToApp(
             stub: 'ShieldSeeder',
             targetPath: $path,
             replacements: [

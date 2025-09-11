@@ -65,6 +65,25 @@ trait CanManipulateFiles
         $this->writeFile($targetPath, $stub);
     }
 
+    protected function copySeederStubToApp(string $stub, string $targetPath, array $replacements = []): void
+    {
+        $filesystem = new Filesystem;
+
+        if (! $this->fileExists($stubPath = base_path('stubs' . DIRECTORY_SEPARATOR . 'filament-shield' . DIRECTORY_SEPARATOR . "{$stub}.stub"))) {
+            $stubPath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . "{$stub}.stub";
+        }
+
+        $stub = Str::of($filesystem->get($stubPath));
+
+        foreach ($replacements as $key => $replacement) {
+            $stub = $stub->replace("{{ {$key} }}", is_array($replacement) ? json_encode($replacement) : $replacement);
+        }
+
+        $stub = (string) $stub;
+
+        $this->writeFile($targetPath, $stub);
+    }
+
     protected function fileExists(string $path): bool
     {
         $filesystem = new Filesystem;

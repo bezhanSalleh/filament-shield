@@ -27,6 +27,7 @@ class SetupCommand extends Command
     use CanManipulateFiles;
     use Prohibitable;
 
+    /** @var string */
     public $signature = 'shield:setup
         {--F|fresh : re-run the migrations}
         {--tenant= : Tenant model}
