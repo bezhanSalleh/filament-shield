@@ -27,13 +27,8 @@ The easiest and most intuitive way to add access management to your Filament pan
 
 
 > [!IMPORTANT]
-> This iteration is a complete rewrite from versions 3.x and 4.x-beta and is not backward compatible. Please refer to the release notes on how to [UPGRADE](https://github.com/bezhanSalleh/filament-shield/releases/tag/4.0.0).
+> This iteration is a complete rewrite from versions 3.x and 4.x-beta and is not backward compatible. Please refer to the [Upgrade](#upgrade) section on how to proceed.
 
-
-
-> [!NOTE]
-> The documentation is a work in progress. Please refer to the [CHANGELOG](CHANGELOG.md) and [PR](https://github.com/bezhanSalleh/filament-shield/pull/592) for the latest updates.
-> Feedback and contributions are welcome!
 
 ## Features
 
@@ -112,6 +107,7 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Configuration](#configuration-4)
     - [Key](#key)
     - [Default](#default)
+- [Upgrade](#upgrade)
 - [Translations](#translations)
 - [Testing](#testing)
 - [Changelog](#changelog)
@@ -676,6 +672,77 @@ return collect(FilamentShield::getAllResourcePermissionsWithLabels())
 
 ### Default
 if you want to use the default translations provided by the package for the commonly used set of permissions for resources, you can set the `localization.key` in the config as `localization.key' => 'filament-shield::filament-shield.resource_permission_prefixes_labels'` and enable localization by setting `localization.enabled` to `true`.
+
+# Upgrade
+Upgrading from `3.x|4.0.0-Beta*` versions to 4.x requires careful consideration due to significant changes in the package's architecture and functionality. Here are the key steps and considerations for a successful upgrade:
+1. **Backup Your Data**: Before making any changes, ensure you have a complete backup of your database and application files. This is crucial in case you need to revert to the previous version.
+2. **Remove Config and Resource**: Delete the existing `filament-shield.php` config file and the published `RoleResource` if you have done so. This is important to avoid conflicts with the new configuration and resource structure.
+3. **Update Composer**: Run `composer require bezhansalleh/filament-shield` to update the package to the latest version.
+4. **Publish New Config and Resource**: Publish the new configuration file and the `RoleResource` using the following commands:
+   ```bash
+   php artisan vendor:publish --tag="filament-shield-config"
+   php artisan shield:publish --panel=admin # you can ignore this if you didn't published the resource previously
+   ```
+5. **Adjust Configuration**: Review and adjust the new `filament-shield.php` configuration file to match your application's requirements. Pay special attention to the new options and defaults that may differ from the previous version.
+6. **HasShieldPermissions Contract is Deprecated**: If you have implemented the `HasShieldPermissions` contract in your resources, consult [Policies](#policies) and [Resources](#resources) sections on how to migrate. If you leave it as is, it will be ignored.
+7. **Clean Slate** or **Perserve**: Decide whether to start fresh with a clean slate or preserve existing roles and permissions.
+    1. **Clean Slate**: If you choose to start fresh, you can run the following command to and follow along to set up the package from scratch.
+         ```bash
+         php artisan shield:setup --fresh
+         ```
+    2. **Preserve Existing Data**: If you want to keep your existing roles and permissions intact, then follow these steps:
+        1. Add the following code to your `AppServiceProvider`'s `boot()` method to perserve the the previous versions(3.x|4.x-Beta*) permission pattern:
+            ```php
+            use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+            use Filament\Pages\BasePage as Page;
+            use Filament\Resources\Resource;
+            use Filament\Widgets\Widget;
+            use Illuminate\Support\Str;
+
+            //...
+            public function boot(): void
+            {
+                FilamentShield::buildPermissionKeyUsing(
+                        function (string $entity, string $affix, string $subject, string $case, string $separator) {
+                            return match(true) {
+                                # if `configurePermissionIdentifierUsing()` was used previously, then this needs to be adjusted accordingly
+                                is_subclass_of($entity, Resource::class) => Str::of($affix)
+                                    ->snake()
+                                    ->append('_')
+                                    ->append(
+                                        Str::of($entity)
+                                            ->afterLast('\\')
+                                            ->beforeLast('Resource')
+                                            ->replace('\\', '')
+                                            ->snake()
+                                            ->replace('_', '::')
+                                    )
+                                    ->toString(),
+                                is_subclass_of($entity, Page::class) => Str::of('page_')
+                                    ->append(class_basename($entity))
+                                    ->toString(),
+                                is_subclass_of($entity, Widget::class) => Str::of('widget_')
+                                    ->append(class_basename($entity))
+                                    ->toString()
+                                };
+                        });
+            }
+            ```
+        2. If you have used the `configurePermissionIdentifierUsing()` method to customize the permission key composition, then adjust the logic for resources above to match your custom logic.
+        3. Running the `shield:generate` command 
+           - If your policies are altered or customized, you may need to run the generate command carefully per resource or set of resources to avoid any unwanted side effects. Then manually review and adjust the customized policies as needed. :
+               ```bash
+               php artisan shield:generate --resource=FooResource,BarResource --option=policies
+               ```
+            - If you haven't customized your policies then run the following command to ensure that your policies are up to date with the latest version of Shield:
+               ```bash
+               php artisan shield:generate --all --option=policies
+               ```
+           - If you have tenancy enabled in your panels and you want to generate the tenancy relationships, you can add the `--relationships` flag to the above commands.
+        4. Review and adjust the generated policies and permissions as needed.
+        
+8. **Test Thoroughly**: After completing the upgrade, thoroughly test your application to ensure that all functionalities related to roles, permissions, and access control are working as expected. Pay special attention to any custom implementations you may have had in place.
+
 
 # Translations 
 
