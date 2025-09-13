@@ -546,7 +546,7 @@ FilamentShieldPlugin::make()
 
 Since almost all Shield commands are destructive and can cause data loss, they can be prohibited by calling the `prohibit` method of the command as follows in a service provider's `boot()` method:
 ```php
-use BezhanSalleh\FilamentShield\FilamentShield;
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use BezhanSalleh\FilamentShield\Commands;
     public function boot(): void
     {
