@@ -8,12 +8,14 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \BezhanSalleh\FilamentShield\FilamentShield buildPermissionKeyUsing(\Closure $callback)
+ * @method static \BezhanSalleh\FilamentShield\FilamentShield buildPermissionLabelUsing(\Closure $callback)
  * @method static array|null getResources()
  * @method static array|null getPages()
  * @method static array|null getWidgets()
  * @method static array|null getCustomPermissions(bool $localized = false)
  * @method static string getLocalizedResourcePermissionLabel(string $permission)
  * @method static string defaultPermissionKeyBuilder(string $affix, string $separator, string $subject, string $case)
+ * @method static string defaultPermissionLabelBuilder(string $entity, string $affix)
  * @method static array getDefaultPermissionKeys(string $entity, array|string $affixes)
  * @method static array|null getEntitiesPermissions()
  * @method static void prohibitDestructiveCommands(bool $prohibit = true)

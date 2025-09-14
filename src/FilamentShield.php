@@ -24,6 +24,8 @@ class FilamentShield
 
     protected ?Closure $buildPermissionKeyUsing = null;
 
+    protected ?Closure $buildPermissionLabelUsing = null;
+
     public function buildPermissionKeyUsing(Closure $callback): static
     {
         $this->buildPermissionKeyUsing = $callback;
@@ -31,24 +33,31 @@ class FilamentShield
         return $this;
     }
 
+    public function buildPermissionLabelUsing(Closure $callback): static
+    {
+        $this->buildPermissionLabelUsing = $callback;
+
+        return $this;
+    }
+
     public function getResources(): ?array
     {
-        return once(fn (): ?array => $this->transformResources());
+        return once(fn(): ?array => $this->transformResources());
     }
 
     public function getPages(): ?array
     {
-        return once(fn (): ?array => $this->transformPages());
+        return once(fn(): ?array => $this->transformPages());
     }
 
     public function getWidgets(): ?array
     {
-        return once(fn (): ?array => $this->transformWidgets());
+        return once(fn(): ?array => $this->transformWidgets());
     }
 
     public function getCustomPermissions(bool $localized = false): ?array
     {
-        return once(fn (): ?array => $this->transformCustomPermissions($localized));
+        return once(fn(): ?array => $this->transformCustomPermissions($localized));
     }
 
     /**
@@ -95,23 +104,48 @@ class FilamentShield
         return $this->format($case, $affix) . $separator . $this->format($case, $subject);
     }
 
+    private function buildPermissionLabel(string $entity, string $affix): string
+    {
+        if ($this->buildPermissionLabelUsing instanceof \Closure) {
+            /** @var string $result */
+            $result = $this->evaluate(
+                value: $this->buildPermissionLabelUsing,
+                namedInjections: [
+                    'entity' => $entity,
+                    'affix' => $affix,
+                    'subject' => $this->resolveSubject($entity),
+                    'defaultLabel' => $this->defaultPermissionLabelBuilder($entity, $affix),
+                ]
+            );
+
+            return $result;
+        }
+
+        return $this->defaultPermissionLabelBuilder($entity, $affix);
+    }
+
+    public function defaultPermissionLabelBuilder(string $entity, string $affix): string
+    {
+        return $this->getAffixLabel($affix, $entity) . ' ' . $this->resolveLabel($entity);
+    }
+
     public function getDefaultPermissionKeys(string $entity, string | array $affixes): array
     {
         $subject = $this->resolveSubject($entity);
 
         if (is_array($affixes)) {
             return collect($affixes)
-                ->mapWithKeys(fn (string $affix): array => [
+                ->mapWithKeys(fn(string $affix): array => [
                     $this->format('camel', $affix) => [
                         'key' => $this->buildPermissionKey($entity, $affix, $subject),
-                        'label' => $this->getAffixLabel($affix, $entity) . ' ' . $this->resolveLabel($entity),
+                        'label' => $this->buildPermissionLabel($entity, $affix),
                     ],
                 ])
                 ->uniqueStrict()
                 ->toArray();
         }
 
-        return [$this->buildPermissionKey($entity, $affixes, $subject) => $this->resolveLabel($entity)];
+        return [$this->buildPermissionKey($entity, $affixes, $subject) => $this->buildPermissionLabel($entity, $affixes)];
     }
 
     protected function resolveSubject(string $entity): string
