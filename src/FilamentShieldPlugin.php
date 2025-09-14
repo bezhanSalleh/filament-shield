@@ -6,6 +6,7 @@ namespace BezhanSalleh\FilamentShield;
 
 use BezhanSalleh\FilamentShield\Concerns\Plugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
+use BezhanSalleh\FilamentShield\Resources\Roles\Tables\RoleTable;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\PluginEssentials\Concerns\Plugin as Essentials;
 use Filament\Contracts\Plugin as FilamentPlugin;
@@ -25,6 +26,13 @@ class FilamentShieldPlugin implements FilamentPlugin
     use Plugin\CanCustomizeColumns;
     use Plugin\CanLocalizePermissionLabels;
     use Plugin\HasSimpleResourcePermissionView;
+
+    /**
+     * The custom table class to use for role management.
+     *
+     * @var string|null
+     */
+    protected ?string $roleTableClass = null;
 
     public static function make(): static
     {
