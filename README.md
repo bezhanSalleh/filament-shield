@@ -99,6 +99,10 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Parent Resource](#parent-resource)
     - [Tenancy](#tenancy)
     - [Layout Customization](#layout-customization)
+    - [Table Customization](#table-customization)
+      - [Using Custom Table Classes](#using-custom-table-classes)
+      - [Creating a Custom Table Class](#creating-a-custom-table-class)
+      - [Benefits](#benefits)
   - [Commands](#commands)
     - [Prohibited Commands](#prohibited-commands)
     - [Core Commands](#core-commands)
@@ -539,6 +543,132 @@ FilamentShieldPlugin::make()
    FilamentShieldPlugin::make()
        ->localizePermissionLabels()
    ```
+
+### Table Customization
+
+Shield follows Filament v4 best practices by using dedicated table classes for the role management interface. This approach provides clean code organization, maintainability, and easy customization without modifying core files.
+
+#### Using Custom Table Classes
+
+You can customize the role table by creating your own table class and registering it with the plugin:
+
+```php
+FilamentShieldPlugin::make()
+    ->roleTableClass(MyCustomRoleTable::class)
+```
+
+#### Creating a Custom Table Class
+
+1. **Extend the Base Table Class**
+
+   Create a custom table class by extending the base `RoleTable`:
+
+   ```php
+   <?php
+
+   namespace App\Filament\Tables;
+
+   use BezhanSalleh\FilamentShield\Resources\Roles\Tables\RoleTable;
+   use Filament\Tables\Columns\TextColumn;
+   use Filament\Tables\Table;
+
+   class CustomRoleTable extends RoleTable
+   {
+       public static function configure(Table $table): Table
+       {
+           return parent::configure($table)
+               ->striped()
+               ->paginated([25, 50, 100])
+               ->defaultSort('name');
+       }
+
+       protected static function getColumns(): array
+       {
+           $columns = parent::getColumns();
+
+           // Add custom column
+           $columns[] = TextColumn::make('created_at')
+               ->label('Created')
+               ->dateTime()
+               ->sortable();
+
+           return $columns;
+       }
+   }
+   ```
+
+2. **Create a Complete Custom Table**
+
+   For full control, create a table class from scratch:
+
+   ```php
+   <?php
+
+   namespace App\Filament\Tables;
+
+   use Filament\Actions\EditAction;
+   use Filament\Actions\DeleteAction;
+   use Filament\Tables\Columns\TextColumn;
+   use Filament\Tables\Filters\SelectFilter;
+   use Filament\Tables\Table;
+
+   class MyRoleTable
+   {
+       public static function configure(Table $table): Table
+       {
+           return $table
+               ->columns(static::getColumns())
+               ->filters(static::getFilters())
+               ->recordActions(static::getRecordActions())
+               ->defaultSort('name')
+               ->striped();
+       }
+
+       protected static function getColumns(): array
+       {
+           return [
+               TextColumn::make('name')
+                   ->searchable()
+                   ->sortable(),
+               TextColumn::make('guard_name')
+                   ->badge(),
+               TextColumn::make('permissions_count')
+                   ->counts('permissions')
+                   ->badge()
+                   ->color('primary'),
+           ];
+       }
+
+       protected static function getFilters(): array
+       {
+           return [
+               SelectFilter::make('guard_name')
+                   ->options([
+                       'web' => 'Web',
+                       'api' => 'API',
+                   ]),
+           ];
+       }
+
+       protected static function getRecordActions(): array
+       {
+           return [
+               EditAction::make(),
+               DeleteAction::make(),
+           ];
+       }
+   }
+   ```
+
+#### Benefits
+
+- **Clean Architecture**: Separation of concerns with dedicated table classes
+- **Maintainable**: Easy to read, test, and maintain
+- **Extensible**: Simple to extend without modifying core files
+- **Reusable**: Table classes can be shared across projects
+- **Future-proof**: Follows Filament v4 recommended patterns
+
+For more details on table customization, see the [Filament documentation on code quality tips](https://filamentphp.com/docs/4.x/resources/code-quality-tips#using-schema-and-table-classes).
 
 ## Commands
 
