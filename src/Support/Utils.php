@@ -68,6 +68,11 @@ class Utils
         return config('filament-shield.shield_resource.is_globally_searchable', false);
     }
 
+    public static function isResourceGuardNameEnabled(): bool
+    {
+        return config('filament-shield.shield_resource.is_guard_name_enabled', true);
+    }
+
     public static function getAuthProviderFQCN()
     {
         return config('filament-shield.auth_provider_model.fqcn');
