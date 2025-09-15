@@ -80,4 +80,21 @@ return [
         'restore_any' => 'Restore Any',
         'replicate' => 'Replicate',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Actions
+    |--------------------------------------------------------------------------
+    */
+
+    'actions.import.label' => 'Import',
+    'actions.import.select.import_type.label' => 'Import Type',
+    'actions.import.select.import_type.option.permissions' => 'Only Permissions',
+    'actions.import.select.import_type.option.roles_and_permissions' => 'Roles and Permissions',
+    'actions.import.file_upload.import.label' => 'Import JSON File',
+
+    'actions.import.errors.notification' => 'An error occurred during the import. Check the file and try again.',
+    'actions.import.success.notification' => 'Import completed successfully!',
+
+    'actions.export' => 'Export',
 ];

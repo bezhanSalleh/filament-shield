@@ -77,4 +77,21 @@ return [
     //     'reorder' => 'Reorder',
     //     'restore_any' => 'Restore Any',
     // ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Actions
+    |--------------------------------------------------------------------------
+    */
+
+    'actions.import.label' => 'Importa',
+    'actions.import.select.import_type.label' => 'Tipo di Importazione',
+    'actions.import.select.import_type.option.permissions' => 'Solo Permessi',
+    'actions.import.select.import_type.option.roles_and_permissions' => 'Ruoli e Permessi',
+    'actions.import.file_upload.import.label' => 'File JSON di Importazione',
+
+    'actions.import.errors.notification' => 'Si è verificato un errore durante l\'importazione. Controlla il file e riprova.',
+    'actions.import.success.notification' => 'Importazione avvenuta con successo!',
+
+    'actions.export' => 'Esporta',
 ];

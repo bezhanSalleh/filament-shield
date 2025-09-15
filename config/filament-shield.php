@@ -258,4 +258,6 @@ return [
 
     'register_role_policy' => true,
 
+    'import_disk' => 'local'
+
 ];
