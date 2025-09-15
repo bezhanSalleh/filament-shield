@@ -52,6 +52,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                                         modifyRuleUsing: fn (Unique $rule) => Utils::isTenancyEnabled() ? $rule->where(Utils::getTenantModelForeignKey(), Filament::getTenant()?->id) : $rule
                                     )
                                     ->required()
+                                    ->columnSpan(Utils::isResourceGuardNameEnabled() ? 1 : 2)
                                     ->maxLength(255),
 
                                 Forms\Components\TextInput::make('guard_name')
