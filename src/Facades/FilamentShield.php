@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \BezhanSalleh\FilamentShield\FilamentShield configurePermissionIdentifierUsing(\Closure $callback)
+ * @method static \BezhanSalleh\FilamentShield\FilamentShield configureAvailableResourceUsing(\Closure $callback)
  * @method static string getPermissionIdentifier(string $resource)
  * @method static void generateForResource(array $entity)
  * @method static void generateForPage(string $page)

@@ -22,11 +22,20 @@ class FilamentShield
 
     protected ?Closure $configurePermissionIdentifierUsing = null;
 
+    protected ?Closure $configureAvailableResourceUsing = null;
+
     public ?Collection $customPermissions = null;
 
     public function configurePermissionIdentifierUsing(Closure $callback): static
     {
         $this->configurePermissionIdentifierUsing = $callback;
+
+        return $this;
+    }
+
+    public function configureAvailableResourceUsing(Closure $callback): static
+    {
+        $this->configureAvailableResourceUsing = $callback;
 
         return $this;
     }
@@ -140,12 +149,25 @@ class FilamentShield
 
         return collect($resources)
             ->reject(function ($resource) {
+                $result = false;
+
                 if (Utils::isGeneralExcludeEnabled()) {
-                    return in_array(
+                    $result = in_array(
                         Str::of($resource)->afterLast('\\'),
                         Utils::getExcludedResouces()
                     );
                 }
+
+                if (! $result && $this->configureAvailableResourceUsing) {
+                    $result = ! $this->evaluate(
+                        value: $this->configureAvailableResourceUsing,
+                        namedInjections: [
+                            'resource' => $resource,
+                        ]
+                    );
+                }
+
+                return $result;
             })
             ->mapWithKeys(function ($resource) {
                 $name = $this->getPermissionIdentifier($resource);
