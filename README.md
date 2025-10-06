@@ -58,7 +58,7 @@ The easiest and most intuitive way to add access management to your Filament pan
 | Package Version | Filament Version |
 |-----------------|------------------|
 | [2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)             | 2.x              |
-| [4.x](https://github.com/bezhanSalleh/filament-shield/tree/3.x)             | 3.x              |
+| [3.x](https://github.com/bezhanSalleh/filament-shield/tree/3.x)             | 3.x              |
 | **4.x**             | 4.x              |
 
 </div>
