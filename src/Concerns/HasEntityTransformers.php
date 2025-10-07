@@ -75,8 +75,10 @@ trait HasEntityTransformers
             ->mapWithKeys(function (string $label, int | string $key) use ($localizedOrFormatted): array {
                 $permission = is_numeric($key) ? $label : $key;
 
+                $case = Utils::getConfig()->permissions->case ?? 'pascal';
+
                 return [
-                    Str::of($permission)->snake()->toString() => $localizedOrFormatted
+                    $this->format($case, $permission) => $localizedOrFormatted
                         ? $this->getPermissionLabel($permission)
                         : Str::of($label)->headline()->toString(),
                 ];
