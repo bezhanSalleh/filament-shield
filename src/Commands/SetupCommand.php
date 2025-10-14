@@ -114,14 +114,27 @@ class SetupCommand extends Command
 
         $makePanelTenantable = $this->shouldConfigureTenancy && confirm("Would you like to make the `{$panel}` panel tenantable?", false);
 
-        Process::forever()->tty()->run("php artisan shield:install {$panel} " . ($makePanelTenantable ? '--tenant' : ''));
+        $process = Process::forever();
+        if (Process::isTtySupported()) {
+            $process->tty();
+        }
+        $process->run("php artisan shield:install {$panel} " . ($makePanelTenantable ? '--tenant' : ''));
 
         if (confirm("Would you like to run `shield:generate` for `{$panel}` Panel?", true)) {
-            Process::forever()->tty()->run("php artisan shield:generate --all --panel={$panel}");
+           $process = Process::forever();
+            if (Process::isTtySupported()) {
+                $process->tty();
+             }
+           $process->run("php artisan shield:generate --all --panel={$panel}");
+            
         }
         if (confirm("Would you like to run `shield:super-admin` for `{$panel}` Panel?", true)) {
             $this->newLine();
-            Process::forever()->tty()->run("php artisan shield:super-admin --panel={$panel}");
+            $process = Process::forever();
+            if (Process::isTtySupported()) {
+                $process->tty();
+            }
+            $process->run("php artisan shield:super-admin --panel={$panel}");
         }
     }
 
