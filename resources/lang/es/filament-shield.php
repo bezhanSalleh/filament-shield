@@ -9,6 +9,7 @@ return [
 
     'column.name' => 'Nombre',
     'column.guard_name' => 'Guard',
+    'column.team' => 'Equipo',
     'column.roles' => 'Roles',
     'column.permissions' => 'Permisos',
     'column.updated_at' => 'Actualizado el',
@@ -22,6 +23,8 @@ return [
     'field.name' => 'Nombre',
     'field.guard_name' => 'Guard',
     'field.permissions' => 'Permisos',
+    'field.team' => 'Equipo',
+    'field.team.placeholder' => 'Seleccione un equipo ...',
     'field.select_all.name' => 'Seleccionar todos',
     'field.select_all.message' => 'Habilitar todos los permisos actualmente <span class="text-primary font-medium">habilitados</span> para este rol',
 
@@ -70,7 +73,7 @@ return [
         'update' => 'Actualizar',
         'delete' => 'Eliminar un registro en particular',
         'delete_any' => 'Eliminar varios registros a la vez',
-        'force_delete' => 'Forzar elminación de un registro en particular',
+        'force_delete' => 'Forzar eliminación de un registro en particular',
         'force_delete_any' => 'Forzar eliminación de varios registros',
         'restore' => 'Restaurar un registro en particular',
         'reorder' => 'Reordenar',
