@@ -38,7 +38,7 @@ trait CanManipulateFiles
         foreach ($replacements as $methodName => $replacement) {
             if (is_array($replacement) && isset($replacement['stub'], $replacement['permission'])) {
 
-                if (! $this->fileExists($methodStubPath = base_path("stubs/filament-shield/{$stub}.stub"))) {
+                if (! $this->fileExists($methodStubPath = base_path("stubs/filament-shield/{$replacement['stub']}.stub"))) {
                     $methodStubPath = $this->getDefaultStubPath() . "/{$replacement['stub']}.stub";
                 }
 
