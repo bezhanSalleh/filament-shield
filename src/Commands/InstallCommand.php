@@ -69,7 +69,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
         );
 
         if (! $this->fileExists($panelPath)) {
-            $this->error("Panel not found: {$panelPath}");
+            $this->error('Panel not found: ' . $panelPath);
 
             return Command::FAILURE;
         }
@@ -100,7 +100,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
             );
         }
 
-        Process::run("php artisan shield:generate --resource=RoleResource --panel={$panel->getId()}");
+        Process::run('php artisan shield:generate --resource=RoleResource --panel=' . $panel->getId());
 
         return Command::SUCCESS;
     }

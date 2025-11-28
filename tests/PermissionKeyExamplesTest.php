@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Example usage tests for the buildPermissionKeyUsing functionality
  */

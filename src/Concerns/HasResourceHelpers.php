@@ -21,7 +21,7 @@ trait HasResourceHelpers
         return collect(
             data_get(
                 target: $this->getResources(),
-                key: "$key.permissions"
+                key: $key . '.permissions'
             )
         )
             ->mapWithKeys(fn (array $permission): array => [$permission['key'] => $permission['label']])
@@ -32,7 +32,7 @@ trait HasResourceHelpers
     {
         return collect(data_get(
             target: $this->getResources(),
-            key: "$key.permissions"
+            key: $key . '.permissions'
         ))
             ->mapWithKeys(fn (array $permission, string $action): array => [$action => $permission['key']])
             ->toArray();

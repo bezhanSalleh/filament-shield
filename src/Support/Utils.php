@@ -10,6 +10,7 @@ use Filament\Panel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -148,7 +149,7 @@ class Utils
 
     public static function getResourceCluster(): ?string
     {
-        return config('filament-shield.shield_resource.cluster', null);
+        return config('filament-shield.shield_resource.cluster');
     }
 
     public static function getRoleModel(): string
@@ -271,7 +272,7 @@ class Utils
 
             // Fast path: exact match
             if ($checkPathLower === $basePathLower) {
-                return rtrim($namespace, '\\');
+                return rtrim((string) $namespace, '\\');
             }
 
             // Check if configured path is within this PSR-4 base
@@ -279,7 +280,7 @@ class Utils
                 $relative = substr($checkPath, strlen($basePath));
                 $relative = rtrim($relative, DIRECTORY_SEPARATOR);
 
-                $ns = rtrim($namespace, '\\');
+                $ns = rtrim((string) $namespace, '\\');
                 if ($relative !== '') {
                     $ns .= '\\' . str_replace(DIRECTORY_SEPARATOR, '\\', $relative);
                 }
@@ -288,7 +289,7 @@ class Utils
             }
         }
 
-        throw new \RuntimeException("Configured path does not match any PSR-4 mapping: {$configuredPath}");
+        throw new RuntimeException('Configured path does not match any PSR-4 mapping: ' . $configuredPath);
     }
 
     protected static function isAbsolutePath(string $path): bool

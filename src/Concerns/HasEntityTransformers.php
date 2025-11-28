@@ -91,7 +91,7 @@ trait HasEntityTransformers
     protected function getResourcesToManage(): array
     {
         return collect(Utils::getConfig()->resources->manage)
-            ->mapWithKeys(fn (array $methods, string $key) => [basename($key) => $methods])
+            ->mapWithKeys(fn (array $methods, string $key): array => [basename($key) => $methods])
             ->toArray();
     }
 
@@ -101,7 +101,7 @@ trait HasEntityTransformers
         $defaultPolicyMethods = $policyConfig->methods;
 
         if (filled($resource)) {
-            $resourcePolicyMethods = data_get($this->getResourcesToManage(), basename($resource), null);
+            $resourcePolicyMethods = data_get($this->getResourcesToManage(), basename($resource));
 
             $defaultPolicyMethods = $policyConfig->merge
                 ? array_merge($defaultPolicyMethods, $resourcePolicyMethods ?? [])

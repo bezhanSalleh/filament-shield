@@ -36,12 +36,6 @@ class ShieldConfig extends Fluent
         }
     }
 
-    // we don't want to memoize this, because we want it to react to config changes at runtime
-    public static function init(): self
-    {
-        return static::$instance = new self(config('filament-shield'));
-    }
-
     public static function __callStatic(mixed $name, mixed $arguments)
     {
         $instance = static::init();
@@ -53,5 +47,11 @@ class ShieldConfig extends Fluent
 
         // Otherwise fallback to Fluent’s magic
         return $instance->$name(...$arguments)->isNotEmpty() ?: null;
+    }
+
+    // we don't want to memoize this, because we want it to react to config changes at runtime
+    public static function init(): self
+    {
+        return static::$instance = new self(config('filament-shield'));
     }
 }

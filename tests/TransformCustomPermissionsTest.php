@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use BezhanSalleh\FilamentShield\FilamentShield;
 
 beforeEach(function () {

@@ -14,7 +14,7 @@ trait CanManipulateFiles
     {
         foreach ($paths as $path) {
             if ($this->fileExists($path)) {
-                $this->components->error("$path already exists, aborting.");
+                $this->components->error($path . ' already exists, aborting.');
 
                 return true;
             }
@@ -27,8 +27,8 @@ trait CanManipulateFiles
     {
         $filesystem = app(Filesystem::class);
 
-        if (! $this->fileExists($stubPath = base_path("stubs/filament-shield/{$stub}.stub"))) {
-            $stubPath = $this->getDefaultStubPath() . "/{$stub}.stub";
+        if (! $this->fileExists($stubPath = base_path(sprintf('stubs/filament-shield/%s.stub', $stub)))) {
+            $stubPath = $this->getDefaultStubPath() . sprintf('/%s.stub', $stub);
         }
 
         $stub = Str::of($filesystem->get($stubPath));
@@ -38,8 +38,8 @@ trait CanManipulateFiles
         foreach ($replacements as $methodName => $replacement) {
             if (is_array($replacement) && isset($replacement['stub'], $replacement['permission'])) {
 
-                if (! $this->fileExists($methodStubPath = base_path("stubs/filament-shield/{$replacement['stub']}.stub"))) {
-                    $methodStubPath = $this->getDefaultStubPath() . "/{$replacement['stub']}.stub";
+                if (! $this->fileExists($methodStubPath = base_path(sprintf('stubs/filament-shield/%s.stub', $replacement['stub'])))) {
+                    $methodStubPath = $this->getDefaultStubPath() . sprintf('/%s.stub', $replacement['stub']);
                 }
 
                 $methodStub = Str::of($filesystem->get($methodStubPath));
@@ -69,14 +69,14 @@ trait CanManipulateFiles
     {
         $filesystem = new Filesystem;
 
-        if (! $this->fileExists($stubPath = base_path('stubs' . DIRECTORY_SEPARATOR . 'filament-shield' . DIRECTORY_SEPARATOR . "{$stub}.stub"))) {
-            $stubPath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . "{$stub}.stub";
+        if (! $this->fileExists($stubPath = base_path('stubs' . DIRECTORY_SEPARATOR . 'filament-shield' . DIRECTORY_SEPARATOR . ($stub . '.stub')))) {
+            $stubPath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . ($stub . '.stub');
         }
 
         $stub = Str::of($filesystem->get($stubPath));
 
         foreach ($replacements as $key => $replacement) {
-            $stub = $stub->replace("{{ {$key} }}", is_array($replacement) ? json_encode($replacement) : $replacement);
+            $stub = $stub->replace(sprintf('{{ %s }}', $key), is_array($replacement) ? json_encode($replacement) : $replacement);
         }
 
         $stub = (string) $stub;
@@ -117,12 +117,12 @@ trait CanManipulateFiles
 
         if (! $this->fileExists($destination)) {
             $filesystem->copy($source, $destination);
-            $this->components->info("$destination file published!");
+            $this->components->info($destination . ' file published!');
 
             return true;
         }
 
-        $this->components->warn("$destination already exists, skipping ...");
+        $this->components->warn($destination . ' already exists, skipping ...');
 
         return false;
     }

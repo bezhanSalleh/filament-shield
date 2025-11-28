@@ -31,6 +31,14 @@ class FilamentShieldPlugin implements FilamentPlugin
         return app(static::class);
     }
 
+    public static function get(): static
+    {
+        /** @var static $plugin */
+        $plugin = filament(app(static::class)->getId());
+
+        return $plugin;
+    }
+
     public function getId(): string
     {
         return 'filament-shield';
@@ -49,14 +57,6 @@ class FilamentShieldPlugin implements FilamentPlugin
     public function boot(Panel $panel): void
     {
         //
-    }
-
-    public static function get(): static
-    {
-        /** @var static $plugin */
-        $plugin = filament(app(static::class)->getId());
-
-        return $plugin;
     }
 
     protected function getPluginDefaults(): array

@@ -77,7 +77,8 @@ trait HasShieldFormComponents
             if (blank($record)) {
                 return;
             }
-            if ($component->isVisible() && count($permissions) > 0) {
+
+            if ($component->isVisible() && $permissions !== []) {
                 $component->state(
                     collect($permissions)
                         /** @phpstan-ignore-next-line */

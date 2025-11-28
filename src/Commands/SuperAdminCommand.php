@@ -36,24 +36,6 @@ class SuperAdminCommand extends Command
 
     protected ?\Illuminate\Database\Eloquent\Model $superAdminRole = null;
 
-    protected function getAuthGuard(): Guard
-    {
-        return Filament::getPanel($this->panel)->auth();
-    }
-
-    protected function getUserProvider(): UserProvider
-    {
-        return $this->getAuthGuard()->getProvider();
-    }
-
-    protected function getUserModel(): string
-    {
-        /** @var EloquentUserProvider $provider */
-        $provider = $this->getUserProvider();
-
-        return $provider->getModel();
-    }
-
     public function handle(): int
     {
         if ($this->isProhibited()) {
@@ -103,6 +85,7 @@ class SuperAdminCommand extends Command
 
                 return self::FAILURE;
             }
+
             setPermissionsTeamId($tenantId);
             $this->superAdminRole = Utils::createRole(tenantId: $tenantId);
             $this->superAdminRole->syncPermissions(Utils::getPermissionModel()::pluck('id'));
@@ -120,9 +103,27 @@ class SuperAdminCommand extends Command
 
         $loginUrl = Filament::getCurrentOrDefaultPanel()?->getLoginUrl();
 
-        $this->components->info("Success! {$this->superAdmin->email} may now log in at {$loginUrl}.");
+        $this->components->info(sprintf('Success! %s may now log in at %s.', $this->superAdmin->email, $loginUrl));
 
         return self::SUCCESS;
+    }
+
+    protected function getAuthGuard(): Guard
+    {
+        return Filament::getPanel($this->panel)->auth();
+    }
+
+    protected function getUserProvider(): UserProvider
+    {
+        return $this->getAuthGuard()->getProvider();
+    }
+
+    protected function getUserModel(): string
+    {
+        /** @var EloquentUserProvider $provider */
+        $provider = $this->getUserProvider();
+
+        return $provider->getModel();
     }
 
     protected function createSuperAdmin(): Authenticatable

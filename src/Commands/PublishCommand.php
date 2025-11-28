@@ -12,6 +12,7 @@ use Filament\Support\Commands\Concerns\HasResourcesLocation;
 use Illuminate\Console\Command;
 use Illuminate\Console\Prohibitable;
 use Illuminate\Filesystem\Filesystem;
+use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -81,7 +82,7 @@ class PublishCommand extends Command
 
         foreach (['CreateRole', 'EditRole', 'ListRoles', 'ViewRole'] as $page) {
             $this->replaceInFile(
-                $resourcePath . "/Pages/{$page}.php",
+                $resourcePath . sprintf('/Pages/%s.php', $page),
                 'BezhanSalleh\\FilamentShield\\Resources\\Roles',
                 $this->resourcesNamespace . '\\Roles'
             );
@@ -177,15 +178,15 @@ class PublishCommand extends Command
             $this->resourcesNamespace = (string) str($this->parentResourceFqn)
                 ->beforeLast('\\')
                 ->append('\\Resources');
-            $this->resourcesDirectory = (string) str((new \ReflectionClass($this->parentResourceFqn))->getFileName())
+            $this->resourcesDirectory = (string) str((new ReflectionClass($this->parentResourceFqn))->getFileName())
                 ->beforeLast(DIRECTORY_SEPARATOR)
                 ->append('/Resources');
 
             return;
         }
 
-        $this->resourcesNamespace = "{$this->parentResourceFqn}\\Resources";
-        $this->resourcesDirectory = (string) str((new \ReflectionClass($this->parentResourceFqn))->getFileName())
+        $this->resourcesNamespace = $this->parentResourceFqn . '\Resources';
+        $this->resourcesDirectory = (string) str((new ReflectionClass($this->parentResourceFqn))->getFileName())
             ->beforeLast('.')
             ->append('/Resources');
     }

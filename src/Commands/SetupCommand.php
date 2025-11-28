@@ -55,7 +55,7 @@ class SetupCommand extends Command
         $this->shouldConfigureTenancy = filled($this->tenantModel);
 
         if (! Utils::isAuthProviderConfigured()) {
-            $this->components->error('Please make sure your Auth Provider model (\App\\Models\\User) uses the `HasRoles` trait');
+            $this->components->error("Please make sure your Auth Provider model (\App\\Models\\User) uses the 'HasRoles' trait");
         }
 
         if ($this->isShieldInstalled() && ! $this->refresh) {
@@ -78,7 +78,7 @@ class SetupCommand extends Command
             $this->components->info('Shield has been successfully setup & configured!');
         }
 
-        if (confirm('Would you like to run `shield:install`?', true)) {
+        if (confirm("Would you like to run 'shield:install'?", true)) {
             $this->promptForOtherShieldCommands();
         }
 
@@ -88,12 +88,15 @@ class SetupCommand extends Command
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/bezhanSalleh/filament-shield');
             }
+
             if (PHP_OS_FAMILY === 'Linux') {
                 exec('xdg-open https://github.com/bezhanSalleh/filament-shield');
             }
+
             if (PHP_OS_FAMILY === 'Windows') {
                 exec('start https://github.com/bezhanSalleh/filament-shield');
             }
+
             $this->components->info('Thank you!');
         }
 
@@ -112,16 +115,17 @@ class SetupCommand extends Command
 
         $installOptions['panel'] = $panel;
 
-        $makePanelTenantable = $this->shouldConfigureTenancy && confirm("Would you like to make the `{$panel}` panel tenantable?", false);
+        $makePanelTenantable = $this->shouldConfigureTenancy && confirm(sprintf("Would you like to make the '%s' panel tenantable?", $panel), false);
 
-        Process::forever()->tty()->run("php artisan shield:install {$panel} " . ($makePanelTenantable ? '--tenant' : ''));
+        $this->runProcessSafely(sprintf('php artisan shield:install %s ', $panel) . ($makePanelTenantable ? '--tenant' : ''));
 
-        if (confirm("Would you like to run `shield:generate` for `{$panel}` Panel?", true)) {
-            Process::forever()->tty()->run("php artisan shield:generate --all --panel={$panel}");
+        if (confirm(sprintf("Would you like to run 'shield:generate' for '%s' Panel?", $panel), true)) {
+            $this->runProcessSafely('php artisan shield:generate --all --panel=' . $panel);
         }
-        if (confirm("Would you like to run `shield:super-admin` for `{$panel}` Panel?", true)) {
+
+        if (confirm(sprintf("Would you like to run 'shield:super-admin' for '%s' Panel?", $panel), true)) {
             $this->newLine();
-            Process::forever()->tty()->run("php artisan shield:super-admin --panel={$panel}");
+            $this->runProcessSafely('php artisan shield:super-admin --panel=' . $panel);
         }
     }
 
@@ -151,7 +155,7 @@ class SetupCommand extends Command
 
             $shieldConfig = Stringer::for(config_path('filament-shield.php'));
 
-            if (is_null(config()->get('filament-shield.tenant_model', null))) {
+            if (is_null(config()->get('filament-shield.tenant_model'))) {
                 $shieldConfig->prepend('auth_provider_model', "'tenant_model' => null,")
                     ->newLine();
             }
@@ -176,7 +180,7 @@ class SetupCommand extends Command
 
             $appServiceProvider = Stringer::for(app_path('Providers/AppServiceProvider.php'));
             if (
-                ! $appServiceProvider->containsChainedBlock('app(\Spatie\Permission\PermissionRegistrar::class)
+                ! $appServiceProvider->containsChainedBlock('app(' . \Spatie\Permission\PermissionRegistrar::class . '::class)
                         ->setPermissionClass(Permission::class)
                         ->setRoleClass(Role::class)')
             ) {
@@ -189,11 +193,11 @@ class SetupCommand extends Command
                 }
 
                 $appServiceProvider
-                    ->appendBlock('public function boot()', "
-                            app(\Spatie\Permission\PermissionRegistrar::class)
+                    ->appendBlock('public function boot()', '
+                            app(' . \Spatie\Permission\PermissionRegistrar::class . '::class)
                                 ->setPermissionClass(Permission::class)
                                 ->setRoleClass(Role::class);
-                        ", true)
+                        ', true)
                     ->save();
             }
         }
@@ -249,10 +253,21 @@ class SetupCommand extends Command
                 ->toString();
 
         if (! class_exists($model) || ! (app($model) instanceof Model)) {
-            $this->components->error("Model not found: {$model}");
+            $this->components->error('Model not found: ' . $model);
             exit();
         }
 
         return app($model);
+    }
+
+    private function runProcessSafely(string $cmd): void
+    {
+        $process = Process::forever();
+
+        if (Process::supportsTty()) {
+            $process->tty();
+        }
+
+        $process->run($cmd);
     }
 }

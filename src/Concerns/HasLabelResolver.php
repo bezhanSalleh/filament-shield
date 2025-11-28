@@ -16,18 +16,6 @@ use InvalidArgumentException;
 
 trait HasLabelResolver
 {
-    protected function resolveLabel(string $entity): string
-    {
-        $entity = resolve($entity);
-
-        return match (true) {
-            $entity instanceof Resource => $this->getLocalizedResourceLabel($entity),
-            $entity instanceof Page => $this->getLocalizedPageLabel($entity),
-            $entity instanceof Widget => $this->getLocalizedWidgetLabel($entity),
-            default => throw new InvalidArgumentException('Entity must be an instance of Resource, Page, or Widget.'),
-        };
-    }
-
     public function getLocalizedResourceLabel(Resource | string $resource): string
     {
         $resource = is_string($resource) ? resolve($resource) : $resource;
@@ -63,13 +51,6 @@ trait HasLabelResolver
         };
     }
 
-    private function hasValidHeading(Widget $widgetInstance): bool
-    {
-        return $widgetInstance instanceof Widget // @phpstan-ignore-line
-            && method_exists($widgetInstance, 'getHeading')
-            && filled(invade($widgetInstance)->getHeading());
-    }
-
     public function getAffixLabel(string $affix, ?string $resource = null): string
     {
         return Arr::get(
@@ -92,8 +73,27 @@ trait HasLabelResolver
     {
         $localizationConfig = Utils::getConfig()->localization;
 
-        return $localizationConfig->enabled && Lang::has("$localizationConfig->key.$permission")
-            ? __("$localizationConfig->key.$permission")
+        return $localizationConfig->enabled && Lang::has(sprintf('%s.%s', $localizationConfig->key, $permission))
+            ? __(sprintf('%s.%s', $localizationConfig->key, $permission))
             : Str::of($permission)->headline()->toString();
+    }
+
+    protected function resolveLabel(string $entity): string
+    {
+        $entity = resolve($entity);
+
+        return match (true) {
+            $entity instanceof Resource => $this->getLocalizedResourceLabel($entity),
+            $entity instanceof Page => $this->getLocalizedPageLabel($entity),
+            $entity instanceof Widget => $this->getLocalizedWidgetLabel($entity),
+            default => throw new InvalidArgumentException('Entity must be an instance of Resource, Page, or Widget.'),
+        };
+    }
+
+    private function hasValidHeading(Widget $widgetInstance): bool
+    {
+        return $widgetInstance instanceof Widget // @phpstan-ignore-line
+            && method_exists($widgetInstance, 'getHeading')
+            && filled(invade($widgetInstance)->getHeading());
     }
 }
