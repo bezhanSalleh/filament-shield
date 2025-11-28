@@ -81,18 +81,18 @@ class GenerateCommand extends Command
 
         $this->generatorOption = $this->option('option');
 
-        if (blank($this->generatorOption) && confirm('Would you like to select what to generate (permissions, policies or both) ?', default: true)) {
-            $this->generatorOption = Select(
-                label: 'What do you want to generate?',
-                options: [
-                    'policies_and_permissions' => 'Policies & Permissions',
-                    'policies' => 'Policies only',
-                    'permissions' => 'Permissions only',
-                ],
-                default: Utils::getGeneratorOption(),
-            );
-        } else {
-            $this->generatorOption = Utils::getGeneratorOption();
+        if (blank($this->generatorOption)) {
+            $this->generatorOption = confirm('Would you like to select what to generate (permissions, policies or both) ?', default: true)
+                ? Select(
+                    label: 'What do you want to generate?',
+                    options: [
+                        'policies_and_permissions' => 'Policies & Permissions',
+                        'policies' => 'Policies only',
+                        'permissions' => 'Permissions only',
+                    ],
+                    default: Utils::getGeneratorOption(),
+                )
+                : Utils::getGeneratorOption();
         }
 
         Filament::setCurrentPanel(Filament::getPanel($panel));
