@@ -180,27 +180,30 @@ class Utils
 
     public static function createRole(?string $name = null, int | string | null $tenantId = null): Role
     {
+        $guardName = static::getFilamentAuthGuard();
+
         if (static::isTenancyEnabled()) {
             return static::getRoleModel()::firstOrCreate(
                 [
                     'name' => $name ?? static::getConfig()->super_admin->name,
                     static::getTenantModelForeignKey() => $tenantId,
+                    'guard_name' => $guardName,
                 ],
-                ['guard_name' => static::getFilamentAuthGuard()]
             );
         }
 
         return static::getRoleModel()::firstOrCreate(
-            ['name' => $name ?? static::getSuperAdminName()],
-            ['guard_name' => static::getFilamentAuthGuard()]
+            [
+                'name' => $name ?? static::getSuperAdminName(),
+                'guard_name' => $guardName,
+            ],
         );
     }
 
     public static function createPermission(string $name): string
     {
         return static::getPermissionModel()::firstOrCreate(
-            ['name' => $name],
-            ['guard_name' => static::getFilamentAuthGuard()]
+            ['name' => $name, 'guard_name' => static::getFilamentAuthGuard()],
         )->name;
     }
 

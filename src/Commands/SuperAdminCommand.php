@@ -66,6 +66,8 @@ class SuperAdminCommand extends Command
             required: true
         );
 
+        Filament::setCurrentPanel($this->panel);
+
         $usersCount = static::getUserModel()::count();
         $tenantId = $this->option('tenant');
 
