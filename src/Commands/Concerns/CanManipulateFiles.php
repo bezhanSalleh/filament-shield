@@ -14,7 +14,7 @@ trait CanManipulateFiles
     {
         foreach ($paths as $path) {
             if ($this->fileExists($path)) {
-                $this->components->error($path . ' already exists, aborting.');
+                $this->components->warn($path . ' already exists, aborting.');
 
                 return true;
             }

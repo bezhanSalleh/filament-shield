@@ -229,10 +229,11 @@ class SetupCommand extends Command
             Schema::disableForeignKeyConstraints();
             DB::table('migrations')->where('migration', 'like', '%create_permission_tables')->delete();
             if (config('database.default') === 'pgsql') {
-                $this->getTables()->each(fn (string $table) => DB::statement("DROP TABLE IF EXISTS {$table} CASCADE"));
+                $this->getTables()->each(fn (string $table) => DB::statement(sprintf('DROP TABLE IF EXISTS %s CASCADE', $table)));
             } else {
-                $this->getTables()->each(fn (string $table) => DB::statement("DROP TABLE IF EXISTS {$table}"));
+                $this->getTables()->each(fn (string $table) => DB::statement('DROP TABLE IF EXISTS ' . $table));
             }
+
             Schema::enableForeignKeyConstraints();
         }
 

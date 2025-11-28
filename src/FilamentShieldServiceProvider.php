@@ -10,6 +10,7 @@ use BezhanSalleh\FilamentShield\Commands\PublishCommand;
 use BezhanSalleh\FilamentShield\Commands\SeederCommand;
 use BezhanSalleh\FilamentShield\Commands\SetupCommand;
 use BezhanSalleh\FilamentShield\Commands\SuperAdminCommand;
+use BezhanSalleh\FilamentShield\Commands\TranslationCommand;
 use BezhanSalleh\FilamentShield\Concerns\HasAboutCommand;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Support\Facades\Gate;
@@ -75,6 +76,7 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
             SeederCommand::class,
             SetupCommand::class,
             SuperAdminCommand::class,
+            TranslationCommand::class,
         ];
     }
 }

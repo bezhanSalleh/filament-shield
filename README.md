@@ -105,8 +105,10 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Generate Command Options (recap)](#generate-command-options-recap)
   - [Localization](#localization)
     - [Configuration](#configuration-4)
-    - [Key](#key)
-    - [Default](#default)
+    - [How It Works](#how-it-works)
+    - [Generating Translation Files](#generating-translation-files)
+    - [Translation Keys](#translation-keys)
+    - [Default Package Translations](#default-package-translations)
 - [Upgrade](#upgrade)
 - [Translations](#translations)
 - [Testing](#testing)
@@ -576,6 +578,8 @@ shield:super-admin [--user=] [--panel=] [--tenant=]
 shield:seeder [--generate] [--option=permissions_via_roles|direct_permissions] [--force]
 
 shield:publish --panel={panel} [--cluster=] [--nested] [--force]
+
+shield:translation {locale} [--panel=] [--path=]
 ```
 
 ### Generate Command Options (recap)
@@ -593,85 +597,93 @@ shield:publish --panel={panel} [--cluster=] [--nested] [--force]
 ```
 
 ## Localization
-Shield supports multiple languages out of the box. When enabled, you can provide translated labels for 
-permissions to create a more localized experience for your international users.
+Shield supports multiple languages out of the box. When enabled, you can provide translated labels for
+permissions to create a more localized experience for your app's users.
 
 ### Configuration
 ```php
 'localization' => [
      'enabled' => false,
-     'key' => 'filament-shield::filament-shield',
+     'key' => 'shield-permissions', // could be any name you want
  ],
 ```
-### Key
-You can translate the permission labels by creating the translations files for your application's 
-supported locales following Laravel's localization conventions. The translation file can be 
-named anything you want. 
-For example, you can create a file named `permissions.php` per locale and then set the 
-`localization.key` in the config as `localization.key' => 'permissions'`. 
 
-Now given that Filament entities(Resources, Pages, Widgets) can be already localized using their own methods,
-you only need to provide translations for the resource prefixes, page and widget names, and any custom permissions you have defined. 
-For custom permissions, the keys will be the same as you define them, but in snake cased format.
-To get the list of keys that you need to provide translations for, you can run the following code snippet in Tinker or wherever you want:
+### How It Works
 
-```php
-use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+Shield uses a **fallback chain** for resolving permission labels:
 
-return collect(FilamentShield::getAllResourcePermissionsWithLabels())
-    ->keys()
-    ->transform(
-        fn($value) => str($value)
-            ->before(config("filament-shield.permissions.separator"))
-            ->snake()
-            ->toString()
-    )
-    ->merge(
-        collect(FilamentShield::getPages())
-            ->merge(FilamentShield::getWidgets())
-            ->flatMap->permissions->keys()
-            ->transform(
-                fn($value) => str($value)
-                    ->after(config("filament-shield.permissions.separator"))
-                    ->snake()
-                    ->toString()
-            )
-    )
-    ->merge(
-        collect(FilamentShield::getCustomPermissions())
-            ->keys()
-            ->transform(fn($value) => str($value)->snake()->toString())
-    )
-    ->unique()
-    ->values()
-    ->toArray();
-```
-**Example output:** running the above in the Filament Demo app context, with `custom_permissions` => ['Impersonate:User', 'View:IconLibrary'] will give you the following output:
-```php
-[
-    "view_any",
-    "view",
-    "create",
-    "update",
-    "delete",
-    "restore",
-    "force_delete",
-    "force_delete_any",
-    "restore_any",
-    "replicate",
-    "reorder",
-    "products_cluster",
-    "stats_overview_widget",
-    "orders_chart",
-    "customers_chart",
-    "latest_orders",
-    "impersonate:_user",
-    "view:_icon_library",
-]
+1. **User's translation file** (when `localization.enabled = true`)
+   - Checks `lang/{locale}/{key}.php` where `{key}` is your configured localization key
+2. **Package's default translations**
+   - Falls back to `resource_permission_prefixes_labels` for standard affixes (view, create, update, etc.)
+3. **Headline fallback**
+   - Converts the key to a readable format (e.g., `force_delete_any` → "Force Delete Any")
+
+### Generating Translation Files
+
+The easiest way to create a translation file is using the `shield:translation` command:
+
+```bash
+php artisan shield:translation en --panel=admin
 ```
 
-### Default
-if you want to use the default translations provided by the package for the commonly used set of permissions for resources, you can set the `localization.key` in the config as `localization.key' => 'filament-shield::filament-shield.resource_permission_prefixes_labels'` and enable localization by setting `localization.enabled` to `true`.
+This generates a file at `lang/en/shield-permissions.php` containing all permission labels:
+
+```php
+<?php
+
+/**
+ * Shield Permission Labels
+ *
+ * Translate the values below to localize permission labels in your application.
+ */
+
+return [
+    // Resource affixes
+    'create' => 'Create',
+    'delete' => 'Delete',
+    'delete_any' => 'Delete Any',
+    'force_delete' => 'Force Delete',
+    'force_delete_any' => 'Force Delete Any',
+    'replicate' => 'Replicate',
+    'reorder' => 'Reorder',
+    'restore' => 'Restore',
+    'restore_any' => 'Restore Any',
+    'update' => 'Update',
+    'view' => 'View',
+    'view_any' => 'View Any',
+
+    // Pages (permission key in snake_case)
+    'view_dashboard' => 'Dashboard',
+
+    // Widgets (permission key in snake_case)
+    'view_stats_overview' => 'Stats Overview',
+
+    // Custom permissions
+    'approve_posts' => 'Approve Posts',
+];
+```
+
+### Translation Keys
+
+All translation keys are in **snake_case** format:
+
+| Permission Type | Original Key | Translation Key |
+|-----------------|--------------|-----------------|
+| Resource affix | `viewAny` | `view_any` |
+| Resource affix | `forceDeleteAny` | `force_delete_any` |
+| Page permission | `view:Dashboard` | `view_dashboard` |
+| Widget permission | `view:StatsOverview` | `view_stats_overview` |
+| Custom permission | `Approve:Posts` | `approve_posts` |
+
+### Default Package Translations
+
+Shield includes translations for standard resource affixes in 32 languages. When `localization.enabled = false`,
+the package automatically uses these translations for affixes like `view`, `create`, `update`, `delete`, etc.
+
+For entity labels (Resources, Pages, Widgets), Filament's entity related methods are used
+(`getModelLabel()`, `getTitle()`, `getHeading()`, etc.).
+
 
 # Upgrade
 Upgrading from `3.x|4.0.0-Beta*` versions to 4.x requires careful consideration due to significant changes in the package's architecture and functionality. Here are the key steps and considerations for a successful upgrade:

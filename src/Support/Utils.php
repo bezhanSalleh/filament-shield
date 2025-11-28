@@ -292,6 +292,22 @@ class Utils
         throw new RuntimeException('Configured path does not match any PSR-4 mapping: ' . $configuredPath);
     }
 
+    /**
+     * Convert a permission key to a localization key.
+     *
+     * Removes the configured separator and converts to snake_case.
+     */
+    public static function toLocalizationKey(string $key): string
+    {
+        $separator = static::getConfig()->permissions->separator;
+
+        return Str::of($key)
+            ->replace($separator, '_')
+            ->snake()
+            ->replace('__', '_')
+            ->toString();
+    }
+
     protected static function isAbsolutePath(string $path): bool
     {
         // windows os
