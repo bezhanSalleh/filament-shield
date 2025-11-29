@@ -2,6 +2,42 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 4.0.3 - 2025-11-29
+
+### What's Changed
+
+#### Release Summary Highlights
+
+- Unified label resolution with consistent fallback chain:
+  - User's translation file (when localization.enabled)
+  - Package's resource_permission_prefixes_labels
+  - Headline fallback - Fixed getLocalizedLabel() to use correct translation path
+  
+- `shield:translation` New Command to generate translation/lang file for the provided locale for permissions of the given panel
+- Fixes setup on windows
+- Fixes multiple guard issues when creating roles/permissions
+
+* fix(stubs): correct custom stub path resolution by @TheSyriableDev in https://github.com/bezhanSalleh/filament-shield/pull/654
+* Update README.md by @jeffersongoncalves in https://github.com/bezhanSalleh/filament-shield/pull/657
+* Update transform custom permissions to use config case by @ShamarKellman in https://github.com/bezhanSalleh/filament-shield/pull/659
+* Fix: ensure selected Panel guard is respected and include guard when creating roles/permissions (fixes #647) by @LuizCristino in https://github.com/bezhanSalleh/filament-shield/pull/660
+* Update localization key in filament-shield config by @EG-Mohamed in https://github.com/bezhanSalleh/filament-shield/pull/663
+* Bump stefanzweifel/git-auto-commit-action from 6 to 7 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/664
+* Update Spanish Translations by @luisprmat in https://github.com/bezhanSalleh/filament-shield/pull/669
+* Bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/672
+* Streamline permission label resolution system by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/675
+
+### New Contributors
+
+* @TheSyriableDev made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/654
+* @jeffersongoncalves made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/657
+* @ShamarKellman made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/659
+* @LuizCristino made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/660
+* @EG-Mohamed made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/663
+* @luisprmat made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/669
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/4.0.2...4.0.3
+
 ## 4.0.2 - 2025-09-11
 
 ### What's Changed
