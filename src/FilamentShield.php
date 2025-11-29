@@ -10,7 +10,6 @@ use Filament\Pages\BasePage as Page;
 use Filament\Resources\Resource;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\Widget;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -23,16 +22,6 @@ class FilamentShield
     use EvaluatesClosures;
 
     protected ?Closure $buildPermissionKeyUsing = null;
-
-    /**
-     * Get the localized resource permission label
-     */
-    public static function getLocalizedResourcePermissionLabel(string $permission): string
-    {
-        return Lang::has('filament-shield::filament-shield.resource_permission_prefixes_labels.' . $permission, app()->getLocale())
-            ? __('filament-shield::filament-shield.resource_permission_prefixes_labels.' . $permission)
-            : Str::of($permission)->headline();
-    }
 
     public function buildPermissionKeyUsing(Closure $callback): static
     {
@@ -70,19 +59,23 @@ class FilamentShield
     {
         $subject = $this->resolveSubject($entity);
 
+        // Resources: multiple permissions with affixes (view, create, update, etc.)
         if (is_array($affixes)) {
             return collect($affixes)
                 ->mapWithKeys(fn (string $affix): array => [
                     $this->format('camel', $affix) => [
                         'key' => $this->buildPermissionKey($entity, $affix, $subject),
-                        'label' => $this->getAffixLabel($affix, $entity) . ' ' . $this->resolveLabel($entity),
+                        'label' => $this->getAffixLabel($affix), // . ' ' . $this->resolveEntityLabel($entity),
                     ],
                 ])
                 ->uniqueStrict()
                 ->toArray();
         }
 
-        return [$this->buildPermissionKey($entity, $affixes, $subject) => $this->resolveLabel($entity)];
+        // Pages/Widgets: single permission with prefix
+        $permissionKey = $this->buildPermissionKey($entity, $affixes, $subject);
+
+        return [$permissionKey => $this->getEntityPermissionLabel($entity, $permissionKey)];
     }
 
     public function getEntitiesPermissions(): ?array

@@ -68,20 +68,19 @@ trait HasEntityTransformers
             ->toArray();
     }
 
-    /**
-     * @return array<string, string>|null
-     */
-    public function transformCustomPermissions(bool $localizedOrFormatted = false): ?array
+    /** @return array<string, string> */
+    public function transformCustomPermissions(bool $localized = false): ?array
     {
-        $config = Utils::getConfig();
+        $permissionCase = Utils::getConfig()->permissions->case;
 
-        return collect($config->custom_permissions)
-            ->mapWithKeys(function (string $label, int | string $key) use ($config, $localizedOrFormatted): array {
+        return collect(Utils::getConfig()->custom_permissions)
+            ->mapWithKeys(function (string $label, int | string $key) use ($localized, $permissionCase): array {
                 $permission = is_numeric($key) ? $label : $key;
+                $configLabel = is_numeric($key) ? null : $label;
 
                 return [
-                    $this->format($config->permissions->case, $permission) => $localizedOrFormatted
-                        ? $this->getPermissionLabel($permission)
+                    $this->format($permissionCase, $permission) => $localized
+                        ? $this->getCustomPermissionLabel($permission, $configLabel)
                         : Str::of($label)->headline()->toString(),
                 ];
             })
