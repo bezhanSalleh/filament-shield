@@ -193,8 +193,9 @@ class SetupCommand extends Command
                 }
 
                 $appServiceProvider
+                    ->append('use', 'use ' . \Spatie\Permission\PermissionRegistrar::class . '::class;')
                     ->appendBlock('public function boot()', '
-                            app(' . \Spatie\Permission\PermissionRegistrar::class . '::class)
+                            app(PermissionRegistrar::class)
                                 ->setPermissionClass(Permission::class)
                                 ->setRoleClass(Role::class);
                         ', true)
@@ -205,7 +206,7 @@ class SetupCommand extends Command
 
     protected function publishConfigs(): void
     {
-        $force = $this->refresh || $this->option('force');
+        $force = $this->option('force');
 
         if (! $this->fileExists(config_path('filament-shield.php')) || $force) {
             $this->{$this->callingMethod}('vendor:publish', [
