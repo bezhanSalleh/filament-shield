@@ -2,6 +2,21 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 4.0.4 - 2025-12-26
+
+### What's Changed
+
+* Test Suite Setup, Enhancements and Fixes  by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/687
+* Fixes #678: Use tenant ID for team permissions and clear cached permissions by @rik5 in https://github.com/bezhanSalleh/filament-shield/pull/682
+* Sync all permissions to super_admin role regardless of tenancy setup by @Jamesking56 in https://github.com/bezhanSalleh/filament-shield/pull/683
+
+### New Contributors
+
+* @rik5 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/682
+* @Jamesking56 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/683
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/4.0.3...4.0.4
+
 ## 4.0.3 - 2025-11-29
 
 ### What's Changed
@@ -9,13 +24,17 @@ All notable changes to `filament-shield` will be documented in this file.
 #### Release Summary Highlights
 
 - Unified label resolution with consistent fallback chain:
+  
   - User's translation file (when localization.enabled)
   - Package's resource_permission_prefixes_labels
   - Headline fallback - Fixed getLocalizedLabel() to use correct translation path
   
 - `shield:translation` New Command to generate translation/lang file for the provided locale for permissions of the given panel
+  
 - Fixes setup on windows
+  
 - Fixes multiple guard issues when creating roles/permissions
+  
 
 * fix(stubs): correct custom stub path resolution by @TheSyriableDev in https://github.com/bezhanSalleh/filament-shield/pull/654
 * Update README.md by @jeffersongoncalves in https://github.com/bezhanSalleh/filament-shield/pull/657
