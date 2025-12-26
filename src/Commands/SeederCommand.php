@@ -8,9 +8,7 @@ use BezhanSalleh\FilamentShield\Commands\Concerns\CanManipulateFiles;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Console\Command;
 use Illuminate\Console\Prohibitable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -30,17 +28,18 @@ class SeederCommand extends Command
     public $signature = 'shield:seeder
         {--generate : Generates permissions for all entities as configured}
         {--option= : Generate only permissions via roles or direct permissions (<fg=green;options=bold>permissions_via_roles,direct_permissions</>)}
-        {--with-tenants : Include tenants in seeder when tenancy enabled}
         {--with-users : Include users based on the roles/permissions in seeder}
         {--include-passwords : Include actual hashed passwords from database}
-        {--generate-passwords : Generate passwords (prompts for custom or random)}
+        {--generate-passwords= : Generate passwords (<fg=green;options=bold>YourPassword</>|<fg=green;options=bold>random</>|<fg=green;options=bold>prompt</>)}
         {--all : Export all tenants/users regardless of roles/permissions}
         {--F|force : Override if the seeder already exists}
     ';
 
-    protected ?string $customPassword = null;
+    protected ?string $generatedPassword = null;
 
     protected string $passwordMode = 'none';
+
+    protected bool $useRandomPasswords = false;
 
     public function handle(): int
     {
@@ -56,39 +55,24 @@ class SeederCommand extends Command
             ]);
         }
 
-        $withTenants = $this->option('with-tenants');
         $withUsers = $this->option('with-users');
         $includePasswords = $this->option('include-passwords');
-        $generatePasswords = $this->option('generate-passwords');
+        $generatePasswordsValue = $this->option('generate-passwords');
         $all = $this->option('all');
         $option = $this->option('option');
 
-        if ($withTenants && ! Utils::isTenancyEnabled()) {
-            $this->components->warn('Tenancy is not enabled.');
+        // Check if --generate-passwords was provided (has a non-null value)
+        $generatePasswordsFlagPassed = $generatePasswordsValue !== null;
 
-            return self::FAILURE;
-        }
-
-        if ($includePasswords && $generatePasswords) {
+        if ($includePasswords && $generatePasswordsFlagPassed) {
             $this->components->error('Cannot use both --include-passwords and --generate-passwords. Choose one.');
 
             return self::INVALID;
         }
 
-        if ($includePasswords) {
-            $this->passwordMode = 'include';
-            $this->components->warn('Including hashed passwords. Handle generated seeder securely.');
-        }
-
-        if ($generatePasswords) {
-            $this->passwordMode = 'generate';
-            $this->customPassword = $this->resolveGeneratedPassword();
-
-            if ($this->customPassword) {
-                $this->components->info('Using provided password for all users.');
-            } else {
-                $this->components->info('Generating random passwords for users. Users will need to reset.');
-            }
+        // Handle password mode when --with-users or --all is used
+        if (($withUsers || $all) && ! $this->resolvePasswordMode($includePasswords, $generatePasswordsFlagPassed, $generatePasswordsValue)) {
+            return self::INVALID;
         }
 
         if (Utils::getRoleModel()::doesntExist() && Utils::getPermissionModel()::doesntExist()) {
@@ -97,7 +81,7 @@ class SeederCommand extends Command
             return self::INVALID;
         }
 
-        $replacements = $this->collectReplacements($withTenants, $withUsers, $all, $option);
+        $replacements = $this->collectReplacements($withUsers, $all, $option);
 
         $this->copySeederStubToApp(
             stub: 'ShieldSeeder',
@@ -111,10 +95,89 @@ class SeederCommand extends Command
         return self::SUCCESS;
     }
 
-    protected function resolveGeneratedPassword(): ?string
+    protected function resolvePasswordMode(bool $includePasswords, bool $generatePasswordsFlagPassed, ?string $generatePasswordsValue): bool
+    {
+        // --include-passwords takes precedence
+        if ($includePasswords) {
+            $this->passwordMode = 'include';
+            $this->components->warn('Including hashed passwords. Handle generated seeder securely.');
+
+            return true;
+        }
+
+        // --generate-passwords flag was passed
+        if ($generatePasswordsFlagPassed) {
+            return $this->handleGeneratePasswordsFlag($generatePasswordsValue);
+        }
+
+        // No password flag provided - prompt interactively
+        return $this->promptForPasswordMode();
+    }
+
+    protected function handleGeneratePasswordsFlag(?string $value): bool
+    {
+        $this->passwordMode = 'generate';
+
+        // --generate-passwords=random
+        if ($value === 'random') {
+            $this->useRandomPasswords = true;
+            $this->components->info('Generating random passwords for users. Users will need to reset.');
+
+            return true;
+        }
+
+        // --generate-passwords=prompt - interactive prompt
+        if ($value === 'prompt') {
+            return $this->promptForGeneratedPassword();
+        }
+
+        // --generate-passwords=SomePassword (custom password provided)
+        if ($value !== null && $value !== '') {
+            $this->generatedPassword = $value;
+            $this->components->info('Using provided password for all users.');
+
+            return true;
+        }
+
+        // Empty value - prompt for choice
+        return $this->promptForGeneratedPassword();
+    }
+
+    protected function promptForPasswordMode(): bool
     {
         $choice = select(
             label: 'How would you like to handle user passwords?',
+            options: [
+                'none' => 'Skip passwords (users will need to reset)',
+                'include' => 'Include existing hashed passwords from database',
+                'generate' => 'Generate new passwords',
+            ],
+            default: 'none'
+        );
+
+        if ($choice === 'none') {
+            $this->passwordMode = 'none';
+
+            return true;
+        }
+
+        if ($choice === 'include') {
+            $this->passwordMode = 'include';
+            $this->components->warn('Including hashed passwords. Handle generated seeder securely.');
+
+            return true;
+        }
+
+        // choice === 'generate'
+        $this->passwordMode = 'generate';
+
+        return $this->promptForGeneratedPassword();
+    }
+
+    protected function promptForGeneratedPassword(): bool
+    {
+        $choice = select(
+            label: 'How would you like to generate passwords?',
             options: [
                 'random' => 'Generate random passwords (users must reset)',
                 'custom' => 'Use a custom password for all users',
@@ -122,25 +185,33 @@ class SeederCommand extends Command
             default: 'random'
         );
 
-        if ($choice === 'custom') {
-            return password(
-                label: 'Enter the password to use for all users',
-                required: true,
-            );
+        if ($choice === 'random') {
+            $this->useRandomPasswords = true;
+            $this->components->info('Generating random passwords for users. Users will need to reset.');
+
+            return true;
         }
 
-        return null;
+        // choice === 'custom'
+        $this->generatedPassword = password(
+            label: 'Enter the password to use for all users',
+            required: true,
+        );
+        $this->components->info('Using provided password for all users.');
+
+        return true;
     }
 
-    protected function collectReplacements(bool $withTenants, bool $withUsers, bool $all, ?string $option = null): array
+    protected function collectReplacements(bool $withUsers, bool $all, ?string $option = null): array
     {
         $directPermissionNames = collect();
         $permissionsViaRoles = collect();
         $directPermissions = collect();
+        $tenancyEnabled = Utils::isTenancyEnabled();
 
         if ((Utils::getRoleModel()::exists() && is_null($option)) || $option === 'permissions_via_roles') {
             $permissionsViaRoles = collect(Utils::getRoleModel()::with('permissions')->get())
-                ->map(function (object $role) use ($directPermissionNames): array {
+                ->map(function (object $role) use ($directPermissionNames, $tenancyEnabled): array {
                     $rolePermissions = $role->permissions->pluck('name')->toArray();
                     $directPermissionNames->push($rolePermissions);
 
@@ -150,7 +221,7 @@ class SeederCommand extends Command
                         'permissions' => $rolePermissions,
                     ];
 
-                    if (Utils::isTenancyEnabled()) {
+                    if ($tenancyEnabled) {
                         $teamForeignKey = Utils::getTenantModelForeignKey();
                         $data[$teamForeignKey] = $role->{$teamForeignKey};
                     }
@@ -178,32 +249,37 @@ class SeederCommand extends Command
             'UserModel' => Utils::getAuthProviderFQCN(),
             'TenantPivotTable' => '',
             'TenantForeignKey' => Utils::getTenantModelForeignKey(),
-            'TenancyEnabled' => Utils::isTenancyEnabled() ? 'true' : 'false',
+            'TenancyEnabled' => $tenancyEnabled ? 'true' : 'false',
         ];
 
-        if ($withTenants && Utils::isTenancyEnabled()) {
-            $tenants = $this->collectTenants($all);
+        // Auto-export tenants when tenancy is enabled (roles have tenant_id, so tenants must exist)
+        if ($tenancyEnabled) {
+            $tenants = $this->collectTenants($all, $withUsers);
             $replacements['Tenants'] = $tenants;
             $replacements['TenantPivotTable'] = $this->resolvePivotTableName();
 
-            $this->components->info(sprintf('Exporting %d tenants...', count($tenants)));
+            if ($tenants !== []) {
+                $this->components->info(sprintf('Exporting %d tenants...', count($tenants)));
+            }
         }
 
-        if ($withUsers) {
+        // Export users when --with-users or --all is provided
+        if ($withUsers || $all) {
             $users = $this->collectUsers($all, $option);
             $replacements['Users'] = $users;
 
             $this->components->info(sprintf('Exporting %d users...', count($users)));
 
-            if ($withTenants && Utils::isTenancyEnabled()) {
-                $replacements['UserTenantPivot'] = $this->collectUserTenantPivot();
+            // Export user-tenant pivot when tenancy is enabled
+            if ($tenancyEnabled) {
+                $replacements['UserTenantPivot'] = $this->collectUserTenantPivot($all);
             }
         }
 
         return $replacements;
     }
 
-    protected function collectTenants(bool $all): array
+    protected function collectTenants(bool $all, bool $withUsers): array
     {
         /**
          * @var string|null $tenantModel
@@ -219,11 +295,26 @@ class SeederCommand extends Command
         if (! $all) {
             $teamForeignKey = Utils::getTenantModelForeignKey();
             $roleModel = Utils::getRoleModel();
-            $tenantIds = $roleModel::query()
+
+            // Get tenant IDs from roles
+            $tenantIdsFromRoles = $roleModel::query()
                 ->whereNotNull($teamForeignKey)
                 ->distinct()
                 ->pluck($teamForeignKey);
-            $query->whereIn('id', $tenantIds);
+
+            // If exporting users, also include tenants from user-tenant pivot
+            if ($withUsers) {
+                $pivotTable = $this->resolvePivotTableName();
+                if ($pivotTable && Schema::hasTable($pivotTable)) {
+                    $tenantIdsFromUsers = DB::table($pivotTable)
+                        ->distinct()
+                        ->pluck($teamForeignKey);
+
+                    $tenantIdsFromRoles = $tenantIdsFromRoles->merge($tenantIdsFromUsers)->unique();
+                }
+            }
+
+            $query->whereIn('id', $tenantIdsFromRoles);
         }
 
         return $query->get()->map(fn (Model $tenant): mixed => $tenant->toArray())->toArray();
@@ -232,42 +323,107 @@ class SeederCommand extends Command
     protected function collectUsers(bool $all, ?string $option = null): array
     {
         $userModel = Utils::getAuthProviderFQCN();
-        $query = $userModel::query()->with(['roles', 'permissions']);
+        $tenancyEnabled = Utils::isTenancyEnabled();
+
+        // Get the morph class name (could be alias like 'user' or FQCN)
+        $morphClass = (new $userModel)->getMorphClass();
+
+        // Get user IDs from pivot tables directly (bypasses team scoping)
+        $userIdsWithRoles = collect();
+        $userIdsWithPermissions = collect();
 
         if (! $all) {
-            $query->where(function (Builder | Relation $q) use ($option): void {
-                if ($option === 'permissions_via_roles') {
-                    $q->whereHas('roles');
-                } elseif ($option === 'direct_permissions') {
-                    $q->whereHas('permissions');
-                } else {
-                    $q->whereHas('roles')->orWhereHas('permissions');
-                }
-            });
+            if (is_null($option) || $option === 'permissions_via_roles') {
+                $userIdsWithRoles = DB::table('model_has_roles')
+                    ->where('model_type', $morphClass)
+                    ->distinct()
+                    ->pluck('model_id');
+            }
+
+            if (is_null($option) || $option === 'direct_permissions') {
+                $userIdsWithPermissions = DB::table('model_has_permissions')
+                    ->where('model_type', $morphClass)
+                    ->distinct()
+                    ->pluck('model_id');
+            }
+
+            $userIds = $userIdsWithRoles->merge($userIdsWithPermissions)->unique();
+            $users = $userModel::whereIn('id', $userIds)->get();
+        } else {
+            $users = $userModel::all();
         }
 
-        return $query->get()->map(function (Model $user) use ($option) {
+        // Collect all tenant IDs to iterate through for role/permission collection
+        $tenantIds = collect([null]); // null for global context
+        if ($tenancyEnabled) {
+            $teamForeignKey = Utils::getTenantModelForeignKey();
+            $tenantIds = DB::table('roles')
+                ->whereNotNull($teamForeignKey)
+                ->distinct()
+                ->pluck($teamForeignKey)
+                ->prepend(null); // Include global context
+        }
+
+        return $users->map(function (Model $user) use ($option, $tenancyEnabled, $tenantIds) {
             $data = $user->only(['name', 'email', 'type']);
 
             if ($this->passwordMode === 'include') {
                 $data['password'] = $user->password;
             } elseif ($this->passwordMode === 'generate') {
-                $data['password'] = bcrypt($this->customPassword ?? Str::random(16));
+                $password = $this->useRandomPasswords ? Str::random(16) : $this->generatedPassword;
+                $data['password'] = bcrypt($password);
             }
 
-            if (is_null($option) || $option === 'permissions_via_roles') {
-                $data['roles'] = $user->roles->pluck('name')->toArray();
+            $collectRoles = is_null($option) || $option === 'permissions_via_roles';
+            $collectPermissions = is_null($option) || $option === 'direct_permissions';
+
+            $allRoles = collect();
+            $allPermissions = collect();
+
+            if ($tenancyEnabled) {
+                // Save current team context to restore after iteration
+                $originalTeamId = getPermissionsTeamId();
+
+                // Iterate through all tenants and collect roles/permissions
+                foreach ($tenantIds as $tenantId) {
+                    setPermissionsTeamId($tenantId);
+                    // Must unset relations to get fresh data for this tenant context
+                    $user->unsetRelation('roles')->unsetRelation('permissions');
+
+                    if ($collectRoles) {
+                        $allRoles = $allRoles->merge($user->roles->pluck('name'));
+                    }
+
+                    if ($collectPermissions) {
+                        $allPermissions = $allPermissions->merge($user->permissions->pluck('name'));
+                    }
+                }
+
+                // Restore original team context
+                setPermissionsTeamId($originalTeamId);
+            } else {
+                if ($collectRoles) {
+                    $allRoles = $user->roles->pluck('name');
+                }
+
+                if ($collectPermissions) {
+                    $allPermissions = $user->permissions->pluck('name');
+                }
             }
 
-            if (is_null($option) || $option === 'direct_permissions') {
-                $data['permissions'] = $user->permissions->pluck('name')->toArray();
+            if ($collectRoles) {
+                $data['roles'] = $allRoles->unique()->values()->toArray();
+            }
+
+            if ($collectPermissions) {
+                $data['permissions'] = $allPermissions->unique()->values()->toArray();
             }
 
             return $data;
         })->toArray();
     }
 
-    protected function collectUserTenantPivot(): array
+    protected function collectUserTenantPivot(bool $all = false): array
     {
         $pivotTable = $this->resolvePivotTableName();
         if (! $pivotTable || ! Schema::hasTable($pivotTable)) {
@@ -279,9 +435,31 @@ class SeederCommand extends Command
             return [];
         }
 
-        return DB::table($pivotTable)
-            ->select($columns)
-            ->get()
+        $query = DB::table($pivotTable)->select($columns);
+
+        // When not exporting all, filter to only users with roles/permissions
+        if (! $all) {
+            $userModel = Utils::getAuthProviderFQCN();
+            // Get the morph class name (could be alias like 'user' or FQCN)
+            $morphClass = (new $userModel)->getMorphClass();
+
+            // Get user IDs directly from pivot tables (bypasses team scoping)
+            $userIdsWithRoles = DB::table('model_has_roles')
+                ->where('model_type', $morphClass)
+                ->distinct()
+                ->pluck('model_id');
+
+            $userIdsWithPermissions = DB::table('model_has_permissions')
+                ->where('model_type', $morphClass)
+                ->distinct()
+                ->pluck('model_id');
+
+            $userIds = $userIdsWithRoles->merge($userIdsWithPermissions)->unique();
+
+            $query->whereIn('user_id', $userIds);
+        }
+
+        return $query->get()
             ->map(fn (stdClass $row): array => (array) $row)
             ->toArray();
     }
