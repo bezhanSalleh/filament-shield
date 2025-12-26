@@ -88,12 +88,12 @@ class SuperAdminCommand extends Command
 
             setPermissionsTeamId($tenantId);
             $this->superAdminRole = Utils::createRole(tenantId: $tenantId);
-            $this->superAdminRole->syncPermissions(Utils::getPermissionModel()::pluck('id'));
-
         } else {
             $this->superAdminRole = Utils::createRole();
         }
 
+        $this->superAdminRole->syncPermissions(Utils::getPermissionModel()::pluck('id'));
+        
         $this->superAdmin
             ->unsetRelation('roles')
             ->unsetRelation('permissions');
