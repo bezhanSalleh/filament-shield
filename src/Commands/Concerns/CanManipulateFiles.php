@@ -81,6 +81,7 @@ trait CanManipulateFiles
             if (is_array($replacement)) {
                 $value = str_replace(['\\', "'"], ['\\\\', "\\'"], $value);
             }
+
             $stub = $stub->replace(sprintf('{{ %s }}', $key), $value);
         }
 
