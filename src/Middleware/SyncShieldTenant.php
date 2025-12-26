@@ -20,9 +20,9 @@ class SyncShieldTenant
     public function handle(Request $request, Closure $next): Response
     {
         if (Filament::hasTenancy() && $tenant = Filament::getTenant()) {
-            
+
             setPermissionsTeamId($tenant->getKey());
-            
+
             if (auth()->hasUser()) {
                 auth()
                     ->user()
