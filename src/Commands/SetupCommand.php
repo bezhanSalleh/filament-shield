@@ -168,6 +168,7 @@ class SetupCommand extends Command
 
             Stringer::for(config_path('permission.php'))
                 ->replace("'teams' => false,", "'teams' => true,")
+                ->replace("'team_foreign_key' => 'team_id',", "'team_foreign_key' => '" . $tenantModel->getForeignKey() . "',")
                 ->save();
 
             config()->set('permission.teams', true);
