@@ -76,7 +76,12 @@ trait CanManipulateFiles
         $stub = Str::of($filesystem->get($stubPath));
 
         foreach ($replacements as $key => $replacement) {
-            $stub = $stub->replace(sprintf('{{ %s }}', $key), is_array($replacement) ? json_encode($replacement) : $replacement);
+            $value = is_array($replacement) ? json_encode($replacement) : $replacement;
+            // Escape single quotes and backslashes for PHP single-quoted strings
+            if (is_array($replacement)) {
+                $value = str_replace(['\\', "'"], ['\\\\', "\\'"], $value);
+            }
+            $stub = $stub->replace(sprintf('{{ %s }}', $key), $value);
         }
 
         $stub = (string) $stub;

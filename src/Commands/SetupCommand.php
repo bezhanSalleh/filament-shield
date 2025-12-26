@@ -168,6 +168,7 @@ class SetupCommand extends Command
 
             Stringer::for(config_path('permission.php'))
                 ->replace("'teams' => false,", "'teams' => true,")
+                ->replace("'team_foreign_key' => 'team_id',", "'team_foreign_key' => '" . $tenantModel->getForeignKey() . "',")
                 ->save();
 
             config()->set('permission.teams', true);
@@ -180,7 +181,7 @@ class SetupCommand extends Command
 
             $appServiceProvider = Stringer::for(app_path('Providers/AppServiceProvider.php'));
             if (
-                ! $appServiceProvider->containsChainedBlock('app(' . \Spatie\Permission\PermissionRegistrar::class . '::class)
+                ! $appServiceProvider->containsChainedBlock('app(PermissionRegistrar::class)
                         ->setPermissionClass(Permission::class)
                         ->setRoleClass(Role::class)')
             ) {
@@ -193,8 +194,9 @@ class SetupCommand extends Command
                 }
 
                 $appServiceProvider
+                    ->append('use', 'use Spatie\Permission\PermissionRegistrar;')
                     ->appendBlock('public function boot()', '
-                            app(' . \Spatie\Permission\PermissionRegistrar::class . '::class)
+                            app(PermissionRegistrar::class)
                                 ->setPermissionClass(Permission::class)
                                 ->setRoleClass(Role::class);
                         ', true)
@@ -205,7 +207,7 @@ class SetupCommand extends Command
 
     protected function publishConfigs(): void
     {
-        $force = $this->refresh || $this->option('force');
+        $force = $this->option('force');
 
         if (! $this->fileExists(config_path('filament-shield.php')) || $force) {
             $this->{$this->callingMethod}('vendor:publish', [

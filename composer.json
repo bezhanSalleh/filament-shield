@@ -27,26 +27,27 @@
         "bezhansalleh/filament-plugin-essentials": "^1.0",
         "filament/filament": "^4.0",
         "illuminate/contracts": "^11.28|^12.0",
-        "illuminate/support": "*",
-        "spatie/laravel-package-tools": "^1.9",
+        "illuminate/support": "^11.28|^12.0",
+        "spatie/laravel-package-tools": "^1.92",
         "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
-        "larastan/larastan": "^2.2|^3.0",
-        "laravel/pint": "^1.0",
-        "nunomaduro/collision": "^7.0|^8.0",
-        "orchestra/testbench": "^8.0|^9.0|^10.0",
-        "pestphp/pest": "^2.0|^3.0",
-        "pestphp/pest-plugin-laravel": "^2.0|^3.0",
-        "pestphp/pest-plugin-livewire": "^3.0",
-        "pestphp/pest-plugin-type-coverage": "^3.5",
+        "larastan/larastan": "^3.8",
+        "laravel/pint": "^1.26",
+        "nunomaduro/collision": "^8.8",
+        "orchestra/testbench": "^10.8",
+        "pestphp/pest": "^3.8|^4.0",
+        "pestphp/pest-plugin-laravel": "^3.2|^4.0",
+        "pestphp/pest-plugin-livewire": "^3.0|^4.0",
+        "pestphp/pest-plugin-type-coverage": "^3.6|^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
-        "phpunit/phpunit": "^10.1|^11.0",
-        "rector/rector": "^2.1",
-        "spatie/laravel-ray": "^1.40"
+        "phpunit/phpunit": "^11.5",
+        "rector/jack": "^0.4.0",
+        "rector/rector": "^2.2",
+        "spatie/laravel-ray": "^1.43"
     },
     "autoload": {
         "psr-4": {
@@ -60,12 +61,19 @@
         }
     },
     "scripts": {
-        "analyse": "vendor/bin/phpstan analyse",
-        "test": "vendor/bin/pest --no-coverage",
-        "type": "vendor/bin/pest --type-coverage",
-        "lint": "vendor/bin/pint",
-        "refactor": "vendor/bin/rector",
-        "finalize": "composer refactor && composer lint && composer type && composer analyse && composer test"
+        "cs": [
+            "rector",
+            "pint --parallel"
+        ],
+        "analyse": "phpstan analyse",
+        "test": "pest --no-coverage",
+        "type": "pest --type-coverage",
+        "finalize": [
+            "@cs",
+            "@analyse",
+            "@test",
+            "@type"
+        ]
     },
     "config": {
         "sort-packages": true,
