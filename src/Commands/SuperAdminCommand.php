@@ -93,7 +93,7 @@ class SuperAdminCommand extends Command
         }
 
         $this->superAdminRole->syncPermissions(Utils::getPermissionModel()::pluck('id'));
-        
+
         $this->superAdmin
             ->unsetRelation('roles')
             ->unsetRelation('permissions');
