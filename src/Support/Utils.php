@@ -211,9 +211,20 @@ class Utils
     public static function giveSuperAdminPermission(string | array | Collection $permissions): void
     {
         if (! static::isSuperAdminDefinedViaGate() && static::isSuperAdminEnabled()) {
-            $superAdmin = static::createRole();
 
-            $superAdmin->givePermissionTo($permissions);
+            if (static::isTenancyEnabled() && $tenantModel = static::getTenantModel()) {
+
+                $tenants = app($tenantModel)->all();
+
+                foreach ($tenants as $tenant) {
+                    $superAdmin = static::createRole(tenantId: $tenant->getKey());
+                    $superAdmin->givePermissionTo($permissions);
+                }
+
+            } else {
+                $superAdmin = static::createRole();
+                $superAdmin->givePermissionTo($permissions);
+            }
 
             app(PermissionRegistrar::class)->forgetCachedPermissions();
         }
