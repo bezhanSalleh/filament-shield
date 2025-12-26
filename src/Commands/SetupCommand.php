@@ -180,7 +180,7 @@ class SetupCommand extends Command
 
             $appServiceProvider = Stringer::for(app_path('Providers/AppServiceProvider.php'));
             if (
-                ! $appServiceProvider->containsChainedBlock('app(' . \Spatie\Permission\PermissionRegistrar::class . '::class)
+                ! $appServiceProvider->containsChainedBlock('app(PermissionRegistrar::class)
                         ->setPermissionClass(Permission::class)
                         ->setRoleClass(Role::class)')
             ) {
@@ -193,7 +193,7 @@ class SetupCommand extends Command
                 }
 
                 $appServiceProvider
-                    ->append('use', 'use ' . \Spatie\Permission\PermissionRegistrar::class . '::class;')
+                    ->append('use', 'use Spatie\Permission\PermissionRegistrar;')
                     ->appendBlock('public function boot()', '
                             app(PermissionRegistrar::class)
                                 ->setPermissionClass(Permission::class)
