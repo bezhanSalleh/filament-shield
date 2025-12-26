@@ -379,46 +379,54 @@ class SeederCommand extends Command
             $collectRoles = is_null($option) || $option === 'permissions_via_roles';
             $collectPermissions = is_null($option) || $option === 'direct_permissions';
 
-            $allRoles = collect();
-            $allPermissions = collect();
-
             if ($tenancyEnabled) {
                 // Save current team context to restore after iteration
                 $originalTeamId = getPermissionsTeamId();
 
-                // Iterate through all tenants and collect roles/permissions
+                // Group roles/permissions by tenant
+                $rolesByTenant = [];
+                $permissionsByTenant = [];
+
                 foreach ($tenantIds as $tenantId) {
                     setPermissionsTeamId($tenantId);
                     // Must unset relations to get fresh data for this tenant context
                     $user->unsetRelation('roles')->unsetRelation('permissions');
 
+                    $tenantKey = $tenantId ?? '_global';
+
                     if ($collectRoles) {
-                        $allRoles = $allRoles->merge($user->roles->pluck('name'));
+                        $roles = $user->roles->pluck('name')->toArray();
+                        if (! empty($roles)) {
+                            $rolesByTenant[$tenantKey] = $roles;
+                        }
                     }
 
                     if ($collectPermissions) {
-                        $allPermissions = $allPermissions->merge($user->permissions->pluck('name'));
+                        $permissions = $user->permissions->pluck('name')->toArray();
+                        if (! empty($permissions)) {
+                            $permissionsByTenant[$tenantKey] = $permissions;
+                        }
                     }
                 }
 
                 // Restore original team context
                 setPermissionsTeamId($originalTeamId);
-            } else {
+
                 if ($collectRoles) {
-                    $allRoles = $user->roles->pluck('name');
+                    $data['tenant_roles'] = $rolesByTenant;
                 }
 
                 if ($collectPermissions) {
-                    $allPermissions = $user->permissions->pluck('name');
+                    $data['tenant_permissions'] = $permissionsByTenant;
                 }
-            }
+            } else {
+                if ($collectRoles) {
+                    $data['roles'] = $user->roles->pluck('name')->toArray();
+                }
 
-            if ($collectRoles) {
-                $data['roles'] = $allRoles->unique()->values()->toArray();
-            }
-
-            if ($collectPermissions) {
-                $data['permissions'] = $allPermissions->unique()->values()->toArray();
+                if ($collectPermissions) {
+                    $data['permissions'] = $user->permissions->pluck('name')->toArray();
+                }
             }
 
             return $data;

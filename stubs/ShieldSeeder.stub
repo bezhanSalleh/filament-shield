@@ -69,23 +69,43 @@ class ShieldSeeder extends Seeder
         }
 
         $userModel = '{{ UserModel }}';
+        $tenancyEnabled = {{ TenancyEnabled }};
 
         foreach ($userData as $data) {
+            // Extract role/permission data before creating user
             $roles = $data['roles'] ?? [];
             $permissions = $data['permissions'] ?? [];
-            unset($data['roles'], $data['permissions']);
+            $tenantRoles = $data['tenant_roles'] ?? [];
+            $tenantPermissions = $data['tenant_permissions'] ?? [];
+            unset($data['roles'], $data['permissions'], $data['tenant_roles'], $data['tenant_permissions']);
 
             $user = $userModel::firstOrCreate(
                 ['email' => $data['email']],
                 $data
             );
 
-            if (! empty($roles)) {
-                $user->syncRoles($roles);
-            }
+            // Handle tenancy mode - sync roles/permissions per tenant
+            if ($tenancyEnabled && (! empty($tenantRoles) || ! empty($tenantPermissions))) {
+                foreach ($tenantRoles as $tenantId => $roleNames) {
+                    $contextId = $tenantId === '_global' ? null : $tenantId;
+                    setPermissionsTeamId($contextId);
+                    $user->syncRoles($roleNames);
+                }
 
-            if (! empty($permissions)) {
-                $user->syncPermissions($permissions);
+                foreach ($tenantPermissions as $tenantId => $permissionNames) {
+                    $contextId = $tenantId === '_global' ? null : $tenantId;
+                    setPermissionsTeamId($contextId);
+                    $user->syncPermissions($permissionNames);
+                }
+            } else {
+                // Non-tenancy mode
+                if (! empty($roles)) {
+                    $user->syncRoles($roles);
+                }
+
+                if (! empty($permissions)) {
+                    $user->syncPermissions($permissions);
+                }
             }
         }
     }
@@ -134,13 +154,21 @@ class ShieldSeeder extends Seeder
         $teamForeignKey = '{{ TenantForeignKey }}';
 
         foreach ($rolePlusPermissions as $rolePlusPermission) {
+            $tenantId = $rolePlusPermission[$teamForeignKey] ?? null;
+
+            // Set tenant context for role creation and permission sync
+            if ($tenancyEnabled) {
+                setPermissionsTeamId($tenantId);
+            }
+
             $roleData = [
                 'name' => $rolePlusPermission['name'],
                 'guard_name' => $rolePlusPermission['guard_name'],
             ];
 
-            if ($tenancyEnabled && ! blank($teamForeignKey) && isset($rolePlusPermission[$teamForeignKey])) {
-                $roleData[$teamForeignKey] = $rolePlusPermission[$teamForeignKey];
+            // Include tenant ID in role data (can be null for global roles)
+            if ($tenancyEnabled && ! blank($teamForeignKey)) {
+                $roleData[$teamForeignKey] = $tenantId;
             }
 
             $role = $roleModel::firstOrCreate($roleData);

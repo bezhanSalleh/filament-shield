@@ -103,6 +103,7 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Prohibited Commands](#prohibited-commands)
     - [Core Commands](#core-commands)
     - [Generate Command Options (recap)](#generate-command-options-recap)
+    - [Seeder Command Options (recap)](#seeder-command-options-recap)
   - [Localization](#localization)
     - [Configuration](#configuration-4)
     - [How It Works](#how-it-works)
@@ -594,6 +595,18 @@ shield:translation {locale} [--panel=] [--path=]
 --ignore-existing-policies          Force regeneration of already existing policies
 --panel=admin                       Panel ID (required when not interactive)
 --relationships                     Generate tenancy relationships (panel must have tenancy)
+```
+
+### Seeder Command Options (recap)
+
+```bash
+--generate    Generate seeder file
+--option=permissions_via_roles|direct_permissions   Choose seeder type
+--with-users    Export users based on their roles/permissions
+--all   Export all tenants/users regardless of role assignments
+--include-passwords Include existing hashed passwords from database
+--generate-passwords=   Generate passwords (random, prompt, or custom value)
+--force   Overwrite existing seeder file
 ```
 
 ## Localization
