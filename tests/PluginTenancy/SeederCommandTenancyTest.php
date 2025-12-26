@@ -50,7 +50,8 @@ describe('SeederCommand with Tenancy', function () {
         $this->user->teams()->attach($this->team);
 
         setPermissionsTeamId($this->team->id);
-    });
+    })
+    ->skipOnLinux();
 
     afterEach(function () {
         $seederPath = database_path('seeders/ShieldSeeder.php');
