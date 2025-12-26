@@ -365,8 +365,10 @@ class SeederCommand extends Command
         }
 
         return $users->map(function (Model $user) use ($option, $tenancyEnabled, $tenantIds) {
-            $data = $user->only(['name', 'email', 'type']);
+            $data = $user->toArray();
 
+            // Handle password based on mode
+            unset($data['password']);
             if ($this->passwordMode === 'include') {
                 $data['password'] = $user->password;
             } elseif ($this->passwordMode === 'generate') {
