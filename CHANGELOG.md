@@ -2,6 +2,15 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 4.1.0 - 2026-01-19
+
+### What's Changed
+
+* Add support for Filament 5.x
+* Bump dependabot/fetch-metadata from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/691
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/4.0.4...4.1.0
+
 ## 4.0.4 - 2025-12-26
 
 ### What's Changed
