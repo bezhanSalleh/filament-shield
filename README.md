@@ -6,6 +6,9 @@
     <a href="https://filamentphp.com/docs/4.x/panels/installation">
         <img alt="FILAMENT 4.x" src="https://img.shields.io/badge/FILAMENT-4.x-EBB304?style=for-the-badge">
     </a>
+    <a href="https://filamentphp.com/docs/5.x/panels/installation">
+        <img alt="FILAMENT 5.x" src="https://img.shields.io/badge/FILAMENT-5.x-EBB304?style=for-the-badge">
+    </a>
     <a href="https://packagist.org/packages/bezhansalleh/filament-shield">
         <img alt="Packagist" src="https://img.shields.io/packagist/v/bezhansalleh/filament-shield.svg?style=for-the-badge&logo=packagist">
     </a>
@@ -59,7 +62,7 @@ The easiest and most intuitive way to add access management to your Filament pan
 |-----------------|------------------|
 | [2.x](https://github.com/bezhanSalleh/filament-shield/tree/2.x)             | 2.x              |
 | [3.x](https://github.com/bezhanSalleh/filament-shield/tree/3.x)             | 3.x              |
-| **4.x**             | 4.x              |
+| **4.x**             | 4.x & 5.x             |
 
 </div>
 
