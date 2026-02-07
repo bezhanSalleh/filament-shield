@@ -159,9 +159,9 @@ class GenerateCommand extends Command
         $this->excludePages = $this->option('exclude') && filled($this->option('page'));
         $this->excludeWidgets = $this->option('exclude') && filled($this->option('widget'));
 
-        $this->onlyResources = ! $this->option('exclude') && filled($this->option('resource'));
-        $this->onlyPages = ! $this->option('exclude') && filled($this->option('page'));
-        $this->onlyWidgets = ! $this->option('exclude') && filled($this->option('widget'));
+        $this->onlyResources = !$this->option('exclude') && filled($this->option('resource'));
+        $this->onlyPages = !$this->option('exclude') && filled($this->option('page'));
+        $this->onlyWidgets = !$this->option('exclude') && filled($this->option('widget'));
     }
 
     protected function generatableResources(): ?array
@@ -169,7 +169,7 @@ class GenerateCommand extends Command
         return collect(FilamentShield::getResources())
             ->filter(function (array $resource): bool {
                 if ($this->excludeResources) {
-                    return ! in_array(Str::of($resource['resourceFqcn'])->afterLast('\\'), $this->resources);
+                    return !in_array(Str::of($resource['resourceFqcn'])->afterLast('\\'), $this->resources);
                 }
 
                 if ($this->onlyResources) {
@@ -186,7 +186,7 @@ class GenerateCommand extends Command
         return collect(FilamentShield::getPages())
             ->filter(function (array $page): bool {
                 if ($this->excludePages) {
-                    return ! in_array(Str::of($page['pageFqcn'])->afterLast('\\'), $this->pages);
+                    return !in_array(Str::of($page['pageFqcn'])->afterLast('\\'), $this->pages);
                 }
 
                 if ($this->onlyPages) {
@@ -203,7 +203,7 @@ class GenerateCommand extends Command
         return collect(FilamentShield::getWidgets())
             ->filter(function (array $widget): bool {
                 if ($this->excludeWidgets) {
-                    return ! in_array(Str::of($widget['class'])->afterLast('\\'), $this->widgets);
+                    return !in_array(Str::of($widget['class'])->afterLast('\\'), $this->widgets);
                 }
 
                 if ($this->onlyWidgets) {
@@ -224,7 +224,7 @@ class GenerateCommand extends Command
                 if ($this->generatorOption === 'policies_and_permissions') {
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
-                    if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
+                    if (!$this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && !$this->fileExists($policyPath))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['modelFqcn']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
 
@@ -234,7 +234,7 @@ class GenerateCommand extends Command
                 if ($this->generatorOption === 'policies') {
                     $policyPath = $this->generatePolicyPath($entity);
                     /** @phpstan-ignore-next-line */
-                    if (! $this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && ! $this->fileExists($policyPath))) {
+                    if (!$this->option('ignore-existing-policies') || ($this->option('ignore-existing-policies') && !$this->fileExists($policyPath))) {
                         $this->copyStubToApp(static::getPolicyStub($entity['modelFqcn']), $policyPath, $this->generatePolicyStubVariables($entity));
                     }
                 }
@@ -251,7 +251,17 @@ class GenerateCommand extends Command
             ->values()
             ->each(function (array $page): void {
                 if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
-                    Utils::generateForPageOrWidget(array_key_first($page['permissions']));
+
+                    // Wir loopen durch alle Permissions der Page
+                    foreach ($page['permissions'] as $permissionData) {
+                        // Falls es ein Array ist (unser neuer Standard), nimm ['key']
+                        // Falls es ein String ist (alter Shield-Standard), nimm den String selbst
+                        $key = is_array($permissionData) ? ($permissionData['key'] ?? null) : $permissionData;
+
+                        if ($key) {
+                            Utils::generateForPageOrWidget($key);
+                        }
+                    }
                 }
             });
     }
@@ -262,7 +272,13 @@ class GenerateCommand extends Command
             ->values()
             ->each(function (array $widget): void {
                 if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
-                    Utils::generateForPageOrWidget(array_key_first($widget['permissions']));
+
+                    foreach ($widget['permissions'] as $permissionData) {
+                        $key = is_array($permissionData) ? ($permissionData['key'] ?? null) : $permissionData;
+                        if ($key) {
+                            Utils::generateForPageOrWidget($key);
+                        }
+                    }
                 }
             });
     }
@@ -277,7 +293,7 @@ class GenerateCommand extends Command
             if ($this->option('verbose') && $generated->isNotEmpty()) {
                 $this->table(
                     ['#', 'Custom Permissions'],
-                    $generated->map(fn (string $permission, int $key): array => [
+                    $generated->map(fn(string $permission, int $key): array => [
                         '#' => $key + 1,
                         'Permission' => $permission,
                     ])
@@ -305,7 +321,7 @@ class GenerateCommand extends Command
 
             $this->table(
                 ['#', 'Resource', 'Policy', 'Permissions'],
-                collect($resources)->map(fn (array $resource, int $key): array => [
+                collect($resources)->map(fn(array $resource, int $key): array => [
                     '#' => $key + 1,
                     'Resource' => $resource['model'],
                     'Policy' => $resource['model'] . 'Policy.php' . ($this->generatorOption !== 'permissions' ? ' ✅' : ' ❌'),
@@ -322,14 +338,16 @@ class GenerateCommand extends Command
     {
         $this->counts['entities'] += count($pages);
         if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
-            $this->counts['permissions'] += count($pages);
+            // $this->counts['permissions'] += count($pages);
+            // Zähle die tatsächliche Anzahl aller Permissions über alle Pages hinweg
+            $this->counts['permissions'] += collect($pages)->map(fn($page) => count($page['permissions']))->sum();
         }
 
         if ($this->option('verbose') && in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
 
             $this->table(
                 ['#', 'Page', 'Permission'],
-                collect($pages)->map(fn (array $page, int $key): array => [
+                collect($pages)->map(fn(array $page, int $key): array => [
                     '#' => $key + 1,
                     'Page' => $page['pageFqcn'],
                     'Permission' => array_key_first($page['permissions']),
@@ -343,13 +361,13 @@ class GenerateCommand extends Command
         $this->counts['entities'] += count($widgets);
 
         if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
-            $this->counts['permissions'] += count($widgets);
+            $this->counts['permissions'] += collect($widgets)->map(fn($widget) => count($widget['permissions']))->sum();
         }
 
         if ($this->option('verbose') && in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
             $this->table(
                 ['#', 'Widget', 'Permission'],
-                collect($widgets)->map(fn (array $widget, int $key): array => [
+                collect($widgets)->map(fn(array $widget, int $key): array => [
                     '#' => $key + 1,
                     'Widget' => $widget['widgetFqcn'],
                     'Permission' => array_key_first($widget['permissions']),

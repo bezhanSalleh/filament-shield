@@ -47,7 +47,9 @@ it('builds default permission key for single affix', function () {
     // The key should be a string and the value should be a label
     $firstKey = array_keys($permissions)[0];
     expect($firstKey)->toBeString();
-    expect($permissions[$firstKey])->toBeString();
+    expect($permissions[$firstKey])->toBeArray();
+    expect($permissions[$firstKey]['key'])->toBe('View:Role');
+    expect($permissions[$firstKey]['label'])->toBe('Role');
 });
 
 it('allows custom permission key building', function () {

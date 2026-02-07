@@ -72,10 +72,38 @@ class FilamentShield
                 ->toArray();
         }
 
-        // Pages/Widgets: single permission with prefix
+        // Pages/Widgets: check for multiple permissions
+        if (is_subclass_of($entity, \Filament\Pages\BasePage::class) && method_exists($entity, 'getShieldPagePermissions')) {
+
+            $pagePrefix = Utils::getConfig()->pages->permission_prefix ?? 'page';
+            $case = Utils::getConfig()->permissions->case; // 'pascal'
+            $separator = Utils::getConfig()->permissions->separator; // ':'
+
+            return collect($entity::getShieldPagePermissions())
+                ->mapWithKeys(function (string $affix) use ($subject, $pagePrefix, $case, $separator): array {
+                    $formatAffix = $this->format($case, $affix);
+                    $formatPrefix = $this->format($case, $pagePrefix);
+                    $key = "{$formatPrefix}{$separator}{$formatAffix}{$separator}{$subject}";
+
+                    return [
+                        $this->format('camel', $affix) => [
+                            'key' => $key,
+                            'label' => $this->getAffixLabel($affix),
+                        ],
+                    ];
+                })
+                ->toArray();
+        }
+
+        // Fallback Pages/Widgets: single permission with prefix
         $permissionKey = $this->buildPermissionKey($entity, $affixes, $subject);
 
-        return [$permissionKey => $this->getEntityPermissionLabel($entity, $permissionKey)];
+        return [
+            $this->format('camel', $affixes) => [
+                'key' => $permissionKey,
+                'label' => $this->getEntityPermissionLabel($entity, $permissionKey),
+            ],
+        ];
     }
 
     public function getEntitiesPermissions(): ?array

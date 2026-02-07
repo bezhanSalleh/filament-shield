@@ -29,9 +29,12 @@ trait HasEntityDiscovery
 
     public function discoverPages(): Collection
     {
-        return Utils::getConfig()->discovery->discover_all_pages
+        // Erst die Variable definieren...
+        $pages = Utils::getConfig()->discovery->discover_all_pages
             ? collect(Filament::getPanels())->flatMap(fn ($panel): array => $panel->getPages())->unique()
             : collect(Filament::getPages());
+
+        return $pages;
     }
 
     public function discoverWidgets(): Collection

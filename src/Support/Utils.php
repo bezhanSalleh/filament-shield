@@ -239,9 +239,22 @@ class Utils
         static::giveSuperAdminPermission($permissions);
     }
 
-    public static function generateForPageOrWidget(string $name): void
+    // public static function generateForPageOrWidget(string $name): void
+    // {
+    //     static::giveSuperAdminPermission(static::createPermission($name));
+    // }
+
+    public static function generateForPageOrWidget(string | array $permissions): void
     {
-        static::giveSuperAdminPermission(static::createPermission($name));
+        if (is_array($permissions)) {
+            $permissions = collect($permissions)
+                ->map(fn ($permission) => static::createPermission($permission)) // Nur den Value nutzen!
+                ->toArray();
+        } else {
+            $permissions = static::createPermission($permissions);
+        }
+
+        static::giveSuperAdminPermission($permissions);
     }
 
     public static function generateForExtraPermissions(): void
