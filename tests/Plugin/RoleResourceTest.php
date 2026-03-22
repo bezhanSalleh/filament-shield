@@ -10,6 +10,10 @@ use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Tests\Fixtures\AdminPanelProvider;
 use BezhanSalleh\FilamentShield\Tests\Fixtures\Models\User;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ViewRecord;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -61,22 +65,22 @@ describe('resource configuration', function () {
 describe('role page classes', function () {
     it('ListRoles extends correct parent', function () {
         expect(class_parents(ListRoles::class))
-            ->toContain(\Filament\Resources\Pages\ListRecords::class);
+            ->toContain(ListRecords::class);
     });
 
     it('CreateRole extends correct parent', function () {
         expect(class_parents(CreateRole::class))
-            ->toContain(\Filament\Resources\Pages\CreateRecord::class);
+            ->toContain(CreateRecord::class);
     });
 
     it('EditRole extends correct parent', function () {
         expect(class_parents(EditRole::class))
-            ->toContain(\Filament\Resources\Pages\EditRecord::class);
+            ->toContain(EditRecord::class);
     });
 
     it('ViewRole extends correct parent', function () {
         expect(class_parents(ViewRole::class))
-            ->toContain(\Filament\Resources\Pages\ViewRecord::class);
+            ->toContain(ViewRecord::class);
     });
 });
 

@@ -6,6 +6,7 @@ use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use BezhanSalleh\FilamentShield\Tests\Fixtures\Models\User;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
     // Mock Filament to avoid NoDefaultPanelSetException for tests that don't need it
@@ -78,7 +79,7 @@ describe('plugin configuration', function () {
 
 describe('RoleResource configuration', function () {
     it('has correct model', function () {
-        expect(RoleResource::getModel())->toBe(\Spatie\Permission\Models\Role::class);
+        expect(RoleResource::getModel())->toBe(Role::class);
     });
 
     it('has record title attribute', function () {

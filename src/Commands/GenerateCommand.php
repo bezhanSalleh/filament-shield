@@ -321,11 +321,11 @@ class GenerateCommand extends Command
     protected function pageInfo(array $pages): void
     {
         $this->counts['entities'] += count($pages);
-        if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
+        if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
             $this->counts['permissions'] += count($pages);
         }
 
-        if ($this->option('verbose') && in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
+        if ($this->option('verbose') && in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
 
             $this->table(
                 ['#', 'Page', 'Permission'],
@@ -342,11 +342,11 @@ class GenerateCommand extends Command
     {
         $this->counts['entities'] += count($widgets);
 
-        if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
+        if (in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
             $this->counts['permissions'] += count($widgets);
         }
 
-        if ($this->option('verbose') && in_array($this->generatorOption, ['permissions', 'policies_and_permissions'])) {
+        if ($this->option('verbose') && in_array($this->generatorOption, ['permissions', 'policies_and_permissions'], true)) {
             $this->table(
                 ['#', 'Widget', 'Permission'],
                 collect($widgets)->map(fn (array $widget, int $key): array => [

@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use RuntimeException;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
+use Spatie\Permission\Traits\HasRoles;
 
 class Utils
 {
@@ -50,7 +51,7 @@ class Utils
 
     public static function isAuthProviderConfigured(): bool
     {
-        return in_array(\Spatie\Permission\Traits\HasRoles::class, class_uses_recursive(static::getAuthProviderFQCN()));
+        return in_array(HasRoles::class, class_uses_recursive(static::getAuthProviderFQCN()));
     }
 
     public static function isSuperAdminEnabled(): bool

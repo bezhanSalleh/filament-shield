@@ -249,7 +249,7 @@ Shield automatically generates policies for your Resources' Models.
     'merge' => true,
     'generate' => true,
     'methods' => [
-        'viewAny', 'view', 'create', 'update', 'delete', 'restore',
+        'viewAny', 'view', 'create', 'update', 'delete', 'deleteAny', 'restore',
         'forceDelete', 'forceDeleteAny', 'restoreAny', 'replicate', 'reorder',
     ],
     'single_parameter_methods' => [

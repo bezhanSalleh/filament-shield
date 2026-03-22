@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Tests\Fixtures\Models;
 
+use BezhanSalleh\FilamentShield\Tests\database\factories\UserFactory;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,9 +27,9 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Team::class);
     }
 
-    protected static function newFactory(): \BezhanSalleh\FilamentShield\Tests\database\factories\UserFactory
+    protected static function newFactory(): UserFactory
     {
-        return \BezhanSalleh\FilamentShield\Tests\database\factories\UserFactory::new();
+        return UserFactory::new();
     }
 
     protected function casts(): array

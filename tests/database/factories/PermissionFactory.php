@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Tests\database\factories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Spatie\Permission\Models\Permission;
 
@@ -17,9 +18,9 @@ class PermissionFactory extends Factory
     /**
      * Create all standard resource permissions.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, Permission>
+     * @return Collection<int, Permission>
      */
-    public static function createResourcePermissions(string $resource, string $guard = 'web'): \Illuminate\Database\Eloquent\Collection
+    public static function createResourcePermissions(string $resource, string $guard = 'web'): Collection
     {
         $permissions = collect([
             "view_{$resource}",

@@ -281,9 +281,6 @@ class SeederCommand extends Command
 
     protected function collectTenants(bool $all, bool $withUsers): array
     {
-        /**
-         * @var string|null $tenantModel
-         */
         $tenantModel = Utils::getTenantModel();
 
         if (! $tenantModel) {

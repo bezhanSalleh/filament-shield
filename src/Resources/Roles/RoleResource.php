@@ -28,6 +28,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
+use Override;
 
 class RoleResource extends Resource
 {
@@ -40,6 +41,7 @@ class RoleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -85,6 +87,7 @@ class RoleResource extends Resource
             ]);
     }
 
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -126,6 +129,7 @@ class RoleResource extends Resource
             ]);
     }
 
+    #[Override]
     public static function getRelations(): array
     {
         return [
@@ -143,6 +147,7 @@ class RoleResource extends Resource
         ];
     }
 
+    #[Override]
     public static function getModel(): string
     {
         return Utils::getRoleModel();
