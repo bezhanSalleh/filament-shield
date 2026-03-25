@@ -23,19 +23,19 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.2|^8.3",
         "bezhansalleh/filament-plugin-essentials": "^1.0",
         "filament/filament": "^4.0|^5.0",
-        "illuminate/contracts": "^11.28|^12.0",
-        "illuminate/support": "^11.28|^12.0",
-        "spatie/laravel-package-tools": "^1.92",
-        "spatie/laravel-permission": "^6.0"
+        "illuminate/contracts": "^11.28|^12.0|^13.0",
+        "illuminate/support": "^11.28|^12.0|^13.0",
+        "spatie/laravel-package-tools": "^1.0",
+        "spatie/laravel-permission": "^6.0|^7.0"
     },
     "require-dev": {
-        "larastan/larastan": "^3.8",
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.26",
         "nunomaduro/collision": "^8.8",
-        "orchestra/testbench": "^10.8",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
         "pestphp/pest": "^3.8|^4.0",
         "pestphp/pest-plugin-laravel": "^3.2|^4.0",
         "pestphp/pest-plugin-livewire": "^3.0|^4.0",
@@ -44,7 +44,7 @@
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
-        "phpunit/phpunit": "^11.5",
+        "phpunit/phpunit": "^11.0|^12.0",
         "rector/jack": "^0.4.0",
         "rector/rector": "^2.2",
         "spatie/laravel-ray": "^1.43"

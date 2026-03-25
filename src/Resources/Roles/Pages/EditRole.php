@@ -10,8 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Spatie\Permission\Contracts\Role as RoleContract;
+use Override;
 
 class EditRole extends EditRecord
 {
@@ -26,9 +25,18 @@ class EditRole extends EditRecord
         ];
     }
 
+    #[Override]
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $this->permissions = Utils::extractRolePermissionsFromFormData($data);
+        $this->permissions = collect($data)
+            ->filter(fn (mixed $permission, string $key): bool => ! in_array($key, ['name', 'guard_name', 'select_all', Utils::getTenantModelForeignKey()], true))
+            ->values()
+            ->flatten()
+            ->unique();
+
+        if (Utils::isTenancyEnabled() && Arr::has($data, Utils::getTenantModelForeignKey()) && filled($data[Utils::getTenantModelForeignKey()])) {
+            return Arr::only($data, ['name', 'guard_name', Utils::getTenantModelForeignKey()]);
+        }
 
         return Utils::normalizeRoleFormData($data);
     }

@@ -275,7 +275,7 @@ Shield automatically generates policies for your Resources' Models.
     'force_path' => false,
     'panel_aware_resolution' => false,
     'methods' => [
-        'viewAny', 'view', 'create', 'update', 'delete', 'restore',
+        'viewAny', 'view', 'create', 'update', 'delete', 'deleteAny', 'restore',
         'forceDelete', 'forceDeleteAny', 'restoreAny', 'replicate', 'reorder',
     ],
     'single_parameter_methods' => [

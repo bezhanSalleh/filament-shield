@@ -2,6 +2,23 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 4.2.0 - 2026-03-22
+
+### What's Changed
+
+* Update Indonesian Translations by @muzhawir in https://github.com/bezhanSalleh/filament-shield/pull/697
+* Add deleteAny to default policy methods by @sjwebb in https://github.com/bezhanSalleh/filament-shield/pull/707
+* Bump ramsey/composer-install from 3 to 4 by @dependabot[bot] in https://github.com/bezhanSalleh/filament-shield/pull/711
+* Laravel 13 Support by @aligulzar729 in https://github.com/bezhanSalleh/filament-shield/pull/712
+
+### New Contributors
+
+* @muzhawir made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/697
+* @sjwebb made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/707
+* @aligulzar729 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/712
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/4.1.0...4.2.0
+
 ## 4.1.0 - 2026-01-19
 
 ### What's Changed

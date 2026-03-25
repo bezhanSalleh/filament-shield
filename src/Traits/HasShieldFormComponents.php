@@ -38,7 +38,7 @@ trait HasShieldFormComponents
     public static function getResourceEntitiesSchema(): ?array
     {
         return collect(FilamentShield::getResources())
-            ->map(function (array $entity): \Filament\Schemas\Components\Section {
+            ->map(function (array $entity): Section {
                 $sectionLabel = strval(
                     static::shield()->hasLocalizedPermissionLabels()
                     ? FilamentShield::getLocalizedResourceLabel($entity['resourceFqcn'])
@@ -46,7 +46,7 @@ trait HasShieldFormComponents
                 );
 
                 return Section::make($sectionLabel)
-                    ->description(fn (): \Illuminate\Support\HtmlString => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['modelFqcn']) . '</span>'))
+                    ->description(fn (): HtmlString => new HtmlString('<span style="word-break: break-word;">' . Utils::showModelPath($entity['modelFqcn']) . '</span>'))
                     ->compact()
                     ->schema([
                         static::getCheckBoxListComponentForResource($entity),
@@ -72,7 +72,7 @@ trait HasShieldFormComponents
 
     public static function setPermissionStateForRecordPermissions(Component $component, string $operation, array $permissions, ?Model $record): void
     {
-        if (in_array($operation, ['edit', 'view'])) {
+        if (in_array($operation, ['edit', 'view'], true)) {
 
             if (blank($record)) {
                 return;
@@ -304,7 +304,7 @@ trait HasShieldFormComponents
                 );
         } else {
             $entitiesComponents
-                ->each(fn (CheckboxList $component): \Filament\Forms\Components\CheckboxList => $component->state([]));
+                ->each(fn (CheckboxList $component): CheckboxList => $component->state([]));
         }
     }
 

@@ -29,6 +29,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
+use Override;
 
 class RoleResource extends Resource
 {
@@ -41,6 +42,7 @@ class RoleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    #[Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -94,6 +96,7 @@ class RoleResource extends Resource
             ]);
     }
 
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
@@ -164,31 +167,7 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        $query = parent::getEloquentQuery();
-
-        if (! Utils::isRolePanelPrefixEnabled()) {
-            return $query;
-        }
-
-        $prefix = Utils::getPanelRolePrefix();
-        if (filled($prefix)) {
-            return $query->where('name', 'like', $prefix . '%');
-        }
-
-        $otherPrefixes = Utils::getOtherPanelRolePrefixes();
-        if ($otherPrefixes === []) {
-            return $query;
-        }
-
-        return $query->where(function (Builder $subQuery) use ($otherPrefixes): void {
-            foreach ($otherPrefixes as $otherPrefix) {
-                $subQuery->where('name', 'not like', $otherPrefix . '%');
-            }
-        });
-    }
-
+    #[Override]
     public static function getRelations(): array
     {
         return [
@@ -206,6 +185,7 @@ class RoleResource extends Resource
         ];
     }
 
+    #[Override]
     public static function getModel(): string
     {
         return Utils::getRoleModel();

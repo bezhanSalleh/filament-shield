@@ -12,6 +12,7 @@ use Illuminate\Console\Prohibitable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -34,7 +35,7 @@ class SuperAdminCommand extends Command
 
     protected ?string $panel = null;
 
-    protected ?\Illuminate\Database\Eloquent\Model $superAdminRole = null;
+    protected ?Model $superAdminRole = null;
 
     public function handle(): int
     {

@@ -10,10 +10,10 @@ return [
     */
 
     'column.name' => 'Nama',
-    'column.guard_name' => 'Nama Penjaga',
+    'column.guard_name' => 'Nama Guard',
     'column.roles' => 'Peran',
     'column.permissions' => 'Izin',
-    'column.updated_at' => 'Dirubah',
+    'column.updated_at' => 'Terakhir Diubah',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,10 +22,10 @@ return [
     */
 
     'field.name' => 'Nama',
-    'field.guard_name' => 'Nama Penjaga',
+    'field.guard_name' => 'Nama Guard',
     'field.permissions' => 'Izin',
     'field.select_all.name' => 'Pilih Semua',
-    'field.select_all.message' => 'Aktifkan semua izin yang <span class="text-primary font-medium">Tersedia</span> untuk Peran ini.',
+    'field.select_all.message' => 'Aktifkan semua izin yang <span class="text-primary font-medium">tersedia</span> untuk peran ini.',
 
     /*
     |--------------------------------------------------------------------------
@@ -33,11 +33,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'nav.group' => 'Pelindung',
+    'nav.group' => 'Filament Shield',
     'nav.role.label' => 'Peran',
     'nav.role.icon' => 'heroicon-o-shield-check',
     'resource.label.role' => 'Peran',
-    'resource.label.roles' => 'Peran',
+    'resource.label.roles' => 'Daftar Peran',
 
     /*
     |--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'forbidden' => 'Kamu tidak punya izin akses',
+    'forbidden' => 'Anda tidak memiliki izin untuk mengakses halaman ini.',
 
     /*
     |--------------------------------------------------------------------------
@@ -67,16 +67,16 @@ return [
 
     'resource_permission_prefixes_labels' => [
         'view' => 'Lihat',
-        'view_any' => 'Lihat Apa Saja',
+        'view_any' => 'Lihat semua',
         'create' => 'Buat',
-        'update' => 'Perbarui',
+        'update' => 'Ubah',
         'delete' => 'Hapus',
-        'delete_any' => 'Hapus Apa Saja',
-        'force_delete' => 'Paksa Hapus',
-        'force_delete_any' => 'Paksa Hapus Apa Saja',
+        'delete_any' => 'Hapus semua',
+        'force_delete' => 'Hapus permanen',
+        'force_delete_any' => 'Hapus permanen semua',
         'restore' => 'Pulihkan',
-        'replicate' => 'Replikasi',
-        'reorder' => 'Susun Ulang',
-        'restore_any' => 'Pulihkan Apa Saja',
+        'replicate' => 'Duplikat',
+        'reorder' => 'Urutkan ulang',
+        'restore_any' => 'Pulihkan semua',
     ],
 ];

@@ -8,6 +8,7 @@ use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Collection;
+use Override;
 
 class CreateRole extends CreateRecord
 {
@@ -15,9 +16,14 @@ class CreateRole extends CreateRecord
 
     protected static string $resource = RoleResource::class;
 
+    #[Override]
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $this->permissions = Utils::extractRolePermissionsFromFormData($data);
+        $this->permissions = collect($data)
+            ->filter(fn (mixed $permission, string $key): bool => ! in_array($key, ['name', 'guard_name', 'select_all', Utils::getTenantModelForeignKey()], true))
+            ->values()
+            ->flatten()
+            ->unique();
 
         return Utils::normalizeRoleFormData($data);
     }

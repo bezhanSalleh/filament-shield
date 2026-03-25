@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BezhanSalleh\FilamentShield\Tests\Fixtures\Models;
 
+use BezhanSalleh\FilamentShield\Tests\database\factories\TeamFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,8 +20,8 @@ class Team extends Model
         return $this->belongsToMany(User::class);
     }
 
-    protected static function newFactory(): \BezhanSalleh\FilamentShield\Tests\database\factories\TeamFactory
+    protected static function newFactory(): TeamFactory
     {
-        return \BezhanSalleh\FilamentShield\Tests\database\factories\TeamFactory::new();
+        return TeamFactory::new();
     }
 }

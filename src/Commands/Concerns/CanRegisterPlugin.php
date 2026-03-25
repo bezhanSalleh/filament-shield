@@ -29,11 +29,11 @@ trait CanRegisterPlugin
                     callback: fn (Stringer $stringer): Stringer => $stringer
                         ->when(
                             value: $centralApp,
-                            callback: fn (Stringer $stringer): \BezhanSalleh\FilamentShield\Stringer => $stringer
+                            callback: fn (Stringer $stringer): Stringer => $stringer
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin)
                                 ->append($shieldPlugin, '->centralApp(' . $tenantModelClass . '),'),
-                            default: fn (Stringer $stringer): \BezhanSalleh\FilamentShield\Stringer => $stringer
+                            default: fn (Stringer $stringer): Stringer => $stringer
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin . ',')
                         ),
@@ -43,13 +43,13 @@ trait CanRegisterPlugin
                     callback: fn (Stringer $stringer): Stringer => $stringer
                         ->when(
                             value: $centralApp,
-                            callback: fn (Stringer $stringer): \BezhanSalleh\FilamentShield\Stringer => $stringer
+                            callback: fn (Stringer $stringer): Stringer => $stringer
                                 ->append($pluginsTarget, $pluginsArray, true)
                                 ->append($pluginsArray, '])')
                                 ->indent(4)
                                 ->append($pluginsArray, $shieldPlugin)
                                 ->append($shieldPlugin, '->centralApp(' . $tenantModelClass . '),'),
-                            default: fn (Stringer $stringer): \BezhanSalleh\FilamentShield\Stringer => $stringer
+                            default: fn (Stringer $stringer): Stringer => $stringer
                                 ->append($pluginsTarget, $pluginsArray, true)
                                 ->append($pluginsArray, '])')
                                 ->indent(4)
