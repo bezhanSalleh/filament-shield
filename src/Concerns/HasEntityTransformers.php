@@ -68,23 +68,98 @@ trait HasEntityTransformers
             ->toArray();
     }
 
-    /** @return array<string, string> */
+    /**
+     * Transform custom permissions from config into formatted key => label pairs.
+     *
+     * When `format_custom_permission_keys` is enabled (default), permission keys are
+     * formatted according to the configured case. If the key contains the configured
+     * separator, each segment is formatted independently and rejoined.
+     *
+     * When a `buildPermissionKeyUsing` closure is registered, custom permissions are
+     * routed through it with `entity` set to `'custom'` and `affix` set to `null`.
+     * Returning `null` from the closure falls back to the default formatting behavior.
+     *
+     * When `format_custom_permission_keys` is disabled, keys are used exactly as
+     * defined in config — useful for externally managed permissions (Terraform, Keycloak, etc.).
+     *
+     * @return array<string, string>
+     */
     public function transformCustomPermissions(bool $localized = false): ?array
     {
-        $permissionCase = Utils::getConfig()->permissions->case;
+        $permissionConfig = Utils::getConfig()->permissions;
+        $formatKeys = $permissionConfig->format_custom_permission_keys ?? true;
 
         return collect(Utils::getConfig()->custom_permissions)
-            ->mapWithKeys(function (string $label, int | string $key) use ($localized, $permissionCase): array {
+            ->mapWithKeys(function (string $label, int | string $key) use ($localized, $permissionConfig, $formatKeys): array {
                 $permission = is_numeric($key) ? $label : $key;
                 $configLabel = is_numeric($key) ? null : $label;
 
+                $formattedKey = $this->resolveCustomPermissionKey(
+                    $permission,
+                    $permissionConfig->case,
+                    $permissionConfig->separator,
+                    $formatKeys,
+                );
+
                 return [
-                    $this->format($permissionCase, $permission) => $localized
+                    $formattedKey => $localized
                         ? $this->getCustomPermissionLabel($permission, $configLabel)
                         : Str::of($label)->headline()->toString(),
                 ];
             })
             ->toArray();
+    }
+
+    /**
+     * Resolve the final permission key for a custom permission.
+     *
+     * Priority: closure (if registered and returns non-null) > format (if enabled) > raw key.
+     */
+    protected function resolveCustomPermissionKey(string $permission, string $case, string $separator, bool $formatKeys): string
+    {
+        // Route through the custom builder closure if registered
+        if ($this->buildPermissionKeyUsing instanceof \Closure) {
+            $result = $this->evaluate(
+                value: $this->buildPermissionKeyUsing,
+                namedInjections: [
+                    'entity' => 'custom',
+                    'affix' => null,
+                    'subject' => $permission,
+                    'case' => $case,
+                    'separator' => $separator,
+                ]
+            );
+
+            // Non-null return means the closure handled it
+            if ($result !== null) {
+                return $result;
+            }
+        }
+
+        // If formatting is disabled, return the key as-is
+        if (! $formatKeys) {
+            return $permission;
+        }
+
+        return $this->formatCustomPermissionKey($permission, $case, $separator);
+    }
+
+    /**
+     * Format a custom permission key, handling separator-delimited segments independently.
+     *
+     * If the permission contains the configured separator (e.g. 'view:system_log'),
+     * each segment is formatted separately and rejoined with the separator
+     * (e.g. 'View:SystemLog' for pascal case).
+     */
+    protected function formatCustomPermissionKey(string $permission, string $case, string $separator): string
+    {
+        if (str_contains($permission, $separator)) {
+            return collect(explode($separator, $permission))
+                ->map(fn (string $segment): string => $this->format($case, $segment))
+                ->implode($separator);
+        }
+
+        return $this->format($case, $permission);
     }
 
     protected function getResourcesToManage(): array

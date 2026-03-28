@@ -102,12 +102,25 @@ return [
     |
     | Supported formats: snake, kebab, pascal, camel, upper_snake, lower_snake
     |
+    | Note: The separator must not conflict with the case format's own
+    | delimiter. For example, `_` cannot be used with snake/lower_snake/
+    | upper_snake, and `-` cannot be used with kebab.
+    |
+    | When `format_custom_permission_keys` is true (default), custom
+    | permissions defined below will have their keys formatted according to
+    | the case setting. If your custom permissions come from external sources
+    | (e.g. Terraform, Keycloak) and must remain unchanged, set this to false.
+    | When using the separator in custom permission definitions, each segment
+    | will be formatted independently (e.g. 'view:system_log' with pascal
+    | case becomes 'View:SystemLog').
+    |
     */
 
     'permissions' => [
         'separator' => ':',
         'case' => 'pascal',
         'generate' => true,
+        'format_custom_permission_keys' => true,
     ],
 
     /*

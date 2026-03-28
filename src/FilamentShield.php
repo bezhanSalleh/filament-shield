@@ -151,25 +151,60 @@ class FilamentShield
         return class_basename($entity);
     }
 
+    /**
+     * Format a string value into the specified case.
+     *
+     * Input is first normalized to PascalCase (handling snake_case, kebab-case,
+     * camelCase, UPPER_SNAKE, and space-separated inputs) before applying the
+     * target case conversion. This ensures consistent output regardless of
+     * the input format.
+     */
     protected function format(string $case, string $value): string
     {
+        $normalized = $this->normalize($value);
+
         return match ($case) {
-            'kebab' => Str::of($value)->kebab()->toString(),
-            'pascal' => Str::of($value)->studly()->toString(),
-            'upper_snake' => Str::of($value)->snake()->upper()->toString(),
-            'lower_snake' => Str::of($value)->snake()->lower()->toString(),
-            'camel' => Str::of($value)->camel()->toString(),
-            default => Str::of($value)->snake()->toString(),
+            'kebab' => Str::of($normalized)->kebab()->toString(),
+            'pascal' => $normalized,
+            'upper_snake' => Str::of($normalized)->snake()->upper()->toString(),
+            'lower_snake' => Str::of($normalized)->snake()->lower()->toString(),
+            'camel' => Str::of($normalized)->camel()->toString(),
+            default => Str::of($normalized)->snake()->toString(),
         };
+    }
+
+    /**
+     * Normalize a string to PascalCase regardless of its original format.
+     *
+     * Handles snake_case, kebab-case, camelCase, PascalCase, UPPER_SNAKE_CASE,
+     * space-separated, and dot.separated inputs by converting all recognized
+     * word boundaries into spaces, then applying studly (PascalCase) conversion.
+     *
+     * ALL_CAPS input (e.g. UPPER_SNAKE) is lowercased first to prevent
+     * Laravel's studly() from treating each character as a separate word.
+     */
+    protected function normalize(string $value): string
+    {
+        $withoutSeparators = preg_replace('/[-_.\s]/', '', $value);
+
+        if ($withoutSeparators !== '' && ctype_upper($withoutSeparators)) {
+            $value = strtolower($value);
+        }
+
+        $value = str_replace(['-', '_', '.'], ' ', $value);
+
+        return Str::of($value)->studly()->toString();
     }
 
     private function buildPermissionKey(string $entity, string $affix, string $subject): string
     {
         $permissionConfig = Utils::getConfig()->permissions;
 
+        $this->validateSeparatorCaseCompatibility($permissionConfig->separator, $permissionConfig->case);
+
         if ($this->buildPermissionKeyUsing instanceof Closure) {
 
-            /** @var string $result */
+            /** @var ?string $result */
             $result = $this->evaluate(
                 value: $this->buildPermissionKeyUsing,
                 namedInjections: [
@@ -181,7 +216,10 @@ class FilamentShield
                 ]
             );
 
-            return $result;
+            // Non-null return means the closure handled it; null falls through to default
+            if ($result !== null) {
+                return $result;
+            }
         }
 
         return $this->defaultPermissionKeyBuilder(
@@ -190,5 +228,33 @@ class FilamentShield
             subject: $subject,
             case: $permissionConfig->case
         );
+    }
+
+    /**
+     * Validate that the configured separator does not conflict with the case format's
+     * own delimiter. For example, snake_case uses `_` internally, so using `_` as the
+     * separator would make it impossible to distinguish the boundary between the affix
+     * and subject in the resulting permission key.
+     *
+     * @throws InvalidArgumentException When the separator conflicts with the case format.
+     */
+    protected function validateSeparatorCaseCompatibility(string $separator, string $case): void
+    {
+        once(function () use ($separator, $case): true {
+            $conflicts = [
+                '_' => ['snake', 'lower_snake', 'upper_snake'],
+                '-' => ['kebab'],
+            ];
+
+            if (isset($conflicts[$separator]) && in_array($case, $conflicts[$separator], true)) {
+                throw new InvalidArgumentException(
+                    "The separator \"{$separator}\" cannot be used with the \"{$case}\" case format because " .
+                    "it conflicts with the case's own delimiter, making it impossible to distinguish " .
+                    'the affix from the subject in permission keys.'
+                );
+            }
+
+            return true;
+        });
     }
 }
