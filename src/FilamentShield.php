@@ -196,6 +196,34 @@ class FilamentShield
         return Str::of($value)->studly()->toString();
     }
 
+    /**
+     * Validate that the configured separator does not conflict with the case format's
+     * own delimiter. For example, snake_case uses `_` internally, so using `_` as the
+     * separator would make it impossible to distinguish the boundary between the affix
+     * and subject in the resulting permission key.
+     *
+     * @throws InvalidArgumentException When the separator conflicts with the case format.
+     */
+    protected function validateSeparatorCaseCompatibility(string $separator, string $case): void
+    {
+        once(function () use ($separator, $case): true {
+            $conflicts = [
+                '_' => ['snake', 'lower_snake', 'upper_snake'],
+                '-' => ['kebab'],
+            ];
+
+            if (isset($conflicts[$separator]) && in_array($case, $conflicts[$separator], true)) {
+                throw new InvalidArgumentException(
+                    "The separator \"{$separator}\" cannot be used with the \"{$case}\" case format because " .
+                    "it conflicts with the case's own delimiter, making it impossible to distinguish " .
+                    'the affix from the subject in permission keys.'
+                );
+            }
+
+            return true;
+        });
+    }
+
     private function buildPermissionKey(string $entity, string $affix, string $subject): string
     {
         $permissionConfig = Utils::getConfig()->permissions;
@@ -228,33 +256,5 @@ class FilamentShield
             subject: $subject,
             case: $permissionConfig->case
         );
-    }
-
-    /**
-     * Validate that the configured separator does not conflict with the case format's
-     * own delimiter. For example, snake_case uses `_` internally, so using `_` as the
-     * separator would make it impossible to distinguish the boundary between the affix
-     * and subject in the resulting permission key.
-     *
-     * @throws InvalidArgumentException When the separator conflicts with the case format.
-     */
-    protected function validateSeparatorCaseCompatibility(string $separator, string $case): void
-    {
-        once(function () use ($separator, $case): true {
-            $conflicts = [
-                '_' => ['snake', 'lower_snake', 'upper_snake'],
-                '-' => ['kebab'],
-            ];
-
-            if (isset($conflicts[$separator]) && in_array($case, $conflicts[$separator], true)) {
-                throw new InvalidArgumentException(
-                    "The separator \"{$separator}\" cannot be used with the \"{$case}\" case format because " .
-                    "it conflicts with the case's own delimiter, making it impossible to distinguish " .
-                    'the affix from the subject in permission keys.'
-                );
-            }
-
-            return true;
-        });
     }
 }
