@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BezhanSalleh\FilamentShield\Concerns;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Closure;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Support\Str;
 
@@ -118,7 +119,7 @@ trait HasEntityTransformers
     protected function resolveCustomPermissionKey(string $permission, string $case, string $separator, bool $formatKeys): string
     {
         // Route through the custom builder closure if registered
-        if ($this->buildPermissionKeyUsing instanceof \Closure) {
+        if ($this->buildPermissionKeyUsing instanceof Closure) {
             $result = $this->evaluate(
                 value: $this->buildPermissionKeyUsing,
                 namedInjections: [
