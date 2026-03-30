@@ -72,14 +72,17 @@ trait HasEntityTransformers
     public function transformCustomPermissions(bool $localized = false): ?array
     {
         $permissionCase = Utils::getConfig()->permissions->case;
+        $disabled = Utils::getConfig()->disable_custom_permissions_transformation;
 
         return collect(Utils::getConfig()->custom_permissions)
-            ->mapWithKeys(function (string $label, int | string $key) use ($localized, $permissionCase): array {
+            ->mapWithKeys(function (string $label, int | string $key) use ($localized, $permissionCase, $disabled): array {
                 $permission = is_numeric($key) ? $label : $key;
                 $configLabel = is_numeric($key) ? null : $label;
 
+                $key = $disabled ? $permission : $this->format($permissionCase, $permission);
+
                 return [
-                    $this->format($permissionCase, $permission) => $localized
+                    $key => $localized
                         ? $this->getCustomPermissionLabel($permission, $configLabel)
                         : Str::of($label)->headline()->toString(),
                 ];
