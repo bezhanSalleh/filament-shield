@@ -36,11 +36,13 @@ trait CanGeneratePolicy
                 ->toString();
         }
 
+        $modelRelativePath = Str::of($path)->after('Models' . DIRECTORY_SEPARATOR);
+
         /** @phpstan-ignore-next-line */
-        return Str::of($path)
-            ->replace('Models', Str::of(Utils::resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString())
+        return Str::of(Utils::getPolicyPath())
+            ->append(DIRECTORY_SEPARATOR)
+            ->append($modelRelativePath)
             ->replaceLast('.php', 'Policy.php')
-            ->replace('\\', DIRECTORY_SEPARATOR)
             ->toString();
     }
 
@@ -65,11 +67,11 @@ trait CanGeneratePolicy
         $namespace = $reflectionClass->getNamespaceName();
         $path = $reflectionClass->getFileName();
 
-        $policyNamespace = Str::of(Utils::resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString();
+        $policyBaseNamespace = Utils::resolveNamespaceFromPath(Utils::getPolicyPath());
 
         $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
-            ? Utils::resolveNamespaceFromPath(Utils::getPolicyPath())
-            : Str::of($namespace)->replace('Models', $policyNamespace)->toString(); /** @phpstan-ignore-line */
+            ? $policyBaseNamespace
+            : $policyBaseNamespace . Str::of($namespace)->after('Models')->toString(); /** @phpstan-ignore-line */
         $stubVariables['model_name'] = $entity['model'];
         $stubVariables['model_fqcn'] = $namespace . '\\' . $entity['model'];
         $stubVariables['model_variable'] = Str::of($entity['model'])->camel();
