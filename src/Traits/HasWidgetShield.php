@@ -18,7 +18,7 @@ trait HasWidgetShield
 
         return $permission && $user
             ? $user->can($permission)
-            : parent::canAccess();
+            : parent::canView();
     }
 
     protected static function getWidgetPermission(): ?string
