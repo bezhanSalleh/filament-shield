@@ -229,10 +229,15 @@ return [
     | Sometimes you need permissions that don't map to resources, pages, or
     | widgets. Define any custom permissions here and they'll be available
     | when editing roles in your application.
+    | Permission names will be transformed according to the rules defined for
+    | the "Permission Builder" (see section above). You can disable that
+    | behaviour.
     |
     */
 
     'custom_permissions' => [],
+
+    'disable_custom_permissions_transformation' => false,
 
     /*
     |--------------------------------------------------------------------------
