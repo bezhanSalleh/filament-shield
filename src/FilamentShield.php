@@ -10,6 +10,7 @@ use Filament\Pages\BasePage as Page;
 use Filament\Resources\Resource;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\Widget;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -23,11 +24,32 @@ class FilamentShield
 
     protected ?Closure $buildPermissionKeyUsing = null;
 
+    protected ?Closure $createSuperAdminUsing = null;
+
     public function buildPermissionKeyUsing(Closure $callback): static
     {
         $this->buildPermissionKeyUsing = $callback;
 
         return $this;
+    }
+
+    public function createSuperAdminUsing(Closure $callback): static
+    {
+        $this->createSuperAdminUsing = $callback;
+
+        return $this;
+    }
+
+    public function createSuperAdmin(): ?Authenticatable
+    {
+        if ($this->createSuperAdminUsing instanceof Closure) {
+            /** @var Authenticatable $result */
+            $result = $this->evaluate($this->createSuperAdminUsing);
+
+            return $result;
+        }
+
+        return null;
     }
 
     public function getResources(): ?array

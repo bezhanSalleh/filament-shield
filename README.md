@@ -107,6 +107,7 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Core Commands](#core-commands)
     - [Generate Command Options (recap)](#generate-command-options-recap)
     - [Seeder Command Options (recap)](#seeder-command-options-recap)
+    - [Custom Super Admin Creation](#custom-super-admin-creation)
   - [Localization](#localization)
     - [Configuration](#configuration-4)
     - [How It Works](#how-it-works)
@@ -611,6 +612,49 @@ shield:translation {locale} [--panel=] [--path=]
 --generate-passwords=   Generate passwords (random, prompt, or custom value)
 --force   Overwrite existing seeder file
 ```
+
+### Custom Super Admin Creation
+
+By default, `shield:super-admin` prompts for a name, email, and password when creating a new user. If your `User` model has additional required fields, you can customize this process using `createSuperAdminUsing` in your `AppServiceProvider`'s `boot()` method:
+
+```php
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use Illuminate\Support\Facades\Hash;
+
+use function Laravel\Prompts\text;
+use function Laravel\Prompts\password;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+public function boot(): void
+{
+    FilamentShield::createSuperAdminUsing(function (): Authenticatable {
+        return \App\Models\User::create([
+            'name' => text(label: 'First Name', required: true),
+            'middle_name' => text(label: 'Middle Name', required: false),
+            'last_name' => text(label: 'Last Name', required: true),
+            'email' => text(
+                label: 'Email address',
+                required: true,
+                validate: fn (string $email): ?string => match (true) {
+                    ! filter_var($email, FILTER_VALIDATE_EMAIL) => 'The email address must be valid.',
+                    \App\Models\User::where('email', $email)->exists() => 'A user with this email address already exists.',
+                    default => null,
+                },
+            ),
+            'password' => Hash::make(password(
+                label: 'Password',
+                required: true,
+                validate: fn (string $value): ?string => match (true) {
+                    strlen($value) < 8 => 'The password must be at least 8 characters.',
+                    default => null,
+                },
+            )),
+        ]);
+    });
+}
+```
+
+The callback should return an `Authenticatable` instance. You're free to add any fields your model requires and use [Laravel Prompts](https://laravel.com/docs/prompts) to collect them interactively.
 
 ## Localization
 Shield supports multiple languages out of the box. When enabled, you can provide translated labels for
