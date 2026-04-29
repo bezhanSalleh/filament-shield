@@ -148,14 +148,16 @@ class FilamentShield
                 ]
             );
 
-            return $result;
+            return Utils::prefixPermissionWithPanel($result);
         }
 
-        return $this->defaultPermissionKeyBuilder(
+        $permission = $this->defaultPermissionKeyBuilder(
             affix: $affix,
             separator: $permissionConfig->separator,
             subject: $subject,
             case: $permissionConfig->case
         );
+
+        return Utils::prefixPermissionWithPanel($permission);
     }
 }

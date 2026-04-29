@@ -26,6 +26,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 use Override;
@@ -52,6 +53,14 @@ class RoleResource extends Resource
                             ->schema([
                                 TextInput::make('name')
                                     ->label(__('filament-shield::filament-shield.field.name'))
+                                    ->afterStateHydrated(function (TextInput $component, ?string $state): void {
+                                        if (filled($state)) {
+                                            $component->state(Utils::stripPanelRolePrefix($state));
+                                        }
+                                    })
+                                    ->mutateStateForValidationUsing(fn (?string $state): ?string => filled($state)
+                                        ? Utils::prefixRoleName($state)
+                                        : $state)
                                     ->unique(
                                         ignoreRecord: true, /** @phpstan-ignore-next-line */
                                         modifyRuleUsing: fn (Unique $rule): Unique => Utils::isTenancyEnabled() ? $rule->where(Utils::getTenantModelForeignKey(), Filament::getTenant()?->id) : $rule
@@ -95,8 +104,28 @@ class RoleResource extends Resource
                 TextColumn::make('name')
                     ->weight(FontWeight::Medium)
                     ->label(__('filament-shield::filament-shield.column.name'))
-                    ->formatStateUsing(fn (string $state): string => Str::headline($state))
-                    ->searchable(),
+                    ->formatStateUsing(fn (string $state): string => Str::headline(Utils::stripPanelRolePrefix($state)))
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        $prefix = Utils::getPanelRolePrefix();
+                        if (filled($prefix)) {
+                            return $query->where('name', 'like', $prefix . '%' . $search . '%');
+                        }
+
+                        if (Utils::isRolePanelPrefixEnabled()) {
+                            $otherPrefixes = Utils::getOtherPanelRolePrefixes();
+                            if ($otherPrefixes !== []) {
+                                $query->where(function (Builder $subQuery) use ($otherPrefixes): void {
+                                    foreach ($otherPrefixes as $otherPrefix) {
+                                        $subQuery->where('name', 'not like', $otherPrefix . '%');
+                                    }
+                                });
+                            }
+
+                            return $query->where('name', 'like', '%' . $search . '%');
+                        }
+
+                        return $query->where('name', 'like', '%' . $search . '%');
+                    }),
                 TextColumn::make('guard_name')
                     ->badge()
                     ->color('warning')
@@ -111,7 +140,16 @@ class RoleResource extends Resource
                 TextColumn::make('permissions_count')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))
-                    ->counts('permissions')
+                    ->state(function ($record): int {
+                        $panelPrefix = Utils::getPanelPermissionPrefix();
+                        if (blank($panelPrefix)) {
+                            return $record->permissions()->count();
+                        }
+
+                        return $record->permissions()
+                            ->where('name', 'like', $panelPrefix . '%')
+                            ->count();
+                    })
                     ->color('primary'),
                 TextColumn::make('updated_at')
                     ->label(__('filament-shield::filament-shield.column.updated_at'))

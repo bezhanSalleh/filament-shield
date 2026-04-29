@@ -78,8 +78,11 @@ trait HasEntityTransformers
                 $permission = is_numeric($key) ? $label : $key;
                 $configLabel = is_numeric($key) ? null : $label;
 
+                $formattedPermission = $this->format($permissionCase, $permission);
+                $prefixedPermission = Utils::prefixPermissionWithPanel($formattedPermission);
+
                 return [
-                    $this->format($permissionCase, $permission) => $localized
+                    $prefixedPermission => $localized
                         ? $this->getCustomPermissionLabel($permission, $configLabel)
                         : Str::of($label)->headline()->toString(),
                 ];
@@ -89,9 +92,7 @@ trait HasEntityTransformers
 
     protected function getResourcesToManage(): array
     {
-        return collect(Utils::getConfig()->resources->manage)
-            ->mapWithKeys(fn (array $methods, string $key): array => [basename($key) => $methods])
-            ->toArray();
+        return collect(Utils::getConfig()->resources->manage)->toArray();
     }
 
     protected function getDefaultPolicyMethodsOrFor(?string $resource = null): array
@@ -100,7 +101,7 @@ trait HasEntityTransformers
         $defaultPolicyMethods = $policyConfig->methods;
 
         if (filled($resource)) {
-            $resourcePolicyMethods = data_get($this->getResourcesToManage(), basename($resource));
+            $resourcePolicyMethods = data_get($this->getResourcesToManage(), $resource);
 
             $defaultPolicyMethods = $policyConfig->merge
                 ? array_merge($defaultPolicyMethods, $resourcePolicyMethods ?? [])

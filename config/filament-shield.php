@@ -93,6 +93,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Roles
+    |--------------------------------------------------------------------------
+    |
+    | Optionally prefix role names by panel ID to isolate roles across
+    | multiple panels. The default panel remains unprefixed.
+    |
+    */
+
+    'roles' => [
+        'panel_prefix' => false,
+        'panel_prefix_separator' => ':',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Permission Builder
     |--------------------------------------------------------------------------
     |
@@ -108,6 +123,18 @@ return [
         'separator' => ':',
         'case' => 'pascal',
         'generate' => true,
+        /*
+        |--------------------------------------------------------------------------
+        | Panel Prefix
+        |--------------------------------------------------------------------------
+        |
+        | When enabled, Shield will prefix permission keys with the current
+        | panel ID to avoid collisions across multiple panels that share
+        | the same auth guard.
+        |
+        */
+        'panel_prefix' => false,
+        'panel_prefix_separator' => ':',
     ],
 
     /*
@@ -125,6 +152,37 @@ return [
         'path' => app_path('Policies'),
         'merge' => true,
         'generate' => true,
+        /*
+        |--------------------------------------------------------------------------
+        | Panel Path
+        |--------------------------------------------------------------------------
+        |
+        | When enabled, Shield will place generated policies under a
+        | panel-specific subdirectory (e.g. app/Policies/Admin).
+        |
+        */
+        'panel_path' => false,
+        /*
+        |--------------------------------------------------------------------------
+        | Force Base Path
+        |--------------------------------------------------------------------------
+        |
+        | When enabled, Shield will always write policies to the configured
+        | base path (and optional panel subdirectory), instead of mirroring
+        | the model's namespace.
+        |
+        */
+        'force_path' => false,
+        /*
+        |--------------------------------------------------------------------------
+        | Panel-Aware Policy Resolution
+        |--------------------------------------------------------------------------
+        |
+        | When enabled, Shield registers a panel-aware policy guesser so
+        | policies resolve to the current panel's directory at runtime.
+        |
+        */
+        'panel_aware_resolution' => false,
         'methods' => [
             'viewAny', 'view', 'create', 'update', 'delete', 'deleteAny', 'restore',
             'forceDelete', 'forceDeleteAny', 'restoreAny', 'replicate', 'reorder',

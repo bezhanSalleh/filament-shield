@@ -54,4 +54,44 @@ class ShieldConfig extends Fluent
     {
         return static::$instance = new self(config('filament-shield'));
     }
+
+    public function rolesPanelPrefixEnabled(): bool
+    {
+        return (bool) ($this->roles->panel_prefix ?? false);
+    }
+
+    public function permissionsPanelPrefixEnabled(): bool
+    {
+        return (bool) ($this->permissions->panel_prefix ?? false);
+    }
+
+    public function policiesPanelPathEnabled(): bool
+    {
+        return (bool) ($this->policies->panel_path ?? false);
+    }
+
+    public function policiesPanelAwareResolutionEnabled(): bool
+    {
+        return (bool) ($this->policies->panel_aware_resolution ?? false);
+    }
+
+    public function policiesForcePathEnabled(): bool
+    {
+        return (bool) ($this->policies->force_path ?? false);
+    }
+
+    public function permissionsSeparator(): string
+    {
+        return (string) ($this->permissions->separator ?? ':');
+    }
+
+    public function permissionsPanelPrefixSeparator(): string
+    {
+        return (string) ($this->permissions->panel_prefix_separator ?? $this->permissionsSeparator());
+    }
+
+    public function rolesPanelPrefixSeparator(): string
+    {
+        return (string) ($this->roles->panel_prefix_separator ?? $this->permissionsPanelPrefixSeparator());
+    }
 }

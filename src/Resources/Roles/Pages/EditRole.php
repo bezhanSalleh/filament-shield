@@ -8,7 +8,7 @@ use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Override;
 
@@ -38,20 +38,42 @@ class EditRole extends EditRecord
             return Arr::only($data, ['name', 'guard_name', Utils::getTenantModelForeignKey()]);
         }
 
-        return Arr::only($data, ['name', 'guard_name']);
+        return Utils::normalizeRoleFormData($data);
     }
 
     protected function afterSave(): void
     {
-        $permissionModels = collect();
-        $this->permissions->each(function (string $permission) use ($permissionModels): void {
-            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
-                'name' => $permission,
-                'guard_name' => $this->data['guard_name'],
-            ]));
-        });
+        $permissionModels = Utils::buildPermissionModels($this->permissions, $this->data['guard_name']);
 
-        // @phpstan-ignore-next-line
-        $this->record->syncPermissions($permissionModels);
+        $record = $this->getRoleRecord();
+        $panelPrefix = Utils::getPanelPermissionPrefix();
+        if (filled($panelPrefix)) {
+            $otherPanelPermissions = $record->permissions()
+                ->pluck('name')
+                ->filter(fn (string $name): bool => ! Str::startsWith($name, $panelPrefix))
+                ->values();
+
+            $permissionNames = $permissionModels->pluck('name')
+                ->merge($otherPanelPermissions)
+                ->unique()
+                ->values();
+
+            $permissionModels = Utils::getPermissionModel()::whereIn('name', $permissionNames)
+                ->where('guard_name', $this->data['guard_name'])
+                ->get();
+        }
+
+        $record->syncPermissions($permissionModels);
+    }
+
+    /**
+     * @return Model&RoleContract
+     */
+    protected function getRoleRecord(): Model
+    {
+        /** @var Model&RoleContract $record */
+        $record = $this->record;
+
+        return $record;
     }
 }

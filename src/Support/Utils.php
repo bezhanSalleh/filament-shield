@@ -8,6 +8,7 @@ use BezhanSalleh\FilamentShield\Facades\FilamentShield;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -27,6 +28,11 @@ class Utils
     public static function getFilamentAuthGuard(): string
     {
         return Filament::getCurrentOrDefaultPanel()?->getAuthGuard() ?? '';
+    }
+
+    public static function getCurrentPanelId(): ?string
+    {
+        return Filament::getCurrentOrDefaultPanel()?->getId();
     }
 
     public static function isResourcePublished(Panel $panel): bool
@@ -61,7 +67,7 @@ class Utils
 
     public static function getSuperAdminName(): string
     {
-        return (string) static::getConfig()->super_admin->name;
+        return static::prefixRoleName((string) static::getConfig()->super_admin->name);
     }
 
     public static function isSuperAdminDefinedViaGate(): bool
@@ -81,7 +87,7 @@ class Utils
 
     public static function getPanelUserRoleName(): string
     {
-        return (string) static::getConfig()->panel_user->name;
+        return static::prefixRoleName((string) static::getConfig()->panel_user->name);
     }
 
     public static function createPanelUserRole(): void
@@ -123,8 +129,48 @@ class Utils
 
     public static function getPolicyPath(): string
     {
-        return Str::of(static::getConfig()->policies->path ?? app_path('Policies'))
+        $path = Str::of(static::getConfig()->policies->path ?? app_path('Policies'))
             ->replace('\\', DIRECTORY_SEPARATOR)
+            ->rtrim(DIRECTORY_SEPARATOR)
+            ->toString();
+
+        $panelSegment = static::getPolicyPanelSegment();
+        if (filled($panelSegment)) {
+            $path .= DIRECTORY_SEPARATOR . $panelSegment;
+        }
+
+        return $path;
+    }
+
+    public static function getPolicyPathRelativeToApp(): ?string
+    {
+        $policyPath = Str::of(static::getPolicyPath())
+            ->replace('\\', DIRECTORY_SEPARATOR)
+            ->toString();
+
+        $appPath = Str::of(app_path())
+            ->replace('\\', DIRECTORY_SEPARATOR)
+            ->rtrim(DIRECTORY_SEPARATOR)
+            ->toString();
+
+        $prefix = $appPath . DIRECTORY_SEPARATOR;
+
+        if (str_starts_with($policyPath, $prefix)) {
+            return Str::of($policyPath)->after($prefix)->toString();
+        }
+
+        return null;
+    }
+
+    public static function getPolicyNamespaceSegment(): string
+    {
+        $relative = static::getPolicyPathRelativeToApp();
+        if (filled($relative)) {
+            return str_replace(DIRECTORY_SEPARATOR, '\\', $relative);
+        }
+
+        return Str::of(static::resolveNamespaceFromPath(static::getPolicyPath()))
+            ->afterLast('\\')
             ->toString();
     }
 
@@ -134,6 +180,35 @@ class Utils
         $path = static::getPolicyPath() . DIRECTORY_SEPARATOR . 'RolePolicy.php';
 
         return $filesystem->exists($path) ? Str::of(static::resolveNamespaceFromPath($path))->before('.php')->toString() : null;
+    }
+
+    public static function isPanelPolicyPathEnabled(): bool
+    {
+        return static::getConfig()->policiesPanelPathEnabled();
+    }
+
+    public static function isPolicyPathForced(): bool
+    {
+        return static::getConfig()->policiesForcePathEnabled();
+    }
+
+    public static function getPolicyPanelSegment(): ?string
+    {
+        if (! static::isPanelPolicyPathEnabled()) {
+            return null;
+        }
+
+        $panel = Filament::getCurrentOrDefaultPanel();
+        if (! $panel || $panel->isDefault()) {
+            return null;
+        }
+
+        $panelId = $panel->getId();
+        if (blank($panelId)) {
+            return null;
+        }
+
+        return (string) Str::of($panelId)->studly();
     }
 
     public static function isRolePolicyRegistered(): bool
@@ -180,14 +255,48 @@ class Utils
         return static::getConfig()->tenant_model ?? null;
     }
 
+    public static function extractRolePermissionsFromFormData(array $data): Collection
+    {
+        return collect($data)
+            ->filter(fn (mixed $permission, string $key): bool => ! in_array($key, ['name', 'guard_name', 'select_all', static::getTenantModelForeignKey()]))
+            ->values()
+            ->flatten()
+            ->unique();
+    }
+
+    public static function normalizeRoleFormData(array $data): array
+    {
+        $data['name'] = static::prefixRoleName((string) $data['name']);
+
+        if (static::isTenancyEnabled() && Arr::has($data, static::getTenantModelForeignKey()) && filled($data[static::getTenantModelForeignKey()])) {
+            return Arr::only($data, ['name', 'guard_name', static::getTenantModelForeignKey()]);
+        }
+
+        return Arr::only($data, ['name', 'guard_name']);
+    }
+
+    public static function buildPermissionModels(Collection $permissions, string $guardName): Collection
+    {
+        $permissionModels = collect();
+        $permissions->each(function (string $permission) use ($permissionModels, $guardName): void {
+            $permissionModels->push(static::getPermissionModel()::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => $guardName,
+            ]));
+        });
+
+        return $permissionModels;
+    }
+
     public static function createRole(?string $name = null, int | string | null $tenantId = null): Role
     {
         $guardName = static::getFilamentAuthGuard();
+        $roleName = static::prefixRoleName($name ?? (string) static::getConfig()->super_admin->name);
 
         if (static::isTenancyEnabled()) {
             return static::getRoleModel()::firstOrCreate(
                 [
-                    'name' => $name ?? static::getConfig()->super_admin->name,
+                    'name' => $roleName,
                     static::getTenantModelForeignKey() => $tenantId,
                     'guard_name' => $guardName,
                 ],
@@ -196,7 +305,7 @@ class Utils
 
         return static::getRoleModel()::firstOrCreate(
             [
-                'name' => $name ?? static::getSuperAdminName(),
+                'name' => $roleName,
                 'guard_name' => $guardName,
             ],
         );
@@ -207,6 +316,130 @@ class Utils
         return static::getPermissionModel()::firstOrCreate(
             ['name' => $name, 'guard_name' => static::getFilamentAuthGuard()],
         )->name;
+    }
+
+    public static function isPanelPrefixEnabled(): bool
+    {
+        return static::getConfig()->permissionsPanelPrefixEnabled();
+    }
+
+    public static function isRolePanelPrefixEnabled(): bool
+    {
+        return static::getConfig()->rolesPanelPrefixEnabled();
+    }
+
+    public static function getRolePrefixSeparator(): string
+    {
+        return static::getConfig()->rolesPanelPrefixSeparator();
+    }
+
+    public static function getPanelRolePrefix(): ?string
+    {
+        if (! static::isRolePanelPrefixEnabled()) {
+            return null;
+        }
+
+        $panel = Filament::getCurrentOrDefaultPanel();
+        if (! $panel || $panel->isDefault()) {
+            return null;
+        }
+
+        $panelId = $panel->getId();
+        if (blank($panelId)) {
+            return null;
+        }
+
+        return $panelId . static::getRolePrefixSeparator();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function getOtherPanelRolePrefixes(): array
+    {
+        if (! static::isRolePanelPrefixEnabled()) {
+            return [];
+        }
+
+        $separator = static::getRolePrefixSeparator();
+        $panels = Filament::getPanels();
+
+        if (! is_array($panels) || $panels === []) {
+            return [];
+        }
+
+        return collect($panels)
+            ->filter(fn (Panel $panel): bool => ! $panel->isDefault() && filled($panel->getId()))
+            ->map(fn (Panel $panel): string => $panel->getId() . $separator)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public static function prefixRoleName(string $name): string
+    {
+        $prefix = static::getPanelRolePrefix();
+        if (blank($prefix)) {
+            return $name;
+        }
+
+        if (str_starts_with($name, $prefix)) {
+            return $name;
+        }
+
+        return $prefix . $name;
+    }
+
+    public static function stripPanelRolePrefix(string $name): string
+    {
+        $prefix = static::getPanelRolePrefix();
+        if (blank($prefix)) {
+            return $name;
+        }
+
+        return str_starts_with($name, $prefix)
+            ? substr($name, strlen($prefix))
+            : $name;
+    }
+
+    public static function getPanelPermissionPrefix(): ?string
+    {
+        if (! static::isPanelPrefixEnabled()) {
+            return null;
+        }
+
+        $panelId = static::getCurrentPanelId();
+        if (blank($panelId)) {
+            return null;
+        }
+
+        return $panelId . static::getPanelPrefixSeparator();
+    }
+
+    public static function getPanelPrefixSeparator(): string
+    {
+        return static::getConfig()->permissionsPanelPrefixSeparator();
+    }
+
+    public static function prefixPermissionWithPanel(string $permission): string
+    {
+        if (! static::isPanelPrefixEnabled()) {
+            return $permission;
+        }
+
+        $panelId = static::getCurrentPanelId();
+        if (blank($panelId)) {
+            return $permission;
+        }
+
+        $separator = static::getPanelPrefixSeparator();
+        $prefix = $panelId . $separator;
+
+        if (str_starts_with($permission, $prefix)) {
+            return $permission;
+        }
+
+        return $prefix . $permission;
     }
 
     public static function giveSuperAdminPermission(string | array | Collection $permissions): void

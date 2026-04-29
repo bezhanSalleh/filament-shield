@@ -14,6 +14,8 @@ use BezhanSalleh\FilamentShield\Commands\TranslationCommand;
 use BezhanSalleh\FilamentShield\Concerns\HasAboutCommand;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
+use RuntimeException;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -59,8 +61,44 @@ class FilamentShieldServiceProvider extends PackageServiceProvider
             });
         }
 
-        if (Utils::isRolePolicyRegistered()) {
+        if (Utils::isRolePolicyRegistered() && ! Utils::getConfig()->policiesPanelAwareResolutionEnabled()) {
             Gate::policy(Utils::getRoleModel(), Utils::getRolePolicyPath());
+        }
+
+        if (Utils::getConfig()->policiesPanelAwareResolutionEnabled()) {
+            Gate::guessPolicyNamesUsing(function (string $modelClass): string {
+                $appNamespace = app()->getNamespace();
+
+                try {
+                    $policySegment = Utils::getPolicyNamespaceSegment();
+                } catch (RuntimeException) {
+                    $policySegment = 'Policies';
+                }
+
+                $policyRoot = rtrim($appNamespace, '\\') . '\\' . $policySegment;
+
+                if ($modelClass === Utils::getRoleModel()) {
+                    return $policyRoot . '\\RolePolicy';
+                }
+
+                if (Str::startsWith($modelClass, $appNamespace . 'Models\\')) {
+                    $relative = Str::of($modelClass)->after($appNamespace . 'Models\\')->toString();
+
+                    return $policyRoot . '\\' . $relative . 'Policy';
+                }
+
+                if (Str::startsWith($modelClass, $appNamespace)) {
+                    $relative = Str::of($modelClass)->after($appNamespace)->toString();
+
+                    return $policyRoot . '\\' . $relative . 'Policy';
+                }
+
+                return Str::of($modelClass)
+                    ->replaceFirst('\\Models\\', '\\' . $policySegment . '\\')
+                    ->replaceFirst('Models\\', $policySegment . '\\')
+                    ->append('Policy')
+                    ->toString();
+            });
         }
     }
 

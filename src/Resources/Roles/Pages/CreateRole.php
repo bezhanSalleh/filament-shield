@@ -7,7 +7,6 @@ namespace BezhanSalleh\FilamentShield\Resources\Roles\Pages;
 use BezhanSalleh\FilamentShield\Resources\Roles\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Override;
 
@@ -26,22 +25,12 @@ class CreateRole extends CreateRecord
             ->flatten()
             ->unique();
 
-        if (Utils::isTenancyEnabled() && Arr::has($data, Utils::getTenantModelForeignKey()) && filled($data[Utils::getTenantModelForeignKey()])) {
-            return Arr::only($data, ['name', 'guard_name', Utils::getTenantModelForeignKey()]);
-        }
-
-        return Arr::only($data, ['name', 'guard_name']);
+        return Utils::normalizeRoleFormData($data);
     }
 
     protected function afterCreate(): void
     {
-        $permissionModels = collect();
-        $this->permissions->each(function (string $permission) use ($permissionModels): void {
-            $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
-                'name' => $permission,
-                'guard_name' => $this->data['guard_name'],
-            ]));
-        });
+        $permissionModels = Utils::buildPermissionModels($this->permissions, $this->data['guard_name']);
 
         $this->record->syncPermissions($permissionModels);
     }
