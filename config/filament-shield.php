@@ -125,6 +125,25 @@ return [
         'path' => app_path('Policies'),
         'merge' => true,
         'generate' => true,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Central Policy Path Segments
+        |--------------------------------------------------------------------------
+        |
+        | When a model's file path contains any of these segments, the generated
+        | policy will be placed in policies.path. Otherwise, the policy is
+        | created alongside the model by replacing Models with Policies.
+        |
+        | For modular apps, you may prefer only ['vendor'] so that models under
+        | modules/{Module}/src are co-located with their policies.
+        |
+        */
+        'central_path_segments' => [
+            'vendor',
+            'src',
+        ],
+
         'methods' => [
             'viewAny', 'view', 'create', 'update', 'delete', 'deleteAny', 'restore',
             'forceDelete', 'forceDeleteAny', 'restoreAny', 'replicate', 'reorder',

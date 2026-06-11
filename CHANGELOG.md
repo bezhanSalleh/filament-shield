@@ -2,6 +2,12 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- Configurable `policies.central_path_segments` for `shield:generate` to control when policies are written to `policies.path` vs co-located beside models
+
 ## 4.2.0 - 2026-03-22
 
 ### What's Changed

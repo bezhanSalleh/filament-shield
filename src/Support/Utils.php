@@ -128,6 +128,31 @@ class Utils
             ->toString();
     }
 
+    /**
+     * @return list<string>
+     */
+    public static function getCentralPolicyPathSegments(): array
+    {
+        $segments = static::getConfig()->policies->central_path_segments ?? ['vendor', 'src'];
+
+        if (! is_array($segments)) {
+            return ['vendor', 'src'];
+        }
+
+        return array_values($segments);
+    }
+
+    public static function shouldUseCentralPolicyPath(string $modelFilePath): bool
+    {
+        $segments = static::getCentralPolicyPathSegments();
+
+        if ($segments === []) {
+            return false;
+        }
+
+        return Str::of($modelFilePath)->contains($segments);
+    }
+
     public static function getRolePolicyPath(): ?string
     {
         $filesystem = new Filesystem;

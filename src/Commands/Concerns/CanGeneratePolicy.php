@@ -28,7 +28,7 @@ trait CanGeneratePolicy
     {
         $path = (new ReflectionClass($entity['modelFqcn']))->getFileName();
 
-        if (Str::of($path)->contains(['vendor', 'src'])) {
+        if (Utils::shouldUseCentralPolicyPath($path)) {
             return Str::of($entity['model'])
                 ->prepend(str(Utils::getPolicyPath())->append('\\'))
                 ->replace('\\', DIRECTORY_SEPARATOR)
@@ -67,7 +67,7 @@ trait CanGeneratePolicy
 
         $policyNamespace = Str::of(Utils::resolveNamespaceFromPath(Utils::getPolicyPath()))->afterLast('\\')->toString();
 
-        $stubVariables['namespace'] = Str::of($path)->contains(['vendor', 'src'])
+        $stubVariables['namespace'] = Utils::shouldUseCentralPolicyPath($path)
             ? Utils::resolveNamespaceFromPath(Utils::getPolicyPath())
             : Str::of($namespace)->replace('Models', $policyNamespace)->toString(); /** @phpstan-ignore-line */
         $stubVariables['model_name'] = $entity['model'];

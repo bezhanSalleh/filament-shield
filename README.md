@@ -83,6 +83,7 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Methods](#methods)
     - [Merge](#merge)
     - [Single Parameter Methods](#single-parameter-methods)
+    - [Central Path Segments](#central-path-segments)
     - [Policy Enforcement](#policy-enforcement)
   - [Resources](#resources)
     - [Configuration](#configuration-2)
@@ -248,6 +249,10 @@ Shield automatically generates policies for your Resources' Models.
     'path' => app_path('Policies'),
     'merge' => true,
     'generate' => true,
+    'central_path_segments' => [
+        'vendor',
+        'src',
+    ],
     'methods' => [
         'viewAny', 'view', 'create', 'update', 'delete', 'deleteAny', 'restore',
         'forceDelete', 'forceDeleteAny', 'restoreAny', 'replicate', 'reorder',
@@ -272,6 +277,28 @@ When `policies.merge` is set to `true`, Shield will combine the global methods d
 
 ### Single Parameter Methods
 Some policy methods only require the user instance as a parameter (e.g., `viewAny`, `create`). These are defined in `policies.single_parameter_methods`. Shield will generate these methods accordingly in the policies. When you add new methods or resource-specific methods, ensure to update this list if they also only require the user instance. This helps maintain consistency and clarity in your policy definitions.
+
+### Central Path Segments
+When running `shield:generate`, Shield decides where to write each policy file based on the model's filesystem path:
+
+- **Central path** (`policies.path`, e.g. `app/Policies`) — used when the model file path contains any segment listed in `policies.central_path_segments`.
+- **Co-located path** — used otherwise. Shield replaces `Models` with `Policies` in the model's namespace/path (e.g. `App\Models\Post` → `app/Policies/PostPolicy.php` or `Modules\Users\Models\Admin` → `Modules\Users\Policies\AdminPolicy.php`).
+
+The default segments are `vendor` and `src`, matching the previous hard-coded behavior for package and PSR-4 `src` trees.
+
+**Modular / monorepo apps:** models under paths such as `modules/Users/src/Models` also match the `src` segment, so policies may land in `app/Policies` instead of beside the module. Limit the list to only `vendor` if you want module policies co-located with their models:
+
+```php
+'central_path_segments' => [
+    'vendor',
+],
+```
+
+Set an empty array to always use co-located policies:
+
+```php
+'central_path_segments' => [],
+```
 
 ### Policy Enforcement
 Laravel automatically resolves policies for models, but this is not always the case. For instance, if your models are not in the default `App\Models` namespace, are nested, or are from third-party plugins, you may need to manually register the policies. You can do this in a service provider's `boot()` method: 
