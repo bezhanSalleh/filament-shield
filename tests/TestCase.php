@@ -53,6 +53,13 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
+        // Parallel test processes share the skeleton filesystem, so files the
+        // package writes under database_path() (e.g. ShieldSeeder.php) race
+        // across processes unless each one gets its own database directory.
+        if (($token = env('TEST_TOKEN')) !== null) {
+            $app->useDatabasePath($app->basePath('database_' . $token));
+        }
+
         // Database
         config()->set('database.default', 'testing');
         config()->set('database.connections.testing', [
@@ -110,6 +117,12 @@ class TestCase extends Orchestra
     protected function setupFreshDatabase(): void
     {
         config()->set('permission.teams', $this->withTenancy);
+
+        // Eloquent caches each model's column listing in a process-wide static;
+        // the roles table schema differs between teams and non-teams tests, so a
+        // stale listing silently discards team_id during mass assignment.
+        $guardableColumns = new \ReflectionProperty(\Illuminate\Database\Eloquent\Model::class, 'guardableColumns');
+        $guardableColumns->setValue(null, []);
 
         Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('role_has_permissions');
