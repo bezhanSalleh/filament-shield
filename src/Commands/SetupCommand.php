@@ -229,14 +229,10 @@ class SetupCommand extends Command
         $forced = $this->refresh || $this->option('force');
         if ($forced) {
             Schema::disableForeignKeyConstraints();
-            DB::table('migrations')->where('migration', 'like', '%create_permission_tables')->delete();
-            if (config('database.default') === 'pgsql') {
-                $this->getTables()->each(fn (string $table) => DB::statement(sprintf('DROP TABLE IF EXISTS %s CASCADE', $table)));
-            } else {
-                $this->getTables()->each(fn (string $table) => DB::statement('DROP TABLE IF EXISTS ' . $table));
-            }
-
+            $this->getTables()->each(fn (string $table) => DB::statement($this->getDropStatement($table)));
             Schema::enableForeignKeyConstraints();
+
+            DB::table('migrations')->where('migration', 'like', '%create_permission_tables')->delete();
         }
 
         $this->{$this->callingMethod}('vendor:publish', [
@@ -250,6 +246,13 @@ class SetupCommand extends Command
         } else {
             $this->{$this->callingMethod}('migrate');
         }
+    }
+
+    protected function getDropStatement(string $table): string
+    {
+        return DB::connection()->getDriverName() === 'pgsql'
+            ? sprintf('DROP TABLE IF EXISTS %s CASCADE', $table)
+            : sprintf('DROP TABLE IF EXISTS %s', $table);
     }
 
     protected function getModel(string $model): ?Model
