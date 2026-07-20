@@ -107,6 +107,7 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Core Commands](#core-commands)
     - [Generate Command Options (recap)](#generate-command-options-recap)
     - [Seeder Command Options (recap)](#seeder-command-options-recap)
+    - [Custom Super Admin Creation](#custom-super-admin-creation)
   - [Localization](#localization)
     - [Configuration](#configuration-4)
     - [How It Works](#how-it-works)
@@ -611,6 +612,52 @@ shield:translation {locale} [--panel=] [--path=]
 --generate-passwords=   Generate passwords (random, prompt, or custom value)
 --force   Overwrite existing seeder file
 ```
+
+### Custom Super Admin Creation
+
+When no user exists yet, `shield:super-admin` prompts for a name, email, and password. If your `User` model requires more than that, register a closure via `SuperAdminCommand::createSuperAdminUsing()` in a service provider's `boot()` method and the command will call it instead:
+
+```php
+use BezhanSalleh\FilamentShield\Commands\SuperAdminCommand;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Hash;
+
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
+
+public function boot(): void
+{
+    SuperAdminCommand::createSuperAdminUsing(function (): ?Authenticatable {
+        return \App\Models\User::create([
+            'name' => text(label: 'First Name', required: true),
+            'last_name' => text(label: 'Last Name', required: true),
+            'email' => text(
+                label: 'Email address',
+                required: true,
+                validate: fn (string $email): ?string => match (true) {
+                    ! filter_var($email, FILTER_VALIDATE_EMAIL) => 'The email address must be valid.',
+                    \App\Models\User::where('email', $email)->exists() => 'A user with this email address already exists.',
+                    default => null,
+                },
+            ),
+            'password' => Hash::make(password(
+                label: 'Password',
+                required: true,
+                validate: fn (string $value): ?string => match (true) {
+                    strlen($value) < 8 => 'The password must be at least 8 characters.',
+                    default => null,
+                },
+            )),
+        ]);
+    });
+
+    SuperAdminCommand::prohibit($this->app->isProduction());
+}
+```
+
+The closure is resolved through the container and should return an `Authenticatable` instance. Returning `null` deliberately falls back to the built-in interactive prompts, so a closure can hand control back whenever it decides not to create the user itself.
+
+Keep in mind that the closure replaces Shield's built-in email and password validation entirely — validate whatever you collect, and never hardcode credentials in it. This hook is meant for bootstrapping development and staging environments only; in production, create the super admin through a seeder or a deliberate one-time run, and pair the hook with `SuperAdminCommand::prohibit($this->app->isProduction())` in the same `boot()` as shown above.
 
 ## Localization
 Shield supports multiple languages out of the box. When enabled, you can provide translated labels for
