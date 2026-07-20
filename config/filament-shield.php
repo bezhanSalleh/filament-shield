@@ -247,6 +247,9 @@ return [
     | widgets. Define any custom permissions here and they'll be available
     | when editing roles in your application.
     |
+    | Keys are formatted per the Permission Builder settings above; set
+    | permissions.format_custom_permission_keys to false to use them as-is.
+    |
     */
 
     'custom_permissions' => [],
