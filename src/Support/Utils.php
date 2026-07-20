@@ -10,6 +10,7 @@ use Filament\Panel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use ReflectionClass;
 use RuntimeException;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -125,6 +126,50 @@ class Utils
     {
         return Str::of(static::getConfig()->policies->path ?? app_path('Policies'))
             ->replace('\\', DIRECTORY_SEPARATOR)
+            ->toString();
+    }
+
+    public static function resolvePolicyFor(string $model): string
+    {
+        $reflection = new ReflectionClass($model);
+        $modelPath = (string) $reflection->getFileName();
+
+        if (Str::startsWith($modelPath, app_path('Models' . DIRECTORY_SEPARATOR))) {
+            return Str::of($modelPath)
+                ->after(app_path('Models' . DIRECTORY_SEPARATOR))
+                ->beforeLast('.php')
+                ->replace(DIRECTORY_SEPARATOR, '\\')
+                ->prepend(static::resolveNamespaceFromPath(static::getPolicyPath()) . '\\')
+                ->append('Policy')
+                ->toString();
+        }
+
+        if (static::hasPathSegment($modelPath, 'vendor') || ! static::hasPathSegment($modelPath, 'Models')) {
+            return static::resolveNamespaceFromPath(static::getPolicyPath()) . '\\' . class_basename($model) . 'Policy';
+        }
+
+        return static::replaceLastSegment($reflection->getNamespaceName(), '\\', 'Models', 'Policies')
+            . '\\' . class_basename($model) . 'Policy';
+    }
+
+    public static function resolvePolicyPathFor(string $model): string
+    {
+        $modelPath = (string) (new ReflectionClass($model))->getFileName();
+
+        if (Str::startsWith($modelPath, app_path('Models' . DIRECTORY_SEPARATOR))) {
+            return Str::of($modelPath)
+                ->after(app_path('Models' . DIRECTORY_SEPARATOR))
+                ->prepend(static::getPolicyPath() . DIRECTORY_SEPARATOR)
+                ->replaceLast('.php', 'Policy.php')
+                ->toString();
+        }
+
+        if (static::hasPathSegment($modelPath, 'vendor') || ! static::hasPathSegment($modelPath, 'Models')) {
+            return static::getPolicyPath() . DIRECTORY_SEPARATOR . class_basename($model) . 'Policy.php';
+        }
+
+        return Str::of(static::replaceLastSegment($modelPath, DIRECTORY_SEPARATOR, 'Models', 'Policies'))
+            ->replaceLast('.php', 'Policy.php')
             ->toString();
     }
 
@@ -304,6 +349,11 @@ class Utils
         throw new RuntimeException('Configured path does not match any PSR-4 mapping: ' . $configuredPath);
     }
 
+    public static function flushPsr4Cache(): void
+    {
+        static::$psr4Cache = null;
+    }
+
     /**
      * Convert a permission key to a localization key.
      *
@@ -318,6 +368,19 @@ class Utils
             ->snake()
             ->replace('__', '_')
             ->toString();
+    }
+
+    protected static function hasPathSegment(string $path, string $segment): bool
+    {
+        return in_array($segment, explode(DIRECTORY_SEPARATOR, $path), true);
+    }
+
+    protected static function replaceLastSegment(string $subject, string $separator, string $search, string $replace): string
+    {
+        $segments = explode($separator, $subject);
+        $segments[max(array_keys($segments, $search, true))] = $replace;
+
+        return implode($separator, $segments);
     }
 
     protected static function isAbsolutePath(string $path): bool

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \BezhanSalleh\FilamentShield\FilamentShield buildPermissionKeyUsing(\Closure $callback)
+ * @method static \BezhanSalleh\FilamentShield\FilamentShield enforcePolicies(bool|\Closure $condition = true, array|null $except = null)
+ * @method static void registerEnforcedPolicies()
  * @method static array|null getResources()
  * @method static array|null getPages()
  * @method static array|null getWidgets()
