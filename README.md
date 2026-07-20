@@ -80,6 +80,8 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Customize permission key composition](#customize-permission-key-composition)
   - [Policies](#policies)
     - [Configuration](#configuration-1)
+    - [Policy Placement](#policy-placement)
+    - [Skipping Provided Policies](#skipping-provided-policies)
     - [Methods](#methods)
     - [Merge](#merge)
     - [Single Parameter Methods](#single-parameter-methods)
@@ -263,6 +265,39 @@ Shield automatically generates policies for your Resources' Models.
 ],
 ```
 
+### Policy Placement
+Shield writes each policy where it belongs for the model that owns it; how policies are resolved at runtime stays in your hands. The rule is applied per model:
+
+1. **Models under `app/Models`** — the policy goes into `policies.path`, keeping any nesting (`app/Models/Blog/Post.php` → `app/Policies/Blog/PostPolicy.php`).
+2. **Vendor models** — the policy goes flat into `policies.path`. Shield never writes inside `vendor/`, since Composer wipes it.
+3. **Models in any other `Models` directory** (modules, plugins, DDD domains, panel-organized trees) — the policy goes into a sibling `Policies` directory beside the model, exactly where Laravel's policy discovery looks.
+4. **Models outside any `Models` directory** (legacy `app/User.php` layouts) — the policy goes flat into `policies.path`.
+
+| Model location | Generated policy | Found by Laravel's discovery? | Action needed |
+|---|---|---|---|
+| `app/Models/Post.php` (default `policies.path`) | `App\Policies\PostPolicy` | Yes | none |
+| `app/Models/Blog/Post.php` | `App\Policies\Blog\PostPolicy` | No | `enforcePolicies()` or register |
+| `app/Models/Post.php` (custom `policies.path`) | e.g. `App\Filament\Policies\PostPolicy` | No | `enforcePolicies()` or register |
+| `app/Filament/Admin/Models/Post.php` | `App\Filament\Admin\Policies\PostPolicy` | Yes | none |
+| `modules/Blog/src/Models/Post.php` | `Modules\Blog\Policies\PostPolicy` | Yes | none |
+| `app/Domain/Users/Models/Post.php` | `App\Domain\Users\Policies\PostPolicy` | Yes | none |
+| vendor model, no bundled policy | `App\Policies\PostPolicy` | No | `enforcePolicies()` or register (`register_role_policy` already covers Shield's `Role`) |
+| `app/User.php` (no `Models` directory) | `App\Policies\UserPolicy` | Yes | none |
+
+Because the rule is per-model, mixed layouts work with zero configuration: a default `app/Models` tree, an `app-modules/` directory, and vendor models can coexist in one app. Grouping models **inside** `app/Models` (e.g. `app/Models/Shared`, `app/Models/Admin`) mirrors the grouping into your policy tree under `policies.path`; grouping them **outside** it (e.g. `app/Filament/Admin/Models`) yields sibling placement that Laravel discovers on its own — the directory choice selects the trade-off.
+
+### Skipping Provided Policies
+When a model's policy already resolves to something other than the policy Shield would generate — for example a policy bundled with an installed plugin, or one you registered yourself — `shield:generate` skips that model and reports which policy provides it. Permissions are still generated.
+
+Ownership is decided structurally, with two symmetric recipes and no flags:
+
+- **Opting a model out** — put your policy anywhere you like, register it with `Gate::policy()`, and delete the file Shield generated. Shield treats it like a plugin-provided policy and backs off that model for good, while still generating its permissions.
+- **Taking over a provided policy** — create a policy class at Shield's conventional location for the model (see the placement table above), for example with `php artisan make:policy`. Once that class exists, the next `shield:generate` fills it and maintains it from then on. Register it with `Gate::policy()` so it wins over the plugin's — explicit registrations beat discovered ones.
+
+The `--ignore-existing-policies` flag is an unrelated axis: it prevents rewriting any policy file that already exists, protecting manual edits. The skip rule decides whether a model is Shield's to generate for; the flag then decides whether an existing file may be rewritten.
+
+One caveat: the check runs in the console, so registrations that only happen conditionally at runtime may not be visible while generating. The worst case is an extra generated file that never resolves — Shield itself never registers anything without being asked.
+
 ### Methods
 Each policy includes methods defined in the `policies.methods` config. You can customize this list to fit your application's needs. Since Filament Resources typically use a standard set of methods, the default configuration should suffice for most applications. If you have specific resources that require additional methods, you can easily add them to the list. 
 However, it would be best to only include methods that are commonly used across your resources and define any resource-specific methods in the `resources.manage` config section. This approach keeps your policies clean and relevant to your application's requirements.
@@ -274,13 +309,28 @@ When `policies.merge` is set to `true`, Shield will combine the global methods d
 Some policy methods only require the user instance as a parameter (e.g., `viewAny`, `create`). These are defined in `policies.single_parameter_methods`. Shield will generate these methods accordingly in the policies. When you add new methods or resource-specific methods, ensure to update this list if they also only require the user instance. This helps maintain consistency and clarity in your policy definitions.
 
 ### Policy Enforcement
-Laravel automatically resolves policies for models, but this is not always the case. For instance, if your models are not in the default `App\Models` namespace, are nested, or are from third-party plugins, you may need to manually register the policies. You can do this in a service provider's `boot()` method: 
+Sibling-placed policies and the default flat `App\Policies` are found by Laravel's policy discovery on their own. The placements marked "No" in the table above — nested under `policies.path`, a custom `policies.path`, and centralized vendor-model policies — are invisible to it and need registration. The simplest way is Shield's opt-in enforcement hook, in a service provider's `boot()` method:
+
+```php
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+
+FilamentShield::enforcePolicies();
+```
+
+At `Filament::serving` time, this registers the Shield-generated policy for each of your resources' models via `Gate::policy()`. It plays by strict rules:
+
+- The condition is evaluated lazily on each request, so a closure can gate enforcement per panel or per tenant: `FilamentShield::enforcePolicies(fn (): bool => Filament::getCurrentPanel()?->getId() === 'admin')`.
+- Models listed in `$except` are left alone: `FilamentShield::enforcePolicies(except: [Post::class])`.
+- Existing explicit `Gate::policy()` registrations — yours or a plugin's — always win, regardless of boot order.
+- Only Shield-generated policy classes that actually exist are registered; your custom-located policies are never touched, and nothing is ever unregistered or overridden.
+
+For full manual control, register policies yourself:
 
 ```php
 Gate::policy(Awcodes\Curator\Models\Media::class, App\Policies\MediaPolicy::class);
 ```
 
-**Tip** For your in-app resources' models you can add the following method in the `boot()` method to automatically enforce policies, without the need to manually register each policy. This assumes your policies are in the `App\Policies` namespace and follow the naming convention of appending `Policy` to the model class name. Adjust the `str_replace` parameters if your structure differs:
+**Tip** Alternatively, you can teach Laravel's discovery your convention with `Gate::guessPolicyNamesUsing()`. If you use a custom `policies.path`, adapt the callback to your configured namespace, since discovery never looks inside a custom path on its own:
 
 ```php
 use Illuminate\Support\Facades\Gate;
@@ -289,6 +339,8 @@ Gate::guessPolicyNamesUsing(function (string $modelClass) {
     return str_replace('Models', 'Policies', $modelClass) . 'Policy';
 });
 ```
+
+One boundary to be aware of: resolving *different* policies per panel for the same model is conditional resolution, which belongs in your own registration logic (a conditioned `enforcePolicies()` closure only gates whether Shield's policies are enforced — it does not swap policies per panel).
 
 ## Resources
 Shield derives resource permission keys from configured policy methods. Since Filament `Resources`' authorization is handled via policies, generated permissions align with policy methods.
@@ -595,7 +647,7 @@ shield:translation {locale} [--panel=] [--path=]
 --page=Dashboard,Settings           Target pages (basenames)
 --widget=StatsOverview,SalesChart   Target widgets (basenames)
 --exclude                           Treat provided entities as exclusions
---ignore-existing-policies          Force regeneration of already existing policies
+--ignore-existing-policies          Skip policies whose file already exists, preserving manual edits
 --panel=admin                       Panel ID (required when not interactive)
 --relationships                     Generate tenancy relationships (panel must have tenancy)
 ```

@@ -116,8 +116,12 @@ return [
     |--------------------------------------------------------------------------
     |
     | Shield can automatically generate Laravel policies for your resources.
-    | When merge is enabled, the methods below will be combined with any
-    | resource-specific methods you define in the resources section.
+    | Generated policies mirror each model's location: models under
+    | app/Models map into the path below (keeping their nesting), models in
+    | any other "Models" directory get a sibling "Policies" directory, and
+    | vendor models fall back to the path below. When merge is enabled, the
+    | methods below will be combined with any resource-specific methods you
+    | define in the resources section.
     |
     */
 

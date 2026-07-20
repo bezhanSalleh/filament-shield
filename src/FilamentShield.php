@@ -10,6 +10,7 @@ use Filament\Pages\BasePage as Page;
 use Filament\Resources\Resource;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -23,11 +24,43 @@ class FilamentShield
 
     protected ?Closure $buildPermissionKeyUsing = null;
 
+    protected bool | Closure $shouldEnforcePolicies = false;
+
+    protected ?array $enforcePoliciesExcept = null;
+
     public function buildPermissionKeyUsing(Closure $callback): static
     {
         $this->buildPermissionKeyUsing = $callback;
 
         return $this;
+    }
+
+    public function enforcePolicies(bool | Closure $condition = true, ?array $except = null): static
+    {
+        $this->shouldEnforcePolicies = $condition;
+        $this->enforcePoliciesExcept = $except;
+
+        return $this;
+    }
+
+    public function registerEnforcedPolicies(): void
+    {
+        if (! $this->evaluate($this->shouldEnforcePolicies)) {
+            return;
+        }
+
+        collect($this->getResources())
+            ->pluck('modelFqcn')
+            ->unique()
+            ->reject(fn (string $model): bool => in_array($model, $this->enforcePoliciesExcept ?? [], true))
+            ->reject(fn (string $model): bool => array_key_exists($model, Gate::policies()))
+            ->each(function (string $model): void {
+                $policy = Utils::resolvePolicyFor($model);
+
+                if (class_exists($policy)) {
+                    Gate::policy($model, $policy);
+                }
+            });
     }
 
     public function getResources(): ?array
