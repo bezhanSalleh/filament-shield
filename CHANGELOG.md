@@ -2,6 +2,37 @@
 
 All notable changes to `filament-shield` will be documented in this file.
 
+## 4.3.0 - 2026-07-23
+
+### What's Changed
+
+* Detect PostgreSQL by driver in shield:setup --fresh by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/736
+* Add createSuperAdminUsing hook to shield:super-admin by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/737
+* Rework policy placement to mirror model structure by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/738
+* Key resources.manage lookups by resource class instead of basename by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/740
+* Custom permission key formatting by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/739
+* Harden CI supply chain by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/741
+* Fix random-order flake in the tenancy seeder tests by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/735
+* Remove vestigial npm tooling by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/744
+* Isolate parallel test processes with per-process skeleton clones by @bezhanSalleh in https://github.com/bezhanSalleh/filament-shield/pull/745
+* fix: zh_TW term translation by @hms5232 in https://github.com/bezhanSalleh/filament-shield/pull/718
+* fix HasWidgetShield to use canView instead of canAccess by @lucaheft in https://github.com/bezhanSalleh/filament-shield/pull/721
+* Allow spatie/laravel-permission ^8.0 too by @ziming in https://github.com/bezhanSalleh/filament-shield/pull/727
+* fix(lang/de): translate reorder and replicate by @grafst in https://github.com/bezhanSalleh/filament-shield/pull/728
+* feat: add Azerbaijani translation by @Elvin-Qulizade in https://github.com/bezhanSalleh/filament-shield/pull/730
+* Add Tajik and Uzbek translations by @komyor09 in https://github.com/bezhanSalleh/filament-shield/pull/734
+
+### New Contributors
+
+* @hms5232 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/718
+* @lucaheft made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/721
+* @ziming made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/727
+* @grafst made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/728
+* @Elvin-Qulizade made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/730
+* @komyor09 made their first contribution in https://github.com/bezhanSalleh/filament-shield/pull/734
+
+**Full Changelog**: https://github.com/bezhanSalleh/filament-shield/compare/4.2.0...4.3.0
+
 ## 4.2.0 - 2026-03-22
 
 ### What's Changed
