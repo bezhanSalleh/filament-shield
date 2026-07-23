@@ -10,18 +10,18 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: main
 
       - name: Update Changelog
-        uses: stefanzweifel/changelog-updater-action@v1
+        uses: stefanzweifel/changelog-updater-action@a938690fad7edf25368f37e43a1ed1b34303eb36 # v1
         with:
           latest-version: ${{ github.event.release.name }}
           release-notes: ${{ github.event.release.body }}
 
       - name: Commit updated CHANGELOG
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7
         with:
           branch: main
           commit_message: Update CHANGELOG

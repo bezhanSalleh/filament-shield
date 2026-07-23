@@ -7,5 +7,16 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    cooldown:
+      default-days: 7
+    labels:
+      - 'dependencies'
+
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    cooldown:
+      default-days: 7
     labels:
       - 'dependencies'
