@@ -5,7 +5,7 @@
         "prettier": "npx prettier --write ."
     },
     "devDependencies": {
-        "prettier": "^2.7.1",
+        "prettier": "^3.9.5",
         "prettier-plugin-blade": "^1.6.19"
     }
 }
