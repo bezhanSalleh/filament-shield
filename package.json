@@ -6,6 +6,6 @@
     },
     "devDependencies": {
         "prettier": "^2.7.1",
-        "prettier-plugin-blade": "^1.5.3"
+        "prettier-plugin-blade": "^1.6.19"
     }
 }
