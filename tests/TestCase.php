@@ -51,15 +51,29 @@ class TestCase extends Orchestra
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    // Parallel test processes otherwise share one skeleton filesystem, so
+    // anything written into it (published config, generated seeders, the
+    // package manifest) races across processes; each process gets its own
+    // skeleton clone instead.
+    public static function applicationBasePath()
     {
-        // Parallel test processes share the skeleton filesystem, so files the
-        // package writes under database_path() (e.g. ShieldSeeder.php) race
-        // across processes unless each one gets its own database directory.
-        if (($token = env('TEST_TOKEN')) !== null) {
-            $app->useDatabasePath($app->basePath('database_' . $token));
+        $token = env('TEST_TOKEN');
+
+        if ($token === null) {
+            return parent::applicationBasePath();
         }
 
+        $basePath = \Orchestra\Testbench\default_skeleton_path() . '_' . $token;
+
+        if (! is_dir($basePath)) {
+            (new \Illuminate\Filesystem\Filesystem)->copyDirectory(\Orchestra\Testbench\default_skeleton_path(), $basePath);
+        }
+
+        return $basePath;
+    }
+
+    public function getEnvironmentSetUp($app)
+    {
         // Database
         config()->set('database.default', 'testing');
         config()->set('database.connections.testing', [
