@@ -13,3 +13,6 @@ vendor
 node_modules
 .php-cs-fixer.cache
 .phpunit.cache
+.vscode
+.playground
+Roadmap.md

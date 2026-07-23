@@ -69,7 +69,7 @@ class SuperAdminCommand extends Command
             }
 
             if (($tenantModel = Utils::getTenantModel()) && $tenantModel::query()->whereKey($tenantId)->doesntExist()) {
-                $this->components->error("The team/tenant [{$tenantId}] does not exist in [{$tenantModel}].");
+                $this->components->error(sprintf('The team/tenant [%s] does not exist in [%s].', $tenantId, $tenantModel));
 
                 return self::FAILURE;
             }

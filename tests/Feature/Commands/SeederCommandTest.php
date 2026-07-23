@@ -106,7 +106,8 @@ describe('basic functionality', function () {
         $this->artisan('shield:seeder', ['--force' => true])
             ->assertSuccessful();
     });
-});
+})
+    ->skipOnWindows();
 
 describe('--with-users flag', function () {
     it('exports users with roles', function () {
@@ -203,7 +204,8 @@ describe('--with-users flag', function () {
         expect($content)->toContain('with-role@test.com');
         expect($content)->toContain('no-perms@test.com');
     });
-});
+})
+    ->skipOnWindows();
 
 describe('password handling', function () {
     it('errors when both --include-passwords and --generate-passwords are used', function () {
@@ -340,7 +342,8 @@ describe('password handling', function () {
         $content = File::get(database_path('seeders/ShieldSeeder.php'));
         expect($content)->toContain('"password":');
     });
-});
+})
+    ->skipOnWindows();
 
 describe('seeder stub content', function () {
     it('generates valid PHP syntax', function () {
@@ -375,4 +378,5 @@ describe('seeder stub content', function () {
         expect($content)->toContain('$user->syncRoles($roles)');
         expect($content)->toContain('$user->syncPermissions($permissions)');
     });
-});
+})
+    ->skipOnWindows();

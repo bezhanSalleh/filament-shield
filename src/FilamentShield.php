@@ -187,7 +187,7 @@ class FilamentShield
     {
         $withoutSeparators = preg_replace('/[-_.\s]/', '', $value);
 
-        if ($withoutSeparators !== '' && ctype_upper($withoutSeparators)) {
+        if ($withoutSeparators !== '' && ctype_upper((string) $withoutSeparators)) {
             $value = strtolower($value);
         }
 
@@ -214,7 +214,7 @@ class FilamentShield
 
             if (isset($conflicts[$separator]) && in_array($case, $conflicts[$separator], true)) {
                 throw new InvalidArgumentException(
-                    "The separator \"{$separator}\" cannot be used with the \"{$case}\" case format because " .
+                    sprintf('The separator "%s" cannot be used with the "%s" case format because ', $separator, $case) .
                     "it conflicts with the case's own delimiter, making it impossible to distinguish " .
                     'the affix from the subject in permission keys.'
                 );

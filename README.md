@@ -96,6 +96,8 @@ The easiest and most intuitive way to add access management to your Filament pan
     - [Options](#options)
     - [Permission Enforcement](#permission-enforcement)
   - [Custom Permissions](#custom-permissions)
+    - [Formatting](#formatting)
+    - [Externally Managed Permissions](#externally-managed-permissions)
   - [Users (Assigning Roles to Users)](#users-assigning-roles-to-users)
   - [Shield Plugin \& Resource](#shield-plugin--resource)
     - [Navigation](#navigation)
