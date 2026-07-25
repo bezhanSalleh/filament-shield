@@ -114,8 +114,8 @@ class FilamentShield
     public function getEntitiesPermissions(): ?array
     {
         return collect($this->getAllResourcePermissionsWithLabels())->keys()
-            ->merge(collect($this->getPages())->map->permission->keys())
-            ->merge(collect($this->getWidgets())->map->permission->keys())
+            ->merge($this->getEntityPermissionKeys($this->getPages()))
+            ->merge($this->getEntityPermissionKeys($this->getWidgets()))
             ->merge(collect($this->getCustomPermissions())->keys())
             ->values()
             ->flatten()
@@ -131,6 +131,19 @@ class FilamentShield
         Commands\SeederCommand::prohibit($prohibit);
         Commands\SetupCommand::prohibit($prohibit);
         Commands\SuperAdminCommand::prohibit($prohibit);
+    }
+
+    /**
+     * Permission keys of transformed page/widget entities.
+     *
+     * @param  array<string, array{permissions?: array<string, string>}>|null  $entities
+     * @return array<int, string>
+     */
+    protected function getEntityPermissionKeys(?array $entities): array
+    {
+        return collect($entities)
+            ->flatMap(fn (array $entity): array => array_keys($entity['permissions'] ?? []))
+            ->all();
     }
 
     protected function resolveSubject(string $entity): string
