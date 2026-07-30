@@ -272,7 +272,7 @@ trait HasShieldFormComponents
     public static function toggleSelectAllViaEntities(Livewire $livewire, Set $set): void
     {
         /** @phpstan-ignore-next-line */
-        $entitiesStates = collect($livewire->form->getFlatComponents())
+        $entitiesStates = collect($livewire->form->getFlatComponents(withActions: false))
             ->reduce(function (mixed $counts, Component $component) {
                 if ($component instanceof CheckboxList) {
                     //  $component->callAfterStateHydrated();
@@ -292,7 +292,7 @@ trait HasShieldFormComponents
     public static function toggleEntitiesViaSelectAll(Livewire $livewire, Set $set, bool $state): void
     {
         /** @phpstan-ignore-next-line */
-        $entitiesComponents = collect($livewire->form->getFlatComponents())
+        $entitiesComponents = collect($livewire->form->getFlatComponents(withActions: false))
             ->filter(fn (Component $component): bool => $component instanceof CheckboxList);
 
         if ($state) {
