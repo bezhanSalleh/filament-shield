@@ -232,7 +232,7 @@ class SetupCommand extends Command
             $this->getTables()->each(fn (string $table) => DB::statement($this->getDropStatement($table)));
             Schema::enableForeignKeyConstraints();
 
-            DB::table('migrations')->where('migration', 'like', '%create_permission_tables')->delete();
+            DB::table(config('database.migrations.table'))->where('migration', 'like', '%create_permission_tables')->delete();
         }
 
         $this->{$this->callingMethod}('vendor:publish', [
