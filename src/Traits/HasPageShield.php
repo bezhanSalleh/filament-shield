@@ -9,8 +9,6 @@ use Filament\Facades\Filament;
 
 trait HasPageShield
 {
-    protected static ?string $pagePermissionKey = null;
-
     public static function shouldRegisterNavigation(): bool
     {
         return static::canAccess() && parent::shouldRegisterNavigation();
@@ -28,11 +26,6 @@ trait HasPageShield
 
     protected static function getPagePermission(): ?string
     {
-        if (static::$pagePermissionKey === null) {
-            $page = FilamentShield::getPages()[static::class] ?? null;
-            static::$pagePermissionKey = $page ? array_key_first($page['permissions']) : null;
-        }
-
-        return static::$pagePermissionKey;
+        return array_key_first(FilamentShield::getPages()[static::class]['permissions'] ?? []);
     }
 }

@@ -9,8 +9,6 @@ use Filament\Facades\Filament;
 
 trait HasWidgetShield
 {
-    protected static ?string $widgetPermissionKey = null;
-
     public static function canView(): bool
     {
         $permission = static::getWidgetPermission();
@@ -23,11 +21,6 @@ trait HasWidgetShield
 
     protected static function getWidgetPermission(): ?string
     {
-        if (static::$widgetPermissionKey === null) {
-            $widget = FilamentShield::getWidgets()[static::class] ?? null;
-            static::$widgetPermissionKey = $widget ? array_key_first($widget['permissions']) : null;
-        }
-
-        return static::$widgetPermissionKey;
+        return array_key_first(FilamentShield::getWidgets()[static::class]['permissions'] ?? []);
     }
 }
