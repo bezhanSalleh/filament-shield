@@ -211,7 +211,7 @@ Return a `string` to use as the permission key, or `null` to fall back to the de
   use Filament\Resources\Resource;
 
   FilamentShield::buildPermissionKeyUsing(
-      function (string $entity, string $affix, string $subject, string $case, string $separator) {
+      function (string $entity, ?string $affix, string $subject, string $case, string $separator) {
         if (is_subclass_of($entity, Resource::class) && in_array(
               needle: $entity, 
               haystack: [
