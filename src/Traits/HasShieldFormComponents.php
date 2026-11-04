@@ -207,6 +207,7 @@ trait HasShieldFormComponents
             ->options(fn (): array => $options)
             ->searchable($searchable)
             ->live()
+            ->partiallyRenderAfterStateUpdated()
             ->afterStateHydrated(function (Component $component, string $operation, ?Model $record, Set $set) use ($options): void {
                 static::setPermissionStateForRecordPermissions(
                     component: $component,
@@ -263,6 +264,7 @@ trait HasShieldFormComponents
             ->label(__('filament-shield::filament-shield.field.select_all.name'))
             ->helperText(fn (): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
             ->live()
+            ->partiallyRenderAfterStateUpdated()
             ->afterStateUpdated(function (Livewire $livewire, Set $set, bool $state): void {
                 static::toggleEntitiesViaSelectAll($livewire, $set, $state);
             })
@@ -314,7 +316,9 @@ trait HasShieldFormComponents
             ->livewireClickHandlerEnabled(true)
             ->action(function () use ($component, $livewire, $set, $resetState): void {
                 /** @phpstan-ignore-next-line */
-                $component->state($resetState ? [] : array_keys($component->getOptions()));
+                $component
+                    ->state($resetState ? [] : array_keys($component->getOptions()))
+                    ->partiallyRender();
                 static::toggleSelectAllViaEntities($livewire, $set);
             });
     }
